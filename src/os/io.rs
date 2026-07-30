@@ -46,16 +46,6 @@ impl<'a> StringFormatter<'a> {
     }
 }
 
-#[macro_export]
-macro_rules! format {
-    ($($tt:tt)*) => {{
-        let mut string = alloc::string::String::new();
-        let mut formatter = $crate::os::io::StringFormatter::new(&mut string);
-        let _ = formatter.write_fmt(format_args!($($tt)*));
-        string
-    }};
-}
-
 #[inline(always)]
 pub fn stdout() -> isize {
     *STDOUT_HANDLE.get_or_init(|| {
@@ -94,13 +84,47 @@ pub fn write(handle: isize, s: &str) {
     if ret == 0 || written != len { ErrorCode::last().panic(); }
 }
 
+#[macro_export]
+macro_rules! format {
+    ($lit:literal, $($tt:tt)*) => {{
+        let mut string = alloc::string::String::new();
+        let mut formatter = $crate::os::io::StringFormatter::new(&mut string);
+        let _ = formatter.write_fmt(format_args!($lit, $($tt)*));
+        string
+    }};
+}
+
+#[macro_export]
+macro_rules! print {
+    () => {{}};
+    ($expr:expr) => {{
+        let handle = $crate::os::io::stdout();
+        let s = $crate::format!("{}", $expr);
+        $crate::os::io::write(handle, s.as_str());
+    }};
+    ($lit:literal, $($tt:tt)*) => {{
+        let handle = $crate::os::io::stdout();
+        let s = $crate::format!($lit, $($tt)*);
+        $crate::os::io::write(handle, s.as_str());
+    }}
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::os::io::{stdout, write};
-
+    use crate::{
+        os::io::{stdout, write}
+    };
 
     #[test]
     fn write_test() {
         write(stdout(), "Hello World!\n");
+    }
+
+    #[test]
+    fn print_test() {
+        print!("Hello {}\n", "World");
+        print!("2 + 8 = ");
+        print!(2 + 8);
+        print!("\n");
     }
 }
