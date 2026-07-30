@@ -28,3 +28,13 @@ impl<'a> StringFormatter<'a> {
         self.0.write_str("\n")
     }
 }
+
+#[macro_export]
+macro_rules! format {
+    ($($tt:tt)*) => {{
+        let mut string = alloc::string::String::new();
+        let mut formatter = $crate::os::io::StringFormatter::new(&mut string);
+        let _ = formatter.write_fmt(format_args!($($tt)*));
+        string
+    }};
+}
