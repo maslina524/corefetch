@@ -31,12 +31,12 @@ mod panic_impl {
 // #[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
-    println!("{}", Version::new());
+    println!("{:?}", Version::new());
     0
 }
 
 #[cfg(test)]
-mod tests {
+mod tests {  
     extern crate std;
 
     #[test]
