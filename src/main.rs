@@ -3,11 +3,16 @@
 #![deny(clippy::all)]
 
 mod sync;
+mod os;
 
 use core::ffi::c_int;
 
-// #[global_allocator]
-// static ALLOCATOR: Allocator = Allocator;
+use crate::os::allocator::Allocator;
+
+extern crate alloc;
+
+#[global_allocator]
+static ALLOCATOR: Allocator = Allocator;
 
 #[cfg(not(test))]
 mod panic_impl {
