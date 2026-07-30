@@ -2,6 +2,17 @@ use core::fmt::Write;
 
 use alloc::string::String;
 
+use crate::{
+    sync::OnceLock,
+    os::windows::GetStdHandle
+};
+
+const STDOUT: u32 = u32::MAX - 10;
+const STDERR: u32 = u32::MAX - 11;
+
+static STDOUT_HANDLE: OnceLock<isize> = OnceLock::new();
+static STDERR_HANDLE: OnceLock<isize> = OnceLock::new();
+
 pub struct StringFormatter<'a>(&'a mut String);
 
 impl<'a> Write for StringFormatter<'a> {
@@ -37,4 +48,18 @@ macro_rules! format {
         let _ = formatter.write_fmt(format_args!($($tt)*));
         string
     }};
+}
+
+#[inline(always)]
+pub fn stdout() -> isize {
+    *STDOUT_HANDLE.get_or_init(|| {
+        (unsafe { GetStdHandle(STDOUT) }) as isize
+    })
+}
+
+#[inline(always)]
+pub fn stderr() -> isize {
+    *STDERR_HANDLE.get_or_init(|| {
+        (unsafe { GetStdHandle(STDERR) }) as isize
+    })
 }
