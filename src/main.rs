@@ -24,7 +24,7 @@ mod panic_impl {
     }
 }
 
-// #[cfg(not(test))]
+#[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
     0
