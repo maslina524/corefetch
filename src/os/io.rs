@@ -37,10 +37,6 @@ impl<'a> StringFormatter<'a> {
         core::fmt::Write::write_fmt(self, args)
     }
 
-    pub fn write_str(&mut self, s: &str) -> core::fmt::Result {
-        self.0.write_str(s)
-    }
-
     pub fn write_nl(&mut self) -> core::fmt::Result {
         self.0.write_str("\n")
     }
@@ -138,6 +134,39 @@ macro_rules! println {
     }}
 }
 
+#[macro_export]
+macro_rules! eprint {
+    () => {{}};
+    ($expr:expr) => {{
+        let handle = $crate::os::io::stderr();
+        let s = $crate::format!("{}", $expr);
+        $crate::os::io::write(handle, s.as_str());
+    }};
+    ($lit:literal, $($tt:tt)*) => {{
+        let handle = $crate::os::io::stderr();
+        let s = $crate::format!($lit, $($tt)*);
+        $crate::os::io::write(handle, s.as_str());
+    }}
+}
+
+#[macro_export]
+macro_rules! eprintln {
+    () => {{
+        let handle = $crate::os::io::stderr();
+        $crate::os::io::write(handle, "\n");
+    }};
+    ($expr:expr) => {{
+        let handle = $crate::os::io::stderr();
+        let s = $crate::formatln!("{}", $expr);
+        $crate::os::io::write(handle, s.as_str());
+    }};
+    ($lit:literal, $($tt:tt)*) => {{
+        let handle = $crate::os::io::stderr();
+        let s = $crate::formatln!($lit, $($tt)*);
+        $crate::os::io::write(handle, s.as_str());
+    }}
+}
+
 #[cfg(test)]
 mod tests {
     use crate::{
@@ -161,5 +190,12 @@ mod tests {
     fn println_test() {
         println!("Hello {}", "World");
         println!("2 + 8 = {}", 2 + 8);
+    }
+
+    #[test]
+    fn eprints_test() {
+        eprintln!("Hello {}", "World");
+        eprint!("42 * 55 = ");
+        eprintln!(42 * 55)
     }
 }
