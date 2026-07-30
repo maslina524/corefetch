@@ -27,6 +27,7 @@ mod panic_impl {
 // #[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
+    println!("Hello World!");
     0
 }
 

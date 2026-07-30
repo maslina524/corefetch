@@ -176,6 +176,8 @@ mod tests {
     #[test]
     fn write_test() {
         write(stdout(), "Hello World!\n");
+        write(stdout(), "Привет мир!\n");
+        write(stdout(), "👋👋👋\n");
     }
 
     #[test]
