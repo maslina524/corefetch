@@ -1,3 +1,5 @@
+use core::ptr;
+
 use crate::os::windows::WideCharToMultiByte;
 
 const CP_UTF8: u32 = 65001;
@@ -9,7 +11,6 @@ pub unsafe fn utf16le_to_utf8(src: *const u16, len: isize, dst: &mut [u8], size:
     // absolutely sure the bytes are completely valid,
     // or for converting strings created by the WinAPI.
 
-    let mut default_chs = 0;
     let ret = unsafe {
         WideCharToMultiByte(
             CP_UTF8, 
@@ -19,9 +20,9 @@ pub unsafe fn utf16le_to_utf8(src: *const u16, len: isize, dst: &mut [u8], size:
             dst.as_mut_ptr(), 
             size as i32, 
             &DEFAULT, 
-            &mut default_chs
+            ptr::null_mut()
         ) 
     };
-    if ret == 0 || default_chs == 0 { panic!("WideCharToMultiByte error!"); }
+    if ret == 0 { panic!("WideCharToMultiByte error!"); }
     ret as usize
 }

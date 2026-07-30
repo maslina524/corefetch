@@ -1,5 +1,7 @@
-use core::ffi::c_void;
-use core::alloc::{GlobalAlloc, Layout};
+use core::{
+    ffi::c_void,
+    alloc::{GlobalAlloc, Layout}
+};
 
 use crate::{
     os::windows::{GetProcessHeap, HeapAlloc, HeapFree},
