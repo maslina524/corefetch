@@ -1,6 +1,8 @@
-use core::cell::UnsafeCell;
-use core::mem::MaybeUninit;
-use core::sync::atomic::{AtomicU8, Ordering};
+use core::{
+    cell::UnsafeCell,
+    mem::MaybeUninit,
+    sync::atomic::{AtomicU8, Ordering}
+};
 
 const INCOMPLETE  : u8 = 0;
 const INITIALIZING: u8 = 1;

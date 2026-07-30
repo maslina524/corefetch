@@ -1,17 +1,23 @@
-use core::fmt::Write;
+use core::{
+    ptr,
+    ffi::c_void,
+    fmt::Write,
+    sync::atomic::{AtomicBool, Ordering}
+};
 
 use alloc::string::String;
 
 use crate::{
-    sync::OnceLock,
-    os::windows::GetStdHandle
+    os::{error::ErrorCode, windows::{GetStdHandle, SetConsoleOutputCP, WriteFile}}, sync::OnceLock
 };
 
-const STDOUT: u32 = u32::MAX - 10;
-const STDERR: u32 = u32::MAX - 11;
+const STDOUT        : u32             = u32::MAX - 10;
+const STDERR        : u32             = u32::MAX - 11;
+const CP_UTF8       : u32             = 65001;
 
 static STDOUT_HANDLE: OnceLock<isize> = OnceLock::new();
 static STDERR_HANDLE: OnceLock<isize> = OnceLock::new();
+static IS_UTF8      : AtomicBool      = AtomicBool::new(false);
 
 pub struct StringFormatter<'a>(&'a mut String);
 
@@ -62,4 +68,39 @@ pub fn stderr() -> isize {
     *STDERR_HANDLE.get_or_init(|| {
         (unsafe { GetStdHandle(STDERR) }) as isize
     })
+}
+
+pub fn write(handle: isize, s: &str) {
+    if IS_UTF8.compare_exchange(false, true, Ordering::Relaxed, Ordering::Relaxed).is_ok() {
+        // SAFETY: The function always receives a valid constant from the documentation,
+        // and possible errors are checked
+        let ret = unsafe { SetConsoleOutputCP(CP_UTF8) };
+        if ret == 0 { ErrorCode::last().panic(); }
+    }
+    let mut written = 0;
+    let len = s.len() as u32;
+    
+    // SAFETY: The handle is always correct, 
+    // errors are checked, the function is safe
+    let ret = unsafe {
+        WriteFile(
+            handle as *mut c_void, 
+            s.as_ptr(), 
+            len, 
+            &mut written, 
+            ptr::null_mut()
+        )
+    };
+    if ret == 0 || written != len { ErrorCode::last().panic(); }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::os::io::{stdout, write};
+
+
+    #[test]
+    fn write_test() {
+        write(stdout(), "Hello World!\n");
+    }
 }
