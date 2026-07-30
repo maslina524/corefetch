@@ -4,10 +4,14 @@
 
 mod sync;
 mod os;
+mod modules;
 
 use core::ffi::c_int;
 
-use crate::os::allocator::Allocator;
+use crate::{
+    modules::*,
+    os::allocator::Allocator
+};
 
 extern crate alloc;
 
@@ -27,7 +31,7 @@ mod panic_impl {
 // #[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
-    println!("Hello World!");
+    println!("{}", Version::new());
     0
 }
 
