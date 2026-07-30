@@ -1,17 +1,16 @@
-/// EXAMPLE:
-/// 
-/// project-name: fastfetch
-/// version: 2.66.0
-/// version-tweak:  
-/// build-type: release 
-/// sysname: Windows 
-/// arch: x86_64 
-/// cmake-built-type: RelWithDebInfo 
-/// compile-time: Jul 10 2026, 07:10:53 
-/// compiler: clang 22.1.8 
-/// libc: ucrt 14.0
+use crate::sync::OnceLock;
+
+static VERSION: OnceLock<Version> = OnceLock::new();
+
+pub fn get<'a>() -> &'static Version<'a> {
+    VERSION.get_or_init(|| {
+        Version::new()
+    })
+}
+
 #[derive(Debug)]
 pub struct Version<'a> {
+    key: &'a str,
     project_name: &'a str,
     version: &'a str,
     version_tweak: &'a str,
@@ -32,6 +31,7 @@ impl<'a> Version<'a> {
             "release"
         };
         Self {
+            key: "Version",
             project_name: env!("CARGO_BIN_NAME"), 
             version: env!("CARGO_PKG_VERSION"), 
             version_tweak: "", 

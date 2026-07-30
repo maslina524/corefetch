@@ -3,7 +3,7 @@ import subprocess
 import sys
 from pprint import pprint
 
-cmd = subprocess.run(["fastfetch", "--json", "-c", "presets/all.jsonc"], capture_output=True, text=True)
+cmd = subprocess.run(["fastfetch", "--json", "-c", "presets/all.jsonc"], capture_output=True, text=True, encoding="utf-8")
 stdout = cmd.stdout
 out_json = json.loads(stdout)
 

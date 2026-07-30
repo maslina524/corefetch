@@ -31,7 +31,7 @@ mod panic_impl {
 // #[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
-    println!("{:?}", Version::new());
+    println!("{:?}", version::get());
     0
 }
 
