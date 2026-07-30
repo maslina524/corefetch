@@ -95,6 +95,17 @@ macro_rules! format {
 }
 
 #[macro_export]
+macro_rules! formatln {
+    ($lit:literal, $($tt:tt)*) => {{
+        let mut string = alloc::string::String::new();
+        let mut formatter = $crate::os::io::StringFormatter::new(&mut string);
+        let _ = formatter.write_fmt(format_args!($lit, $($tt)*));
+        let _ = formatter.write_nl();
+        string
+    }};
+}
+
+#[macro_export]
 macro_rules! print {
     () => {{}};
     ($expr:expr) => {{
@@ -105,6 +116,24 @@ macro_rules! print {
     ($lit:literal, $($tt:tt)*) => {{
         let handle = $crate::os::io::stdout();
         let s = $crate::format!($lit, $($tt)*);
+        $crate::os::io::write(handle, s.as_str());
+    }}
+}
+
+#[macro_export]
+macro_rules! println {
+    () => {{
+        let handle = $crate::os::io::stdout();
+        $crate::os::io::write(handle, "\n");
+    }};
+    ($expr:expr) => {{
+        let handle = $crate::os::io::stdout();
+        let s = $crate::formatln!("{}", $expr);
+        $crate::os::io::write(handle, s.as_str());
+    }};
+    ($lit:literal, $($tt:tt)*) => {{
+        let handle = $crate::os::io::stdout();
+        let s = $crate::formatln!($lit, $($tt)*);
         $crate::os::io::write(handle, s.as_str());
     }}
 }
@@ -126,5 +155,11 @@ mod tests {
         print!("2 + 8 = ");
         print!(2 + 8);
         print!("\n");
+    }
+
+    #[test]
+    fn println_test() {
+        println!("Hello {}", "World");
+        println!("2 + 8 = {}", 2 + 8);
     }
 }
