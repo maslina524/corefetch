@@ -2,6 +2,8 @@
 #![cfg_attr(not(test), no_main)]
 #![deny(clippy::all)]
 
+mod sync;
+
 use core::ffi::c_int;
 
 // #[global_allocator]
