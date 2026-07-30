@@ -1,8 +1,10 @@
 use core::ffi::c_void;
 use core::alloc::{GlobalAlloc, Layout};
 
-use crate::os::windows::*;
-use crate::sync::OnceLock;
+use crate::{
+    os::windows::{GetProcessHeap, HeapAlloc, HeapFree},
+    sync::OnceLock
+};
 
 static HEAP_HANDLE: OnceLock<usize> = OnceLock::new();
 
