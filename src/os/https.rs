@@ -2,6 +2,11 @@ use alloc::string::String;
 use alloc::vec::Vec;
 use alloc::borrow::ToOwned;
 
+pub struct Response {
+    code: u16,
+    content: Vec<u8>
+}
+
 #[derive(Debug)]
 pub struct Url {
     protocol: String,
@@ -56,11 +61,38 @@ impl Url {
     }
 }
 
+pub struct Request {
+    url: Url,
+}
+
+impl Request {
+    pub fn new(url: impl Into<String>) -> Option<Self> {
+        let url = Url::new(url.into())?;
+        Some(
+            Self { url }
+        )
+    }
+
+    pub fn get(self) -> Response {
+        self.send("GET")
+    }
+
+    fn send(self, method: &str) -> Response {
+        Response { code: 204, content: Vec::new() }
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::os::https::Url;
+    use crate::os::https::{Request, Url};
 
     extern crate std;
+
+    #[test]
+    fn example_response_test() {
+        let url = "http://piston-meta.mojang.com/mc/game/version_manifest_v2.json";
+        let response = Request::new(url).unwrap().get();
+    }
 
     #[test]
     fn url_parse_test() {
