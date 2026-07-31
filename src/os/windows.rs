@@ -18,6 +18,8 @@ macro_rules! link {
     )
 }
 
+link!("kernel32" "system" fn CloseHandle(hobject : HANDLE) -> BOOL);
+link!("kernel32" "system" fn CreateToolhelp32Snapshot(dwflags : CREATE_TOOLHELP_SNAPSHOT_FLAGS, th32processid : u32) -> HANDLE);
 link!("kernel32" "system" fn FormatMessageW(dwflags : FORMAT_MESSAGE_OPTIONS, lpsource : *const core::ffi::c_void, dwmessageid : u32, dwlanguageid : u32, lpbuffer : PWSTR, nsize : u32, arguments : *const *const i8) -> u32);
 link!("kernel32" "system" fn GetLastError() -> WIN32_ERROR);
 link!("kernel32" "system" fn GetLocaleInfoEx(lplocalename : PCWSTR, lctype : u32, lplcdata : PWSTR, cchdata : i32) -> i32);
@@ -25,10 +27,13 @@ link!("kernel32" "system" fn GetProcessHeap() -> HANDLE);
 link!("kernel32" "system" fn GetStdHandle(nstdhandle : STD_HANDLE) -> HANDLE);
 link!("kernel32" "system" fn HeapAlloc(hheap : HANDLE, dwflags : HEAP_FLAGS, dwbytes : usize) -> *mut core::ffi::c_void);
 link!("kernel32" "system" fn HeapFree(hheap : HANDLE, dwflags : HEAP_FLAGS, lpmem : *const core::ffi::c_void) -> BOOL);
+link!("kernel32" "system" fn Process32First(hsnapshot : HANDLE, lppe : *mut PROCESSENTRY32) -> BOOL);
+link!("kernel32" "system" fn Process32Next(hsnapshot : HANDLE, lppe : *mut PROCESSENTRY32) -> BOOL);
 link!("kernel32" "system" fn SetConsoleOutputCP(wcodepageid : u32) -> BOOL);
 link!("kernel32" "system" fn WideCharToMultiByte(codepage : u32, dwflags : u32, lpwidecharstr : PCWSTR, cchwidechar : i32, lpmultibytestr : PSTR, cbmultibyte : i32, lpdefaultchar : PCSTR, lpuseddefaultchar : *mut BOOL) -> i32);
 link!("kernel32" "system" fn WriteFile(hfile : HANDLE, lpbuffer : *const u8, nnumberofbytestowrite : u32, lpnumberofbyteswritten : *mut u32, lpoverlapped : *mut OVERLAPPED) -> BOOL);
 pub type BOOL = i32;
+pub type CREATE_TOOLHELP_SNAPSHOT_FLAGS = u32;
 pub type FORMAT_MESSAGE_OPTIONS = u32;
 pub type HANDLE = *mut core::ffi::c_void;
 pub type HEAP_FLAGS = u32;
@@ -66,6 +71,26 @@ pub struct OVERLAPPED_0_0 {
 }
 pub type PCSTR = *const u8;
 pub type PCWSTR = *const u16;
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct PROCESSENTRY32 {
+    pub dwSize: u32,
+    pub cntUsage: u32,
+    pub th32ProcessID: u32,
+    pub th32DefaultHeapID: usize,
+    pub th32ModuleID: u32,
+    pub cntThreads: u32,
+    pub th32ParentProcessID: u32,
+    pub pcPriClassBase: i32,
+    pub dwFlags: u32,
+    pub szExeFile: [i8; 260],
+}
+impl Default for PROCESSENTRY32 {
+    fn default() -> Self {
+        // SAFETY: All types are guaranteed to be zeroable
+		unsafe { core::mem::zeroed() }
+    }
+}
 pub type PSTR = *mut u8;
 pub type PWSTR = *mut u16;
 pub type STD_HANDLE = u32;
