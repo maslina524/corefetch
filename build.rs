@@ -1,6 +1,8 @@
 use std::process::Command;
 
 fn main() {
+    println!("cargo:rerun-if-changed=build.rs");
+    
     // ENV: TARGET_ARCH
     let target_arch = std::env::var("CARGO_CFG_TARGET_ARCH").unwrap();
     println!("cargo:rustc-env=TARGET_ARCH={}", target_arch);
@@ -26,6 +28,4 @@ fn main() {
     } 
 
     println!("cargo:rustc-env=RUSTC_VERSION={}", rustc_version.trim());
-
-    println!("cargo:rerun-if-changed=build.rs");
 }

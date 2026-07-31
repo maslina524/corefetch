@@ -48,7 +48,7 @@ impl Display for ErrorCode {
         let mut utf8_buf = [0u8; 128];
         // SAFETY: UTF16 string obtained from the WinAPI.
         let mut utf8_len = unsafe {
-            utf16le_to_utf8(buf.as_ptr(), len as isize, &mut utf8_buf, 128)
+            utf16le_to_utf8(&buf, len as isize, &mut utf8_buf, 128)
         };
 
         while [0x0A, 0x0D].contains(&utf8_buf[utf8_len - 1]) {
