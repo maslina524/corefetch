@@ -10,7 +10,6 @@ pub fn get<'a>() -> &'static Version<'a> {
 
 #[derive(Debug)]
 pub struct Version<'a> {
-    key: &'a str,
     project_name: &'a str,
     version: &'a str,
     version_tweak: &'a str,
@@ -31,7 +30,6 @@ impl<'a> Version<'a> {
             "release"
         };
         Self {
-            key: "Version",
             project_name: env!("CARGO_BIN_NAME"), 
             version: env!("CARGO_PKG_VERSION"), 
             version_tweak: "", 

@@ -32,6 +32,7 @@ mod panic_impl {
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
     println!("{:#?}", locale::get());
+    println!("{:#?}", processes::get());
     println!("{:#?}", version::get());
     0
 }
@@ -45,3 +46,4 @@ mod tests {
         std::println!("Hello World!");
     }
 }
+
