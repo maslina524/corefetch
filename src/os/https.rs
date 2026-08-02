@@ -38,6 +38,24 @@ pub struct Response {
     content: Vec<u8>
 }
 
+impl Response {
+    pub fn code(&self) -> u16 {
+        self.code
+    }
+
+    pub fn is_success(&self) -> bool {
+        self.code >= 200 && self.code < 300
+    }
+
+    pub fn content(&self) -> &Vec<u8> {
+        &self.content
+    }
+
+    pub fn as_text(&self) -> Result<String, alloc::string::FromUtf8Error> {
+        String::from_utf8(self.content.clone())
+    }
+}
+
 #[derive(Debug)]
 pub struct Url {
     protocol: String,
