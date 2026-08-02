@@ -1,6 +1,27 @@
-use alloc::string::String;
-use alloc::vec::Vec;
-use alloc::borrow::ToOwned;
+use core::{
+    ptr,
+    ffi::c_void
+};
+
+use alloc::{
+    string::String,
+    string::ToString,
+    vec::Vec,
+    borrow::ToOwned,
+    ffi::CString
+};
+
+use crate::{
+    os::error::ErrorCode,
+    os::windows::*,
+    format,
+    L
+};
+
+const WINHTTP_ACCESS_TYPE_DEFAULT_PROXY: u32        = 0;
+const WINHTTP_NO_PROXY_NAME            : *const u16 = ptr::null();
+const WINHTTP_NO_PROXY_BYPASS          : *const u16 = ptr::null();
+const WINHTTP_OPTION_RECEIVE_TIMEOUT   : u32        = 95;
 
 pub struct Response {
     code: u16,
@@ -59,6 +80,47 @@ impl Url {
             Self { protocol, subdomains, domain, tld, port, path }
         )
     }
+
+    pub fn as_cstr(&self) -> CString {
+        CString::new(self.to_string()).unwrap()
+    }
+
+    pub fn port(&self) -> u16 {
+        if let Some(port) = self.port {
+            port
+        } else {
+            match self.protocol.as_str() {
+                "http"  => 80,
+                "https" => 443,
+                _ => 0
+            }
+        }
+    }
+}
+
+impl core::fmt::Display for Url {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        // protocol
+        let mut ret = format!("{}://", self.protocol);
+
+        // subdomains
+        if !self.subdomains.is_empty() {
+            ret.push_str(&format!("{}.", self.subdomains.join(".")));
+        }
+
+        // domain.tld
+        ret.push_str(&format!("{}.{}", self.domain, self.tld));
+
+        // port
+        if let Some(port) = self.port {
+            ret.push_str(&format!(":{}", port));
+        }
+
+        // path
+        ret.push_str(&self.path);
+
+        write!(f, "{ret}")
+    }
 }
 
 pub struct Request {
@@ -72,14 +134,6 @@ impl Request {
             Self { url }
         )
     }
-
-    pub fn get(self) -> Response {
-        self.send("GET")
-    }
-
-    fn send(self, method: &str) -> Response {
-        Response { code: 204, content: Vec::new() }
-    }
 }
 
 #[cfg(test)]
@@ -91,7 +145,7 @@ mod tests {
     #[test]
     fn example_response_test() {
         let url = "http://piston-meta.mojang.com/mc/game/version_manifest_v2.json";
-        let response = Request::new(url).unwrap().get();
+        let response = Request::new(url).unwrap();
     }
 
     #[test]
