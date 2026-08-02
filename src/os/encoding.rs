@@ -20,7 +20,10 @@ pub fn utf16le_to_utf8(
     // you should only use this function when you are 
     // absolutely sure the bytes are completely valid,
     // or for converting strings created by the WinAPI.
-    
+    if len == 0 {
+        return Ok(String::new());
+    }
+
     let size = unsafe {
         WideCharToMultiByte(
             CP_UTF8, 
@@ -54,6 +57,7 @@ pub fn utf16le_to_utf8(
         return Err(ErrorCode::last()) 
     }
     
+    unsafe { buf.set_len(ret as usize) };
     let string = String::from_utf8(buf).unwrap();
     Ok(string)
 }
@@ -67,6 +71,10 @@ pub fn utf8_to_utf16le(
     // or for converting strings created by the WinAPI.
     
     let src = src.into();
+    if src.is_empty() {
+        return Ok(Vec::new());
+    }
+
     let size = unsafe {
         MultiByteToWideChar(
             CP_UTF8, 
@@ -96,12 +104,13 @@ pub fn utf8_to_utf16le(
         return Err(ErrorCode::last()) 
     }
     
+    unsafe { buf.set_len(ret as usize) };
+
     Ok(buf)
 }
 
-#[macro_export]
-macro_rules! L {
-    ($v:expr) => {{
-        $crate::os::encoding::utf8_to_utf16le($v).unwrap().as_ptr() as *const u16
-    }};
+pub fn wide(src: impl Into<String>) -> error::Result<Vec<u16>> {
+    let mut vec = utf8_to_utf16le(src)?;
+    vec.push(0);
+    Ok(vec)
 }

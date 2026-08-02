@@ -11,7 +11,7 @@ panic = "abort"
 strip = true
 
 [profile.dev]
-opt-level = 3
+opt-level = 1
 lto = true
 codegen-units = 1
 panic = "abort"

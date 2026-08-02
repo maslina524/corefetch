@@ -14,15 +14,25 @@ use alloc::{
 use crate::{
     os::error::ErrorCode,
     os::windows::*,
+    os::encoding::wide,
     format,
-    L
 };
 
-const WINHTTP_ACCESS_TYPE_DEFAULT_PROXY: u32        = 0;
-const WINHTTP_NO_PROXY_NAME            : *const u16 = ptr::null();
-const WINHTTP_NO_PROXY_BYPASS          : *const u16 = ptr::null();
-const WINHTTP_OPTION_RECEIVE_TIMEOUT   : u32        = 95;
+const WINHTTP_ACCESS_TYPE_DEFAULT_PROXY: u32               = 0;
+const WINHTTP_NO_PROXY_NAME            : *const u16        = ptr::null();
+const WINHTTP_NO_PROXY_BYPASS          : *const u16        = ptr::null();
+const WINHTTP_OPTION_RECEIVE_TIMEOUT   : u32               = 95;
+const WINHTTP_NO_REFERER               : *const u16        = ptr::null();
+const WINHTTP_DEFAULT_ACCEPT_TYPES     : *const *const u16 = ptr::null();
+const WINHTTP_FLAG_SECURE              : u32               = 0x00800000;
+const WINHTTP_NO_ADDITIONAL_HEADERS    : *const u16        = ptr::null();
+const WINHTTP_NO_REQUEST_DATA          : *mut c_void       = ptr::null_mut();
+const WINHTTP_QUERY_STATUS_CODE        : u32               = 19;
+const WINHTTP_QUERY_FLAG_NUMBER        : u32               = 0x20000000;
 
+const INVALID_HANDLE                   : *mut c_void       = -1isize as usize as *mut c_void;
+
+#[derive(Debug)]
 pub struct Response {
     code: u16,
     content: Vec<u8>
@@ -134,6 +144,143 @@ impl Request {
             Self { url }
         )
     }
+
+    pub fn get(self) -> Response {
+        self.send("GET")
+    }
+
+    #[cfg(target_os = "windows")]
+    fn send(self, method: &str) -> Response {
+        let session = unsafe {
+            let header = wide("UserAgent/1.0").unwrap();
+            WinHttpOpen(
+                header.as_ptr(),
+                WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
+                WINHTTP_NO_PROXY_NAME,
+                WINHTTP_NO_PROXY_BYPASS,
+                0
+            )
+        };
+        if session.is_null() { ErrorCode::last().panic(); }
+
+        let mut hostname = String::new();
+        if !self.url.subdomains.is_empty() {
+            hostname.push_str(&self.url.subdomains.join("."));
+            hostname.push('.');
+        }
+        hostname.push_str(&self.url.domain);
+        hostname.push('.');
+        hostname.push_str(&self.url.tld);
+
+        let server = wide(hostname).unwrap();
+        let conn = unsafe {
+            WinHttpConnect(session, server.as_ptr(), self.url.port(), 0)
+        };
+        if conn.is_null() {
+            let err = ErrorCode::last();
+            unsafe { WinHttpCloseHandle(session) };
+            err.panic();
+        }
+
+        let method = wide(method).unwrap();
+        let path = wide(self.url.path).unwrap();
+        let flags = if self.url.protocol == "https" {
+            WINHTTP_FLAG_SECURE
+        } else {
+            0
+        };
+
+        let req = unsafe {
+            WinHttpOpenRequest(
+                conn,
+                method.as_ptr(),
+                path.as_ptr(),
+                ptr::null(),
+                WINHTTP_NO_REFERER,
+                WINHTTP_DEFAULT_ACCEPT_TYPES,
+                flags
+            )
+        };
+        if req.is_null() {
+            let err = ErrorCode::last();
+            unsafe { WinHttpCloseHandle(conn) };
+            unsafe { WinHttpCloseHandle(session) };
+            err.panic();
+        }
+        
+        let send = unsafe {
+            WinHttpSendRequest(
+                req, 
+                WINHTTP_NO_ADDITIONAL_HEADERS, 
+                0, 
+                WINHTTP_NO_REQUEST_DATA, 
+                0, 
+                0, 
+                0
+            )
+        };
+        if send == 0 {
+            let err = ErrorCode::last();
+            unsafe { WinHttpCloseHandle( req) };
+            unsafe { WinHttpCloseHandle(conn) };
+            unsafe { WinHttpCloseHandle(session) };
+            err.panic_code();
+        }
+        
+        let ret = unsafe {
+            WinHttpReceiveResponse(
+                req, 
+                ptr::null_mut()
+            )
+        };
+        if ret == 0 {
+            let err = ErrorCode::last();
+            unsafe { WinHttpCloseHandle(req) };
+            unsafe { WinHttpCloseHandle(conn) };
+            unsafe { WinHttpCloseHandle(session) };
+            err.panic();
+        }
+
+        let mut status_code: u32 = 0;
+        let mut size = size_of::<u32>() as u32;
+        let query = unsafe {
+            WinHttpQueryHeaders(
+                req,
+                WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
+                ptr::null(),
+                &mut status_code as *mut _ as *mut c_void,
+                &mut size,
+                ptr::null_mut(),
+            )
+        };
+        if query == 0 {  ErrorCode::last().panic(); }
+
+        let mut buf = Vec::new();
+        let mut read = 0;
+        loop {
+            let mut chunk = [0u8; 4096];
+            let ret = unsafe {
+                WinHttpReadData(
+                    req,
+                    chunk.as_mut_ptr() as *mut c_void,
+                    4096,
+                    &mut read,
+                )
+            };
+            if ret == 0 || read == 0 {
+                break;
+            }
+            buf.extend_from_slice(&chunk[..read as usize]);
+        }
+
+        unsafe {
+            WinHttpCloseHandle(req);
+            WinHttpCloseHandle(conn);
+            WinHttpCloseHandle(session);
+        }
+
+        Response { code: status_code as u16, content: buf }
+    }
 }
 
 #[cfg(test)]
@@ -144,13 +291,16 @@ mod tests {
 
     #[test]
     fn example_response_test() {
-        let url = "http://piston-meta.mojang.com/mc/game/version_manifest_v2.json";
-        let response = Request::new(url).unwrap();
+        let url = "https://wttr.in/?format=%c;%C;%x;%h;%t;%f;%H;%L;%w;%l;%m;%M;%p;%P;%e;%u;%D;%S;%z;%s;%d;%T;%Z";
+        let response = Request::new(url).unwrap().get();
+        let string = String::from_utf8(response.content).unwrap();
+        println!("Response code: {}", response.code);
+        assert!(!string.split(";").collect::<Vec<&str>>().is_empty())
     }
 
     #[test]
     fn url_parse_test() {
-        let string = "http://piston-meta.mojang.com/mc/game/version_manifest_v2.json";
+        let string = "https://wttr.in/";
         let url = Url::new(string);
         std::println!("{url:?}")
     }
