@@ -10,15 +10,9 @@ const WTTR_URL: &str = "https://wttr.in/?lang=en&format=%t %E2%80%94 %C (%l)";
 
 static WEATHER: OnceLock<Weather> = OnceLock::new();
 
-pub fn get() -> &'static Weather {
-    WEATHER.get_or_init(|| {
-        Weather::new()
-    })
-}
-
 #[derive(Debug)]
 pub struct Weather {
-    result: String
+    pub result: String
 }
 
 impl Weather {
@@ -31,6 +25,12 @@ impl Weather {
         };
 
         Self { result }
+    }
+
+    pub fn get() -> &'static Weather {
+        WEATHER.get_or_init(|| {
+            Weather::new()
+        })
     }
 }
 

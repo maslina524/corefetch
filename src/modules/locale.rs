@@ -7,21 +7,15 @@ use crate::{
     sync::OnceLock
 };
 
-static LOCALE                 : OnceLock<Locale> = OnceLock::new();
-
 const LOCALE_NAME_MAX_LENGTH  : usize            = 85;
 const LOCALE_NAME_USER_DEFAULT: *const u16       = ptr::null_mut();
 const LOCALE_SNAME            : u32              = 0x0000005c;
 
-pub fn get() -> &'static Locale {
-    LOCALE.get_or_init(|| {
-        Locale::new()
-    })
-}
+static LOCALE                 : OnceLock<Locale> = OnceLock::new();
 
 #[derive(Debug)]
 pub struct Locale {
-    result: String
+    pub result: String
 }
 
 impl Locale {
@@ -41,6 +35,12 @@ impl Locale {
         Self {
             result
         }
+    }
+
+    pub fn get() -> &'static Locale {
+        LOCALE.get_or_init(|| {
+            Locale::new()
+        })
     }
 }
 

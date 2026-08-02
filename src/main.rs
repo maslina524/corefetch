@@ -31,11 +31,11 @@ mod panic_impl {
 // #[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
-    println!("{}",    colors::get());
-    println!("{:#?}", locale::get());
-    println!("{:#?}", processes::get());
-    println!("{:#?}", version::get());
-    println!("{:#?}", weather::get());
+    println!("{}",    Colors::get());
+    println!("{:#?}", Locale::get());
+    println!("{:#?}", Processes::get());
+    println!("{:#?}", Version::get());
+    println!("{:#?}", Weather::get());
     0
 }
 
