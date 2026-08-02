@@ -36,6 +36,7 @@ link!("winhttp" "system" fn WinHttpCloseHandle(hinternet : *mut core::ffi::c_voi
 link!("winhttp" "system" fn WinHttpConnect(hsession : *mut core::ffi::c_void, pswzservername : PCWSTR, nserverport : u16, dwreserved : u32) -> *mut core::ffi::c_void);
 link!("winhttp" "system" fn WinHttpOpen(pszagentw : PCWSTR, dwaccesstype : WINHTTP_ACCESS_TYPE, pszproxyw : PCWSTR, pszproxybypassw : PCWSTR, dwflags : u32) -> *mut core::ffi::c_void);
 link!("winhttp" "system" fn WinHttpOpenRequest(hconnect : *mut core::ffi::c_void, pwszverb : PCWSTR, pwszobjectname : PCWSTR, pwszversion : PCWSTR, pwszreferrer : PCWSTR, ppwszaccepttypes : *const PCWSTR, dwflags : WINHTTP_OPEN_REQUEST_FLAGS) -> *mut core::ffi::c_void);
+link!("winhttp" "system" fn WinHttpQueryHeaders(hrequest : *mut core::ffi::c_void, dwinfolevel : u32, pwszname : PCWSTR, lpbuffer : *mut core::ffi::c_void, lpdwbufferlength : *mut u32, lpdwindex : *mut u32) -> BOOL);
 link!("winhttp" "system" fn WinHttpReadData(hrequest : *mut core::ffi::c_void, lpbuffer : *mut core::ffi::c_void, dwnumberofbytestoread : u32, lpdwnumberofbytesread : *mut u32) -> BOOL);
 link!("winhttp" "system" fn WinHttpReceiveResponse(hrequest : *mut core::ffi::c_void, lpreserved : *mut core::ffi::c_void) -> BOOL);
 link!("winhttp" "system" fn WinHttpSendRequest(hrequest : *mut core::ffi::c_void, lpszheaders : PCWSTR, dwheaderslength : u32, lpoptional : *const core::ffi::c_void, dwoptionallength : u32, dwtotallength : u32, dwcontext : usize) -> BOOL);
