@@ -5,7 +5,7 @@ use crate::{
     os::encoding::utf16le_to_utf8
 };
 
-// pub type Result<T> = core::result::Result<T, ErrorCode>;
+pub type Result<T> = core::result::Result<T, ErrorCode>;
 
 const FORMAT_MESSAGE_FROM_SYSTEM   : u32 = 0x00001000;
 const FORMAT_MESSAGE_IGNORE_INSERTS: u32 = 0x00000200;
@@ -45,20 +45,11 @@ impl Display for ErrorCode {
             )
         };
 
-        let mut utf8_buf = [0u8; 128];
-        // SAFETY: UTF16 string obtained from the WinAPI.
-        let mut utf8_len = unsafe {
-            utf16le_to_utf8(&buf, len as isize, &mut utf8_buf, 128)
-        };
+        let utf8 = utf16le_to_utf8(&buf, len as isize)
+            .expect("WinAPI passed an invalid UTF-16LE string");
 
-        while [0x0A, 0x0D].contains(&utf8_buf[utf8_len - 1]) {
-            utf8_len -= 1;
-            utf8_buf[utf8_len] = 0x00;
-        }
-        utf8_buf[utf8_len] = 0x00;
-        let string = str::from_utf8(&utf8_buf).unwrap();
-        
-        write!(f, "{string}")
+        let utf8_str = utf8.trim();
+        write!(f, "{utf8_str}")
     }
 }
 
