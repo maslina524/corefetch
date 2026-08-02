@@ -82,20 +82,20 @@ pub fn write(handle: isize, s: &str) {
 
 #[macro_export]
 macro_rules! format {
-    ($lit:literal, $($tt:tt)*) => {{
+    ($($tt:tt)*) => {{
         let mut string = alloc::string::String::new();
         let mut formatter = $crate::os::io::StringFormatter::new(&mut string);
-        let _ = formatter.write_fmt(format_args!($lit, $($tt)*));
+        let _ = formatter.write_fmt(format_args!($($tt)*));
         string
     }};
 }
 
 #[macro_export]
 macro_rules! formatln {
-    ($lit:literal, $($tt:tt)*) => {{
+    ($($tt:tt)*) => {{
         let mut string = alloc::string::String::new();
         let mut formatter = $crate::os::io::StringFormatter::new(&mut string);
-        let _ = formatter.write_fmt(format_args!($lit, $($tt)*));
+        let _ = formatter.write_fmt(format_args!($($tt)*));
         let _ = formatter.write_nl();
         string
     }};
