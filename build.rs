@@ -1,7 +1,20 @@
 use std::process::Command;
+use std::fs;
 
 fn main() {
-    println!("cargo:rerun-if-changed=build.rs");
+    // Bypasses caching, runs every time during compilation.
+    let timestamp = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_millis()
+        .to_string();
+    
+    let out_dir = std::env::var("OUT_DIR").unwrap();
+    let trigger_file = format!("{}/build_trigger_{}", out_dir, timestamp);
+    fs::write(&trigger_file, &timestamp).unwrap();
+    
+    println!("cargo:rerun-if-changed={}", trigger_file);
+    println!("cargo:rerun-if-env-changed=BUILD_TIMESTAMP_{}", timestamp);
     
     // ENV: TARGET_ARCH
     let target_arch = std::env::var("CARGO_CFG_TARGET_ARCH").unwrap();
@@ -24,8 +37,8 @@ fn main() {
         .unwrap_or_else(|| "unknown".to_string());
     
     if let Some(idx) = rustc_version.find("(") {
-        rustc_version = rustc_version[..idx - 1].trim().to_string()
-    } 
+        rustc_version = rustc_version[..idx - 1].trim().to_string();
+    }
 
     println!("cargo:rustc-env=RUSTC_VERSION={}", rustc_version.trim());
 }
