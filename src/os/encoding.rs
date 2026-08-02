@@ -98,3 +98,10 @@ pub fn utf8_to_utf16le(
     
     Ok(buf)
 }
+
+#[macro_export]
+macro_rules! L {
+    ($v:expr) => {{
+        $crate::os::encoding::utf8_to_utf16le($v).unwrap().as_ptr() as *const u16
+    }};
+}

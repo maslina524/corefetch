@@ -27,16 +27,26 @@ link!("kernel32" "system" fn GetProcessHeap() -> HANDLE);
 link!("kernel32" "system" fn GetStdHandle(nstdhandle : STD_HANDLE) -> HANDLE);
 link!("kernel32" "system" fn HeapAlloc(hheap : HANDLE, dwflags : HEAP_FLAGS, dwbytes : usize) -> *mut core::ffi::c_void);
 link!("kernel32" "system" fn HeapFree(hheap : HANDLE, dwflags : HEAP_FLAGS, lpmem : *const core::ffi::c_void) -> BOOL);
+link!("kernel32" "system" fn MultiByteToWideChar(codepage : u32, dwflags : MULTI_BYTE_TO_WIDE_CHAR_FLAGS, lpmultibytestr : PCSTR, cbmultibyte : i32, lpwidecharstr : PWSTR, cchwidechar : i32) -> i32);
 link!("kernel32" "system" fn Process32First(hsnapshot : HANDLE, lppe : *mut PROCESSENTRY32) -> BOOL);
 link!("kernel32" "system" fn Process32Next(hsnapshot : HANDLE, lppe : *mut PROCESSENTRY32) -> BOOL);
 link!("kernel32" "system" fn SetConsoleOutputCP(wcodepageid : u32) -> BOOL);
 link!("kernel32" "system" fn WideCharToMultiByte(codepage : u32, dwflags : u32, lpwidecharstr : PCWSTR, cchwidechar : i32, lpmultibytestr : PSTR, cbmultibyte : i32, lpdefaultchar : PCSTR, lpuseddefaultchar : *mut BOOL) -> i32);
+link!("winhttp" "system" fn WinHttpCloseHandle(hinternet : *mut core::ffi::c_void) -> BOOL);
+link!("winhttp" "system" fn WinHttpConnect(hsession : *mut core::ffi::c_void, pswzservername : PCWSTR, nserverport : u16, dwreserved : u32) -> *mut core::ffi::c_void);
+link!("winhttp" "system" fn WinHttpOpen(pszagentw : PCWSTR, dwaccesstype : WINHTTP_ACCESS_TYPE, pszproxyw : PCWSTR, pszproxybypassw : PCWSTR, dwflags : u32) -> *mut core::ffi::c_void);
+link!("winhttp" "system" fn WinHttpOpenRequest(hconnect : *mut core::ffi::c_void, pwszverb : PCWSTR, pwszobjectname : PCWSTR, pwszversion : PCWSTR, pwszreferrer : PCWSTR, ppwszaccepttypes : *const PCWSTR, dwflags : WINHTTP_OPEN_REQUEST_FLAGS) -> *mut core::ffi::c_void);
+link!("winhttp" "system" fn WinHttpReadData(hrequest : *mut core::ffi::c_void, lpbuffer : *mut core::ffi::c_void, dwnumberofbytestoread : u32, lpdwnumberofbytesread : *mut u32) -> BOOL);
+link!("winhttp" "system" fn WinHttpReceiveResponse(hrequest : *mut core::ffi::c_void, lpreserved : *mut core::ffi::c_void) -> BOOL);
+link!("winhttp" "system" fn WinHttpSendRequest(hrequest : *mut core::ffi::c_void, lpszheaders : PCWSTR, dwheaderslength : u32, lpoptional : *const core::ffi::c_void, dwoptionallength : u32, dwtotallength : u32, dwcontext : usize) -> BOOL);
+link!("winhttp" "system" fn WinHttpSetOption(hinternet : *const core::ffi::c_void, dwoption : u32, lpbuffer : *const core::ffi::c_void, dwbufferlength : u32) -> BOOL);
 link!("kernel32" "system" fn WriteFile(hfile : HANDLE, lpbuffer : *const u8, nnumberofbytestowrite : u32, lpnumberofbyteswritten : *mut u32, lpoverlapped : *mut OVERLAPPED) -> BOOL);
 pub type BOOL = i32;
 pub type CREATE_TOOLHELP_SNAPSHOT_FLAGS = u32;
 pub type FORMAT_MESSAGE_OPTIONS = u32;
 pub type HANDLE = *mut core::ffi::c_void;
 pub type HEAP_FLAGS = u32;
+pub type MULTI_BYTE_TO_WIDE_CHAR_FLAGS = u32;
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct OVERLAPPED {
@@ -95,3 +105,5 @@ pub type PSTR = *mut u8;
 pub type PWSTR = *mut u16;
 pub type STD_HANDLE = u32;
 pub type WIN32_ERROR = u32;
+pub type WINHTTP_ACCESS_TYPE = u32;
+pub type WINHTTP_OPEN_REQUEST_FLAGS = u32;
