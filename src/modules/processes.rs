@@ -1,18 +1,13 @@
 use crate::{
-    os::env, sync::OnceLock
+    os::env,
+    sync::OnceLock
 };
 
 static PROCESSES: OnceLock<Processes> = OnceLock::new();
 
-pub fn get() -> &'static Processes {
-    PROCESSES.get_or_init(|| {
-        Processes::new()
-    })
-}
-
 #[derive(Debug)]
 pub struct Processes {
-    result: usize
+    pub result: usize
 }
 
 impl Processes {
@@ -20,6 +15,12 @@ impl Processes {
         Self {
             result: env::processes_count()
         }
+    }
+
+    pub fn get() -> &'static Processes {
+        PROCESSES.get_or_init(|| {
+            Processes::new()
+        })
     }
 }
 

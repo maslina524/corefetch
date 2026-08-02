@@ -5,10 +5,8 @@ use core::{
 
 use alloc::{
     string::String,
-    string::ToString,
     vec::Vec,
-    borrow::ToOwned,
-    ffi::CString
+    borrow::ToOwned
 };
 
 use crate::{
@@ -21,7 +19,6 @@ use crate::{
 const WINHTTP_ACCESS_TYPE_DEFAULT_PROXY: u32               = 0;
 const WINHTTP_NO_PROXY_NAME            : *const u16        = ptr::null();
 const WINHTTP_NO_PROXY_BYPASS          : *const u16        = ptr::null();
-const WINHTTP_OPTION_RECEIVE_TIMEOUT   : u32               = 95;
 const WINHTTP_NO_REFERER               : *const u16        = ptr::null();
 const WINHTTP_DEFAULT_ACCEPT_TYPES     : *const *const u16 = ptr::null();
 const WINHTTP_FLAG_SECURE              : u32               = 0x00800000;
@@ -29,8 +26,6 @@ const WINHTTP_NO_ADDITIONAL_HEADERS    : *const u16        = ptr::null();
 const WINHTTP_NO_REQUEST_DATA          : *mut c_void       = ptr::null_mut();
 const WINHTTP_QUERY_STATUS_CODE        : u32               = 19;
 const WINHTTP_QUERY_FLAG_NUMBER        : u32               = 0x20000000;
-
-const INVALID_HANDLE                   : *mut c_void       = -1isize as usize as *mut c_void;
 
 #[derive(Debug)]
 pub struct Response {
@@ -107,10 +102,6 @@ impl Url {
         Some(
             Self { protocol, subdomains, domain, tld, port, path }
         )
-    }
-
-    pub fn as_cstr(&self) -> CString {
-        CString::new(self.to_string()).unwrap()
     }
 
     pub fn port(&self) -> u16 {

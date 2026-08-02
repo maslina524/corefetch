@@ -2,18 +2,18 @@ use crate::sync::OnceLock;
 
 static COLORS: OnceLock<Colors> = OnceLock::new();
 
-pub fn get() -> &'static Colors {
-    COLORS.get_or_init(|| {
-        Colors::new()
-    })
-}
-
 #[derive(Debug)]
 pub struct Colors;
 
 impl Colors {
     pub fn new() -> Self {
         Self {}
+    }
+
+    pub fn get() -> &'static Colors {
+        COLORS.get_or_init(|| {
+            Colors::new()
+        })
     }
 }
 

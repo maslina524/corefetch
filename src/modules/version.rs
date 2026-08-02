@@ -2,24 +2,18 @@ use crate::sync::OnceLock;
 
 static VERSION: OnceLock<Version> = OnceLock::new();
 
-pub fn get<'a>() -> &'static Version<'a> {
-    VERSION.get_or_init(|| {
-        Version::new()
-    })
-}
-
 #[derive(Debug)]
 pub struct Version<'a> {
-    project_name: &'a str,
-    version: &'a str,
-    version_tweak: &'a str,
-    build_type: &'a str,
-    sysname: &'a str,
-    arch: &'a str,
-    cmake_built_type: &'a str,
-    compile_time: &'a str,
-    compiler: &'a str,
-    libc: &'a str
+    pub project_name: &'a str,
+    pub version: &'a str,
+    pub version_tweak: &'a str,
+    pub build_type: &'a str,
+    pub sysname: &'a str,
+    pub arch: &'a str,
+    pub cmake_built_type: &'a str,
+    pub compile_time: &'a str,
+    pub compiler: &'a str,
+    pub libc: &'a str
 }
 
 impl<'a> Version<'a> {
@@ -41,6 +35,12 @@ impl<'a> Version<'a> {
             compiler: env!("RUSTC_VERSION"), 
             libc: ""
         }
+    }
+
+    pub fn get() -> &'static Version<'a> {
+        VERSION.get_or_init(|| {
+            Version::new()
+        })
     }
 }
 
