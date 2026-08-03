@@ -33,6 +33,7 @@ mod panic_impl {
 extern "C" fn main() -> c_int {
     println!("{}",    Colors::get());
     println!("{:#?}", Locale::get());
+    println!("{:#?}", Os::get());
     println!("{:#?}", Processes::get());
     println!("{:#?}", Version::get());
     println!("{:#?}", Weather::get());
