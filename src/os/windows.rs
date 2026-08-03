@@ -30,6 +30,7 @@ link!("kernel32" "system" fn HeapFree(hheap : HANDLE, dwflags : HEAP_FLAGS, lpme
 link!("kernel32" "system" fn MultiByteToWideChar(codepage : u32, dwflags : MULTI_BYTE_TO_WIDE_CHAR_FLAGS, lpmultibytestr : PCSTR, cbmultibyte : i32, lpwidecharstr : PWSTR, cchwidechar : i32) -> i32);
 link!("kernel32" "system" fn Process32First(hsnapshot : HANDLE, lppe : *mut PROCESSENTRY32) -> BOOL);
 link!("kernel32" "system" fn Process32Next(hsnapshot : HANDLE, lppe : *mut PROCESSENTRY32) -> BOOL);
+link!("ntdll" "system" fn RtlGetVersion(lpversioninformation : *mut OSVERSIONINFOW) -> NTSTATUS);
 link!("kernel32" "system" fn SetConsoleOutputCP(wcodepageid : u32) -> BOOL);
 link!("kernel32" "system" fn WideCharToMultiByte(codepage : u32, dwflags : u32, lpwidecharstr : PCWSTR, cchwidechar : i32, lpmultibytestr : PSTR, cbmultibyte : i32, lpdefaultchar : PCSTR, lpuseddefaultchar : *mut BOOL) -> i32);
 link!("winhttp" "system" fn WinHttpCloseHandle(hinternet : *mut core::ffi::c_void) -> BOOL);
@@ -48,6 +49,23 @@ pub type FORMAT_MESSAGE_OPTIONS = u32;
 pub type HANDLE = *mut core::ffi::c_void;
 pub type HEAP_FLAGS = u32;
 pub type MULTI_BYTE_TO_WIDE_CHAR_FLAGS = u32;
+pub type NTSTATUS = i32;
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct OSVERSIONINFOW {
+    pub dwOSVersionInfoSize: u32,
+    pub dwMajorVersion: u32,
+    pub dwMinorVersion: u32,
+    pub dwBuildNumber: u32,
+    pub dwPlatformId: u32,
+    pub szCSDVersion: [u16; 128],
+}
+impl Default for OSVERSIONINFOW {
+    fn default() -> Self {
+        // SAFETY: All types are guaranteed to be zeroable
+		unsafe { core::mem::zeroed() }
+    }
+}
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct OVERLAPPED {
