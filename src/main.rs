@@ -22,9 +22,18 @@ static ALLOCATOR: Allocator = Allocator;
 mod panic_impl {
     use core::panic::PanicInfo;
 
+    use crate::{
+        os::windows::ExitProcess,
+        eprintln
+    };
+
     #[panic_handler]
-    fn panic(_info: &PanicInfo) -> ! {
-        loop {}
+    fn panic(info: &PanicInfo) -> ! {
+        if let Some(loc) = info.location() {
+            eprintln!("{loc}");
+        }
+        eprintln!("{}", info.message());
+        unsafe { ExitProcess(101) }
     }
 }
 
