@@ -104,14 +104,9 @@ macro_rules! formatln {
 #[macro_export]
 macro_rules! print {
     () => {{}};
-    ($expr:expr) => {{
+    ($($tt:tt)*) => {{
         let handle = $crate::os::io::stdout();
-        let s = $crate::format!("{}", $expr);
-        $crate::os::io::write(handle, s.as_str());
-    }};
-    ($lit:literal, $($tt:tt)*) => {{
-        let handle = $crate::os::io::stdout();
-        let s = $crate::format!($lit, $($tt)*);
+        let s = $crate::format!($($tt)*);
         $crate::os::io::write(handle, s.as_str());
     }}
 }
@@ -122,14 +117,9 @@ macro_rules! println {
         let handle = $crate::os::io::stdout();
         $crate::os::io::write(handle, "\n");
     }};
-    ($expr:expr) => {{
+    ($($tt:tt)*) => {{
         let handle = $crate::os::io::stdout();
-        let s = $crate::formatln!("{}", $expr);
-        $crate::os::io::write(handle, s.as_str());
-    }};
-    ($lit:literal, $($tt:tt)*) => {{
-        let handle = $crate::os::io::stdout();
-        let s = $crate::formatln!($lit, $($tt)*);
+        let s = $crate::formatln!($($tt)*);
         $crate::os::io::write(handle, s.as_str());
     }}
 }
@@ -142,9 +132,9 @@ macro_rules! eprint {
         let s = $crate::format!("{}", $expr);
         $crate::os::io::write(handle, s.as_str());
     }};
-    ($lit:literal, $($tt:tt)*) => {{
+    ($($tt:tt)*) => {{
         let handle = $crate::os::io::stderr();
-        let s = $crate::format!($lit, $($tt)*);
+        let s = $crate::format!($($tt)*);
         $crate::os::io::write(handle, s.as_str());
     }}
 }
@@ -155,14 +145,9 @@ macro_rules! eprintln {
         let handle = $crate::os::io::stderr();
         $crate::os::io::write(handle, "\n");
     }};
-    ($expr:expr) => {{
+    ($($tt:tt)*) => {{
         let handle = $crate::os::io::stderr();
-        let s = $crate::formatln!("{}", $expr);
-        $crate::os::io::write(handle, s.as_str());
-    }};
-    ($lit:literal, $($tt:tt)*) => {{
-        let handle = $crate::os::io::stderr();
-        let s = $crate::formatln!($lit, $($tt)*);
+        let s = $crate::formatln!($($tt)*);
         $crate::os::io::write(handle, s.as_str());
     }}
 }
@@ -183,8 +168,7 @@ mod tests {
     #[test]
     fn print_test() {
         print!("Hello {}\n", "World");
-        print!("2 + 8 = ");
-        print!(2 + 8);
+        print!("2 + 8 = {}", 2 + 8);
         print!("\n");
     }
 
@@ -197,7 +181,6 @@ mod tests {
     #[test]
     fn eprints_test() {
         eprintln!("Hello {}", "World");
-        eprint!("42 * 55 = ");
-        eprintln!(42 * 55)
+        eprint!("42 * 55 = {}", 42 * 55);
     }
 }
