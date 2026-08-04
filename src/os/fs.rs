@@ -11,7 +11,7 @@ use alloc::{
 use crate::{
     os::error::{self, ErrorCode},
     os::path::Path,
-    os::windows::{CreateFileW, HANDLE, WriteFile, ReadFile, GetFileSizeEx}
+    os::windows::{CreateFileW, HANDLE, WriteFile, ReadFile, GetFileSizeEx, CloseHandle}
 };
 
 const FILE_SHARE_READ      : u32         = 0x0001;
@@ -110,6 +110,13 @@ impl File {
         // SAFETY: WinAPI modifies data in `Vec<_>`, you must update the len
         unsafe { buf.set_len(size_usize) };
         Ok(buf)
+    }
+}
+
+impl Drop for File {
+    fn drop(&mut self) {
+        // SAFETY: Completely safe
+        unsafe { CloseHandle(self.0) };
     }
 }
 
