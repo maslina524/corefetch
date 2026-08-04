@@ -2,6 +2,10 @@
 name = "nofetch-alloc"
 version = "0.1.0"
 edition = "2024"
+description = "fastfetch-based program written in rust with #![no_std]"
+license = "MIT"
+authors = ["maslina524 <luk.kirill2804@gmail.com>"]
+repository = "https://github.com/maslina524/nofetch"
 
 [profile.release]
 opt-level = 3
