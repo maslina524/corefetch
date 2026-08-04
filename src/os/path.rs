@@ -4,6 +4,11 @@ use alloc::{
     borrow::ToOwned
 };
 
+use crate::{
+    os::encoding::utf8_to_utf16le,
+    os::error
+};
+
 #[repr(transparent)]
 pub struct Path {
     inner: String
@@ -30,6 +35,10 @@ impl Path {
 
     pub fn as_str(&self) -> &String {
         &self.inner
+    }
+
+    pub fn as_utf16le_str(&self) -> error::Result<Vec<u16>> {
+        utf8_to_utf16le(&self.inner)
     }
 
     pub fn parts(&self) -> Vec<&str> {
