@@ -11,7 +11,7 @@ use alloc::{
 use crate::{
     os::error::{self, ErrorCode},
     os::path::Path,
-    os::windows::{CreateFileW, HANDLE, WriteFile}
+    os::windows::{CreateFileW, HANDLE, WriteFile, ReadFile, GetFileSizeEx}
 };
 
 const FILE_SHARE_READ      : u32         = 0x0001;
@@ -81,10 +81,42 @@ impl File {
         
         Ok(())
     }
+
+    pub fn read(&self) -> error::Result<Vec<u8>> {
+        let mut size = 0;
+        // SAFETY: Completely safe
+        let ret = unsafe {
+            GetFileSizeEx(self.0, &raw mut size)
+        };
+        if ret == 0 {
+            return Err(ErrorCode::last());
+        }
+        let size_usize = usize::try_from(size).expect("UNREACHABLE");
+        let mut buf = Vec::with_capacity(size_usize);
+        let mut readed = 0;
+
+        // SAFETY: The handle is always correct, 
+        // errors are checked, the function is safe
+        let ret = unsafe {
+            ReadFile(
+                self.0,
+                buf.as_mut_ptr(), 
+                u32::try_from(size).expect("UNREACHABLE"), 
+                &raw mut readed, 
+                ptr::null_mut()
+            )
+        };
+
+        // SAFETY: WinAPI modifies data in `Vec<_>`, you must update the len
+        unsafe { buf.set_len(size_usize) };
+        Ok(buf)
+    }
 }
 
 #[cfg(test)]
 mod tests {
+    use alloc::string::String;
+
     use crate::os::fs::{File, Access};
   
     extern crate std;
@@ -93,5 +125,14 @@ mod tests {
     fn write_file_test() {
         let file = File::open("test.txt", Access::Write).unwrap();
         let _ = file.write("Hello World!");
+    }
+
+    #[test]
+    fn read_file_test() {
+        let file = File::open("README.md", Access::Read).unwrap();
+        let buf = file.read().unwrap();
+        let string = String::from_utf8(buf).unwrap();
+
+        assert!(string.starts_with("# Nofetch"));
     }
 }
