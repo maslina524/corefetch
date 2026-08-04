@@ -29,7 +29,7 @@ pub fn utf16le_to_utf8(
             CP_UTF8, 
             0, 
             src.as_ptr(), 
-            len as i32, 
+            i32::try_from(len).expect("UNREACHABLE"), 
             ptr::null_mut(), 
             0, 
             ptr::null(), 
@@ -40,13 +40,14 @@ pub fn utf16le_to_utf8(
         return Err(ErrorCode::last()) 
     }
 
-    let mut buf = Vec::with_capacity(size as usize);
+    let size_usize = usize::try_from(size).expect("UNREACHABLE");
+    let mut buf = Vec::with_capacity(size_usize);
     let ret = unsafe {
         WideCharToMultiByte(
             CP_UTF8, 
             0, 
             src.as_ptr(), 
-            len as i32, 
+            i32::try_from(len).expect("UNREACHABLE"), 
             buf.as_mut_ptr(), 
             size, 
             ptr::null(), 
@@ -57,7 +58,8 @@ pub fn utf16le_to_utf8(
         return Err(ErrorCode::last()) 
     }
     
-    unsafe { buf.set_len(ret as usize) };
+    let ret_usize = usize::try_from(ret).expect("UNREACHABLE");
+    unsafe { buf.set_len(ret_usize) };
     let string = String::from_utf8(buf).unwrap();
     Ok(string)
 }
@@ -80,7 +82,7 @@ pub fn utf8_to_utf16le(
             CP_UTF8, 
             0, 
             src.as_ptr(), 
-            src.len() as i32, 
+            i32::try_from(src.len()).expect("UNREACHABLE"), 
             ptr::null_mut(), 
             0,
         ) 
@@ -89,13 +91,14 @@ pub fn utf8_to_utf16le(
         return Err(ErrorCode::last()) 
     }
 
-    let mut buf = Vec::with_capacity(size as usize);
+    let size_usize = usize::try_from(size).expect("UNREACHABLE");
+    let mut buf = Vec::with_capacity(size_usize);
     let ret = unsafe {
         MultiByteToWideChar(
             CP_UTF8, 
             0, 
             src.as_ptr(), 
-            src.len() as i32, 
+            i32::try_from(src.len()).expect("UNREACHABLE"), 
             buf.as_mut_ptr(), 
             size
         ) 
@@ -104,7 +107,8 @@ pub fn utf8_to_utf16le(
         return Err(ErrorCode::last()) 
     }
     
-    unsafe { buf.set_len(ret as usize) };
+    let ret_usize = usize::try_from(ret).expect("UNREACHABLE");
+    unsafe { buf.set_len(ret_usize) };
 
     Ok(buf)
 }

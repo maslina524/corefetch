@@ -17,9 +17,9 @@ impl Processes {
         }
     }
 
-    pub fn get() -> &'static Processes {
+    pub fn get() -> &'static Self {
         PROCESSES.get_or_init(|| {
-            Processes::new()
+            Self::new()
         })
     }
 }

@@ -7,14 +7,14 @@ use crate::{
 
 pub type Result<T> = core::result::Result<T, ErrorCode>;
 
-const FORMAT_MESSAGE_FROM_SYSTEM   : u32 = 0x00001000;
-const FORMAT_MESSAGE_IGNORE_INSERTS: u32 = 0x00000200;
+const FORMAT_MESSAGE_FROM_SYSTEM   : u32 = 0x1000;
+const FORMAT_MESSAGE_IGNORE_INSERTS: u32 = 0x0200;
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone)]
 pub struct ErrorCode(u32);
 
 impl ErrorCode {
-    pub fn new(code: u32) -> Self {
+    pub const fn new(code: u32) -> Self {
         Self(code)
     }
 
@@ -50,7 +50,8 @@ impl Display for ErrorCode {
             )
         };
 
-        let utf8 = utf16le_to_utf8(&buf, len as isize)
+        let len_isize = isize::try_from(len).expect("UNREACHABLE");
+        let utf8 = utf16le_to_utf8(&buf, len_isize)
             .expect("WinAPI passed an invalid UTF-16LE string");
 
         let utf8_str = utf8.trim();
@@ -71,6 +72,6 @@ mod tests {
         let err = ErrorCode::new(5);
         let fmt = std::format!("{err}");
         std::println!("Error msg: `{fmt}`");
-        assert!(fmt.len() > "WinApi: ".len())
+        assert!(fmt.len() > "WinApi: ".len());
     }
 }

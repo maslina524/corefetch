@@ -9,7 +9,7 @@ use crate::{
 
 const LOCALE_NAME_MAX_LENGTH  : usize            = 85;
 const LOCALE_NAME_USER_DEFAULT: *const u16       = ptr::null_mut();
-const LOCALE_SNAME            : u32              = 0x0000005c;
+const LOCALE_SNAME            : u32              = 0x005c;
 
 static LOCALE                 : OnceLock<Locale> = OnceLock::new();
 
@@ -26,20 +26,20 @@ impl Locale {
                 LOCALE_NAME_USER_DEFAULT, 
                 LOCALE_SNAME, 
                 buf.as_mut_ptr() , 
-                LOCALE_NAME_MAX_LENGTH as i32
+                i32::try_from(LOCALE_NAME_MAX_LENGTH).expect("UNREACHABLE")
             )
         };
-
-        let result = String::from_utf16_lossy(&buf[..len as usize]).rsplit("\0").collect();
+        let len_usize = usize::try_from(len).expect("UNREACHABLE");
+        let result = String::from_utf16_lossy(&buf[..len_usize]).rsplit('\0').collect();
 
         Self {
             result
         }
     }
 
-    pub fn get() -> &'static Locale {
+    pub fn get() -> &'static Self {
         LOCALE.get_or_init(|| {
-            Locale::new()
+            Self::new()
         })
     }
 }

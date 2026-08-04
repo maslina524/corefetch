@@ -25,32 +25,29 @@ impl<T> OnceLock<T> {
             unsafe { return (&*self.value.get()).assume_init_ref(); }
         }
 
-        match self.state.compare_exchange(
+        if self.state.compare_exchange(
             INCOMPLETE,
             INITIALIZING,
             Ordering::AcqRel,
             Ordering::Acquire,
-        ) {  
-            Ok(_) => {
-                let value = f();
+         ).is_ok() {
+            let value = f();
+            
+            // SAFETY: In write we initialize the value, and
+            // then call an unsafe function that
+            // is completely safe after initialization
+            unsafe { (*self.value.get()).write(value); }
+            self.state.store(READY, Ordering::Release);
 
-                // SAFETY: In write we initialize the value, and
-                // then call an unsafe function that
-                // is completely safe after initialization
-                unsafe { (*self.value.get()).write(value); }
-                self.state.store(READY, Ordering::Release);
-
-                // SAFETY: The value in `MaybeUninit` is guaranteed to be initialized
-                unsafe { (&*self.value.get()).assume_init_ref() }
+            // SAFETY: The value in `MaybeUninit` is guaranteed to be initialized
+            unsafe { (&*self.value.get()).assume_init_ref() }
+        } else {
+            while self.state.load(Ordering::Acquire) != READY {
+                core::hint::spin_loop();
             }
-            Err(_) => {
-                while self.state.load(Ordering::Acquire) != READY {
-                    core::hint::spin_loop();
-                }
 
-                // SAFETY: The value in `MaybeUninit` is guaranteed to be initialized
-                unsafe { (&*self.value.get()).assume_init_ref() }
-            }
+            // SAFETY: The value in `MaybeUninit` is guaranteed to be initialized
+            unsafe { (&*self.value.get()).assume_init_ref() }
         }
     }
 }

@@ -24,9 +24,9 @@ pub struct Os<'a> {
     pub arch: &'a str,
 }
 
-impl<'a> Os<'a> {
+impl Os<'_> {
     pub fn new() -> Self {
-        let ver = env::os_version().expect("Failed to get os version");
+        let ver = env::os_version();
         let pretty_name = format!("{} {} ({})", ver.name, ver.version, ver.codename);
         let id = format!("{} {}", ver.name, ver.version);
         Self { 
@@ -45,14 +45,14 @@ impl<'a> Os<'a> {
         }
     }
 
-    pub fn get() -> &'static Os<'a> {
+    pub fn get() -> &'static Self {
         OS.get_or_init(|| {
-            Os::new()
+            Self::new()
         })
     }
 }
 
-impl<'a> core::fmt::Display for Os<'a> {
+impl core::fmt::Display for Os<'_> {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "{} {}", self.pretty_name, self.arch)
     }
