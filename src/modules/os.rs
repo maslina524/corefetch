@@ -10,18 +10,18 @@ static OS: OnceLock<Os> = OnceLock::new();
 
 #[derive(Debug)]
 pub struct Os<'a> {
-    sysname: String,
-    name: String,
-    pretty_name: String,
-    id: String,
-    id_like: String,
-    variant: String,
-    variant_id: String,
-    version: String,
-    version_id: String,
-    codename: String,
-    build_id: String,
-    arch: &'a str,
+    pub sysname: String,
+    pub name: String,
+    pub pretty_name: String,
+    pub id: String,
+    pub id_like: String,
+    pub variant: String,
+    pub variant_id: String,
+    pub version: String,
+    pub version_id: String,
+    pub codename: String,
+    pub build_id: String,
+    pub arch: &'a str,
 }
 
 impl<'a> Os<'a> {
