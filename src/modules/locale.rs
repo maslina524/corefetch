@@ -3,6 +3,7 @@ use core::ptr;
 use alloc::string::String;
 
 use crate::{
+    os::error::ErrorCode,
     os::windows::GetLocaleInfoEx,
     sync::OnceLock
 };
@@ -21,6 +22,7 @@ pub struct Locale {
 impl Locale {
     pub fn new() -> Self {
         let mut buf = [0u16; LOCALE_NAME_MAX_LENGTH];
+        // SAFETY: Just a WinAPI function, the return value is checked
         let len = unsafe {
             GetLocaleInfoEx(
                 LOCALE_NAME_USER_DEFAULT, 
@@ -29,12 +31,12 @@ impl Locale {
                 i32::try_from(LOCALE_NAME_MAX_LENGTH).expect("UNREACHABLE")
             )
         };
+        if len == 0 { ErrorCode::last().panic(); }
+
         let len_usize = usize::try_from(len).expect("UNREACHABLE");
         let result = String::from_utf16_lossy(&buf[..len_usize]).rsplit('\0').collect();
 
-        Self {
-            result
-        }
+        Self { result }
     }
 
     pub fn get() -> &'static Self {

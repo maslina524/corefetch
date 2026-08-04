@@ -16,14 +16,11 @@ pub fn utf16le_to_utf8(
     src: &[u16], 
     len: isize,
 ) -> error::Result<String> {
-    // SAFETY: Passing invalid UTF-16-LE bytes will panic;
-    // you should only use this function when you are 
-    // absolutely sure the bytes are completely valid,
-    // or for converting strings created by the WinAPI.
     if len == 0 {
         return Ok(String::new());
     }
 
+    // SAFETY: Just a WinAPI function, the return value is checked
     let size = unsafe {
         WideCharToMultiByte(
             CP_UTF8, 
@@ -42,6 +39,8 @@ pub fn utf16le_to_utf8(
 
     let size_usize = usize::try_from(size).expect("UNREACHABLE");
     let mut buf = Vec::with_capacity(size_usize);
+
+    // SAFETY: Just a WinAPI function, the return value is checked
     let ret = unsafe {
         WideCharToMultiByte(
             CP_UTF8, 
@@ -59,24 +58,20 @@ pub fn utf16le_to_utf8(
     }
     
     let ret_usize = usize::try_from(ret).expect("UNREACHABLE");
+
+    // SAFETY: WinAPI modifies data in `Vec<_>`, you must update the len
     unsafe { buf.set_len(ret_usize) };
     let string = String::from_utf8(buf).unwrap();
     Ok(string)
 }
 
-pub fn utf8_to_utf16le(
-    src: impl Into<String>
-) -> error::Result<Vec<u16>> {
-    // SAFETY: Passing invalid UTF-16-LE bytes will panic;
-    // you should only use this function when you are 
-    // absolutely sure the bytes are completely valid,
-    // or for converting strings created by the WinAPI.
-    
+pub fn utf8_to_utf16le(src: impl Into<String>) -> error::Result<Vec<u16>> {
     let src = src.into();
     if src.is_empty() {
         return Ok(Vec::new());
     }
 
+    // SAFETY: Just a WinAPI function, the return value is checked
     let size = unsafe {
         MultiByteToWideChar(
             CP_UTF8, 
@@ -93,6 +88,8 @@ pub fn utf8_to_utf16le(
 
     let size_usize = usize::try_from(size).expect("UNREACHABLE");
     let mut buf = Vec::with_capacity(size_usize);
+
+    // SAFETY: Just a WinAPI function, the return value is checked
     let ret = unsafe {
         MultiByteToWideChar(
             CP_UTF8, 
@@ -108,8 +105,9 @@ pub fn utf8_to_utf16le(
     }
     
     let ret_usize = usize::try_from(ret).expect("UNREACHABLE");
-    unsafe { buf.set_len(ret_usize) };
+    // SAFETY: WinAPI modifies data in `Vec<_>`, you must update the len
 
+    unsafe { buf.set_len(ret_usize) };
     Ok(buf)
 }
 

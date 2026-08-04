@@ -29,8 +29,9 @@ pub struct File(FileHandle);
 impl File {
     pub fn open(path: impl Into<Path>, access: Access) -> error::Result<Self> {
         let path = path.into();
-
         let path_wide = path.as_utf16le_str()?;
+
+        // SAFETY: Parameters are fully correct, return value is checked
         let handle = unsafe {
             CreateFileW(
                 path_wide.as_ptr(), 

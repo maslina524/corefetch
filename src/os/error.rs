@@ -19,6 +19,7 @@ impl ErrorCode {
     }
 
     pub fn last() -> Self {
+        // SAFETY: Completely safe
         let code = unsafe { GetLastError() };
         Self::new(code)
     }

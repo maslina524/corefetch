@@ -159,6 +159,7 @@ impl Request {
 
     #[cfg(target_os = "windows")]
     fn send(self, method: &str) -> Response {
+        // SAFETY: Parameters are fully correct, return value is checked
         let session = unsafe {
             let header = wide("UserAgent/1.0").unwrap();
             WinHttpOpen(
@@ -181,11 +182,13 @@ impl Request {
         hostname.push_str(&self.url.tld);
 
         let server = wide(hostname).unwrap();
+        // SAFETY: Just a WinAPI function, the return value is checked
         let conn = unsafe {
             WinHttpConnect(session, server.as_ptr(), self.url.port(), 0)
         };
         if conn.is_null() {
             let err = ErrorCode::last();
+            // SAFETY: Completely safe
             unsafe { WinHttpCloseHandle(session) };
             err.panic();
         }
@@ -198,6 +201,7 @@ impl Request {
             0
         };
 
+        // SAFETY: Parameters are fully correct, return value is checked
         let req = unsafe {
             WinHttpOpenRequest(
                 conn,
@@ -211,11 +215,14 @@ impl Request {
         };
         if req.is_null() {
             let err = ErrorCode::last();
+            // SAFETY: Completely safe
             unsafe { WinHttpCloseHandle(conn) };
+            // SAFETY: Completely safe
             unsafe { WinHttpCloseHandle(session) };
             err.panic();
         }
         
+        // SAFETY: Just a WinAPI function, the return value is checked
         let send = unsafe {
             WinHttpSendRequest(
                 req, 
@@ -229,12 +236,16 @@ impl Request {
         };
         if send == 0 {
             let err = ErrorCode::last();
-            unsafe { WinHttpCloseHandle( req) };
-            unsafe { WinHttpCloseHandle(conn) };
-            unsafe { WinHttpCloseHandle(session) };
+            // SAFETY: Completely safe
+            unsafe { 
+                WinHttpCloseHandle( req);
+                WinHttpCloseHandle(conn);
+                WinHttpCloseHandle(session);
+            };
             err.panic_code();
         }
         
+        // SAFETY: Just a WinAPI function, the return value is checked
         let ret = unsafe {
             WinHttpReceiveResponse(
                 req, 
@@ -243,14 +254,18 @@ impl Request {
         };
         if ret == 0 {
             let err = ErrorCode::last();
-            unsafe { WinHttpCloseHandle(req) };
-            unsafe { WinHttpCloseHandle(conn) };
-            unsafe { WinHttpCloseHandle(session) };
+            // SAFETY: Completely safe
+            unsafe {
+                WinHttpCloseHandle(req);
+                WinHttpCloseHandle(conn);
+                WinHttpCloseHandle(session);
+            };
             err.panic();
         }
 
         let mut status_code: u32 = 0;
         let mut size = u32::try_from(size_of::<u32>()).expect("UNREACHABLE");
+        // SAFETY: Parameters are fully correct, return value is checked
         let query = unsafe {
             WinHttpQueryHeaders(
                 req,
@@ -267,6 +282,7 @@ impl Request {
         let mut read = 0;
         loop {
             let mut chunk = [0u8; 4096];
+            // SAFETY: Parameters are fully correct, return value is checked
             let ret = unsafe {
                 WinHttpReadData(
                     req,
@@ -281,6 +297,7 @@ impl Request {
             buf.extend_from_slice(&chunk[..read as usize]);
         }
 
+        // SAFETY: Completely safe
         unsafe {
             WinHttpCloseHandle(req);
             WinHttpCloseHandle(conn);
