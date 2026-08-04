@@ -18,6 +18,8 @@ fn get_heap_handle() -> *mut c_void {
 }
 
 pub struct Allocator;
+
+// SAFETY: All unsafe code has SAFETY comments
 unsafe impl GlobalAlloc for Allocator {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
         let handle = get_heap_handle();

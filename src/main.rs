@@ -1,6 +1,13 @@
 #![cfg_attr(not(test), no_std)]
 #![cfg_attr(not(test), no_main)]
 #![deny(clippy::all)]
+#![deny(
+    clippy::undocumented_unsafe_blocks,
+    clippy::unnecessary_safety_comment,
+    clippy::unnecessary_safety_doc,
+    clippy::unsafe_removed_from_name, 
+    clippy::unsafe_derive_deserialize,
+)]
 #![allow(unused)]
 #![allow(clippy::struct_field_names)]
 #![allow(clippy::too_many_lines)]
@@ -39,6 +46,7 @@ mod panic_impl {
             eprintln!("{loc}");
         }
         eprintln!("{}", info.message());
+        // SAFETY: The function is used in the binary, everything is safe
         unsafe { ExitProcess(101) }
     }
 }

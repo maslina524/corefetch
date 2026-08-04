@@ -43,12 +43,14 @@ impl<'a> StringFormatter<'a> {
 
 pub fn stdout() -> isize {
     *STDOUT_HANDLE.get_or_init(|| {
+        // SAFETY: Completely safe
         (unsafe { GetStdHandle(STDOUT) }) as isize
     })
 }
 
 pub fn stderr() -> isize {
     *STDERR_HANDLE.get_or_init(|| {
+        // SAFETY: Completely safe
         (unsafe { GetStdHandle(STDERR) }) as isize
     })
 }

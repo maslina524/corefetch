@@ -29,6 +29,7 @@ pub fn os_version() -> OsVersion {
     let name = "Windows".to_owned();
 
     let mut osvi = OSVERSIONINFOW::default();
+    // SAFETY: Completely safe
     unsafe { RtlGetVersion(&raw mut osvi) };
 
     let build = osvi.dwBuildNumber;
@@ -82,6 +83,7 @@ pub fn os_version() -> OsVersion {
 }
 
 pub fn processes_count() -> usize {
+    // SAFETY: Just a WinAPI function, the return value is checked
     let snapshot = unsafe {
         CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0)
     };
@@ -93,13 +95,17 @@ pub fn processes_count() -> usize {
     };
 
     let mut count = 0;
+    // SAFETY: Completely safe
     let first = unsafe {
         Process32First(snapshot, &raw mut pe)
     };
     if first == 1 {
         count += 1;
         loop {
-            let next = unsafe { Process32Next(snapshot, &raw mut pe) };
+            // SAFETY: Just a WinAPI function, the return value is checked
+            let next = unsafe {
+                Process32Next(snapshot, &raw mut pe)
+            };
             if next == 0 { break; }
             count += 1;
         }
