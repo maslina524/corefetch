@@ -10,11 +10,11 @@ use alloc::{
 
 use crate::os::{
     error::{self, ErrorCode},
-    windows::*
+    windows::{OSVERSIONINFOW, PROCESSENTRY32, RtlGetVersion, CreateToolhelp32Snapshot, Process32First, Process32Next}
 };
 
-const TH32CS_SNAPPROCESS: u32 = 0x00000002;
-const INVALID_HANDLE: *mut c_void = -1isize as usize as *mut c_void;
+const TH32CS_SNAPPROCESS: u32 = 0x0002;
+const INVALID_HANDLE: *mut c_void = (-1isize).cast_unsigned() as *mut c_void;
 
 pub struct OsVersion {
     pub sysname: String,
@@ -24,12 +24,12 @@ pub struct OsVersion {
     pub variant: String
 }
 
-pub fn os_version() -> error::Result<OsVersion> {
+pub fn os_version() -> OsVersion {
     let sysname = "WIN32_NT".to_owned();
     let name = "Windows".to_owned();
 
     let mut osvi = OSVERSIONINFOW::default();
-    unsafe { RtlGetVersion(&mut osvi) };
+    unsafe { RtlGetVersion(&raw mut osvi) };
 
     let build = osvi.dwBuildNumber;
     
@@ -44,7 +44,18 @@ pub fn os_version() -> error::Result<OsVersion> {
     }.to_owned();
 
     let codename = match build {
-        10240 => "1507",
+        950 => "4.00",
+        1381 => "NT 4.0",
+        1998 => "4.10",
+        2195 => "NT 5.0",
+        3000 => "4.90",
+        2600 | 2700 | 2710 => "NT 5.1",
+        3790 => "NT 5.2",
+        6002 => "NT 6.0",
+        7601 => "NT 6.1",
+        9200 => "NT 6.2",
+        9600 => "NT 6.3",
+        10240 => "NT 10.0",
         10586 => "1511",
         14393 => "1607",
         15063 => "1703",
@@ -56,10 +67,8 @@ pub fn os_version() -> error::Result<OsVersion> {
         19041 => "2004",
         19042 => "20H2",
         19043 => "21H1",
-        19044 => "21H2",
-        19045 => "22H2",
-        22000 => "21H2",
-        22621 => "22H2",
+        19044 | 22000 => "21H2",
+        19045 | 22621 => "22H2",
         22631 => "23H2",
         26100 => "24H2",
         26200 => "25H2",
@@ -69,7 +78,7 @@ pub fn os_version() -> error::Result<OsVersion> {
 
     let variant = "Home".to_owned();
 
-    Ok(OsVersion { sysname, name, version, codename, variant })
+    OsVersion { sysname, name, version, codename, variant }
 }
 
 pub fn processes_count() -> usize {
@@ -79,18 +88,18 @@ pub fn processes_count() -> usize {
     if snapshot == INVALID_HANDLE { ErrorCode::last().panic(); }
 
     let mut pe = PROCESSENTRY32 {
-        dwSize: mem::size_of::<PROCESSENTRY32>() as u32,
+        dwSize: u32::try_from(mem::size_of::<PROCESSENTRY32>()).expect("UNREACHABLE"),
         ..Default::default()
     };
 
     let mut count = 0;
     let first = unsafe {
-        Process32First(snapshot, &mut pe)
+        Process32First(snapshot, &raw mut pe)
     };
     if first == 1 {
         count += 1;
         loop {
-            let next = unsafe { Process32Next(snapshot, &mut pe) };
+            let next = unsafe { Process32Next(snapshot, &raw mut pe) };
             if next == 0 { break; }
             count += 1;
         }

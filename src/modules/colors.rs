@@ -6,13 +6,13 @@ static COLORS: OnceLock<Colors> = OnceLock::new();
 pub struct Colors;
 
 impl Colors {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self {}
     }
 
-    pub fn get() -> &'static Colors {
+    pub fn get() -> &'static Self {
         COLORS.get_or_init(|| {
-            Colors::new()
+            Self::new()
         })
     }
 }

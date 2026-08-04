@@ -21,16 +21,15 @@ static IS_UTF8      : AtomicBool      = AtomicBool::new(false);
 
 pub struct StringFormatter<'a>(&'a mut String);
 
-impl<'a> Write for StringFormatter<'a> {
+impl Write for StringFormatter<'_> {
     fn write_str(&mut self, s: &str) -> core::fmt::Result {
         self.0.write_str(s)
     }
 }
 
 impl<'a> StringFormatter<'a> {
-    #[inline(always)]
-    pub fn new(ptr: &'a mut String) -> Self {
-        StringFormatter(ptr)
+    pub const fn new(ptr: &'a mut String) -> Self {
+        Self(ptr)
     }
     
     pub fn write_fmt(&mut self, args: core::fmt::Arguments) -> core::fmt::Result {
@@ -42,14 +41,12 @@ impl<'a> StringFormatter<'a> {
     }
 }
 
-#[inline(always)]
 pub fn stdout() -> isize {
     *STDOUT_HANDLE.get_or_init(|| {
         (unsafe { GetStdHandle(STDOUT) }) as isize
     })
 }
 
-#[inline(always)]
 pub fn stderr() -> isize {
     *STDERR_HANDLE.get_or_init(|| {
         (unsafe { GetStdHandle(STDERR) }) as isize
@@ -64,7 +61,7 @@ pub fn write(handle: isize, s: &str) {
         if ret == 0 { ErrorCode::last().panic(); }
     }
     let mut written = 0;
-    let len = s.len() as u32;
+    let len = u32::try_from(s.len()).expect("UNREACHABLE");
     
     // SAFETY: The handle is always correct, 
     // errors are checked, the function is safe
@@ -73,7 +70,7 @@ pub fn write(handle: isize, s: &str) {
             handle as *mut c_void, 
             s.as_ptr(), 
             len, 
-            &mut written, 
+            &raw mut written, 
             ptr::null_mut()
         )
     };

@@ -1,6 +1,9 @@
 #![cfg_attr(not(test), no_std)]
 #![cfg_attr(not(test), no_main)]
 #![deny(clippy::all)]
+#![allow(unused)]
+#![allow(clippy::struct_field_names)]
+#![allow(clippy::too_many_lines)]
 
 mod sync;
 mod os;
@@ -11,7 +14,9 @@ mod logo;
 use core::ffi::c_int;
 
 use crate::{
-    logo::LogoInfo, modules::*, os::allocator::Allocator
+    logo::LogoInfo,
+    modules::{Colors, Locale, Os, Processes, Version, Weather},
+    os::allocator::Allocator
 };
 
 extern crate alloc;
@@ -53,7 +58,7 @@ extern "C" fn main() -> c_int {
         let (string, len) = line;
         print!("{string}");
         print!("{}", " ".repeat(40 - len));
-        println!("If `len` is calculated correctly, everything should be in one column")
+        println!("If `len` is calculated correctly, everything should be in one column");
     }
 
     0

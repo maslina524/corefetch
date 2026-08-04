@@ -32,8 +32,8 @@ unsafe impl GlobalAlloc for Allocator {
                 0, 
                 layout.size()
             );
-            if ptr.is_null() { panic!("HeapAlloc error!") }
-            ptr as *mut u8
+            assert!(!ptr.is_null(), "HeapAlloc error!");
+            ptr.cast::<u8>()
         }
     }
 
@@ -48,9 +48,9 @@ unsafe impl GlobalAlloc for Allocator {
             let ret = HeapFree(
                 handle, 
                 0, 
-                ptr as *mut c_void
+                ptr.cast::<c_void>()
             );
-            if ret == 0 { panic!("HeapFree error!") }
+            assert!(ret != 0, "HeapFree error!");
         }
     }
 }

@@ -49,7 +49,7 @@ impl LogoInfo {
     }
 
     pub fn get_ansi_lines(&self) -> Vec<(String, usize)> {
-        let lines: Vec<String> = self.lines.lines().map(|s| s.to_owned()).collect();
+        let lines: Vec<String> = self.lines.lines().map(ToOwned::to_owned).collect();
         let mut ret = Vec::new();
 
         for line in lines {

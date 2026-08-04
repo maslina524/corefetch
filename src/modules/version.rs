@@ -16,8 +16,8 @@ pub struct Version<'a> {
     pub libc: &'a str
 }
 
-impl<'a> Version<'a> {
-    pub fn new() -> Self {
+impl Version<'_> {
+    pub const fn new() -> Self {
         let build_type = if cfg!(debug_assertions) {
             "debug"
         } else {
@@ -37,14 +37,14 @@ impl<'a> Version<'a> {
         }
     }
 
-    pub fn get() -> &'static Version<'a> {
+    pub fn get() -> &'static Self {
         VERSION.get_or_init(|| {
-            Version::new()
+            Self::new()
         })
     }
 }
 
-impl<'a> core::fmt::Display for Version<'a> {
+impl core::fmt::Display for Version<'_> {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "{} {} ({})", self.project_name, self.version, self.arch)
     }

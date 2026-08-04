@@ -18,18 +18,18 @@ pub struct Weather {
 impl Weather {
     pub fn new() -> Self {
         let response = Request::new(WTTR_URL).unwrap().get();
-        let result = if !response.is_success() {
-            format!("Unknown: code {}", response.code())
-        } else {
+        let result = if response.is_success() {
             response.as_text().unwrap()
+        } else {
+            format!("Unknown: code {}", response.code())
         };
 
         Self { result }
     }
 
-    pub fn get() -> &'static Weather {
+    pub fn get() -> &'static Self {
         WEATHER.get_or_init(|| {
-            Weather::new()
+            Self::new()
         })
     }
 }

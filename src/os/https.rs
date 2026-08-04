@@ -11,7 +11,10 @@ use alloc::{
 
 use crate::{
     os::error::ErrorCode,
-    os::windows::*,
+    os::windows::{
+        WinHttpOpen, WinHttpConnect, WinHttpCloseHandle, WinHttpOpenRequest,
+        WinHttpSendRequest, WinHttpReceiveResponse, WinHttpQueryHeaders, WinHttpReadData
+    },
     os::encoding::wide,
     format,
 };
@@ -21,11 +24,11 @@ const WINHTTP_NO_PROXY_NAME            : *const u16        = ptr::null();
 const WINHTTP_NO_PROXY_BYPASS          : *const u16        = ptr::null();
 const WINHTTP_NO_REFERER               : *const u16        = ptr::null();
 const WINHTTP_DEFAULT_ACCEPT_TYPES     : *const *const u16 = ptr::null();
-const WINHTTP_FLAG_SECURE              : u32               = 0x00800000;
+const WINHTTP_FLAG_SECURE              : u32               = 0x0080_0000;
 const WINHTTP_NO_ADDITIONAL_HEADERS    : *const u16        = ptr::null();
 const WINHTTP_NO_REQUEST_DATA          : *mut c_void       = ptr::null_mut();
 const WINHTTP_QUERY_STATUS_CODE        : u32               = 19;
-const WINHTTP_QUERY_FLAG_NUMBER        : u32               = 0x20000000;
+const WINHTTP_QUERY_FLAG_NUMBER        : u32               = 0x2000_0000;
 
 #[derive(Debug)]
 pub struct Response {
@@ -34,15 +37,15 @@ pub struct Response {
 }
 
 impl Response {
-    pub fn code(&self) -> u16 {
+    pub const fn code(&self) -> u16 {
         self.code
     }
 
-    pub fn is_success(&self) -> bool {
+    pub const fn is_success(&self) -> bool {
         self.code >= 200 && self.code < 300
     }
 
-    pub fn content(&self) -> &Vec<u8> {
+    pub const fn content(&self) -> &Vec<u8> {
         &self.content
     }
 
@@ -72,7 +75,7 @@ impl Url {
         url = url[proto_sep + 3..].to_owned();
 
         // Path
-        let slash_sep = url.find("/").unwrap_or(url.len());
+        let slash_sep = url.find('/').unwrap_or(url.len());
         let path = if slash_sep == url.len() {
             String::from("/")
         } else {
@@ -90,7 +93,7 @@ impl Url {
             None
         };
 
-        let mut parts = base.split(".").map(|s| s.to_owned()).collect::<Vec<String>>();
+        let mut parts = base.split('.').map(ToOwned::to_owned).collect::<Vec<String>>();
         
         // Tld
         let tld = parts.pop()?;
@@ -105,15 +108,11 @@ impl Url {
     }
 
     pub fn port(&self) -> u16 {
-        if let Some(port) = self.port {
-            port
-        } else {
-            match self.protocol.as_str() {
-                "http"  => 80,
-                "https" => 443,
-                _ => 0
-            }
-        }
+        self.port.unwrap_or(match self.protocol.as_str() {
+            "http"  => 80,
+            "https" => 443,
+            _ => 0
+        })
     }
 }
 
@@ -251,14 +250,14 @@ impl Request {
         }
 
         let mut status_code: u32 = 0;
-        let mut size = size_of::<u32>() as u32;
+        let mut size = u32::try_from(size_of::<u32>()).expect("UNREACHABLE");
         let query = unsafe {
             WinHttpQueryHeaders(
                 req,
                 WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
                 ptr::null(),
-                &mut status_code as *mut _ as *mut c_void,
-                &mut size,
+                (&raw mut status_code).cast(),
+                &raw mut size,
                 ptr::null_mut(),
             )
         };
@@ -271,9 +270,9 @@ impl Request {
             let ret = unsafe {
                 WinHttpReadData(
                     req,
-                    chunk.as_mut_ptr() as *mut c_void,
+                    chunk.as_mut_ptr().cast(),
                     4096,
-                    &mut read,
+                    &raw mut read,
                 )
             };
             if ret == 0 || read == 0 {
@@ -288,7 +287,8 @@ impl Request {
             WinHttpCloseHandle(session);
         }
 
-        Response { code: status_code as u16, content: buf }
+        let status_u16 = u16::try_from(status_code).expect("UNREACHABLE");
+        Response { code: status_u16, content: buf }
     }
 }
 
@@ -304,13 +304,13 @@ mod tests {
         let response = Request::new(url).unwrap().get();
         let string = String::from_utf8(response.content).unwrap();
         println!("Response code: {}", response.code);
-        assert!(!string.split(";").collect::<Vec<&str>>().is_empty())
+        assert!(string.split(';').next().is_some());
     }
 
     #[test]
     fn url_parse_test() {
         let string = "https://wttr.in/";
         let url = Url::new(string);
-        std::println!("{url:?}")
+        std::println!("{url:?}");
     }
 }

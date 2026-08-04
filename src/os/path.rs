@@ -26,14 +26,14 @@ impl Path {
     fn clear(self) -> Self {
         let inner = self.inner
             .replace('\\', "/")
-            .split("/")
+            .split('/')
             .filter(|x| !x.is_empty())
             .collect();
 
         Self { inner }
     }
 
-    pub fn as_str(&self) -> &String {
+    pub const fn as_str(&self) -> &String {
         &self.inner
     }
 
@@ -42,46 +42,48 @@ impl Path {
     }
 
     pub fn parts(&self) -> Vec<&str> {
-        self.inner.split("/").collect()
+        self.inner.split('/').collect()
     }
 
-    pub fn pop(&mut self) -> Option<&str> {
+    pub fn pop(&mut self) -> Option<String> {
         let mut parts = self.parts();
         if parts.len() <= 1 {
-            return None
+            return None;
         }
-        parts.pop()
+        let popped = parts.pop().map(String::from);
+        self.inner = parts.join("/");
+        popped
     }
 
-    pub fn join(&mut self, path: impl Into<Path>) {
+    pub fn join(&mut self, path: impl Into<Self>) {
         let mut parts = self.parts();
         let path = path.into();
         let path_parts = path.parts();
         parts.extend(path_parts);
-        self.inner = parts.join("/")
+        self.inner = parts.join("/");
     }
 }
 
 impl From<String> for Path {
     fn from(value: String) -> Self {
-        Path { inner: value }.clear()
+        Self { inner: value }.clear()
     }
 }
 
 impl From<&str> for Path {
     fn from(value: &str) -> Self {
-        Path { inner: value.to_owned() }.clear()
+        Self { inner: value.to_owned() }.clear()
     }
 }
 
 impl From<Vec<String>> for Path {
     fn from(value: Vec<String>) -> Self {
-        Path { inner: value.join("/") }.clear()
+        Self { inner: value.join("/") }.clear()
     }
 }
 
 impl From<Vec<&str>> for Path {
     fn from(value: Vec<&str>) -> Self {
-        Path { inner: value.join("/") }.clear()
+        Self { inner: value.join("/") }.clear()
     }
 }
