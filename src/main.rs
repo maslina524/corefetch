@@ -11,8 +11,7 @@ mod logo;
 use core::ffi::c_int;
 
 use crate::{
-    modules::*,
-    os::allocator::Allocator
+    logo::LogoInfo, modules::*, os::allocator::Allocator
 };
 
 extern crate alloc;
@@ -48,6 +47,15 @@ extern "C" fn main() -> c_int {
     println!("{:#?}", Processes::get());
     println!("{:#?}", Version::get());
     println!("{:#?}", Weather::get());
+
+    let lines = LogoInfo::new("Windows 7").get_ansi_lines();
+    for line in lines {
+        let (string, len) = line;
+        print!("{string}");
+        print!("{}", " ".repeat(40 - len));
+        println!("If `len` is calculated correctly, everything should be in one column")
+    }
+
     0
 }
 
