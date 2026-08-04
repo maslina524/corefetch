@@ -6,6 +6,7 @@ mod sync;
 mod os;
 mod modules;
 mod color;
+mod logo;
 
 use core::ffi::c_int;
 
