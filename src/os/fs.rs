@@ -3,10 +3,15 @@ use core::{
     ptr
 };
 
-use crate::os::{
-    error::{self, ErrorCode},
-    path::Path,
-    windows::{CreateFileW, HANDLE}
+use alloc::{
+    string::String,
+    vec::Vec
+};
+
+use crate::{
+    os::error::{self, ErrorCode},
+    os::path::Path,
+    os::windows::{CreateFileW, HANDLE, WriteFile}
 };
 
 const FILE_SHARE_READ      : u32         = 0x0001;
@@ -48,5 +53,45 @@ impl File {
         }
         
         Ok(Self(handle))
+    }
+
+    pub fn write(&self, buf: impl Into<Vec<u8>>) -> error::Result<()> {
+        let mut buf = buf.into();
+        let len = u32::try_from(buf.len()).expect("UNREACHABLE");
+        let mut written = 0;
+
+        // SAFETY: The handle is always correct, 
+        // errors are checked, the function is safe
+        let ret = unsafe {
+            WriteFile(
+                self.0, 
+                buf.as_mut_ptr(), 
+                len, 
+                &raw mut written, 
+                ptr::null_mut()
+            )
+        };
+        if ret == 0 || written != len {
+            return Err(ErrorCode::last());
+        }
+        
+        let written_usize = usize::try_from(written).expect("UNREACHABLE");
+        // SAFETY: WinAPI modifies data in `Vec<_>`, you must update the len
+        unsafe { buf.set_len(written_usize) };
+        
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::os::fs::{File, Access};
+  
+    extern crate std;
+
+    #[test]
+    fn write_file_test() {
+        let file = File::open("test.txt", Access::Write).unwrap();
+        let _ = file.write("Hello World!");
     }
 }

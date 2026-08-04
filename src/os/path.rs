@@ -5,7 +5,7 @@ use alloc::{
 };
 
 use crate::{
-    os::encoding::utf8_to_utf16le,
+    os::encoding::wide,
     os::error
 };
 
@@ -38,7 +38,7 @@ impl Path {
     }
 
     pub fn as_utf16le_str(&self) -> error::Result<Vec<u16>> {
-        utf8_to_utf16le(&self.inner)
+        wide(&self.inner)
     }
 
     pub fn parts(&self) -> Vec<&str> {
