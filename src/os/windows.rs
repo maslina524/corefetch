@@ -19,6 +19,7 @@ macro_rules! link {
 }
 
 link!("kernel32" "system" fn CloseHandle(hobject : HANDLE) -> BOOL);
+link!("kernel32" "system" fn CreateFileW(lpfilename : PCWSTR, dwdesiredaccess : u32, dwsharemode : FILE_SHARE_MODE, lpsecurityattributes : *const SECURITY_ATTRIBUTES, dwcreationdisposition : FILE_CREATION_DISPOSITION, dwflagsandattributes : FILE_FLAGS_AND_ATTRIBUTES, htemplatefile : HANDLE) -> HANDLE);
 link!("kernel32" "system" fn CreateToolhelp32Snapshot(dwflags : CREATE_TOOLHELP_SNAPSHOT_FLAGS, th32processid : u32) -> HANDLE);
 link!("kernel32" "system" fn ExitProcess(uexitcode : u32) -> !);
 link!("kernel32" "system" fn FormatMessageW(dwflags : FORMAT_MESSAGE_OPTIONS, lpsource : *const core::ffi::c_void, dwmessageid : u32, dwlanguageid : u32, lpbuffer : PWSTR, nsize : u32, arguments : *const *const i8) -> u32);
@@ -46,6 +47,9 @@ link!("winhttp" "system" fn WinHttpSetOption(hinternet : *const core::ffi::c_voi
 link!("kernel32" "system" fn WriteFile(hfile : HANDLE, lpbuffer : *const u8, nnumberofbytestowrite : u32, lpnumberofbyteswritten : *mut u32, lpoverlapped : *mut OVERLAPPED) -> BOOL);
 pub type BOOL = i32;
 pub type CREATE_TOOLHELP_SNAPSHOT_FLAGS = u32;
+pub type FILE_CREATION_DISPOSITION = u32;
+pub type FILE_FLAGS_AND_ATTRIBUTES = u32;
+pub type FILE_SHARE_MODE = u32;
 pub type FORMAT_MESSAGE_OPTIONS = u32;
 pub type HANDLE = *mut core::ffi::c_void;
 pub type HEAP_FLAGS = u32;
@@ -123,6 +127,19 @@ impl Default for PROCESSENTRY32 {
 }
 pub type PSTR = *mut u8;
 pub type PWSTR = *mut u16;
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct SECURITY_ATTRIBUTES {
+    pub nLength: u32,
+    pub lpSecurityDescriptor: *mut core::ffi::c_void,
+    pub bInheritHandle: BOOL,
+}
+impl Default for SECURITY_ATTRIBUTES {
+    fn default() -> Self {
+        // SAFETY: All types are guaranteed to be zeroable
+		unsafe { core::mem::zeroed() }
+    }
+}
 pub type STD_HANDLE = u32;
 pub type WIN32_ERROR = u32;
 pub type WINHTTP_ACCESS_TYPE = u32;
