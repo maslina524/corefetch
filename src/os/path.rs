@@ -1,3 +1,8 @@
+use core::{
+    ptr,
+    slice
+};
+
 use alloc::{
     string::String,
     vec::Vec,
@@ -6,8 +11,14 @@ use alloc::{
 
 use crate::{
     os::encoding::wide,
-    os::error
+    os::error,
+    os::windows::{SHGetKnownFolderPath, GUID},
+    os::encoding::utf16le_to_utf8
 };
+
+const FOLDERID_LOCALAPPDATA: GUID = GUID::from_u128(
+    0xF1B32785_6FBA_4FCF_9D55_7B8E7F157091
+);
 
 #[repr(transparent)]
 pub struct Path {
@@ -19,6 +30,35 @@ impl Path {
         Self { inner: String::new() }
     }
 
+    pub fn local() -> Self {
+        let mut path_ptr = ptr::null_mut();
+
+        // SAFETY: Completely safe
+        let ret = unsafe {
+            SHGetKnownFolderPath(
+                &FOLDERID_LOCALAPPDATA, 
+                0, 
+                ptr::null_mut(), 
+                &raw mut path_ptr
+            )
+        };
+        assert!(ret == 0, "Failed to get the path to AppData/Local");
+
+        let mut len = 0;
+        // SAFETY: The string is located at the pointer and up to the null byte, 
+        // everything is safe
+        while unsafe { path_ptr.add(len).read() } != 0 {
+            len += 1;
+        }
+
+        // SAFETY: Between `path_ptr..path_ptr + len` there is a string
+        let slice = unsafe { slice::from_raw_parts(path_ptr, len) };
+        let len_isize = isize::try_from(len).expect("UNREACHABLE");
+        let inner = utf16le_to_utf8(slice, len_isize).expect("UNREACHABLE");
+
+        Self::from(inner)
+    }
+
     pub fn with_capacity(cap: usize) -> Self {
         Self { inner: String::with_capacity(cap) }
     }
@@ -28,7 +68,13 @@ impl Path {
             .replace('\\', "/")
             .split('/')
             .filter(|x| !x.is_empty())
-            .collect();
+            .fold(String::new(), |mut acc, s| {
+                if !acc.is_empty() {
+                    acc.push('/');
+                }
+                acc.push_str(s);
+                acc
+            });
 
         Self { inner }
     }
@@ -85,5 +131,22 @@ impl From<Vec<String>> for Path {
 impl From<Vec<&str>> for Path {
     fn from(value: Vec<&str>) -> Self {
         Self { inner: value.join("/") }.clear()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use alloc::string::String;
+
+    use crate::os::path::Path;
+  
+    extern crate std;
+
+    #[test]
+    fn get_local_test() {
+        let local = Path::local();
+        let string = local.as_str();
+        println!("{string}");
+        assert!(string.ends_with("/AppData/Local"));
     }
 }

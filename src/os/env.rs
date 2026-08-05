@@ -77,6 +77,7 @@ pub fn os_version() -> OsVersion {
         _ => ""
     }.to_owned();
 
+    // TODO: Variant not impl
     let variant = "Home".to_owned();
 
     OsVersion { sysname, name, version, codename, variant }
