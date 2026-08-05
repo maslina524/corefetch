@@ -264,7 +264,7 @@ impl Request {
         }
 
         let mut status_code: u32 = 0;
-        let mut size = u32::try_from(size_of::<u32>()).expect("UNREACHABLE");
+        let mut size = size_of::<u32>() as u32;
         // SAFETY: Parameters are fully correct, return value is checked
         let query = unsafe {
             WinHttpQueryHeaders(
@@ -304,7 +304,7 @@ impl Request {
             WinHttpCloseHandle(session);
         }
 
-        let status_u16 = u16::try_from(status_code).expect("UNREACHABLE");
+        let status_u16 = status_code as u16;
         Response { code: status_u16, content: buf }
     }
 }

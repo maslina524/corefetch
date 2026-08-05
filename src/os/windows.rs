@@ -28,6 +28,7 @@ link!("kernel32" "system" fn GetLastError() -> WIN32_ERROR);
 link!("kernel32" "system" fn GetLocaleInfoEx(lplocalename : PCWSTR, lctype : u32, lplcdata : PWSTR, cchdata : i32) -> i32);
 link!("kernel32" "system" fn GetProcessHeap() -> HANDLE);
 link!("kernel32" "system" fn GetStdHandle(nstdhandle : STD_HANDLE) -> HANDLE);
+link!("kernel32" "system" fn GetSystemTimeAsFileTime(lpsystemtimeasfiletime : *mut FILETIME));
 link!("kernel32" "system" fn HeapAlloc(hheap : HANDLE, dwflags : HEAP_FLAGS, dwbytes : usize) -> *mut core::ffi::c_void);
 link!("kernel32" "system" fn HeapFree(hheap : HANDLE, dwflags : HEAP_FLAGS, lpmem : *const core::ffi::c_void) -> BOOL);
 link!("kernel32" "system" fn MultiByteToWideChar(codepage : u32, dwflags : MULTI_BYTE_TO_WIDE_CHAR_FLAGS, lpmultibytestr : PCSTR, cbmultibyte : i32, lpwidecharstr : PWSTR, cchwidechar : i32) -> i32);
@@ -50,6 +51,12 @@ link!("winhttp" "system" fn WinHttpSetOption(hinternet : *const core::ffi::c_voi
 link!("kernel32" "system" fn WriteFile(hfile : HANDLE, lpbuffer : *const u8, nnumberofbytestowrite : u32, lpnumberofbyteswritten : *mut u32, lpoverlapped : *mut OVERLAPPED) -> BOOL);
 pub type BOOL = i32;
 pub type CREATE_TOOLHELP_SNAPSHOT_FLAGS = u32;
+#[repr(C)]
+#[derive(Clone, Copy, Default)]
+pub struct FILETIME {
+    pub dwLowDateTime: u32,
+    pub dwHighDateTime: u32,
+}
 pub type FILE_CREATION_DISPOSITION = u32;
 pub type FILE_FLAGS_AND_ATTRIBUTES = u32;
 pub type FILE_SHARE_MODE = u32;

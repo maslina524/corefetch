@@ -63,7 +63,7 @@ pub fn write(handle: isize, s: &str) {
         if ret == 0 { ErrorCode::last().panic(); }
     }
     let mut written = 0;
-    let len = u32::try_from(s.len()).expect("UNREACHABLE");
+    let len = s.len() as u32;
     
     // SAFETY: The handle is always correct, 
     // errors are checked, the function is safe

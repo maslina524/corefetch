@@ -28,12 +28,12 @@ impl Locale {
                 LOCALE_NAME_USER_DEFAULT, 
                 LOCALE_SNAME, 
                 buf.as_mut_ptr() , 
-                i32::try_from(LOCALE_NAME_MAX_LENGTH).expect("UNREACHABLE")
+                LOCALE_NAME_MAX_LENGTH as i32
             )
         };
         if len == 0 { ErrorCode::last().panic(); }
 
-        let len_usize = usize::try_from(len).expect("UNREACHABLE");
+        let len_usize = len as usize;
         let result = String::from_utf16_lossy(&buf[..len_usize]).rsplit('\0').collect();
 
         Self { result }

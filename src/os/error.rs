@@ -51,7 +51,7 @@ impl Display for ErrorCode {
             )
         };
 
-        let len_isize = isize::try_from(len).expect("UNREACHABLE");
+        let len_isize = len as isize;
         let utf8 = utf16le_to_utf8(&buf, len_isize)
             .expect("WinAPI passed an invalid UTF-16LE string");
 
