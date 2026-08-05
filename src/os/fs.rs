@@ -181,11 +181,22 @@ pub fn create_dir(path: impl Into<Path>) -> error::Result<()> {
     Ok(())
 }
 
+pub fn create_dirs(path: impl Into<Path>) -> error::Result<()> {
+    let path = path.into();
+    if !path.exists() {
+        if let Some(parent) = path.parent() {
+            create_dirs(parent)?;
+        }
+        create_dir(path)?;
+    }
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use alloc::string::String;
 
-    use crate::os::fs::{Access, File, read_to_string};
+    use crate::os::fs::{self, Access, File};
   
     extern crate std;
 
@@ -206,7 +217,12 @@ mod tests {
 
     #[test]
     fn read_to_string_test() {
-        let string = read_to_string("README.md").unwrap();
+        let string = fs::read_to_string("README.md").unwrap();
         assert!(string.starts_with("# Nofetch"));
+    }
+
+    #[test]
+    fn create_dirs_test() {
+        fs::create_dirs("a/b/c/d").expect("ErrorCode");
     }
 }

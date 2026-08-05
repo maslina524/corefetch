@@ -21,6 +21,7 @@ const FOLDERID_LOCALAPPDATA: GUID = GUID::from_u128(
 );
 
 #[repr(transparent)]
+#[derive(Clone)]
 pub struct Path {
     inner: String
 }
@@ -127,6 +128,12 @@ impl Path {
         };
         ret == 1
     }
+
+    pub fn parent(&self) -> Option<Self> {
+        let mut clone = self.clone();
+        clone.pop()?;
+        Some(clone)
+    }
 }
 
 impl From<String> for Path {
@@ -150,6 +157,12 @@ impl From<Vec<String>> for Path {
 impl From<Vec<&str>> for Path {
     fn from(value: Vec<&str>) -> Self {
         Self { inner: value.join("/") }.clear()
+    }
+}
+
+impl From<&Self> for Path {
+    fn from(value: &Self) -> Self {
+        Self { inner: value.as_str().to_owned() }.clear()
     }
 }
 
