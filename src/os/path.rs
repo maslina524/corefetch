@@ -12,7 +12,7 @@ use alloc::{
 use crate::{
     os::encoding::wide,
     os::error,
-    os::windows::{SHGetKnownFolderPath, GUID},
+    os::windows::{GUID, SHGetKnownFolderPath, PathFileExistsW},
     os::encoding::utf16le_to_utf8
 };
 
@@ -91,7 +91,7 @@ impl Path {
         &self.inner
     }
 
-    pub fn as_utf16le_str(&self) -> error::Result<Vec<u16>> {
+    pub fn as_wide_str(&self) -> error::Result<Vec<u16>> {
         wide(&self.inner)
     }
 
@@ -115,6 +115,17 @@ impl Path {
         let path_parts = path.parts();
         parts.extend(path_parts);
         Self::from(parts)
+    }
+    
+    pub fn exists(&self) -> bool {
+        let Ok(path_wide) = self.as_wide_str() else {
+            return false;
+        };
+        // SAFETY: Completely safe
+        let ret = unsafe {
+            PathFileExistsW(path_wide.as_ptr())
+        };
+        ret == 1
     }
 }
 

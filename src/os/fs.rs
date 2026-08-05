@@ -64,7 +64,7 @@ pub struct File(FileHandle);
 impl File {
     pub fn open(path: impl Into<Path>, access: Access) -> error::Result<Self> {
         let path = path.into();
-        let path_wide = path.as_utf16le_str()?;
+        let path_wide = path.as_wide_str()?;
 
         // SAFETY: Parameters are fully correct, return value is checked
         let handle = unsafe {
@@ -165,7 +165,7 @@ pub fn read_to_string(path: impl Into<Path>) -> Result<String, ReadError> {
 
 pub fn create_dir(path: impl Into<Path>) -> error::Result<()> {
     let path = path.into();
-    let path_wide = path.as_utf16le_str()?;
+    let path_wide = path.as_wide_str()?;
 
     // SAFETY: Parameters are fully correct, return value is checked
     let ret = unsafe {
