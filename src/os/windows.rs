@@ -33,6 +33,7 @@ link!("kernel32" "system" fn GetSystemTimeAsFileTime(lpsystemtimeasfiletime : *m
 link!("kernel32" "system" fn HeapAlloc(hheap : HANDLE, dwflags : HEAP_FLAGS, dwbytes : usize) -> *mut core::ffi::c_void);
 link!("kernel32" "system" fn HeapFree(hheap : HANDLE, dwflags : HEAP_FLAGS, lpmem : *const core::ffi::c_void) -> BOOL);
 link!("kernel32" "system" fn MultiByteToWideChar(codepage : u32, dwflags : MULTI_BYTE_TO_WIDE_CHAR_FLAGS, lpmultibytestr : PCSTR, cbmultibyte : i32, lpwidecharstr : PWSTR, cchwidechar : i32) -> i32);
+link!("shlwapi" "system" fn PathFileExistsW(pszpath : PCWSTR) -> BOOL);
 link!("kernel32" "system" fn Process32First(hsnapshot : HANDLE, lppe : *mut PROCESSENTRY32) -> BOOL);
 link!("kernel32" "system" fn Process32Next(hsnapshot : HANDLE, lppe : *mut PROCESSENTRY32) -> BOOL);
 link!("kernel32" "system" fn ReadFile(hfile : HANDLE, lpbuffer : *mut u8, nnumberofbytestoread : u32, lpnumberofbytesread : *mut u32, lpoverlapped : *mut OVERLAPPED) -> BOOL);
