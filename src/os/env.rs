@@ -10,11 +10,17 @@ use alloc::{
 
 use crate::os::{
     error::{self, ErrorCode},
-    windows::{OSVERSIONINFOW, PROCESSENTRY32, RtlGetVersion, CreateToolhelp32Snapshot, Process32First, Process32Next}
+    windows::{
+        OSVERSIONINFOW, PROCESSENTRY32, FILETIME, RtlGetVersion,
+        CreateToolhelp32Snapshot, Process32First, Process32Next, GetSystemTimeAsFileTime
+    }
 };
 
-const TH32CS_SNAPPROCESS: u32 = 0x0002;
-const INVALID_HANDLE: *mut c_void = (-1isize).cast_unsigned() as *mut c_void;
+const TH32CS_SNAPPROCESS   : u32         = 0x0002;
+const INVALID_HANDLE       : *mut c_void = (-1isize).cast_unsigned() as *mut c_void;
+const TIME_ZONE_ID_INVALID : u32         = u32::MAX;
+const TIME_ZONE_ID_DAYLIGHT: u32         = 2;
+const EPOCH_DIFF           : u64         = 116_444_736_000_000_000;
 
 pub struct OsVersion {
     pub sysname: String,
@@ -91,7 +97,7 @@ pub fn processes_count() -> usize {
     if snapshot == INVALID_HANDLE { ErrorCode::last().panic(); }
 
     let mut pe = PROCESSENTRY32 {
-        dwSize: u32::try_from(mem::size_of::<PROCESSENTRY32>()).expect("UNREACHABLE"),
+        dwSize: mem::size_of::<PROCESSENTRY32>() as u32,
         ..Default::default()
     };
 
@@ -113,4 +119,41 @@ pub fn processes_count() -> usize {
     }
 
     count
+}
+
+pub fn timestamp_secs() -> u64 {
+    let mut info = FILETIME::default();
+
+    // SAFETY: Completely safe
+    unsafe {
+        GetSystemTimeAsFileTime(&raw mut info);
+    };
+
+    let uli = ((info.dwHighDateTime as u64) << 32) | (info.dwLowDateTime as u64);
+    (uli - EPOCH_DIFF) / 10_000_000
+}
+
+pub fn timestamp_mins() -> u64 {
+    timestamp_secs() / 60
+}
+
+pub fn timestamp_hours() -> u64 {
+    timestamp_secs() / 3600
+}
+
+#[cfg(test)]
+mod tests {
+    use alloc::string::String;
+
+    use crate::os::env;
+  
+    extern crate std;
+
+    #[test]
+    fn timestamp_secs_test() {
+        for _ in 0..100_000 {
+            let timestamp = env::timestamp_secs();
+            println!("{timestamp}");
+        }
+    }
 }
