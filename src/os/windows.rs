@@ -35,6 +35,7 @@ link!("kernel32" "system" fn Process32First(hsnapshot : HANDLE, lppe : *mut PROC
 link!("kernel32" "system" fn Process32Next(hsnapshot : HANDLE, lppe : *mut PROCESSENTRY32) -> BOOL);
 link!("kernel32" "system" fn ReadFile(hfile : HANDLE, lpbuffer : *mut u8, nnumberofbytestoread : u32, lpnumberofbytesread : *mut u32, lpoverlapped : *mut OVERLAPPED) -> BOOL);
 link!("ntdll" "system" fn RtlGetVersion(lpversioninformation : *mut OSVERSIONINFOW) -> NTSTATUS);
+link!("shell32" "system" fn SHGetKnownFolderPath(rfid : *const GUID, dwflags : u32, htoken : HANDLE, ppszpath : *mut PWSTR) -> HRESULT);
 link!("kernel32" "system" fn SetConsoleOutputCP(wcodepageid : u32) -> BOOL);
 link!("kernel32" "system" fn WideCharToMultiByte(codepage : u32, dwflags : u32, lpwidecharstr : PCWSTR, cchwidechar : i32, lpmultibytestr : PSTR, cbmultibyte : i32, lpdefaultchar : PCSTR, lpuseddefaultchar : *mut BOOL) -> i32);
 link!("winhttp" "system" fn WinHttpCloseHandle(hinternet : *mut core::ffi::c_void) -> BOOL);
@@ -53,8 +54,28 @@ pub type FILE_CREATION_DISPOSITION = u32;
 pub type FILE_FLAGS_AND_ATTRIBUTES = u32;
 pub type FILE_SHARE_MODE = u32;
 pub type FORMAT_MESSAGE_OPTIONS = u32;
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct GUID {
+    pub data1: u32,
+    pub data2: u16,
+    pub data3: u16,
+    pub data4: [u8; 8],
+}
+impl GUID {
+    pub const fn from_u128(uuid: u128) -> Self {
+        Self {
+            data1: (uuid >> 96) as u32,
+            data2: (uuid >> 80 & 0xffff) as u16,
+            data3: (uuid >> 64 & 0xffff) as u16,
+            data4: ((uuid & 0xFFFF_FFFF_FFFF_FFFF) as u64).to_be_bytes(),
+        }
+    }
+}
 pub type HANDLE = *mut core::ffi::c_void;
 pub type HEAP_FLAGS = u32;
+pub type HRESULT = i32;
+pub type KNOWN_FOLDER_FLAG = i32;
 pub type MULTI_BYTE_TO_WIDE_CHAR_FLAGS = u32;
 pub type NTSTATUS = i32;
 #[repr(C)]
