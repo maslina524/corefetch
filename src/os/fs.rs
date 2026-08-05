@@ -18,9 +18,11 @@ use crate::{
 };
 
 const FILE_SHARE_READ      : u32         = 0x0001;
-const OPEN_EXISTING        : u32         = 0x0003;
 const FILE_ATTRIBUTE_NORMAL: u32         = 0x0080;
 const INVALID_HANDLE       : *mut c_void = (-1isize).cast_unsigned() as *mut c_void;
+const CREATE_NEW           : u32         = 0x0001;
+const CREATE_ALWAYS        : u32         = 0x0002;
+const OPEN_EXISTING        : u32         = 0x0003;
 
 pub type FileHandle = HANDLE;
 
@@ -63,6 +65,18 @@ pub struct File(FileHandle);
 
 impl File {
     pub fn open(path: impl Into<Path>, access: Access) -> error::Result<Self> {
+        Self::create_with_cd(path, access, OPEN_EXISTING)
+    }
+
+    pub fn create_new(path: impl Into<Path>, access: Access) -> error::Result<Self> {
+        Self::create_with_cd(path, access, CREATE_NEW)
+    }
+
+    pub fn create_always(path: impl Into<Path>, access: Access) -> error::Result<Self> {
+        Self::create_with_cd(path, access, CREATE_ALWAYS)
+    }
+
+    fn create_with_cd(path: impl Into<Path>, access: Access, cd: u32) -> error::Result<Self> {
         let path = path.into();
         let path_wide = path.as_wide_str()?;
 
@@ -73,7 +87,7 @@ impl File {
                 access as u32, 
                 FILE_SHARE_READ, 
                 ptr::null(), 
-                OPEN_EXISTING, 
+                cd, 
                 FILE_ATTRIBUTE_NORMAL, 
                 ptr::null_mut()
             )
