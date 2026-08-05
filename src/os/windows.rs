@@ -19,6 +19,7 @@ macro_rules! link {
 }
 
 link!("kernel32" "system" fn CloseHandle(hobject : HANDLE) -> BOOL);
+link!("kernel32" "system" fn CreateDirectoryW(lppathname : PCWSTR, lpsecurityattributes : *const SECURITY_ATTRIBUTES) -> BOOL);
 link!("kernel32" "system" fn CreateFileW(lpfilename : PCWSTR, dwdesiredaccess : u32, dwsharemode : FILE_SHARE_MODE, lpsecurityattributes : *const SECURITY_ATTRIBUTES, dwcreationdisposition : FILE_CREATION_DISPOSITION, dwflagsandattributes : FILE_FLAGS_AND_ATTRIBUTES, htemplatefile : HANDLE) -> HANDLE);
 link!("kernel32" "system" fn CreateToolhelp32Snapshot(dwflags : CREATE_TOOLHELP_SNAPSHOT_FLAGS, th32processid : u32) -> HANDLE);
 link!("kernel32" "system" fn ExitProcess(uexitcode : u32) -> !);

@@ -11,7 +11,10 @@ use alloc::{
 use crate::{
     os::error::{self, ErrorCode},
     os::path::Path,
-    os::windows::{CreateFileW, HANDLE, WriteFile, ReadFile, GetFileSizeEx, CloseHandle}
+    os::windows::{
+        CreateFileW, HANDLE, WriteFile, ReadFile,
+        GetFileSizeEx, CloseHandle, CreateDirectoryW
+    }
 };
 
 const FILE_SHARE_READ      : u32         = 0x0001;
@@ -158,6 +161,24 @@ pub fn read_to_string(path: impl Into<Path>) -> Result<String, ReadError> {
     let bytes = handler.read()?;
     let string = String::from_utf8(bytes)?;
     Ok(string)
+}
+
+pub fn create_dir(path: impl Into<Path>) -> error::Result<()> {
+    let path = path.into();
+    let path_wide = path.as_utf16le_str()?;
+
+    // SAFETY: Parameters are fully correct, return value is checked
+    let ret = unsafe {
+        CreateDirectoryW(
+            path_wide.as_ptr(),
+            ptr::null()
+        )
+    };
+    if ret == 0 {
+        return Err(ErrorCode::last());
+    }
+
+    Ok(())
 }
 
 #[cfg(test)]

@@ -59,6 +59,14 @@ impl Path {
         Self::from(inner)
     }
 
+    pub fn nofetch() -> Self {
+        Self::local().join("nofetch")
+    }
+
+    pub fn cache() -> Self {
+        Self::local().join("nofetch").join("cache")
+    }
+
     pub fn with_capacity(cap: usize) -> Self {
         Self { inner: String::with_capacity(cap) }
     }
@@ -101,12 +109,12 @@ impl Path {
         popped
     }
 
-    pub fn join(&mut self, path: impl Into<Self>) {
+    pub fn join(&self, path: impl Into<Self>) -> Self {
         let mut parts = self.parts();
         let path = path.into();
         let path_parts = path.parts();
         parts.extend(path_parts);
-        self.inner = parts.join("/");
+        Self::from(parts)
     }
 }
 
