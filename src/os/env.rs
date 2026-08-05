@@ -15,7 +15,7 @@ use crate::os::{
     windows::{
         OSVERSIONINFOW, PROCESSENTRY32, FILETIME, RtlGetVersion,
         CreateToolhelp32Snapshot, Process32First, Process32Next, GetSystemTimeAsFileTime,
-        CommandLineToArgvW, GetCommandLineW
+        CommandLineToArgvW, GetCommandLineW, CloseHandle
     }
 };
 
@@ -97,7 +97,9 @@ pub fn processes_count() -> usize {
     let snapshot = unsafe {
         CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0)
     };
-    if snapshot == INVALID_HANDLE { ErrorCode::last().panic(); }
+    if snapshot == INVALID_HANDLE {
+        ErrorCode::last().panic();
+    }
 
     let mut pe = PROCESSENTRY32 {
         dwSize: mem::size_of::<PROCESSENTRY32>() as u32,
@@ -109,6 +111,7 @@ pub fn processes_count() -> usize {
     let first = unsafe {
         Process32First(snapshot, &raw mut pe)
     };
+    
     if first == 1 {
         count += 1;
         loop {
@@ -116,11 +119,16 @@ pub fn processes_count() -> usize {
             let next = unsafe {
                 Process32Next(snapshot, &raw mut pe)
             };
-            if next == 0 { break; }
+            if next == 0 {
+                break;
+            }
             count += 1;
         }
     }
 
+    // SAFETY: Completely safe
+    unsafe { CloseHandle(snapshot); }
+    
     count
 }
 
