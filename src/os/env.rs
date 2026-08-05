@@ -1,18 +1,21 @@
 use core::{
     ffi::c_void,
-    mem
+    mem,
+    slice
 };
 
 use alloc::{
     string::String,
-    borrow::ToOwned
+    borrow::ToOwned,
+    vec::Vec
 };
 
 use crate::os::{
     error::{self, ErrorCode},
     windows::{
         OSVERSIONINFOW, PROCESSENTRY32, FILETIME, RtlGetVersion,
-        CreateToolhelp32Snapshot, Process32First, Process32Next, GetSystemTimeAsFileTime
+        CreateToolhelp32Snapshot, Process32First, Process32Next, GetSystemTimeAsFileTime,
+        CommandLineToArgvW, GetCommandLineW
     }
 };
 
@@ -141,6 +144,40 @@ pub fn timestamp_hours() -> u64 {
     timestamp_secs() / 3600
 }
 
+pub fn args() -> Vec<String> {
+    // SAFETY: Completely safe
+    let ptr = unsafe { GetCommandLineW() };
+    let mut argv_count = 0;
+
+    // SAFETY: Just a WinAPI function,
+    // I don't know what to write, it's safe
+    let mut argv_ptrs = unsafe {
+        CommandLineToArgvW(
+            ptr, 
+            &raw mut argv_count
+        )
+    };
+
+    let mut ret = Vec::new();
+    for i in 0..argv_count {
+        // SAFETY: Moving strictly within the allocated memory by WinAPI
+        let start_ptr = unsafe { *argv_ptrs.add(i as usize) };
+
+        let mut len = 0;
+        // SAFETY: Moving until the end of the allocated string
+        while unsafe { *start_ptr.add(len) } != 0 {
+            len += 1;
+        }
+
+        // SAFETY: All parameters were correctly calculated earlier.
+        let slice = unsafe { slice::from_raw_parts(start_ptr, len) };
+        let string = String::from_utf16_lossy(slice);
+        ret.push(string);
+    }
+
+    ret
+}
+
 #[cfg(test)]
 mod tests {
     use alloc::string::String;
@@ -155,5 +192,14 @@ mod tests {
             let timestamp = env::timestamp_secs();
             println!("{timestamp}");
         }
+    }
+
+    #[test]
+    fn args_test() {
+        let args = env::args();
+        println!("{args:?}");
+
+        assert!(!args.is_empty());
+        assert!(args[0].contains("nofetch"));
     }
 }
