@@ -4,7 +4,7 @@ use core::{
 };
 
 use alloc::{
-    string::String,
+    string::{String, FromUtf8Error},
     vec::Vec
 };
 
@@ -27,6 +27,33 @@ pub enum Access {
     Write     = 0x4000_0000,
     ReadWrite = 0x8000_0000 | 0x4000_0000,
     All       = 0x1000_0000
+}
+
+#[derive(Debug)]
+pub enum ReadError {
+    Utf8(FromUtf8Error),
+    Code(ErrorCode),
+}
+
+impl From<FromUtf8Error> for ReadError {
+    fn from(err: FromUtf8Error) -> Self {
+        Self::Utf8(err)
+    }
+}
+
+impl From<ErrorCode> for ReadError {
+    fn from(err: ErrorCode) -> Self {
+        Self::Code(err)
+    }
+}
+
+impl core::fmt::Display for ReadError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        match self {
+            Self::Utf8(s) => write!(f, "Utf8Error: {s}"),
+            Self::Code(s) => write!(f, "ErrorCode: {s}"),
+        }
+    }
 }
 
 pub struct File(FileHandle);
@@ -120,11 +147,24 @@ impl Drop for File {
     }
 }
 
+pub fn read(path: impl Into<Path>) -> error::Result<Vec<u8>> {
+    let handler = File::open(path, Access::Read)?;
+    let bytes = handler.read()?;
+    Ok(bytes)
+}
+
+pub fn read_to_string(path: impl Into<Path>) -> Result<String, ReadError> {
+    let handler = File::open(path, Access::Read)?;
+    let bytes = handler.read()?;
+    let string = String::from_utf8(bytes)?;
+    Ok(string)
+}
+
 #[cfg(test)]
 mod tests {
     use alloc::string::String;
 
-    use crate::os::fs::{File, Access};
+    use crate::os::fs::{Access, File, read_to_string};
   
     extern crate std;
 
@@ -140,6 +180,12 @@ mod tests {
         let buf = file.read().unwrap();
         let string = String::from_utf8(buf).unwrap();
 
+        assert!(string.starts_with("# Nofetch"));
+    }
+
+    #[test]
+    fn read_to_string_test() {
+        let string = read_to_string("README.md").unwrap();
         assert!(string.starts_with("# Nofetch"));
     }
 }
