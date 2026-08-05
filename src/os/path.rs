@@ -53,7 +53,7 @@ impl Path {
 
         // SAFETY: Between `path_ptr..path_ptr + len` there is a string
         let slice = unsafe { slice::from_raw_parts(path_ptr, len) };
-        let len_isize = isize::try_from(len).expect("UNREACHABLE");
+        let len_isize = len as isize;
         let inner = utf16le_to_utf8(slice, len_isize).expect("UNREACHABLE");
 
         Self::from(inner)

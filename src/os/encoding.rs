@@ -26,7 +26,7 @@ pub fn utf16le_to_utf8(
             CP_UTF8, 
             0, 
             src.as_ptr(), 
-            i32::try_from(len).expect("UNREACHABLE"), 
+            len as i32, 
             ptr::null_mut(), 
             0, 
             ptr::null(), 
@@ -37,7 +37,7 @@ pub fn utf16le_to_utf8(
         return Err(ErrorCode::last()) 
     }
 
-    let size_usize = usize::try_from(size).expect("UNREACHABLE");
+    let size_usize = size as usize;
     let mut buf = Vec::with_capacity(size_usize);
 
     // SAFETY: Just a WinAPI function, the return value is checked
@@ -46,7 +46,7 @@ pub fn utf16le_to_utf8(
             CP_UTF8, 
             0, 
             src.as_ptr(), 
-            i32::try_from(len).expect("UNREACHABLE"), 
+            len as i32, 
             buf.as_mut_ptr(), 
             size, 
             ptr::null(), 
@@ -57,7 +57,7 @@ pub fn utf16le_to_utf8(
         return Err(ErrorCode::last()) 
     }
     
-    let ret_usize = usize::try_from(ret).expect("UNREACHABLE");
+    let ret_usize = ret as usize;
 
     // SAFETY: WinAPI modifies data in `Vec<_>`, you must update the len
     unsafe { buf.set_len(ret_usize) };
@@ -77,7 +77,7 @@ pub fn utf8_to_utf16le(src: impl Into<String>) -> error::Result<Vec<u16>> {
             CP_UTF8, 
             0, 
             src.as_ptr(), 
-            i32::try_from(src.len()).expect("UNREACHABLE"), 
+            src.len() as i32, 
             ptr::null_mut(), 
             0,
         ) 
@@ -86,7 +86,7 @@ pub fn utf8_to_utf16le(src: impl Into<String>) -> error::Result<Vec<u16>> {
         return Err(ErrorCode::last()) 
     }
 
-    let size_usize = usize::try_from(size).expect("UNREACHABLE");
+    let size_usize = size as usize;
     let mut buf = Vec::with_capacity(size_usize);
 
     // SAFETY: Just a WinAPI function, the return value is checked
@@ -95,7 +95,7 @@ pub fn utf8_to_utf16le(src: impl Into<String>) -> error::Result<Vec<u16>> {
             CP_UTF8, 
             0, 
             src.as_ptr(), 
-            i32::try_from(src.len()).expect("UNREACHABLE"), 
+            src.len() as i32, 
             buf.as_mut_ptr(), 
             size
         ) 
@@ -104,9 +104,8 @@ pub fn utf8_to_utf16le(src: impl Into<String>) -> error::Result<Vec<u16>> {
         return Err(ErrorCode::last()) 
     }
     
-    let ret_usize = usize::try_from(ret).expect("UNREACHABLE");
+    let ret_usize = ret as usize;
     // SAFETY: WinAPI modifies data in `Vec<_>`, you must update the len
-
     unsafe { buf.set_len(ret_usize) };
     Ok(buf)
 }

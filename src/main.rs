@@ -11,6 +11,10 @@
 #![allow(unused)]
 #![allow(clippy::struct_field_names)]
 #![allow(clippy::too_many_lines)]
+#![allow(clippy::cast_lossless)]
+#![allow(clippy::cast_possible_truncation)]
+#![allow(clippy::cast_possible_wrap)]
+#![allow(clippy::cast_sign_loss)]
 
 mod sync;
 mod os;
@@ -51,7 +55,7 @@ mod panic_impl {
     }
 }
 
-// #[cfg(not(test))]
+#[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
     println!("{}",    Colors::get());

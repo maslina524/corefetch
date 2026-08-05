@@ -84,7 +84,7 @@ impl File {
 
     pub fn write(&self, buf: impl Into<Vec<u8>>) -> error::Result<()> {
         let mut buf = buf.into();
-        let len = u32::try_from(buf.len()).expect("UNREACHABLE");
+        let len = buf.len() as u32;
         let mut written = 0;
 
         // SAFETY: The handle is always correct, 
@@ -102,7 +102,7 @@ impl File {
             return Err(ErrorCode::last());
         }
         
-        let written_usize = usize::try_from(written).expect("UNREACHABLE");
+        let written_usize = written as usize;
         // SAFETY: WinAPI modifies data in `Vec<_>`, you must update the len
         unsafe { buf.set_len(written_usize) };
         
@@ -118,7 +118,7 @@ impl File {
         if ret == 0 {
             return Err(ErrorCode::last());
         }
-        let size_usize = usize::try_from(size).expect("UNREACHABLE");
+        let size_usize = size as usize;
         let mut buf = Vec::with_capacity(size_usize);
         let mut readed = 0;
 
@@ -128,7 +128,7 @@ impl File {
             ReadFile(
                 self.0,
                 buf.as_mut_ptr(), 
-                u32::try_from(size).expect("UNREACHABLE"), 
+                size as u32, 
                 &raw mut readed, 
                 ptr::null_mut()
             )
