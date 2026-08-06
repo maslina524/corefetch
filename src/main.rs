@@ -1,12 +1,16 @@
 #![cfg_attr(not(test), no_std)]
 #![cfg_attr(not(test), no_main)]
-#![deny(clippy::all)]
 #![deny(
+    clippy::all,
     clippy::undocumented_unsafe_blocks,
     clippy::unnecessary_safety_comment,
     clippy::unnecessary_safety_doc,
     clippy::unsafe_removed_from_name, 
     clippy::unsafe_derive_deserialize,
+    clippy::missing_safety_doc,
+    clippy::as_ptr_cast_mut,
+    clippy::mut_from_ref,
+    clippy::fn_to_numeric_cast_any,
 )]
 #![allow(unused)]
 #![allow(clippy::struct_field_names)]
@@ -22,7 +26,15 @@ mod modules;
 mod color;
 mod logo;
 
+extern crate alloc;
+
 use core::ffi::c_int;
+
+use alloc::{
+    string::String,
+    borrow::ToOwned,
+    vec::Vec
+};
 
 use crate::{
     logo::LogoInfo,
@@ -30,10 +42,17 @@ use crate::{
     os::allocator::Allocator
 };
 
-extern crate alloc;
-
 #[global_allocator]
 static ALLOCATOR: Allocator = Allocator;
+
+// --- THESE CONSTANTS ARE CONFIG PLACEHOLDERS ---
+pub mod padding {
+    pub const TOP   : usize = 1;
+    pub const BOTTOM: usize = 2;
+    pub const RIGHT : usize = 3;
+    pub const LEFT  : usize = 4;
+}
+// -----------------------------------------------
 
 #[cfg(not(test))]
 mod panic_impl {
@@ -55,7 +74,41 @@ mod panic_impl {
     }
 }
 
-#[cfg(not(test))]
+fn max_line_len(lines: &Vec<(String, usize)>) -> usize {
+    let mut ret = 0;
+    for (_, len) in lines {
+        if *len > ret {
+            ret = *len;
+        }
+    }
+    ret
+}
+
+fn build_logo_buf() -> Vec<String> {
+    let lines = LogoInfo::new(&Os::get().id).get_ansi_lines();
+    let max_len = max_line_len(&lines);
+    let mut ret = Vec::new();
+
+    for _ in 0..padding::TOP {
+        ret.push(String::new());
+    }
+    for (line, len) in lines {
+        let string = format!(
+            "{}{}{}",
+            " ".repeat(padding::LEFT),
+            line,
+            " ".repeat(padding::RIGHT + max_len - len)
+        );
+        ret.push(string);
+    }
+    for _ in 0..padding::BOTTOM {
+        ret.push(String::new());
+    }
+
+    ret
+}
+
+// #[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
     println!("{}",    Colors::get());
@@ -65,12 +118,9 @@ extern "C" fn main() -> c_int {
     println!("{:#?}", Version::get());
     println!("{:#?}", Weather::get());
 
-    let lines = LogoInfo::new("Windows 7").get_ansi_lines();
+    let lines = build_logo_buf();
     for line in lines {
-        let (string, len) = line;
-        print!("{string}");
-        print!("{}", " ".repeat(40 - len));
-        println!("If `len` is calculated correctly, everything should be in one column");
+        println!("{line}");
     }
 
     0
