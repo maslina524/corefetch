@@ -31,7 +31,7 @@ extern crate alloc;
 use core::ffi::c_int;
 
 use alloc::{
-    string::String,
+    string::{String, ToString},
     borrow::ToOwned,
     vec::Vec
 };
@@ -39,7 +39,8 @@ use alloc::{
 use crate::{
     logo::LogoInfo,
     modules::{Colors, Locale, Os, Processes, Version, Weather},
-    os::allocator::Allocator
+    os::allocator::Allocator,
+    os::env
 };
 
 #[global_allocator]
@@ -84,13 +85,17 @@ fn max_line_len(lines: &Vec<(String, usize)>) -> usize {
     ret
 }
 
-fn build_logo_buf() -> Vec<String> {
-    let lines = LogoInfo::new(&Os::get().id).get_ansi_lines();
-    let max_len = max_line_len(&lines);
+fn build_logo_buf(lines: &Vec<(String, usize)>, max_len: usize) -> Vec<String> {
+    let max_len_padding = max_len + padding::LEFT + padding::RIGHT;
     let mut ret = Vec::new();
 
+    let (w, h) = env::terminal_size();
+    if w < max_len_padding {
+        return Vec::new();
+    }
+    
     for _ in 0..padding::TOP {
-        ret.push(String::new());
+        ret.push(" ".repeat(max_len_padding));
     }
     for (line, len) in lines {
         let string = format!(
@@ -102,25 +107,61 @@ fn build_logo_buf() -> Vec<String> {
         ret.push(string);
     }
     for _ in 0..padding::BOTTOM {
-        ret.push(String::new());
+        ret.push(" ".repeat(max_len_padding));
     }
 
     ret
 }
 
-#[cfg(not(test))]
+fn split_by_len(string: &str, len: usize) -> Vec<&str> {
+    let mut string = string;
+    let mut ret = Vec::new();
+    while string.len() > len {
+        let part = &string[..len];
+        string = &string[len..];
+        ret.push(part);
+    }
+    ret.push(string);
+    ret
+}
+
+fn build_info_buf(max_len: usize) -> Vec<String> {
+    let (w, _) = env::terminal_size();
+    let max_len_line = w - max_len - padding::LEFT - padding::RIGHT; 
+    let mut ret = Vec::new();
+
+    ret.extend(
+        split_by_len(
+            format!("{:?}", Os::get()).as_str(), 
+            max_len_line
+        ).iter().map(ToString::to_string)
+    );
+
+    ret
+}
+
+// #[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
-    println!("{}",    Colors::get());
-    println!("{:#?}", Locale::get());
-    println!("{:#?}", Os::get());
-    println!("{:#?}", Processes::get());
-    println!("{:#?}", Version::get());
-    println!("{:#?}", Weather::get());
+    // println!("{}",    Colors::get());
+    // println!("{:#?}", Locale::get());
+    // println!("{:#?}", Os::get());
+    // println!("{:#?}", Processes::get());
+    // println!("{:#?}", Version::get());
+    // println!("{:#?}", Weather::get());
 
-    let lines = build_logo_buf();
-    for line in lines {
-        println!("{line}");
+    let logo_lines = LogoInfo::new(&Os::get().id).get_ansi_lines();
+    let max_logo_len = max_line_len(&logo_lines);
+
+    let logo_buf = build_logo_buf(&logo_lines, max_logo_len);
+    let info_buf = build_info_buf(max_logo_len);
+    let max_lines = logo_buf.len().max(info_buf.len());
+
+    let empty_logo_line = " ".repeat(max_logo_len + padding::LEFT + padding::RIGHT);
+    for i in 0..max_lines {
+        let logo_line = logo_buf.get(i).map_or(empty_logo_line.as_str(), String::as_str);
+        let info_line = info_buf.get(i).map_or("", String::as_str);
+        println!("{logo_line}{info_line}");
     }
 
     0

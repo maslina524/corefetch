@@ -106,7 +106,7 @@ pub fn terminal_handle() -> isize {
     })
 }
 
-pub fn terminal_size() -> error::Result<(usize, usize)> {
+pub fn terminal_size() -> (usize, usize) {
     let mut buf = CONSOLE_SCREEN_BUFFER_INFO::default();
 
     // SAFETY: Comletely safe
@@ -117,12 +117,12 @@ pub fn terminal_size() -> error::Result<(usize, usize)> {
         )
     };
     if ret == 0 {
-        return Err(ErrorCode::last());
+        ErrorCode::last().panic();
     }
 
     let w = buf.srWindow.Right - buf.srWindow.Left + 1;
     let h = buf.srWindow.Bottom - buf.srWindow.Top + 1;
-    Ok((w as usize, h as usize))
+    (w as usize, h as usize)
 }
 
 pub fn processes_count() -> usize {
@@ -246,7 +246,7 @@ mod tests {
 
     #[test]
     fn terminal_size_test() {
-        let size = env::terminal_size().expect("Error");
+        let size = env::terminal_size();
         println!("{size:?}");
     }
 }
