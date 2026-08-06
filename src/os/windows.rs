@@ -26,6 +26,7 @@ link!("kernel32" "system" fn CreateToolhelp32Snapshot(dwflags : CREATE_TOOLHELP_
 link!("kernel32" "system" fn ExitProcess(uexitcode : u32) -> !);
 link!("kernel32" "system" fn FormatMessageW(dwflags : FORMAT_MESSAGE_OPTIONS, lpsource : *const core::ffi::c_void, dwmessageid : u32, dwlanguageid : u32, lpbuffer : PWSTR, nsize : u32, arguments : *const *const i8) -> u32);
 link!("kernel32" "system" fn GetCommandLineW() -> PCWSTR);
+link!("kernel32" "system" fn GetConsoleScreenBufferInfo(hconsoleoutput : HANDLE, lpconsolescreenbufferinfo : *mut CONSOLE_SCREEN_BUFFER_INFO) -> BOOL);
 link!("kernel32" "system" fn GetFileSizeEx(hfile : HANDLE, lpfilesize : *mut i64) -> BOOL);
 link!("kernel32" "system" fn GetLastError() -> WIN32_ERROR);
 link!("kernel32" "system" fn GetLocaleInfoEx(lplocalename : PCWSTR, lctype : u32, lplcdata : PWSTR, cchdata : i32) -> i32);
@@ -54,6 +55,22 @@ link!("winhttp" "system" fn WinHttpSendRequest(hrequest : *mut core::ffi::c_void
 link!("winhttp" "system" fn WinHttpSetOption(hinternet : *const core::ffi::c_void, dwoption : u32, lpbuffer : *const core::ffi::c_void, dwbufferlength : u32) -> BOOL);
 link!("kernel32" "system" fn WriteFile(hfile : HANDLE, lpbuffer : *const u8, nnumberofbytestowrite : u32, lpnumberofbyteswritten : *mut u32, lpoverlapped : *mut OVERLAPPED) -> BOOL);
 pub type BOOL = i32;
+pub type CONSOLE_CHARACTER_ATTRIBUTES = u16;
+#[repr(C)]
+#[derive(Clone, Copy, Default)]
+pub struct CONSOLE_SCREEN_BUFFER_INFO {
+    pub dwSize: COORD,
+    pub dwCursorPosition: COORD,
+    pub wAttributes: CONSOLE_CHARACTER_ATTRIBUTES,
+    pub srWindow: SMALL_RECT,
+    pub dwMaximumWindowSize: COORD,
+}
+#[repr(C)]
+#[derive(Clone, Copy, Default)]
+pub struct COORD {
+    pub X: i16,
+    pub Y: i16,
+}
 pub type CREATE_TOOLHELP_SNAPSHOT_FLAGS = u32;
 #[repr(C)]
 #[derive(Clone, Copy, Default)]
@@ -173,6 +190,14 @@ impl Default for SECURITY_ATTRIBUTES {
         // SAFETY: All types are guaranteed to be zeroable
 		unsafe { core::mem::zeroed() }
     }
+}
+#[repr(C)]
+#[derive(Clone, Copy, Default)]
+pub struct SMALL_RECT {
+    pub Left: i16,
+    pub Top: i16,
+    pub Right: i16,
+    pub Bottom: i16,
 }
 pub type STD_HANDLE = u32;
 pub type WIN32_ERROR = u32;

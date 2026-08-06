@@ -76,6 +76,10 @@ impl File {
         Self::create_with_cd(path, access, CREATE_ALWAYS)
     }
 
+    pub const fn as_handle(&self) -> FileHandle {
+        self.0
+    }
+
     fn create_with_cd(path: impl Into<Path>, access: Access, cd: u32) -> error::Result<Self> {
         let path = path.into();
         let path_wide = path.as_wide_str()?;
