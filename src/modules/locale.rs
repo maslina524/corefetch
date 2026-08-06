@@ -51,12 +51,16 @@ impl Module for Locale {
         })
     }
 
-    fn key() -> &'static str {
+    fn key(&self) -> &'static str {
         "Locale"
     }
 
-    fn title() -> &'static str {
+    fn title(&self) -> &'static str {
         "{result}"
+    }
+
+    fn string_name(&self) -> &'static str {
+        "locale"
     }
 
     format_for_module!(Locale, result);

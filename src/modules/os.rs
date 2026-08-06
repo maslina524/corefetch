@@ -54,12 +54,16 @@ impl Module for Os<'_> {
         })
     }
 
-    fn key() -> &'static str {
+    fn key(&self) -> &'static str {
         "OS"
     }
 
-    fn title() -> &'static str {
+    fn title(&self) -> &'static str {
         "{pretty_name}"
+    }
+
+    fn string_name(&self) -> &'static str {
+        "os"
     }
 
     format_for_module!(

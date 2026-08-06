@@ -81,12 +81,16 @@ impl Module for Weather {
         })
     }
 
-    fn key() -> &'static str {
+    fn key(&self) -> &'static str {
         "Weather"
     }
 
-    fn title() -> &'static str {
+    fn title(&self) -> &'static str {
         "{result}"
+    }
+
+    fn string_name(&self) -> &'static str {
+        "weather"
     }
 
     format_for_module!(Weather, result);

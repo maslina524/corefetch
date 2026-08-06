@@ -48,12 +48,16 @@ impl Module for Version<'_> {
         })
     }
 
-    fn key() -> &'static str {
+    fn key(&self) -> &'static str {
         "Version"
     }
 
-    fn title() -> &'static str {
+    fn title(&self) -> &'static str {
         "{project_name} {version} ({arch})"
+    }
+
+    fn string_name(&self) -> &'static str {
+        "version"
     }
 
     format_for_module!(
