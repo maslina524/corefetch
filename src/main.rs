@@ -114,15 +114,34 @@ fn build_logo_buf(lines: &Vec<(String, usize)>, max_len: usize) -> Vec<String> {
 }
 
 fn split_by_len(string: &str, len: usize) -> Vec<&str> {
-    let mut string = string;
-    let mut ret = Vec::new();
-    while string.len() > len {
-        let part = &string[..len];
-        string = &string[len..];
-        ret.push(part);
+    let mut result = Vec::new();
+    let mut chars = string.chars().peekable();
+    let mut start = 0;
+    let mut byte_pos = 0;
+
+    while chars.peek().is_some() {
+        let mut count = 0;
+        let mut end_byte = byte_pos;
+        
+        while count < len && chars.peek().is_some() {
+            let ch = chars.next().unwrap();
+            count += 1;
+            end_byte += ch.len_utf8();
+        }
+        
+        let slice = &string[byte_pos..end_byte];
+        if let Some(newline_pos) = slice.rfind('\n') {
+            let split_at = byte_pos + newline_pos + 1;
+            result.push(&string[byte_pos..split_at - 1]);
+            byte_pos = split_at;
+            chars = string[byte_pos..].chars().peekable();
+        } else {
+            result.push(slice);
+            byte_pos = end_byte;
+        }
     }
-    ret.push(string);
-    ret
+
+    result
 }
 
 fn build_info_buf(max_len: usize) -> Vec<String> {
@@ -132,7 +151,28 @@ fn build_info_buf(max_len: usize) -> Vec<String> {
 
     ret.extend(
         split_by_len(
-            format!("{:?}", Os::get()).as_str(), 
+            format!("{}", Os::get()).as_str(), 
+            max_len_line
+        ).iter().map(ToString::to_string)
+    );
+
+    ret.extend(
+        split_by_len(
+            format!("{}", Locale::get()).as_str(), 
+            max_len_line
+        ).iter().map(ToString::to_string)
+    );
+
+    ret.extend(
+        split_by_len(
+            format!("{}", Weather::get()).as_str(), 
+            max_len_line
+        ).iter().map(ToString::to_string)
+    );
+
+    ret.extend(
+        split_by_len(
+            format!("{}", Colors::get()).as_str(), 
             max_len_line
         ).iter().map(ToString::to_string)
     );
