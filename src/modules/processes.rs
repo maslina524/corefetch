@@ -1,4 +1,7 @@
 use crate::{
+    format_for_module,
+    impl_display_for_module,
+    modules::Module,
     os::env,
     sync::OnceLock
 };
@@ -10,22 +13,28 @@ pub struct Processes {
     pub result: usize
 }
 
-impl Processes {
-    pub fn new() -> Self {
+impl Module for Processes {
+    fn new() -> Self {
         Self {
             result: env::processes_count()
         }
     }
 
-    pub fn get() -> &'static Self {
+    fn get() -> &'static Self {
         PROCESSES.get_or_init(|| {
             Self::new()
         })
     }
+
+    fn key() -> &'static str {
+        "Processes"
+    }
+
+    fn title() -> &'static str {
+        "{result}"
+    }
+
+    format_for_module!(Processes, result);
 }
 
-impl core::fmt::Display for Processes {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        write!(f, "{}", self.result)
-    }
-}
+impl_display_for_module!(Processes);
