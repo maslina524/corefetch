@@ -5,12 +5,7 @@ use alloc::{
 };
 
 use crate::{
-    sync::OnceLock,
-    os::https::Request,
-    os::path::Path,
-    os::fs::{self, File, Access},
-    os::env,
-    format
+    format, format_for_module, impl_display_for_module, modules::Module, os::{env, fs::{self, Access, File}, https::Request, path::Path}, sync::OnceLock
 };
 
 const WTTR_URL: &str = "https://wttr.in/?lang=en&format=%t+%E2%80%94+%C+(%l)";
@@ -23,25 +18,6 @@ pub struct Weather {
 }
 
 impl Weather {
-    pub fn new() -> Self {
-        let cur_hour = env::timestamp_hours();
-        let result = if let Some((hours, data)) = Self::read_cache() {
-            if cur_hour == hours {
-                data
-            } else {
-                let data = Self::request();
-                Self::set_cache(cur_hour, &data);
-                data
-            }
-        } else {
-            let data = Self::request();
-            Self::set_cache(cur_hour, &data);
-            data
-        };
-
-        Self { result }
-    }
-
     fn request() -> String {
         let response = Request::new(WTTR_URL).unwrap().get();
         if response.is_success() {
@@ -77,16 +53,43 @@ impl Weather {
 
         Some(())
     }
+}
 
-    pub fn get() -> &'static Self {
+impl Module for Weather {
+    fn new() -> Self {
+        let cur_hour = env::timestamp_hours();
+        let result = if let Some((hours, data)) = Self::read_cache() {
+            if cur_hour == hours {
+                data
+            } else {
+                let data = Self::request();
+                Self::set_cache(cur_hour, &data);
+                data
+            }
+        } else {
+            let data = Self::request();
+            Self::set_cache(cur_hour, &data);
+            data
+        };
+
+        Self { result }
+    }
+
+    fn get() -> &'static Self {
         WEATHER.get_or_init(|| {
             Self::new()
         })
     }
+
+    fn key() -> &'static str {
+        "Weather"
+    }
+
+    fn title() -> &'static str {
+        "{result}"
+    }
+
+    format_for_module!(Weather, result);
 }
 
-impl core::fmt::Display for Weather {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        write!(f, "{}", self.result)
-    }
-} 
+impl_display_for_module!(Weather);
