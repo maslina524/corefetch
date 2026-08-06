@@ -25,11 +25,11 @@ static UNKNOWN_PTR: &LogoInfo = &LogoInfo {
 static LOGO_INFO: OnceLock<&'static LogoInfo> = OnceLock::new();
 
 pub struct LogoInfo {
-    names: Vec<&'static str>,
-    lines: &'static str,
-    colors: Vec<&'static str>,
-    color_keys: &'static str,
-    color_title: &'static str
+    pub names: Vec<&'static str>,
+    pub lines: &'static str,
+    pub colors: Vec<&'static str>,
+    pub color_keys: &'static str,
+    pub color_title: &'static str
 }
 
 impl LogoInfo {
