@@ -3,8 +3,14 @@ use core::ptr;
 use alloc::string::String;
 
 use crate::{
+    format, 
+    format_module, 
+    impl_display_for_module, 
+    format_for_module, 
+    logo::LogoInfo, 
+    modules::Module, 
     os::error::ErrorCode,
-    os::windows::GetLocaleInfoEx,
+    os::windows::GetLocaleInfoEx, 
     sync::OnceLock
 };
 
@@ -19,8 +25,8 @@ pub struct Locale {
     pub result: String
 }
 
-impl Locale {
-    pub fn new() -> Self {
+impl Module for Locale {
+    fn new() -> Self {
         let mut buf = [0u16; LOCALE_NAME_MAX_LENGTH];
         // SAFETY: Just a WinAPI function, the return value is checked
         let len = unsafe {
@@ -39,15 +45,22 @@ impl Locale {
         Self { result }
     }
 
-    pub fn get() -> &'static Self {
+    fn get() -> &'static Self {
         LOCALE.get_or_init(|| {
             Self::new()
         })
     }
+
+    fn key() -> &'static str {
+        "Locale"
+    }
+
+    fn title() -> &'static str {
+        "{result}"
+    }
+
+    format_for_module!(Locale, result);
 }
 
-impl core::fmt::Display for Locale {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        write!(f, "{}", self.result)
-    }
-}
+
+impl_display_for_module!(Locale);
