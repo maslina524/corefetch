@@ -37,10 +37,7 @@ use alloc::{
 };
 
 use crate::{
-    logo::LogoInfo,
-    modules::{Colors, Locale, Os, Processes, Version, Weather},
-    os::allocator::Allocator,
-    os::env
+    logo::LogoInfo, modules::{Colors, FormatValue, Locale, Module, Os, Processes, Version, Weather}, os::{allocator::Allocator, env}
 };
 
 #[global_allocator]
@@ -53,6 +50,14 @@ pub mod padding {
     pub const RIGHT : usize = 3;
     pub const LEFT  : usize = 4;
 }
+pub const MODULES: [&str; 6] = [
+    "locale",
+    "os",
+    "processes",
+    "version",
+    "weather",
+    "color"
+];
 // -----------------------------------------------
 
 const MIN_OFFSET: usize = 24;
@@ -146,33 +151,24 @@ fn split_by_len(string: &str, len: usize) -> Vec<&str> {
     result
 }
 
+fn get_module_lines(name: &str, max_len_line: usize) -> Option<Vec<String>> {
+    modules::from_str(name).map(|module| {
+        let string = module.format(FormatValue::default(), FormatValue::default());
+        let splitted = split_by_len(&string, max_len_line);
+        splitted.iter().map(ToString::to_string).collect()
+    })
+}
+
 fn build_info_buf(max_len: usize) -> Vec<String> {
     let (w, _) = env::terminal_size();
     let max_len_line = w - max_len - padding::LEFT - padding::RIGHT; 
     let mut ret = Vec::new();
 
-    ret.extend(
-        split_by_len(
-            format!("{}", Os::get()).as_str(), 
-            max_len_line
-        ).iter().map(ToString::to_string)
-    );
-
-    ret.extend(
-        split_by_len(
-            format!("{}", Locale::get()).as_str(), 
-            max_len_line
-        ).iter().map(ToString::to_string)
-    );
-
-    ret.extend(
-        split_by_len(
-            format!("{}", Weather::get()).as_str(), 
-            max_len_line
-        ).iter().map(ToString::to_string)
-    );
-
-    ret.extend(format!("{}", Colors::get()).split("\n").map(ToString::to_string));
+    for name in MODULES {
+        if let Some(m) = get_module_lines(name, max_len_line) {
+            ret.extend(m);
+        }
+    }
 
     ret
 }

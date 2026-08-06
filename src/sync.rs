@@ -54,7 +54,7 @@ impl<T> OnceLock<T> {
     pub fn get(&self) -> Option<&T> {
         if self.state.load(Ordering::Acquire) == READY {
             // SAFETY: The value in `MaybeUninit` is guaranteed to be initialized
-            unsafe { return Some((&*self.value.get()).assume_init_ref()); }
+            unsafe { Some((&*self.value.get()).assume_init_ref()) }
         } else {
             None
         }
