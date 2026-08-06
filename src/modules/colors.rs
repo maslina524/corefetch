@@ -23,12 +23,16 @@ impl Module for Colors {
         })
     }
 
-    fn key() -> &'static str {
+    fn key(&self) -> &'static str {
         ""
     }
 
-    fn title() -> &'static str {
+    fn title(&self) -> &'static str {
         ""
+    }
+
+    fn string_name(&self) -> &'static str {
+        "colors"
     }
 
     fn format(&self, key: super::FormatValue, format: super::FormatValue) -> String {

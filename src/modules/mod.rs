@@ -12,6 +12,8 @@ pub use processes::Processes;
 pub use version::Version;
 pub use weather::Weather;
 
+use alloc::boxed::Box;
+
 #[derive(Default)]
 pub struct FormatValue<'a> {
     pub format: Option<&'a str>,
@@ -19,11 +21,24 @@ pub struct FormatValue<'a> {
 }
 
 pub trait Module {
-    fn new() -> Self;
-    fn get() -> &'static Self;
-    fn key() -> &'static str;
-    fn title() -> &'static str;
+    fn new() -> Self where Self: Sized;
+    fn get() -> &'static Self where Self: Sized;
+    fn key(&self) -> &'static str;
+    fn title(&self) -> &'static str;
+    fn string_name(&self) -> &'static str;
     fn format(&self, key: FormatValue, format: FormatValue) -> alloc::string::String;
+}
+
+pub fn from_str(string: &str) -> Option<Box<dyn Module>> {
+    match string.to_lowercase().as_str() {
+        "color"     => Some(Box::new(Colors::new())),
+        "locale"    => Some(Box::new(Locale::new())),
+        "os"        => Some(Box::new(Os::new())),
+        "processes" => Some(Box::new(Processes::new())),
+        "version"   => Some(Box::new(Version::new())),
+        "weather"   => Some(Box::new(Weather::new())),
+        _ => None,
+    }
 }
 
 #[macro_export]
@@ -49,11 +64,11 @@ macro_rules! format_for_module {
     ($name:ident, $($field:ident),*) => {
         fn format(&self, key: super::FormatValue, format: super::FormatValue) -> alloc::string::String {
             let key_color = key.color.unwrap_or($crate::logo::LogoInfo::get().unwrap().color_keys);
-            let key_format = key.format.unwrap_or($name::key());
+            let key_format = key.format.unwrap_or(self.key());
             let key_string = $crate::format_module!(key_format, self, $($field),*);
 
             let value_color = format.color.unwrap_or($crate::logo::LogoInfo::get().unwrap().color_title);
-            let value_format = format.format.unwrap_or($name::title());
+            let value_format = format.format.unwrap_or(self.title());
             let value_string = $crate::format_module!(value_format, self, $($field),*);
 
             $crate::format!("\x1b[{key_color}m{key_string}\x1b[0m: \x1b[{value_color}m{value_string}\x1b[0m")

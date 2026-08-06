@@ -26,12 +26,16 @@ impl Module for Processes {
         })
     }
 
-    fn key() -> &'static str {
+    fn key(&self) -> &'static str {
         "Processes"
     }
 
-    fn title() -> &'static str {
+    fn title(&self) -> &'static str {
         "{result}"
+    }
+
+    fn string_name(&self) -> &'static str {
+        "processes"
     }
 
     format_for_module!(Processes, result);
