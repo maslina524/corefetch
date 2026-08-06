@@ -1,4 +1,9 @@
-use crate::sync::OnceLock;
+use crate::{
+    format_for_module,
+    impl_display_for_module,
+    modules::Module,
+    sync::OnceLock
+};
 
 static VERSION: OnceLock<Version> = OnceLock::new();
 
@@ -16,8 +21,8 @@ pub struct Version<'a> {
     pub libc: &'a str
 }
 
-impl Version<'_> {
-    pub const fn new() -> Self {
+impl Module for Version<'_> {
+    fn new() -> Self {
         let build_type = if cfg!(debug_assertions) {
             "debug"
         } else {
@@ -37,15 +42,26 @@ impl Version<'_> {
         }
     }
 
-    pub fn get() -> &'static Self {
+    fn get() -> &'static Self {
         VERSION.get_or_init(|| {
             Self::new()
         })
     }
+
+    fn key() -> &'static str {
+        "Version"
+    }
+
+    fn title() -> &'static str {
+        "{project_name} {version} ({arch})"
+    }
+
+    format_for_module!(
+        Version,
+        project_name, version, version_tweak, build_type,
+        sysname, arch, cmake_built_type, compile_time,
+        compiler, libc
+    );
 }
 
-impl core::fmt::Display for Version<'_> {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        write!(f, "{} {} ({})", self.project_name, self.version, self.arch)
-    }
-}
+impl_display_for_module!(Version, '_);
