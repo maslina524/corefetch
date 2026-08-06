@@ -10,13 +10,15 @@ use alloc::{
     vec::Vec
 };
 
-use crate::os::{
-    error::{self, ErrorCode},
-    windows::{
-        OSVERSIONINFOW, PROCESSENTRY32, FILETIME, RtlGetVersion,
-        CreateToolhelp32Snapshot, Process32First, Process32Next, GetSystemTimeAsFileTime,
-        CommandLineToArgvW, GetCommandLineW, CloseHandle
-    }
+use crate::{
+    os::error::{self, ErrorCode},
+    os::fs::{Access, File},
+    os::windows::{
+        CONSOLE_SCREEN_BUFFER_INFO, CloseHandle, CommandLineToArgvW, CreateToolhelp32Snapshot,
+        FILETIME, GetCommandLineW, GetConsoleScreenBufferInfo, GetSystemTimeAsFileTime,
+        OSVERSIONINFOW, PROCESSENTRY32, Process32First, Process32Next, RtlGetVersion
+    },
+    sync::OnceLock
 };
 
 const TH32CS_SNAPPROCESS   : u32         = 0x0002;
@@ -24,6 +26,8 @@ const INVALID_HANDLE       : *mut c_void = (-1isize).cast_unsigned() as *mut c_v
 const TIME_ZONE_ID_INVALID : u32         = u32::MAX;
 const TIME_ZONE_ID_DAYLIGHT: u32         = 2;
 const EPOCH_DIFF           : u64         = 116_444_736_000_000_000;
+
+static TERMINAL_HANDLE     : OnceLock<isize> = OnceLock::new();
 
 pub struct OsVersion {
     pub sysname: String,
@@ -90,6 +94,35 @@ pub fn os_version() -> OsVersion {
     let variant = "Home".to_owned();
 
     OsVersion { sysname, name, version, codename, variant }
+}
+
+pub fn terminal_handle() -> isize {
+    *TERMINAL_HANDLE.get_or_init(|| {
+        let file = File::open("CONOUT$", Access::Read).unwrap();
+        let handle = file.as_handle();
+        assert!(!handle.is_null());
+        mem::forget(file);
+        handle as isize
+    })
+}
+
+pub fn terminal_size() -> error::Result<(usize, usize)> {
+    let mut buf = CONSOLE_SCREEN_BUFFER_INFO::default();
+
+    // SAFETY: Comletely safe
+    let ret = unsafe {
+        GetConsoleScreenBufferInfo(
+            terminal_handle() as *mut c_void, 
+            &raw mut buf
+        )
+    };
+    if ret == 0 {
+        return Err(ErrorCode::last());
+    }
+
+    let w = buf.srWindow.Right - buf.srWindow.Left + 1;
+    let h = buf.srWindow.Bottom - buf.srWindow.Top + 1;
+    Ok((w as usize, h as usize))
 }
 
 pub fn processes_count() -> usize {
@@ -209,5 +242,11 @@ mod tests {
 
         assert!(!args.is_empty());
         assert!(args[0].contains("nofetch"));
+    }
+
+    #[test]
+    fn terminal_size_test() {
+        let size = env::terminal_size().expect("Error");
+        println!("{size:?}");
     }
 }
