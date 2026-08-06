@@ -11,3 +11,21 @@ pub use os::Os;
 pub use processes::Processes;
 pub use version::Version;
 pub use weather::Weather;
+
+pub struct FormatValue<'a> {
+    pub format: Option<&'a str>,
+    pub color: Option<&'a str>
+}
+
+impl<'a> Default for FormatValue<'a> {
+    fn default() -> Self {
+        Self { format: None, color: None }
+    }
+}
+
+pub trait Module {
+    fn new() -> Self;
+    fn get() -> &'static Self;
+    fn key() -> alloc::string::String;
+    fn format(key: FormatValue, format: FormatValue) -> alloc::string::String;
+}
