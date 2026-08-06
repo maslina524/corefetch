@@ -55,6 +55,8 @@ pub mod padding {
 }
 // -----------------------------------------------
 
+const MIN_OFFSET: usize = 24;
+
 #[cfg(not(test))]
 mod panic_impl {
     use core::panic::PanicInfo;
@@ -170,12 +172,7 @@ fn build_info_buf(max_len: usize) -> Vec<String> {
         ).iter().map(ToString::to_string)
     );
 
-    ret.extend(
-        split_by_len(
-            format!("{}", Colors::get()).as_str(), 
-            max_len_line
-        ).iter().map(ToString::to_string)
-    );
+    ret.extend(format!("{}", Colors::get()).split("\n").map(ToString::to_string));
 
     ret
 }
@@ -189,20 +186,38 @@ extern "C" fn main() -> c_int {
     // println!("{:#?}", Processes::get());
     // println!("{:#?}", Version::get());
     // println!("{:#?}", Weather::get());
+    let (w, _) = env::terminal_size();
 
     let logo_lines = LogoInfo::new(&Os::get().id).get_ansi_lines();
     let max_logo_len = max_line_len(&logo_lines);
+    let max_logo_len_padding = max_logo_len + padding::LEFT + padding::RIGHT;
+
+    let split_len = if max_logo_len_padding + MIN_OFFSET < w {
+        max_logo_len
+    } else {
+        w
+    };
 
     let logo_buf = build_logo_buf(&logo_lines, max_logo_len);
-    let info_buf = build_info_buf(max_logo_len);
+    let info_buf = build_info_buf(split_len);
     let max_lines = logo_buf.len().max(info_buf.len());
 
-    let empty_logo_line = " ".repeat(max_logo_len + padding::LEFT + padding::RIGHT);
-    for i in 0..max_lines {
-        let logo_line = logo_buf.get(i).map_or(empty_logo_line.as_str(), String::as_str);
-        let info_line = info_buf.get(i).map_or("", String::as_str);
-        println!("{logo_line}{info_line}");
+    if max_logo_len_padding + MIN_OFFSET < w {
+        let empty_logo_line = " ".repeat(max_logo_len_padding);
+        for i in 0..max_lines {
+            let logo_line = logo_buf.get(i).map_or(empty_logo_line.as_str(), String::as_str);
+            let info_line = info_buf.get(i).map_or("", String::as_str);
+            println!("{logo_line}{info_line}");
+        }
+    } else {
+        for line in logo_buf {
+            println!("{line}");
+        }
+        for line in info_buf {
+            println!("{line}");
+        }
     }
+    
 
     0
 }
