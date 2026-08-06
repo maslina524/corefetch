@@ -1,9 +1,12 @@
 use alloc::string::String;
 
 use crate::{
-    os::env,
-    sync::OnceLock,
-    format
+    format,
+    format_for_module,
+    impl_display_for_module,
+    modules::Module,
+    os::env, 
+    sync::OnceLock
 };
 
 static OS: OnceLock<Os> = OnceLock::new();
@@ -24,8 +27,8 @@ pub struct Os<'a> {
     pub arch: &'a str,
 }
 
-impl Os<'_> {
-    pub fn new() -> Self {
+impl Module for Os<'_> {
+    fn new() -> Self {
         let ver = env::os_version();
         let pretty_name = format!("{} {} ({})", ver.name, ver.version, ver.codename);
         let id = format!("{} {}", ver.name, ver.version);
@@ -45,15 +48,26 @@ impl Os<'_> {
         }
     }
 
-    pub fn get() -> &'static Self {
+    fn get() -> &'static Self {
         OS.get_or_init(|| {
             Self::new()
         })
     }
+
+    fn key() -> &'static str {
+        "OS"
+    }
+
+    fn title() -> &'static str {
+        "{pretty_name}"
+    }
+
+    format_for_module!(
+        Os,
+        sysname, name, pretty_name, id,
+        id_like, variant, variant_id, version,
+        version_id, codename, build_id, arch
+    );
 }
 
-impl core::fmt::Display for Os<'_> {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        write!(f, "{} {}", self.pretty_name, self.arch)
-    }
-}
+impl_display_for_module!(Os, '_);
