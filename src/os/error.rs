@@ -24,12 +24,12 @@ impl ErrorCode {
         Self::new(code)
     }
 
+    #[cold]
     #[track_caller]
     pub fn panic(&self) -> ! {
         panic!("WinApi: {self}")
     }
 
-    #[track_caller]
     pub fn panic_code(&self) -> ! {
         panic!("WinApi: Code {}", self.0)
     }
