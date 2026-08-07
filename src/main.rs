@@ -59,7 +59,7 @@ pub const MODULES: [&str; 7] = [
     "processes",
     "version",
     "weather",
-    "color"
+    "colors"
 ];
 // -----------------------------------------------
 
@@ -157,7 +157,12 @@ fn split_by_len(string: &str, len: usize) -> Vec<&str> {
 fn get_module_lines(name: &str, max_len_line: usize) -> Option<Vec<String>> {
     modules::from_str(name).map(|module| {
         let string = module.format(FormatValue::default(), FormatValue::default());
-        let splitted = split_by_len(&string, max_len_line);
+        let splitted = if name == "colors" {
+            string.split('\n').collect()
+        } else {
+            split_by_len(&string, max_len_line)
+        };
+
         splitted.iter().map(ToString::to_string).collect()
     })
 }
