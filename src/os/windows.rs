@@ -20,6 +20,7 @@ macro_rules! link {
 
 link!("kernel32" "system" fn CloseHandle(hobject : HANDLE) -> BOOL);
 link!("shell32" "system" fn CommandLineToArgvW(lpcmdline : PCWSTR, pnumargs : *mut i32) -> *mut PWSTR);
+link!("advapi32" "system" fn ConvertSidToStringSidW(sid : PSID, stringsid : *mut PWSTR) -> BOOL);
 link!("kernel32" "system" fn CreateDirectoryW(lppathname : PCWSTR, lpsecurityattributes : *const SECURITY_ATTRIBUTES) -> BOOL);
 link!("kernel32" "system" fn CreateFileW(lpfilename : PCWSTR, dwdesiredaccess : u32, dwsharemode : FILE_SHARE_MODE, lpsecurityattributes : *const SECURITY_ATTRIBUTES, dwcreationdisposition : FILE_CREATION_DISPOSITION, dwflagsandattributes : FILE_FLAGS_AND_ATTRIBUTES, htemplatefile : HANDLE) -> HANDLE);
 link!("kernel32" "system" fn CreateToolhelp32Snapshot(dwflags : CREATE_TOOLHELP_SNAPSHOT_FLAGS, th32processid : u32) -> HANDLE);
@@ -30,6 +31,8 @@ link!("kernel32" "system" fn GetCommandLineW() -> PCWSTR);
 link!("kernel32" "system" fn GetComputerNameW(lpbuffer : PWSTR, nsize : *mut u32) -> BOOL);
 link!("kernel32" "system" fn GetConsoleScreenBufferInfo(hconsoleoutput : HANDLE, lpconsolescreenbufferinfo : *mut CONSOLE_SCREEN_BUFFER_INFO) -> BOOL);
 link!("kernel32" "system" fn GetCurrentDirectoryW(nbufferlength : u32, lpbuffer : PWSTR) -> u32);
+link!("kernel32" "system" fn GetCurrentProcess() -> HANDLE);
+link!("kernel32" "system" fn GetCurrentProcessId() -> u32);
 link!("kernel32" "system" fn GetFileSizeEx(hfile : HANDLE, lpfilesize : *mut i64) -> BOOL);
 link!("kernel32" "system" fn GetLastError() -> WIN32_ERROR);
 link!("kernel32" "system" fn GetLocaleInfoEx(lplocalename : PCWSTR, lctype : u32, lplcdata : PWSTR, cchdata : i32) -> i32);
@@ -38,11 +41,14 @@ link!("kernel32" "system" fn GetNumaHighestNodeNumber(highestnodenumber : *mut u
 link!("kernel32" "system" fn GetProcessHeap() -> HANDLE);
 link!("kernel32" "system" fn GetStdHandle(nstdhandle : STD_HANDLE) -> HANDLE);
 link!("kernel32" "system" fn GetSystemTimeAsFileTime(lpsystemtimeasfiletime : *mut FILETIME));
+link!("advapi32" "system" fn GetTokenInformation(tokenhandle : HANDLE, tokeninformationclass : TOKEN_INFORMATION_CLASS, tokeninformation : *mut core::ffi::c_void, tokeninformationlength : u32, returnlength : *mut u32) -> BOOL);
 link!("secur32" "system" fn GetUserNameExW(nameformat : EXTENDED_NAME_FORMAT, lpnamebuffer : PWSTR, nsize : *mut u32) -> bool);
 link!("advapi32" "system" fn GetUserNameW(lpbuffer : PWSTR, pcbbuffer : *mut u32) -> BOOL);
 link!("kernel32" "system" fn HeapAlloc(hheap : HANDLE, dwflags : HEAP_FLAGS, dwbytes : usize) -> *mut core::ffi::c_void);
 link!("kernel32" "system" fn HeapFree(hheap : HANDLE, dwflags : HEAP_FLAGS, lpmem : *const core::ffi::c_void) -> BOOL);
+link!("kernel32" "system" fn LocalFree(hmem : HLOCAL) -> HLOCAL);
 link!("kernel32" "system" fn MultiByteToWideChar(codepage : u32, dwflags : MULTI_BYTE_TO_WIDE_CHAR_FLAGS, lpmultibytestr : PCSTR, cbmultibyte : i32, lpwidecharstr : PWSTR, cchwidechar : i32) -> i32);
+link!("advapi32" "system" fn OpenProcessToken(processhandle : HANDLE, desiredaccess : TOKEN_ACCESS_MASK, tokenhandle : *mut HANDLE) -> BOOL);
 link!("shlwapi" "system" fn PathFileExistsW(pszpath : PCWSTR) -> BOOL);
 link!("kernel32" "system" fn Process32First(hsnapshot : HANDLE, lppe : *mut PROCESSENTRY32) -> BOOL);
 link!("kernel32" "system" fn Process32Next(hsnapshot : HANDLE, lppe : *mut PROCESSENTRY32) -> BOOL);
@@ -124,6 +130,7 @@ impl GUID {
 pub type HANDLE = *mut core::ffi::c_void;
 pub type HEAP_FLAGS = u32;
 pub type HKEY = *mut core::ffi::c_void;
+pub type HLOCAL = *mut core::ffi::c_void;
 pub type HRESULT = i32;
 pub type KNOWN_FOLDER_FLAG = i32;
 pub type LOGICAL_PROCESSOR_RELATIONSHIP = i32;
@@ -200,6 +207,7 @@ impl Default for PROCESSENTRY32 {
     }
 }
 pub type PROCESSOR_CACHE_TYPE = i32;
+pub type PSID = *mut core::ffi::c_void;
 pub type PSTR = *mut u8;
 pub type PWSTR = *mut u16;
 pub type REG_CREATE_KEY_DISPOSITION = u32;
@@ -265,6 +273,8 @@ pub struct SYSTEM_LOGICAL_PROCESSOR_INFORMATION_0_1 {
 pub struct SYSTEM_LOGICAL_PROCESSOR_INFORMATION_0_0 {
     pub Flags: u8,
 }
+pub type TOKEN_ACCESS_MASK = u32;
+pub type TOKEN_INFORMATION_CLASS = i32;
 pub type WIN32_ERROR = u32;
 pub type WINHTTP_ACCESS_TYPE = u32;
 pub type WINHTTP_OPEN_REQUEST_FLAGS = u32;
