@@ -266,6 +266,19 @@ pub fn micro_arch() -> String {
     }
 }
 
+// NOT IMPLEMENTED
+pub const fn logical_grouped() -> String {
+    todo_or!("Will be implemented in the future", String::new())
+}
+
+pub const fn max_freq_formatted() -> String {
+    todo_or!("Cannot be implemented on Windows (or very difficult)", String::new())
+}
+
+pub const fn temperature() -> String {
+    todo_or!("Cannot be implemented on Windows (or very difficult)", String::new())
+}
+
 #[cfg(test)]
 mod tests {
     use crate::detect::cpu;
