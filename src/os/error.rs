@@ -17,11 +17,15 @@ impl ErrorCode {
     pub const fn new(code: u32) -> Self {
         Self(code)
     }
-
+    
     pub fn last() -> Self {
         // SAFETY: Completely safe
         let code = unsafe { GetLastError() };
         Self::new(code)
+    }
+
+    pub const fn code(&self) -> u32 {
+        self.0
     }
 
     #[cold]
