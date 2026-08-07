@@ -11,7 +11,7 @@ use alloc::{
 };
 
 use crate::{
-    os::windows::{GetLogicalProcessorInformation, SYSTEM_LOGICAL_PROCESSOR_INFORMATION},
+    os::windows::{GetLogicalProcessorInformation, SYSTEM_LOGICAL_PROCESSOR_INFORMATION, GetActiveProcessorCount},
     os::error::{self, ErrorCode}
 };
 
@@ -19,6 +19,7 @@ use crate::{
 pub struct Cores {
     pub physical: usize,
     pub logical: usize,
+    pub online: usize,
 }
 
 pub fn vendor() -> String {
@@ -77,6 +78,10 @@ pub fn cores_count() -> error::Result<Cores> {
 
     let mut logical = 0;
     let mut physical = 0;
+    // SAFETY: Completely safe
+    let online = unsafe {
+        GetActiveProcessorCount(0)
+    } as usize;
     for info in buf {
         if info.Relationship == 0 {
             physical += 1;
@@ -88,7 +93,7 @@ pub fn cores_count() -> error::Result<Cores> {
         }
     }
 
-    Ok(Cores { physical, logical })
+    Ok(Cores { physical, logical, online })
 }
 
 #[cfg(test)]
