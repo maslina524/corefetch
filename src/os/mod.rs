@@ -7,3 +7,4 @@ pub mod env;
 pub mod https;
 pub mod path;
 pub mod fs;
+pub mod regedit;

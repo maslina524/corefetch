@@ -40,6 +40,7 @@ link!("shlwapi" "system" fn PathFileExistsW(pszpath : PCWSTR) -> BOOL);
 link!("kernel32" "system" fn Process32First(hsnapshot : HANDLE, lppe : *mut PROCESSENTRY32) -> BOOL);
 link!("kernel32" "system" fn Process32Next(hsnapshot : HANDLE, lppe : *mut PROCESSENTRY32) -> BOOL);
 link!("kernel32" "system" fn ReadFile(hfile : HANDLE, lpbuffer : *mut u8, nnumberofbytestoread : u32, lpnumberofbytesread : *mut u32, lpoverlapped : *mut OVERLAPPED) -> BOOL);
+link!("advapi32" "system" fn RegCreateKeyExW(hkey : HKEY, lpsubkey : PCWSTR, reserved : u32, lpclass : PCWSTR, dwoptions : REG_OPEN_CREATE_OPTIONS, samdesired : REG_SAM_FLAGS, lpsecurityattributes : *const SECURITY_ATTRIBUTES, phkresult : *mut HKEY, lpdwdisposition : *mut REG_CREATE_KEY_DISPOSITION) -> WIN32_ERROR);
 link!("ntdll" "system" fn RtlGetVersion(lpversioninformation : *mut OSVERSIONINFOW) -> NTSTATUS);
 link!("shell32" "system" fn SHGetKnownFolderPath(rfid : *const GUID, dwflags : u32, htoken : HANDLE, ppszpath : *mut PWSTR) -> HRESULT);
 link!("kernel32" "system" fn SetConsoleOutputCP(wcodepageid : u32) -> BOOL);
@@ -102,6 +103,7 @@ impl GUID {
 }
 pub type HANDLE = *mut core::ffi::c_void;
 pub type HEAP_FLAGS = u32;
+pub type HKEY = *mut core::ffi::c_void;
 pub type HRESULT = i32;
 pub type KNOWN_FOLDER_FLAG = i32;
 pub type MULTI_BYTE_TO_WIDE_CHAR_FLAGS = u32;
@@ -178,6 +180,9 @@ impl Default for PROCESSENTRY32 {
 }
 pub type PSTR = *mut u8;
 pub type PWSTR = *mut u16;
+pub type REG_CREATE_KEY_DISPOSITION = u32;
+pub type REG_OPEN_CREATE_OPTIONS = u32;
+pub type REG_SAM_FLAGS = u32;
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct SECURITY_ATTRIBUTES {
