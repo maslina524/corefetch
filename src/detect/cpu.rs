@@ -1,9 +1,18 @@
-use core::arch::x86_64::__cpuid;
+use core::{
+    arch::x86_64::__cpuid,
+    mem,
+    ptr
+};
 
 use alloc::{
     string::String,
     vec::Vec,
     vec
+};
+
+use crate::{
+    os::windows::{GetLogicalProcessorInformation, SYSTEM_LOGICAL_PROCESSOR_INFORMATION},
+    os::error::{self, ErrorCode}
 };
 
 pub fn vendor() -> String {
@@ -28,6 +37,52 @@ pub fn vendor() -> String {
     String::from_utf8(vendor).unwrap()
 }
 
+pub fn logical_cores_count() -> error::Result<usize> {
+    let mut size = 0;
+    
+    // SAFETY: Completely safe
+    let ret = unsafe {
+        GetLogicalProcessorInformation(
+            ptr::null_mut(), 
+            &raw mut size
+        )
+    };
+    let err = ErrorCode::last();
+    if err.code() != 122 && err.code() != 0 {
+        return Err(ErrorCode::last());
+    }
+
+    let struct_size = mem::size_of::<SYSTEM_LOGICAL_PROCESSOR_INFORMATION>();
+    let buf_size = size as usize / struct_size;
+    let mut buf = Vec::with_capacity(buf_size);
+
+    // SAFETY: Completely safe
+    let ret = unsafe {
+        GetLogicalProcessorInformation(
+            buf.as_mut_ptr(), 
+            &raw mut size
+        )
+    };
+    if ret == 0 {
+        return Err(ErrorCode::last());
+    }
+    // SAFETY: WinAPI modifies data in `Vec<_>`, you must update the len
+    unsafe { buf.set_len(buf_size) };
+
+    let mut count = 0;
+    for info in buf {
+        if info.Relationship == 0 {
+            let mut mask = info.ProcessorMask;
+            while mask != 0 {
+                mask &= (mask - 1);
+                count += 1;
+            }
+        }
+    }
+
+    Ok(count)
+}
+
 #[cfg(test)]
 mod tests {
     use crate::detect::cpu;
@@ -37,5 +92,12 @@ mod tests {
     #[test]
     fn vendor_test() {
         std::println!("Vendor: {}", cpu::vendor());
+    }
+
+    #[test]
+    fn logical_cores_test() {
+        let count = cpu::logical_cores_count().unwrap();
+        println!("{count}");
+        assert!(count != 0);
     }
 }

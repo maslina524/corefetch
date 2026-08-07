@@ -30,6 +30,7 @@ link!("kernel32" "system" fn GetConsoleScreenBufferInfo(hconsoleoutput : HANDLE,
 link!("kernel32" "system" fn GetFileSizeEx(hfile : HANDLE, lpfilesize : *mut i64) -> BOOL);
 link!("kernel32" "system" fn GetLastError() -> WIN32_ERROR);
 link!("kernel32" "system" fn GetLocaleInfoEx(lplocalename : PCWSTR, lctype : u32, lplcdata : PWSTR, cchdata : i32) -> i32);
+link!("kernel32" "system" fn GetLogicalProcessorInformation(buffer : *mut SYSTEM_LOGICAL_PROCESSOR_INFORMATION, returnedlength : *mut u32) -> BOOL);
 link!("kernel32" "system" fn GetProcessHeap() -> HANDLE);
 link!("kernel32" "system" fn GetStdHandle(nstdhandle : STD_HANDLE) -> HANDLE);
 link!("kernel32" "system" fn GetSystemTimeAsFileTime(lpsystemtimeasfiletime : *mut FILETIME));
@@ -59,6 +60,15 @@ link!("winhttp" "system" fn WinHttpSendRequest(hrequest : *mut core::ffi::c_void
 link!("winhttp" "system" fn WinHttpSetOption(hinternet : *const core::ffi::c_void, dwoption : u32, lpbuffer : *const core::ffi::c_void, dwbufferlength : u32) -> BOOL);
 link!("kernel32" "system" fn WriteFile(hfile : HANDLE, lpbuffer : *const u8, nnumberofbytestowrite : u32, lpnumberofbyteswritten : *mut u32, lpoverlapped : *mut OVERLAPPED) -> BOOL);
 pub type BOOL = i32;
+#[repr(C)]
+#[derive(Clone, Copy, Default)]
+pub struct CACHE_DESCRIPTOR {
+    pub Level: u8,
+    pub Associativity: u8,
+    pub LineSize: u16,
+    pub Size: u32,
+    pub Type: PROCESSOR_CACHE_TYPE,
+}
 pub type CONSOLE_CHARACTER_ATTRIBUTES = u16;
 #[repr(C)]
 #[derive(Clone, Copy, Default)]
@@ -109,6 +119,7 @@ pub type HEAP_FLAGS = u32;
 pub type HKEY = *mut core::ffi::c_void;
 pub type HRESULT = i32;
 pub type KNOWN_FOLDER_FLAG = i32;
+pub type LOGICAL_PROCESSOR_RELATIONSHIP = i32;
 pub type MULTI_BYTE_TO_WIDE_CHAR_FLAGS = u32;
 pub type NTSTATUS = i32;
 #[repr(C)]
@@ -181,6 +192,7 @@ impl Default for PROCESSENTRY32 {
 		unsafe { core::mem::zeroed() }
     }
 }
+pub type PROCESSOR_CACHE_TYPE = i32;
 pub type PSTR = *mut u8;
 pub type PWSTR = *mut u16;
 pub type REG_CREATE_KEY_DISPOSITION = u32;
@@ -209,6 +221,43 @@ pub struct SMALL_RECT {
     pub Bottom: i16,
 }
 pub type STD_HANDLE = u32;
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct SYSTEM_LOGICAL_PROCESSOR_INFORMATION {
+    pub ProcessorMask: usize,
+    pub Relationship: LOGICAL_PROCESSOR_RELATIONSHIP,
+    pub Anonymous: SYSTEM_LOGICAL_PROCESSOR_INFORMATION_0,
+}
+impl Default for SYSTEM_LOGICAL_PROCESSOR_INFORMATION {
+    fn default() -> Self {
+        // SAFETY: All types are guaranteed to be zeroable
+		unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub union SYSTEM_LOGICAL_PROCESSOR_INFORMATION_0 {
+    pub ProcessorCore: SYSTEM_LOGICAL_PROCESSOR_INFORMATION_0_0,
+    pub NumaNode: SYSTEM_LOGICAL_PROCESSOR_INFORMATION_0_1,
+    pub Cache: CACHE_DESCRIPTOR,
+    pub Reserved: [u64; 2],
+}
+impl Default for SYSTEM_LOGICAL_PROCESSOR_INFORMATION_0 {
+    fn default() -> Self {
+        // SAFETY: All types are guaranteed to be zeroable
+		unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[derive(Clone, Copy, Default)]
+pub struct SYSTEM_LOGICAL_PROCESSOR_INFORMATION_0_1 {
+    pub NodeNumber: u32,
+}
+#[repr(C)]
+#[derive(Clone, Copy, Default)]
+pub struct SYSTEM_LOGICAL_PROCESSOR_INFORMATION_0_0 {
+    pub Flags: u8,
+}
 pub type WIN32_ERROR = u32;
 pub type WINHTTP_ACCESS_TYPE = u32;
 pub type WINHTTP_OPEN_REQUEST_FLAGS = u32;
