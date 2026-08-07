@@ -53,7 +53,7 @@ impl Module for Version<'_> {
     }
 
     fn title(&self) -> &'static str {
-        "{project_name} {version} ({arch})"
+        "{project-name} {version} ({arch})"
     }
 
     fn string_name(&self) -> &'static str {
