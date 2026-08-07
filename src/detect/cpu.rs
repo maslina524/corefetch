@@ -12,14 +12,52 @@ use alloc::{
 
 use crate::{
     os::windows::{GetLogicalProcessorInformation, SYSTEM_LOGICAL_PROCESSOR_INFORMATION, GetActiveProcessorCount, GetNumaHighestNodeNumber},
-    os::error::{self, ErrorCode}
+    os::error::{self, ErrorCode},
+    sync::OnceLock
 };
+
+type LogicalInfo = SYSTEM_LOGICAL_PROCESSOR_INFORMATION;
+
+static VEC_LOGICAL_INFO: OnceLock<Vec<LogicalInfo>> = OnceLock::new();
 
 #[derive(Debug)]
 pub struct Cores {
     pub physical: usize,
     pub logical: usize,
     pub online: usize,
+}
+
+fn logical_info() -> &'static Vec<LogicalInfo> {
+    VEC_LOGICAL_INFO.get_or_init(|| {
+        let mut size = 0;
+
+        // SAFETY: Completely safe
+        let ret = unsafe {
+            GetLogicalProcessorInformation(
+                ptr::null_mut(), 
+                &raw mut size
+            )
+        };
+        let err = ErrorCode::last();
+        assert!(err.code() != 122 && err.code() != 0, "`GetLogicalProcessorInformation` (size) failed");
+
+        let struct_size = mem::size_of::<SYSTEM_LOGICAL_PROCESSOR_INFORMATION>();
+        let buf_size = size as usize / struct_size;
+        let mut buf = Vec::with_capacity(buf_size);
+
+        // SAFETY: Completely safe
+        let ret = unsafe {
+            GetLogicalProcessorInformation(
+                buf.as_mut_ptr(), 
+                &raw mut size
+            )
+        };
+        assert!(ErrorCode::last().code() == 0, "`GetLogicalProcessorInformation` (info) failed");
+
+        // SAFETY: WinAPI modifies data in `Vec<_>`, you must update the len
+        unsafe { buf.set_len(buf_size) };
+        buf
+    })
 }
 
 pub fn vendor() -> String {
