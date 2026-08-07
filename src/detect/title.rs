@@ -1,7 +1,7 @@
 use alloc::string::String;
 
 use crate::{
-    os::windows::{GetUserNameW, GetUserNameExW},
+    os::windows::{GetUserNameW, GetUserNameExW, GetCurrentDirectoryW},
     os::path::Path,
     os::env,
     sync::OnceLock,
@@ -73,6 +73,24 @@ pub fn colored_user_name() -> String {
     )
 }
 
+pub fn cwd() -> String {
+    let mut buf = [0u16; 1024];
+    let size = 1024;
+    
+    // SAFETY: Completely safe
+    let ret = unsafe {
+        GetCurrentDirectoryW(
+            size,
+            (&raw mut buf).cast(),
+        )
+    };
+    if ret == 0 {
+        return String::new();
+    }
+
+    String::from_utf16_lossy(&buf)
+}
+
 #[cfg(test)]
 mod tests {
     use crate::detect::title;
@@ -90,5 +108,11 @@ mod tests {
     fn full_user_name_test() {
         let full = title::full_user_name();
         println!("{full}");
+    }
+
+    #[test]
+    fn cwd() {
+        let cwd = title::cwd();
+        println!("{cwd}");
     }
 }

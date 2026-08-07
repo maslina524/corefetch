@@ -28,6 +28,7 @@ link!("kernel32" "system" fn FormatMessageW(dwflags : FORMAT_MESSAGE_OPTIONS, lp
 link!("kernel32" "system" fn GetActiveProcessorCount(groupnumber : u16) -> u32);
 link!("kernel32" "system" fn GetCommandLineW() -> PCWSTR);
 link!("kernel32" "system" fn GetConsoleScreenBufferInfo(hconsoleoutput : HANDLE, lpconsolescreenbufferinfo : *mut CONSOLE_SCREEN_BUFFER_INFO) -> BOOL);
+link!("kernel32" "system" fn GetCurrentDirectoryW(nbufferlength : u32, lpbuffer : PWSTR) -> u32);
 link!("kernel32" "system" fn GetFileSizeEx(hfile : HANDLE, lpfilesize : *mut i64) -> BOOL);
 link!("kernel32" "system" fn GetLastError() -> WIN32_ERROR);
 link!("kernel32" "system" fn GetLocaleInfoEx(lplocalename : PCWSTR, lctype : u32, lplcdata : PWSTR, cchdata : i32) -> i32);
