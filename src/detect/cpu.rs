@@ -11,9 +11,7 @@ use alloc::{
 };
 
 use crate::{
-    os::windows::{GetLogicalProcessorInformation, SYSTEM_LOGICAL_PROCESSOR_INFORMATION, GetActiveProcessorCount, GetNumaHighestNodeNumber},
-    os::error::{self, ErrorCode},
-    sync::OnceLock
+    os::{error::{self, ErrorCode}, windows::{GetActiveProcessorCount, GetLogicalProcessorInformation, GetNumaHighestNodeNumber, SYSTEM_LOGICAL_PROCESSOR_INFORMATION}}, sync::OnceLock, todo_or
 };
 
 type LogicalInfo = SYSTEM_LOGICAL_PROCESSOR_INFORMATION;
@@ -120,6 +118,22 @@ pub fn logical_cores_count() -> usize {
 pub fn online_cores_count() -> usize {
     // SAFETY: Completely safe
     (unsafe { GetActiveProcessorCount(0) }) as usize
+}
+
+pub const fn code_name() -> String {
+    if cfg!(any(target_arch = "x86_64", target_arch = "x86")) {
+        todo_or!("fn code_name is not implemented", String::new())
+    } else {
+        String::new()
+    }
+}
+
+pub const fn technology() -> String {
+    if cfg!(any(target_arch = "x86_64", target_arch = "x86")) {
+        todo_or!("fn technology is not implemented", String::new())
+    } else {
+        String::new()
+    }
 }
 
 #[cfg(test)]

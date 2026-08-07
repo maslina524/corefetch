@@ -22,6 +22,7 @@
 
 mod sync;
 mod os;
+mod macros;
 mod modules;
 mod color;
 mod logo;
@@ -217,14 +218,4 @@ extern "C" fn main() -> c_int {
     
 
     0
-}
-
-#[cfg(test)]
-mod tests {  
-    extern crate std;
-
-    #[test]
-    fn test_test() {
-        std::println!("Hello World!");
-    }
 }
