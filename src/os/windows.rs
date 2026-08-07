@@ -32,6 +32,7 @@ link!("kernel32" "system" fn GetFileSizeEx(hfile : HANDLE, lpfilesize : *mut i64
 link!("kernel32" "system" fn GetLastError() -> WIN32_ERROR);
 link!("kernel32" "system" fn GetLocaleInfoEx(lplocalename : PCWSTR, lctype : u32, lplcdata : PWSTR, cchdata : i32) -> i32);
 link!("kernel32" "system" fn GetLogicalProcessorInformation(buffer : *mut SYSTEM_LOGICAL_PROCESSOR_INFORMATION, returnedlength : *mut u32) -> BOOL);
+link!("kernel32" "system" fn GetNumaHighestNodeNumber(highestnodenumber : *mut u32) -> BOOL);
 link!("kernel32" "system" fn GetProcessHeap() -> HANDLE);
 link!("kernel32" "system" fn GetStdHandle(nstdhandle : STD_HANDLE) -> HANDLE);
 link!("kernel32" "system" fn GetSystemTimeAsFileTime(lpsystemtimeasfiletime : *mut FILETIME));

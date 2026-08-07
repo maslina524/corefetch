@@ -11,7 +11,7 @@ use alloc::{
 };
 
 use crate::{
-    os::windows::{GetLogicalProcessorInformation, SYSTEM_LOGICAL_PROCESSOR_INFORMATION, GetActiveProcessorCount},
+    os::windows::{GetLogicalProcessorInformation, SYSTEM_LOGICAL_PROCESSOR_INFORMATION, GetActiveProcessorCount, GetNumaHighestNodeNumber},
     os::error::{self, ErrorCode}
 };
 
@@ -42,6 +42,18 @@ pub fn vendor() -> String {
     ];
     
     String::from_utf8(vendor).unwrap()
+}
+
+pub fn numa_nodes_count() -> usize {
+    let mut highest = 0;
+    // SAFETY: Completely safe
+    let ret = unsafe {
+        GetNumaHighestNodeNumber(&raw mut highest)
+    };
+    if ret == 0 {
+        return 0
+    }
+    highest as usize + 1
 }
 
 pub fn cores_count() -> error::Result<Cores> {
@@ -111,5 +123,12 @@ mod tests {
     fn cores_test() {
         let cores = cpu::cores_count().unwrap();
         println!("{cores:#?}");
+    }
+
+    #[test]
+    fn numa_nodes_test() {
+        let numa = cpu::numa_nodes_count();
+        assert!(numa != 0);
+        println!("{numa}");
     }
 }
