@@ -33,7 +33,7 @@ pub trait Module {
 
 pub fn from_str(string: &str) -> Option<Box<dyn Module>> {
     match string.to_lowercase().as_str() {
-        "color"     => Some(Box::new(Colors::new())),
+        "colors"    => Some(Box::new(Colors::new())),
         "cpu"       => Some(Box::new(Cpu::new())),
         "locale"    => Some(Box::new(Locale::new())),
         "os"        => Some(Box::new(Os::new())),
