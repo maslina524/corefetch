@@ -200,6 +200,17 @@ pub fn base_freq_formatted() -> String {
     })
 }
 
+pub fn name() -> String {
+    let handle = Regedit::open(
+        Hkey::LocalMachine, 
+        "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0", 
+        Access::Read
+    ).unwrap();
+    let reg = handle.read("ProcessorNameString").unwrap();
+    let string = reg.as_string().unwrap();
+    string.to_owned()
+}
+
 fn cpuid_has_feature(leaf: u32, subleaf: u32, reg: usize, bit: usize) -> bool {
     let ret = __cpuid_count(leaf, subleaf);
     let regs = [ret.eax, ret.ebx, ret.ecx, ret.edx];
