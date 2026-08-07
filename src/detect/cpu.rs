@@ -20,13 +20,6 @@ type LogicalInfo = SYSTEM_LOGICAL_PROCESSOR_INFORMATION;
 
 static VEC_LOGICAL_INFO: OnceLock<Vec<LogicalInfo>> = OnceLock::new();
 
-#[derive(Debug)]
-pub struct Cores {
-    pub physical: usize,
-    pub logical: usize,
-    pub online: usize,
-}
-
 fn logical_info() -> &'static Vec<LogicalInfo> {
     VEC_LOGICAL_INFO.get_or_init(|| {
         let mut size = 0;
@@ -39,7 +32,7 @@ fn logical_info() -> &'static Vec<LogicalInfo> {
             )
         };
         let err = ErrorCode::last();
-        assert!(err.code() != 122 && err.code() != 0, "`GetLogicalProcessorInformation` (size) failed");
+        assert!(err.code() == 122 || err.code() == 0, "`GetLogicalProcessorInformation` (size) failed");
 
         let struct_size = mem::size_of::<SYSTEM_LOGICAL_PROCESSOR_INFORMATION>();
         let buf_size = size as usize / struct_size;
@@ -52,7 +45,7 @@ fn logical_info() -> &'static Vec<LogicalInfo> {
                 &raw mut size
             )
         };
-        assert!(ErrorCode::last().code() == 0, "`GetLogicalProcessorInformation` (info) failed");
+        assert!(ErrorCode::last().code() != 0, "`GetLogicalProcessorInformation` (info) failed");
 
         // SAFETY: WinAPI modifies data in `Vec<_>`, you must update the len
         unsafe { buf.set_len(buf_size) };
@@ -94,47 +87,25 @@ pub fn numa_nodes_count() -> usize {
     highest as usize + 1
 }
 
-pub fn cores_count() -> error::Result<Cores> {
-    let mut size = 0;
-    
-    // SAFETY: Completely safe
-    let ret = unsafe {
-        GetLogicalProcessorInformation(
-            ptr::null_mut(), 
-            &raw mut size
-        )
-    };
-    let err = ErrorCode::last();
-    if err.code() != 122 && err.code() != 0 {
-        return Err(ErrorCode::last());
-    }
+pub fn physical_cores_count() -> usize {
+    let buf = logical_info();
 
-    let struct_size = mem::size_of::<SYSTEM_LOGICAL_PROCESSOR_INFORMATION>();
-    let buf_size = size as usize / struct_size;
-    let mut buf = Vec::with_capacity(buf_size);
-
-    // SAFETY: Completely safe
-    let ret = unsafe {
-        GetLogicalProcessorInformation(
-            buf.as_mut_ptr(), 
-            &raw mut size
-        )
-    };
-    if ret == 0 {
-        return Err(ErrorCode::last());
-    }
-    // SAFETY: WinAPI modifies data in `Vec<_>`, you must update the len
-    unsafe { buf.set_len(buf_size) };
-
-    let mut logical = 0;
     let mut physical = 0;
-    // SAFETY: Completely safe
-    let online = unsafe {
-        GetActiveProcessorCount(0)
-    } as usize;
     for info in buf {
         if info.Relationship == 0 {
             physical += 1;
+        }
+    }
+
+    physical
+}
+
+pub fn logical_cores_count() -> usize {
+    let buf = logical_info();
+
+    let mut logical = 0;
+    for info in buf {
+        if info.Relationship == 0 {
             let mut mask = info.ProcessorMask;
             while mask != 0 {
                 mask &= (mask - 1);
@@ -143,7 +114,12 @@ pub fn cores_count() -> error::Result<Cores> {
         }
     }
 
-    Ok(Cores { physical, logical, online })
+    logical
+}
+
+pub fn online_cores_count() -> usize {
+    // SAFETY: Completely safe
+    (unsafe { GetActiveProcessorCount(0) }) as usize
 }
 
 #[cfg(test)]
@@ -159,8 +135,17 @@ mod tests {
 
     #[test]
     fn cores_test() {
-        let cores = cpu::cores_count().unwrap();
-        println!("{cores:#?}");
+        let physical = cpu::physical_cores_count();
+        assert!(physical != 0);
+
+        let logical = cpu::logical_cores_count();
+        assert!(logical != 0);
+
+        let online = cpu::online_cores_count();
+        
+        assert!(online != 0);
+
+        println!("Physical: {physical}, Logical: {logical}, Online: {online}");
     }
 
     #[test]
