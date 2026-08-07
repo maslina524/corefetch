@@ -1,4 +1,5 @@
 pub mod colors;    // 14) Colors        : Display the terminal's 16-color palette
+pub mod cpu;       // 15) CPU           : Print CPU name, frequency, etc.
 pub mod locale;    // 37) Locale        : Print system locale name
 pub mod os;        // 47) OS            : Print the OS or Linux distribution name and version
 pub mod processes; // 53) Processes     : Print number of running processes
@@ -6,6 +7,7 @@ pub mod version;   // 68) Version       : Print the Fastfetch version and build 
 pub mod weather;   // 71) Weather       : Print weather information
 
 pub use colors::Colors;
+pub use cpu::Cpu;
 pub use locale::Locale;
 pub use os::Os;
 pub use processes::Processes;
@@ -32,6 +34,7 @@ pub trait Module {
 pub fn from_str(string: &str) -> Option<Box<dyn Module>> {
     match string.to_lowercase().as_str() {
         "color"     => Some(Box::new(Colors::new())),
+        "cpu"       => Some(Box::new(Cpu::new())),
         "locale"    => Some(Box::new(Locale::new())),
         "os"        => Some(Box::new(Os::new())),
         "processes" => Some(Box::new(Processes::new())),

@@ -52,8 +52,9 @@ pub mod padding {
     pub const RIGHT : usize = 3;
     pub const LEFT  : usize = 4;
 }
-pub const MODULES: [&str; 6] = [
+pub const MODULES: [&str; 7] = [
     "locale",
+    "cpu",
     "os",
     "processes",
     "version",
