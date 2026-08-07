@@ -60,7 +60,7 @@ impl Module for Cpu {
     }
 
     fn title(&self) -> &'static str {
-        "{name} {cores-physical}:{cores-logical}:{cores-online}"
+        "{name} ({core-types}) @ {freq-base}"
     }
 
     fn string_name(&self) -> &'static str {

@@ -59,7 +59,7 @@ impl Module for Os<'_> {
     }
 
     fn title(&self) -> &'static str {
-        "{pretty_name}"
+        "{pretty-name}"
     }
 
     fn string_name(&self) -> &'static str {

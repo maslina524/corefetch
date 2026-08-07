@@ -74,7 +74,7 @@ macro_rules! format_for_module {
             let value_format = format.format.unwrap_or(self.title());
             let value_string = $crate::format_module!(value_format, self, $($field),*);
 
-            $crate::format!("\x1b[{key_color}m{key_string}\x1b[0m: \x1b[{value_color}m{value_string}\x1b[0m")
+            $crate::format!("\x1b[{key_color}m{key_string}\x1b[0m: {value_string}")
         }
     };
 }
@@ -86,15 +86,16 @@ macro_rules! format_module {
         let mut idx = 1;
         
         $(
-            result = result.replace(
-                &alloc::fmt::format(format_args!("{{{}}}", stringify!($field))),
-                &$crate::format_module!(@to_string &$obj.$field)
-            );
+            let placeholder_underscore = alloc::fmt::format(format_args!("{{{}}}", stringify!($field)));
+            let placeholder_hyphen = placeholder_underscore.replace('_', "-");
             
-            result = result.replace(
-                &alloc::fmt::format(format_args!("{{{}}}", idx)),
-                &$crate::format_module!(@to_string &$obj.$field)
-            );
+            let value = &$crate::format_module!(@to_string &$obj.$field);
+            
+            result = result.replace(&placeholder_underscore, value);
+            result = result.replace(&placeholder_hyphen, value);
+            
+            let placeholder_idx = alloc::fmt::format(format_args!("{{{}}}", idx));
+            result = result.replace(&placeholder_idx, value);
             
             idx += 1;
         )*

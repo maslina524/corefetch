@@ -176,7 +176,7 @@ fn build_info_buf(max_len: usize) -> Vec<String> {
     ret
 }
 
-#[cfg(not(test))]
+// #[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
     // println!("{}",    Colors::get());
@@ -206,14 +206,14 @@ extern "C" fn main() -> c_int {
         for i in 0..max_lines {
             let logo_line = logo_buf.get(i).map_or(empty_logo_line.as_str(), String::as_str);
             let info_line = info_buf.get(i).map_or("", String::as_str);
-            println!("{logo_line}{info_line}");
+            println!("{logo_line}{info_line}\x1b[0m");
         }
     } else {
         for line in logo_buf {
-            println!("{line}");
+            println!("{line}\x1b[0m");
         }
         for line in info_buf {
-            println!("{line}");
+            println!("{line}\x1b[0m");
         }
     }
     
