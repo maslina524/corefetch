@@ -6,7 +6,7 @@ use alloc::{
     vec
 };
 
-fn vendor() -> String {
+pub fn vendor() -> String {
     let ret = __cpuid(0);
     let (eax, ebx, ecx, edx) = (ret.eax, ret.ebx, ret.ecx, ret.edx);
 
