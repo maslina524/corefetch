@@ -12,7 +12,7 @@
     clippy::mut_from_ref,
     clippy::fn_to_numeric_cast_any,
 )]
-#![allow(unused)]
+// #![allow(unused)]
 #![allow(clippy::struct_field_names)]
 #![allow(clippy::too_many_lines)]
 #![allow(clippy::cast_lossless)]
@@ -181,7 +181,7 @@ fn build_info_buf(max_len: usize) -> Vec<String> {
     ret
 }
 
-// #[cfg(not(test))]
+#[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
     // println!("{}",    Colors::get());
