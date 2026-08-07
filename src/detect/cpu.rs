@@ -1,5 +1,5 @@
 use core::{
-    arch::x86_64::__cpuid,
+    arch::x86_64::{__cpuid, __cpuid_count, _xgetbv},
     mem,
     ptr
 };
@@ -184,6 +184,66 @@ pub fn base_freq_formatted() -> String {
     })
 }
 
+fn cpuid_has_feature(leaf: u32, subleaf: u32, reg: usize, bit: usize) -> bool {
+    let ret = __cpuid_count(leaf, subleaf);
+    let regs = [ret.eax, ret.ebx, ret.ecx, ret.edx];
+    ((regs[reg] >> bit) & 1) == 1
+}
+
+fn xgetbv_test(bit: u8) -> bool {
+    // SAFETY: The index is always zero, safe
+    let xcr0 = unsafe { _xgetbv(0) };
+    (xcr0 >> bit as u64) == 1
+}
+
+fn os_supports_ymm() -> bool {
+    xgetbv_test(2)
+}
+
+fn os_supports_zmm() -> bool {
+    xgetbv_test(7)
+}
+
+pub fn level() -> Option<u8> {
+    if cfg!(not(any(target_arch = "x86_64", target_arch = "x86"))) {
+        return None;
+    }
+
+    if !cpuid_has_feature(1, 0, 2, 0) { return Some(1) }
+    if !cpuid_has_feature(1, 0, 2, 19) { return Some(1) }
+    if !cpuid_has_feature(1, 0, 2, 20) { return Some(1) }
+    if !cpuid_has_feature(1, 0, 2, 23) { return Some(1) }
+
+    if !cpuid_has_feature(0x8000_0001, 0, 2, 0) { return Some(1) }
+    if !cpuid_has_feature(1, 0, 2, 13) { return Some(1) }
+
+    if !os_supports_ymm() { return Some(2) }
+
+    if (!cpuid_has_feature(1, 0, 2, 28)) { return Some(2) }
+    if (!cpuid_has_feature(1, 0, 2, 27)) { return Some(2) }
+    
+    let ret = __cpuid(7);
+    let regs = [ret.eax, ret.ebx, ret.ecx, ret.edx];
+    if regs[1] & (1 << 5) == 0 { return Some(2) }
+    if regs[1] & (1 << 3) == 0 { return Some(2) }
+    if regs[1] & (1 << 8) == 0 { return Some(2) }
+    if !cpuid_has_feature(1, 0, 2, 29) { return Some(2) }
+    if !cpuid_has_feature(1, 0, 2, 12) { return Some(2) }
+    
+    if !cpuid_has_feature(1, 0, 2, 22) { return Some(2) }
+    if !cpuid_has_feature(0x8000_0001, 0, 2, 5) { return Some(2) }
+
+    if !os_supports_zmm() { return Some(3) }
+
+    if regs[1] & (1 << 16) == 0 { return Some(3) }
+    if regs[1] & (1 << 30) == 0 { return Some(3) }
+    if regs[1] & (1 << 28) == 0 { return Some(3) }
+    if regs[1] & (1 << 17) == 0 { return Some(3) }
+    if regs[1] & (1 << 31) == 0 { return Some(3) }
+
+    Some(4)
+}
+
 #[cfg(test)]
 mod tests {
     use crate::detect::cpu;
@@ -229,5 +289,11 @@ mod tests {
         let bf = cpu::base_freq_formatted();
         assert!(bf.contains("GHz"));
         println!("{bf}");
+    }
+
+    #[test]
+    fn level_test() {
+        let level = cpu::level().unwrap();
+        println!("{level}");
     }
 }
