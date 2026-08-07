@@ -142,6 +142,12 @@ impl From<String> for Path {
     }
 }
 
+impl From<&String> for Path {
+    fn from(value: &String) -> Self {
+        Self { inner: value.to_owned() }.clear()
+    }
+}
+
 impl From<&str> for Path {
     fn from(value: &str) -> Self {
         Self { inner: value.to_owned() }.clear()
