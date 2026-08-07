@@ -36,6 +36,7 @@ link!("kernel32" "system" fn GetNumaHighestNodeNumber(highestnodenumber : *mut u
 link!("kernel32" "system" fn GetProcessHeap() -> HANDLE);
 link!("kernel32" "system" fn GetStdHandle(nstdhandle : STD_HANDLE) -> HANDLE);
 link!("kernel32" "system" fn GetSystemTimeAsFileTime(lpsystemtimeasfiletime : *mut FILETIME));
+link!("secur32" "system" fn GetUserNameExW(nameformat : EXTENDED_NAME_FORMAT, lpnamebuffer : PWSTR, nsize : *mut u32) -> bool);
 link!("advapi32" "system" fn GetUserNameW(lpbuffer : PWSTR, pcbbuffer : *mut u32) -> BOOL);
 link!("kernel32" "system" fn HeapAlloc(hheap : HANDLE, dwflags : HEAP_FLAGS, dwbytes : usize) -> *mut core::ffi::c_void);
 link!("kernel32" "system" fn HeapFree(hheap : HANDLE, dwflags : HEAP_FLAGS, lpmem : *const core::ffi::c_void) -> BOOL);
@@ -89,6 +90,7 @@ pub struct COORD {
     pub Y: i16,
 }
 pub type CREATE_TOOLHELP_SNAPSHOT_FLAGS = u32;
+pub type EXTENDED_NAME_FORMAT = i32;
 #[repr(C)]
 #[derive(Clone, Copy, Default)]
 pub struct FILETIME {
