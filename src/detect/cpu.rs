@@ -12,7 +12,15 @@ use alloc::{
 };
 
 use crate::{
-    os::{error::{self, ErrorCode}, windows::{GetActiveProcessorCount, GetLogicalProcessorInformation, GetNumaHighestNodeNumber, SYSTEM_LOGICAL_PROCESSOR_INFORMATION}}, sync::OnceLock, todo_or
+    os::error::{self, ErrorCode},
+    os::windows::{
+        GetActiveProcessorCount, GetLogicalProcessorInformation, GetNumaHighestNodeNumber,
+        SYSTEM_LOGICAL_PROCESSOR_INFORMATION
+    },
+    os::regedit::{Regedit, RegValue, Access, Hkey},
+    sync::OnceLock,
+    todo_or,
+    format
 };
 
 type LogicalInfo = SYSTEM_LOGICAL_PROCESSOR_INFORMATION;
@@ -163,6 +171,19 @@ pub fn technology() -> String {
     }
 }
 
+pub fn base_freq_formatted() -> String {
+    let handle = Regedit::open(
+        Hkey::LocalMachine, 
+        "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0", 
+        Access::Read
+    ).unwrap();
+    handle.read("~MHz").map_or_else(|_| String::new(), |key| {
+        let mhz = key.as_u32().unwrap_or(0);
+        let ghz = mhz as f64 / 1000.0;
+        format!("{ghz:.2} GHz")
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use crate::detect::cpu;
@@ -201,5 +222,12 @@ mod tests {
         let tech = cpu::technology();
         assert!(!tech.is_empty());
         println!("{tech}");
+    }
+
+    #[test]
+    fn base_freq_test() {
+        let bf = cpu::base_freq_formatted();
+        assert!(bf.contains("GHz"));
+        println!("{bf}");
     }
 }
