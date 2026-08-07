@@ -4,7 +4,10 @@ use crate::{
     os::windows::GetUserNameW,
     os::path::Path,
     os::env,
-    sync::OnceLock
+    sync::OnceLock,
+    logo::LogoInfo,
+    todo_or,
+    format
 };
 
 static USER_NAME: OnceLock<String> = OnceLock::new();
@@ -37,6 +40,18 @@ pub fn home_dir() -> Path {
 
 pub fn exe_path() -> String {
     env::args()[0].clone()
+}
+
+pub fn user_shell() -> String {
+    todo_or!("Will be implemented in the future", String::new())
+}
+
+pub fn colored_user_name() -> String {
+    format!(
+        "{}{}\x1b[0m",
+        LogoInfo::get().unwrap().color_title,
+        user_name()
+    )
 }
 
 #[cfg(test)]
