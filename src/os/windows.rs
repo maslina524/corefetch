@@ -43,6 +43,7 @@ link!("kernel32" "system" fn ReadFile(hfile : HANDLE, lpbuffer : *mut u8, nnumbe
 link!("advapi32" "system" fn RegCloseKey(hkey : HKEY) -> WIN32_ERROR);
 link!("advapi32" "system" fn RegCreateKeyExW(hkey : HKEY, lpsubkey : PCWSTR, reserved : u32, lpclass : PCWSTR, dwoptions : REG_OPEN_CREATE_OPTIONS, samdesired : REG_SAM_FLAGS, lpsecurityattributes : *const SECURITY_ATTRIBUTES, phkresult : *mut HKEY, lpdwdisposition : *mut REG_CREATE_KEY_DISPOSITION) -> WIN32_ERROR);
 link!("advapi32" "system" fn RegOpenKeyExW(hkey : HKEY, lpsubkey : PCWSTR, uloptions : u32, samdesired : REG_SAM_FLAGS, phkresult : *mut HKEY) -> WIN32_ERROR);
+link!("advapi32" "system" fn RegQueryValueExW(hkey : HKEY, lpvaluename : PCWSTR, lpreserved : *const u32, lptype : *mut REG_VALUE_TYPE, lpdata : *mut u8, lpcbdata : *mut u32) -> WIN32_ERROR);
 link!("ntdll" "system" fn RtlGetVersion(lpversioninformation : *mut OSVERSIONINFOW) -> NTSTATUS);
 link!("shell32" "system" fn SHGetKnownFolderPath(rfid : *const GUID, dwflags : u32, htoken : HANDLE, ppszpath : *mut PWSTR) -> HRESULT);
 link!("kernel32" "system" fn SetConsoleOutputCP(wcodepageid : u32) -> BOOL);
@@ -185,6 +186,7 @@ pub type PWSTR = *mut u16;
 pub type REG_CREATE_KEY_DISPOSITION = u32;
 pub type REG_OPEN_CREATE_OPTIONS = u32;
 pub type REG_SAM_FLAGS = u32;
+pub type REG_VALUE_TYPE = u32;
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct SECURITY_ATTRIBUTES {
