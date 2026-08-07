@@ -29,3 +29,7 @@ pub fn user_name() -> &'static String {
         String::from_utf16_lossy(&buf)
     })
 }
+
+pub fn home_dir() -> Path {
+    Path::from("C:/Users").join(user_name())
+}
