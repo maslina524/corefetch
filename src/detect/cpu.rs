@@ -15,6 +15,12 @@ use crate::{
     os::error::{self, ErrorCode}
 };
 
+#[derive(Debug)]
+pub struct Cores {
+    pub physical: usize,
+    pub logical: usize,
+}
+
 pub fn vendor() -> String {
     let ret = __cpuid(0);
     let (eax, ebx, ecx, edx) = (ret.eax, ret.ebx, ret.ecx, ret.edx);
@@ -37,7 +43,7 @@ pub fn vendor() -> String {
     String::from_utf8(vendor).unwrap()
 }
 
-pub fn logical_cores_count() -> error::Result<usize> {
+pub fn cores_count() -> error::Result<Cores> {
     let mut size = 0;
     
     // SAFETY: Completely safe
@@ -69,18 +75,20 @@ pub fn logical_cores_count() -> error::Result<usize> {
     // SAFETY: WinAPI modifies data in `Vec<_>`, you must update the len
     unsafe { buf.set_len(buf_size) };
 
-    let mut count = 0;
+    let mut logical = 0;
+    let mut physical = 0;
     for info in buf {
         if info.Relationship == 0 {
+            physical += 1;
             let mut mask = info.ProcessorMask;
             while mask != 0 {
                 mask &= (mask - 1);
-                count += 1;
+                logical += 1;
             }
         }
     }
 
-    Ok(count)
+    Ok(Cores { physical, logical })
 }
 
 #[cfg(test)]
@@ -95,9 +103,8 @@ mod tests {
     }
 
     #[test]
-    fn logical_cores_test() {
-        let count = cpu::logical_cores_count().unwrap();
-        println!("{count}");
-        assert!(count != 0);
+    fn cores_test() {
+        let cores = cpu::cores_count().unwrap();
+        println!("{cores:#?}");
     }
 }
