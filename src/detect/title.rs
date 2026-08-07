@@ -1,7 +1,7 @@
 use alloc::string::String;
 
 use crate::{
-    os::windows::GetUserNameW,
+    os::windows::{GetUserNameW, GetUserNameExW},
     os::path::Path,
     os::env,
     sync::OnceLock,
@@ -34,6 +34,25 @@ pub fn user_name() -> &'static String {
     })
 }
 
+pub fn full_user_name() -> String {
+    let mut buf = [0u16; UNLEN + 1];
+    let mut size = (UNLEN + 1) as u32;
+    
+    // SAFETY: Completely safe
+    let ret = unsafe {
+        GetUserNameExW(
+            3,
+            (&raw mut buf).cast(),
+            &raw mut size,
+        )
+    };
+    if !ret {
+        return String::new();
+    }
+
+    String::from_utf16_lossy(&buf)
+}
+
 pub fn home_dir() -> Path {
     Path::from("C:/Users").join(user_name())
 }
@@ -42,7 +61,7 @@ pub fn exe_path() -> String {
     env::args()[0].clone()
 }
 
-pub fn user_shell() -> String {
+pub const fn user_shell() -> String {
     todo_or!("Will be implemented in the future", String::new())
 }
 
@@ -65,5 +84,11 @@ mod tests {
         let path = title::exe_path();
         println!("{path}");
         assert!(path.contains("nofetch"));
+    }
+
+    #[test]
+    fn full_user_name_test() {
+        let full = title::full_user_name();
+        println!("{full}");
     }
 }
