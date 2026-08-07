@@ -3,6 +3,7 @@ use alloc::string::String;
 use crate::{
     os::windows::GetUserNameW,
     os::path::Path,
+    os::env,
     sync::OnceLock
 };
 
@@ -32,4 +33,22 @@ pub fn user_name() -> &'static String {
 
 pub fn home_dir() -> Path {
     Path::from("C:/Users").join(user_name())
+}
+
+pub fn exe_path() -> String {
+    env::args()[0].clone()
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::detect::title;
+
+    extern crate std;
+
+    #[test]
+    fn exe_path_test() {
+        let path = title::exe_path();
+        println!("{path}");
+        assert!(path.contains("nofetch"));
+    }
 }
