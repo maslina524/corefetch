@@ -124,6 +124,22 @@ pub fn logical_cores_count() -> usize {
     logical
 }
 
+pub fn package_count() -> usize {
+    let buf = logical_info();
+    
+    let mut package = 0;
+    let mut idx = 0;
+    while idx < buf.len() {
+        let info = &buf[idx];
+        if info.Relationship == 3 {
+            package += 1;
+        }
+        idx += 1;
+    }
+
+    package
+}
+
 pub fn online_cores_count() -> usize {
     // SAFETY: Completely safe
     (unsafe { GetActiveProcessorCount(0) }) as usize
@@ -204,44 +220,50 @@ fn os_supports_zmm() -> bool {
     xgetbv_test(7)
 }
 
-pub fn level() -> Option<u8> {
-    if cfg!(not(any(target_arch = "x86_64", target_arch = "x86"))) {
-        return None;
-    }
+pub fn level_x86_64() -> u8 {
+    if !cpuid_has_feature(1, 0, 2, 0) { return 1 }
+    if !cpuid_has_feature(1, 0, 2, 19) { return 1 }
+    if !cpuid_has_feature(1, 0, 2, 20) { return 1 }
+    if !cpuid_has_feature(1, 0, 2, 23) { return 1 }
 
-    if !cpuid_has_feature(1, 0, 2, 0) { return Some(1) }
-    if !cpuid_has_feature(1, 0, 2, 19) { return Some(1) }
-    if !cpuid_has_feature(1, 0, 2, 20) { return Some(1) }
-    if !cpuid_has_feature(1, 0, 2, 23) { return Some(1) }
+    if !cpuid_has_feature(0x8000_0001, 0, 2, 0) { return 1 }
+    if !cpuid_has_feature(1, 0, 2, 13) { return 1 }
 
-    if !cpuid_has_feature(0x8000_0001, 0, 2, 0) { return Some(1) }
-    if !cpuid_has_feature(1, 0, 2, 13) { return Some(1) }
+    if !os_supports_ymm() { return 2 }
 
-    if !os_supports_ymm() { return Some(2) }
-
-    if (!cpuid_has_feature(1, 0, 2, 28)) { return Some(2) }
-    if (!cpuid_has_feature(1, 0, 2, 27)) { return Some(2) }
+    if (!cpuid_has_feature(1, 0, 2, 28)) { return 2 }
+    if (!cpuid_has_feature(1, 0, 2, 27)) { return 2 }
     
     let ret = __cpuid(7);
-    let regs = [ret.eax, ret.ebx, ret.ecx, ret.edx];
-    if regs[1] & (1 << 5) == 0 { return Some(2) }
-    if regs[1] & (1 << 3) == 0 { return Some(2) }
-    if regs[1] & (1 << 8) == 0 { return Some(2) }
-    if !cpuid_has_feature(1, 0, 2, 29) { return Some(2) }
-    if !cpuid_has_feature(1, 0, 2, 12) { return Some(2) }
+    let ebx = ret.ebx;
+    if ebx & (1 << 5) == 0 { return 2 }
+    if ebx & (1 << 3) == 0 { return 2 }
+    if ebx & (1 << 8) == 0 { return 2 }
+    if !cpuid_has_feature(1, 0, 2, 29) { return 2 }
+    if !cpuid_has_feature(1, 0, 2, 12) { return 2 }
     
-    if !cpuid_has_feature(1, 0, 2, 22) { return Some(2) }
-    if !cpuid_has_feature(0x8000_0001, 0, 2, 5) { return Some(2) }
+    if !cpuid_has_feature(1, 0, 2, 22) { return 2 }
+    if !cpuid_has_feature(0x8000_0001, 0, 2, 5) { return 2 }
 
-    if !os_supports_zmm() { return Some(3) }
+    if !os_supports_zmm() { return 3 }
 
-    if regs[1] & (1 << 16) == 0 { return Some(3) }
-    if regs[1] & (1 << 30) == 0 { return Some(3) }
-    if regs[1] & (1 << 28) == 0 { return Some(3) }
-    if regs[1] & (1 << 17) == 0 { return Some(3) }
-    if regs[1] & (1 << 31) == 0 { return Some(3) }
+    if ebx & (1 << 16) == 0 { return 3 }
+    if ebx & (1 << 30) == 0 { return 3 }
+    if ebx & (1 << 28) == 0 { return 3 }
+    if ebx & (1 << 17) == 0 { return 3 }
+    if ebx & (1 << 31) == 0 { return 3 }
 
-    Some(4)
+    4
+}
+
+pub fn micro_arch() -> String {
+    let arch = env!("TARGET_ARCH");
+    if cfg!(any(target_arch = "x86_64", target_arch = "x86")) {
+        let level = level_x86_64();
+        format!("{arch}-v{level}")
+    } else {
+        arch.to_owned()
+    }
 }
 
 #[cfg(test)]
@@ -292,8 +314,15 @@ mod tests {
     }
 
     #[test]
-    fn level_test() {
-        let level = cpu::level().unwrap();
-        println!("{level}");
+    fn micro_arch_test() {
+        let arch = cpu::micro_arch();
+        println!("{arch}");
+    }
+
+    #[test]
+    fn package_test() {
+        let package = cpu::package_count();
+        println!("{package}");
+        assert!(package != 0);
     }
 }
