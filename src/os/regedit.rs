@@ -9,9 +9,9 @@ use alloc::{
 };
 
 use crate::{
-    os::windows::{RegCreateKeyExW, RegOpenKeyExW, HANDLE},
+    os::windows::{RegCloseKey, RegCreateKeyExW, RegOpenKeyExW, HANDLE},
     os::encoding::utf8_to_utf16le,
-    os::error
+    os::error::{self, ErrorCode}
 };
 
 #[repr(u32)]
@@ -110,6 +110,9 @@ impl Regedit {
                 ptr::null_mut()
             )
         };
+        if ret != 0 {
+            return Err(ErrorCode::last());
+        }
 
         Ok(Self(handle))
     }
@@ -129,7 +132,28 @@ impl Regedit {
                 &raw mut handle,
             )
         };
+        if ret != 0 {
+            return Err(ErrorCode::last());
+        }
 
         Ok(Self(handle))
+    }
+
+    fn close(&mut self) -> error::Result<()> {
+        // SAFETY: The handle is always valid,
+        // the function is only used in `Drop`
+        let ret = unsafe {
+            RegCloseKey(self.0)
+        };
+        if ret != 0 {
+            return Err(ErrorCode::last());
+        }
+        Ok(())
+    }
+}
+
+impl Drop for Regedit {
+    fn drop(&mut self) {
+        self.close();
     }
 }
