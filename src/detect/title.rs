@@ -1,7 +1,7 @@
 use alloc::string::String;
 
 use crate::{
-    os::windows::{GetUserNameW, GetUserNameExW, GetCurrentDirectoryW},
+    os::windows::{GetUserNameW, GetUserNameExW, GetCurrentDirectoryW, GetComputerNameW},
     os::path::Path,
     os::env,
     sync::OnceLock,
@@ -11,8 +11,10 @@ use crate::{
 };
 
 static USER_NAME: OnceLock<String> = OnceLock::new();
+static HOST_NAME: OnceLock<String> = OnceLock::new();
 
 const UNLEN     : usize            = 256;
+const PCNAME_LEN: usize            = 15;
 
 pub fn user_name() -> &'static String {
     USER_NAME.get_or_init(|| {
@@ -32,6 +34,42 @@ pub fn user_name() -> &'static String {
 
         String::from_utf16_lossy(&buf)
     })
+}
+
+pub fn colored_user_name() -> String {
+    format!(
+        "{}{}\x1b[0m",
+        LogoInfo::get().unwrap().color_title,
+        user_name()
+    )
+}
+
+pub fn host_name() -> &'static String {
+    HOST_NAME.get_or_init(|| {
+        let mut buf = [0u16; PCNAME_LEN + 1];
+        let mut size = (UNLEN + 1) as u32;
+        
+        // SAFETY: Completely safe
+        let ret = unsafe {
+            GetComputerNameW(
+                (&raw mut buf).cast(),
+                &raw mut size,
+            )
+        };
+        if ret == 0 {
+            return String::new();
+        }
+
+        String::from_utf16_lossy(&buf).to_lowercase()
+    })
+}
+
+pub fn colored_host_name() -> String {
+    format!(
+        "{}{}\x1b[0m",
+        LogoInfo::get().unwrap().color_title,
+        host_name()
+    )
 }
 
 pub fn full_user_name() -> String {
@@ -63,14 +101,6 @@ pub fn exe_path() -> String {
 
 pub const fn user_shell() -> String {
     todo_or!("Will be implemented in the future", String::new())
-}
-
-pub fn colored_user_name() -> String {
-    format!(
-        "{}{}\x1b[0m",
-        LogoInfo::get().unwrap().color_title,
-        user_name()
-    )
 }
 
 pub fn cwd() -> String {
@@ -111,8 +141,14 @@ mod tests {
     }
 
     #[test]
-    fn cwd() {
+    fn cwd_test() {
         let cwd = title::cwd();
+        println!("{cwd}");
+    }
+
+    #[test]
+    fn host_test() {
+        let cwd = title::host_name();
         println!("{cwd}");
     }
 }
