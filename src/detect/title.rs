@@ -64,7 +64,7 @@ pub fn user_name() -> &'static String {
 
 pub fn colored_user_name() -> String {
     format!(
-        "\x1b[{}m{}\x1b[0m",
+        "\x1b[1;{}m{}\x1b[0m",
         LogoInfo::get().unwrap().color_title,
         user_name()
     )
@@ -92,7 +92,7 @@ pub fn host_name() -> &'static String {
 
 pub fn colored_host_name() -> String {
     format!(
-        "\x1b[{}m{}\x1b[0m",
+        "\x1b[1;{}m{}\x1b[0m",
         LogoInfo::get().unwrap().color_title,
         host_name()
     )

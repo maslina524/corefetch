@@ -79,14 +79,11 @@ macro_rules! format_for_module {
     ($name:ident, $($field:ident),*) => {
         fn format(&self, key: super::FormatValue, format: super::FormatValue) -> alloc::string::String {
             let key_color = key.color.unwrap_or($crate::logo::LogoInfo::get().unwrap().color_keys);
-            let key_format = key.format.unwrap_or(self.key());
-            let key_string = $crate::format_module!(key_format, self, $($field),*);
+            let key_raw = key.format.unwrap_or(self.key());
+            let value_raw = format.format.unwrap_or(self.title());
 
-            let value_color = format.color.unwrap_or($crate::logo::LogoInfo::get().unwrap().color_title);
-            let value_format = format.format.unwrap_or(self.title());
-            let value_string = $crate::format_module!(value_format, self, $($field),*);
-
-            $crate::format!("\x1b[{key_color}m{key_string}\x1b[0m: {value_string}")
+            let full_string = $crate::format!("\x1b[1;{key_color}m{key_raw}\x1b[0m: {value_raw}");
+            $crate::format_module!(&full_string, self, $($field),*)
         }
     };
 }

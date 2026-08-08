@@ -62,7 +62,7 @@ impl LogoInfo {
 
         for line in lines {
             let mut ret_len = 0;
-            let mut ret_line = String::new();
+            let mut ret_line = "\x1b[1m".to_owned();
             let mut in_percent = false;
             for ch in line.chars() {
                 if ch == '$' {

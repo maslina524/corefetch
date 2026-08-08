@@ -195,7 +195,7 @@ fn build_info_buf(max_len: usize) -> Vec<String> {
     ret
 }
 
-#[cfg(not(test))]
+// #[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
     // println!("{}",    Colors::get());
