@@ -24,6 +24,8 @@ mod sync;
 mod os;
 mod macros;
 mod ansi;
+mod xxhash64;
+
 mod modules;
 mod color;
 mod logo;
