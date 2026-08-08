@@ -3,6 +3,7 @@ pub mod cpu;       // 15) CPU           : Print CPU name, frequency, etc.
 pub mod locale;    // 37) Locale        : Print system locale name
 pub mod os;        // 47) OS            : Print the OS or Linux distribution name and version
 pub mod processes; // 53) Processes     : Print number of running processes
+pub mod separator; // 55) Separator     : Print a separator line
 pub mod title;     // 63) Title         : Print the title, including your username and hostname
 pub mod version;   // 68) Version       : Print the Fastfetch version and build information
 pub mod weather;   // 71) Weather       : Print weather information
@@ -12,6 +13,7 @@ pub use cpu::Cpu;
 pub use locale::Locale;
 pub use os::Os;
 pub use processes::Processes;
+pub use separator::Separator;
 pub use title::Title;
 pub use version::Version;
 pub use weather::Weather;
@@ -40,6 +42,7 @@ pub fn from_str(string: &str) -> Option<Box<dyn Module>> {
         "locale"    => Some(Box::new(Locale::new())),
         "os"        => Some(Box::new(Os::new())),
         "processes" => Some(Box::new(Processes::new())),
+        "separator" => Some(Box::new(Separator::new())),
         "title"     => Some(Box::new(Title::new())),
         "version"   => Some(Box::new(Version::new())),
         "weather"   => Some(Box::new(Weather::new())),
