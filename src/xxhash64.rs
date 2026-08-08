@@ -44,4 +44,41 @@ impl XXHash64 {
         self.state[2] = Self::process_single(self.state[2], block2);
         self.state[3] = Self::process_single(self.state[3], block3);
     }
+
+    pub fn add(&mut self, input: &[u8]) {
+        if input.is_empty() {
+            return;
+        }
+
+        self.total_len += input.len() as u64;
+        let mut data = input;
+        let mut buf_used = self.buf_size;
+
+        if buf_used + data.len() < MAX_BUF_SIZE {
+            self.buf[buf_used..buf_used + data.len()].copy_from_slice(data);
+            self.buf_size = buf_used + data.len();
+            return;
+        }
+
+        if buf_used > 0 {
+            let need = MAX_BUF_SIZE - buf_used;
+            self.buf[buf_used..MAX_BUF_SIZE].copy_from_slice(&data[..need]);
+            data = &data[need..];
+            let buf = self.buf;
+            self.process_block(&buf);
+            self.buf_size = 0;
+        }
+
+        while data.len() >= MAX_BUF_SIZE {
+            let block = &data[..MAX_BUF_SIZE];
+            let block_arr: [u8; 32] = block.try_into().unwrap();
+            self.process_block(&block_arr);
+            data = &data[MAX_BUF_SIZE..];
+        }
+
+        if !data.is_empty() {
+            self.buf[..data.len()].copy_from_slice(data);
+            self.buf_size = data.len();
+        }
+    }
 }
