@@ -18,6 +18,7 @@ use crate::{
         FILETIME, GetCommandLineW, GetConsoleScreenBufferInfo, GetSystemTimeAsFileTime,
         OSVERSIONINFOW, PROCESSENTRY32, Process32First, Process32Next, RtlGetVersion
     },
+    os::regedit::{self, Regedit, RegValue, Hkey},
     sync::OnceLock
 };
 
@@ -90,8 +91,22 @@ pub fn os_version() -> OsVersion {
         _ => ""
     }.to_owned();
 
-    // TODO: Variant not impl
-    let variant = "Home".to_owned();
+    let value = Regedit::open(
+        Hkey::LocalMachine, 
+        "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", 
+        regedit::Access::Read
+    ).unwrap().read("ProductName").unwrap_or(RegValue::None);
+
+    let mut variant = value
+        .as_string()
+        .unwrap_or("")
+        .to_owned();
+
+    let idx = variant
+        .rfind(' ')
+        .unwrap_or(0);
+    
+    variant = variant[idx + 1..].to_owned();
 
     OsVersion { sysname, name, version, codename, variant }
 }
