@@ -111,4 +111,22 @@ impl Date {
             _ => unreachable!()
         }.to_owned()
     }
+    
+    fn day_in_year(time: &SYSTEMTIME) -> u16 {
+        let mut days_in_month: [u8; 12] = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        let is_leap = time.wYear.is_multiple_of(400) || 
+                    (time.wYear.is_multiple_of(4) && time.wYear.is_multiple_of(100));
+        
+        if is_leap {
+            days_in_month[1] = 29;
+        }
+        
+        let mut  day_os_year = 0u16;
+        for i in days_in_month.iter().take(time.wMonth as usize - 1) {
+            day_os_year += *i as u16;
+        }
+        day_os_year += time.wDay;
+        
+        day_os_year
+    }
 }
