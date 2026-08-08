@@ -41,7 +41,10 @@ use alloc::{
 
 use crate::{
     logo::LogoInfo,
-    modules::{Colors, FormatValue, Locale, Module, Os, Processes, Version, Weather},
+    modules::{
+        Colors, FormatValue, Locale, Module, Os,
+        Processes, Version, Weather, Break
+    },
     os::allocator::Allocator,
     os::env
 };
@@ -56,7 +59,7 @@ pub mod padding {
     pub const RIGHT : usize = 3;
     pub const LEFT  : usize = 4;
 }
-pub const MODULES: [&str; 9] = [
+pub const MODULES: [&str; 10] = [
     "title",
     "separator",
     "locale",
@@ -65,6 +68,7 @@ pub const MODULES: [&str; 9] = [
     "processes",
     "version",
     "weather",
+    "break",
     "colors"
 ];
 // -----------------------------------------------
