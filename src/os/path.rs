@@ -21,7 +21,7 @@ const FOLDERID_LOCALAPPDATA: GUID = GUID::from_u128(
 );
 
 #[repr(transparent)]
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Path {
     inner: String
 }
@@ -169,6 +169,12 @@ impl From<Vec<&str>> for Path {
 impl From<&Self> for Path {
     fn from(value: &Self) -> Self {
         Self { inner: value.as_str().to_owned() }.clear()
+    }
+}
+
+impl core::fmt::Display for Path {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(f, "{}", self.inner)
     }
 }
 
