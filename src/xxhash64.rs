@@ -81,4 +81,89 @@ impl XXHash64 {
             self.buf_size = data.len();
         }
     }
+
+    pub fn hash(&self) -> u64 {
+        let mut result;
+
+        if self.total_len >= MAX_BUF_SIZE as u64 {
+            result = self.state[0].rotate_left(1)
+                + self.state[1].rotate_left(7)
+                + self.state[2].rotate_left(12)
+                + self.state[3].rotate_left(18);
+
+            result ^= Self::process_single(0, self.state[0]);
+            result = result.wrapping_mul(PRIME_1).wrapping_add(PRIME_4);
+
+            result ^= Self::process_single(0, self.state[1]);
+            result = result.wrapping_mul(PRIME_1).wrapping_add(PRIME_4);
+
+            result ^= Self::process_single(0, self.state[2]);
+            result = result.wrapping_mul(PRIME_1).wrapping_add(PRIME_4);
+
+            result ^= Self::process_single(0, self.state[3]);
+            result = result.wrapping_mul(PRIME_1).wrapping_add(PRIME_4);
+        } else {
+            result = self.state[2].wrapping_add(PRIME_5);
+        }
+
+        result = result.wrapping_add(self.total_len);
+
+        let mut idx = 0;
+        let stop = self.buf_size;
+
+        while idx + 8 <= stop {
+            let value = u64::from_le_bytes(
+                self.buf[idx..idx + 8].try_into().unwrap()
+            );
+            result ^= Self::process_single(0, value);
+            result = result.rotate_left(27);
+            result = result.wrapping_mul(PRIME_1).wrapping_add(PRIME_4);
+            idx += 8;
+        }
+
+        if idx + 4 <= stop {
+            let value = u32::from_le_bytes(
+                self.buf[idx..idx + 4].try_into().unwrap()
+            ) as u64;
+            result ^= value.wrapping_mul(PRIME_1);
+            result = result.rotate_left(23);
+            result = result.wrapping_mul(PRIME_2).wrapping_add(PRIME_3);
+            idx += 4;
+        }
+
+        while idx < stop {
+            result ^= (self.buf[idx] as u64).wrapping_mul(PRIME_5);
+            result = result.rotate_left(11);
+            result = result.wrapping_mul(PRIME_1);
+            idx += 1;
+        }
+
+        result ^= result >> 33;
+        result = result.wrapping_mul(PRIME_2);
+        result ^= result >> 29;
+        result = result.wrapping_mul(PRIME_3);
+        result ^= result >> 32;
+
+        result
+    }
+
+    pub fn hash_bytes(data: &[u8], seed: u64) -> u64 {
+        let mut hasher = Self::new(seed);
+        hasher.add(data);
+        hasher.hash()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_xxhash64() {
+        let data = b"Hello World";
+        let seed = 0;
+        let hash = XXHash64::hash_bytes(data, seed);
+        assert_eq!(hash, 0x63_34_d2_07_19_24_5b_c2);
+        println!("Hash: {hash:016x}");
+    }
 }
