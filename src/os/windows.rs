@@ -33,14 +33,17 @@ link!("kernel32" "system" fn GetConsoleScreenBufferInfo(hconsoleoutput : HANDLE,
 link!("kernel32" "system" fn GetCurrentDirectoryW(nbufferlength : u32, lpbuffer : PWSTR) -> u32);
 link!("kernel32" "system" fn GetCurrentProcess() -> HANDLE);
 link!("kernel32" "system" fn GetCurrentProcessId() -> u32);
+link!("kernel32" "system" fn GetDynamicTimeZoneInformation(ptimezoneinformation : *mut DYNAMIC_TIME_ZONE_INFORMATION) -> u32);
 link!("kernel32" "system" fn GetFileSizeEx(hfile : HANDLE, lpfilesize : *mut i64) -> BOOL);
 link!("kernel32" "system" fn GetLastError() -> WIN32_ERROR);
+link!("kernel32" "system" fn GetLocalTime(lpsystemtime : *mut SYSTEMTIME));
 link!("kernel32" "system" fn GetLocaleInfoEx(lplocalename : PCWSTR, lctype : u32, lplcdata : PWSTR, cchdata : i32) -> i32);
 link!("kernel32" "system" fn GetLogicalProcessorInformation(buffer : *mut SYSTEM_LOGICAL_PROCESSOR_INFORMATION, returnedlength : *mut u32) -> BOOL);
 link!("kernel32" "system" fn GetNumaHighestNodeNumber(highestnodenumber : *mut u32) -> BOOL);
 link!("kernel32" "system" fn GetProcessHeap() -> HANDLE);
 link!("kernel32" "system" fn GetStdHandle(nstdhandle : STD_HANDLE) -> HANDLE);
 link!("kernel32" "system" fn GetSystemTimeAsFileTime(lpsystemtimeasfiletime : *mut FILETIME));
+link!("kernel32" "system" fn GetTimeZoneInformation(lptimezoneinformation : *mut TIME_ZONE_INFORMATION) -> u32);
 link!("advapi32" "system" fn GetTokenInformation(tokenhandle : HANDLE, tokeninformationclass : TOKEN_INFORMATION_CLASS, tokeninformation : *mut core::ffi::c_void, tokeninformationlength : u32, returnlength : *mut u32) -> BOOL);
 link!("secur32" "system" fn GetUserNameExW(nameformat : EXTENDED_NAME_FORMAT, lpnamebuffer : PWSTR, nsize : *mut u32) -> bool);
 link!("advapi32" "system" fn GetUserNameW(lpbuffer : PWSTR, pcbbuffer : *mut u32) -> BOOL);
@@ -98,6 +101,25 @@ pub struct COORD {
     pub Y: i16,
 }
 pub type CREATE_TOOLHELP_SNAPSHOT_FLAGS = u32;
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DYNAMIC_TIME_ZONE_INFORMATION {
+    pub Bias: i32,
+    pub StandardName: [u16; 32],
+    pub StandardDate: SYSTEMTIME,
+    pub StandardBias: i32,
+    pub DaylightName: [u16; 32],
+    pub DaylightDate: SYSTEMTIME,
+    pub DaylightBias: i32,
+    pub TimeZoneKeyName: [u16; 128],
+    pub DynamicDaylightTimeDisabled: bool,
+}
+impl Default for DYNAMIC_TIME_ZONE_INFORMATION {
+    fn default() -> Self {
+        // SAFETY: All types are guaranteed to be zeroable
+		unsafe { core::mem::zeroed() }
+    }
+}
 pub type EXTENDED_NAME_FORMAT = i32;
 #[repr(C)]
 #[derive(Clone, Copy, Default)]
@@ -237,6 +259,18 @@ pub struct SMALL_RECT {
 }
 pub type STD_HANDLE = u32;
 #[repr(C)]
+#[derive(Clone, Copy, Default)]
+pub struct SYSTEMTIME {
+    pub wYear: u16,
+    pub wMonth: u16,
+    pub wDayOfWeek: u16,
+    pub wDay: u16,
+    pub wHour: u16,
+    pub wMinute: u16,
+    pub wSecond: u16,
+    pub wMilliseconds: u16,
+}
+#[repr(C)]
 #[derive(Clone, Copy)]
 pub struct SYSTEM_LOGICAL_PROCESSOR_INFORMATION {
     pub ProcessorMask: usize,
@@ -272,6 +306,23 @@ pub struct SYSTEM_LOGICAL_PROCESSOR_INFORMATION_0_1 {
 #[derive(Clone, Copy, Default)]
 pub struct SYSTEM_LOGICAL_PROCESSOR_INFORMATION_0_0 {
     pub Flags: u8,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct TIME_ZONE_INFORMATION {
+    pub Bias: i32,
+    pub StandardName: [u16; 32],
+    pub StandardDate: SYSTEMTIME,
+    pub StandardBias: i32,
+    pub DaylightName: [u16; 32],
+    pub DaylightDate: SYSTEMTIME,
+    pub DaylightBias: i32,
+}
+impl Default for TIME_ZONE_INFORMATION {
+    fn default() -> Self {
+        // SAFETY: All types are guaranteed to be zeroable
+		unsafe { core::mem::zeroed() }
+    }
 }
 pub type TOKEN_ACCESS_MASK = u32;
 pub type TOKEN_INFORMATION_CLASS = i32;
