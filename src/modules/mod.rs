@@ -1,6 +1,7 @@
 pub mod breakk;    // 7)  Break         : Print an empty line
 pub mod colors;    // 14) Colors        : Display the terminal's 16-color palette
 pub mod cpu;       // 15) CPU           : Print CPU name, frequency, etc.
+pub mod datetime;  // 20) DateTime      : Print the current date and time
 pub mod locale;    // 37) Locale        : Print system locale name
 pub mod os;        // 47) OS            : Print the OS or Linux distribution name and version
 pub mod processes; // 53) Processes     : Print number of running processes
@@ -12,6 +13,7 @@ pub mod weather;   // 71) Weather       : Print weather information
 pub use breakk::Break;
 pub use colors::Colors;
 pub use cpu::Cpu;
+pub use datetime::Datetime;
 pub use locale::Locale;
 pub use os::Os;
 pub use processes::Processes;
@@ -42,6 +44,7 @@ pub fn from_str(string: &str) -> Option<Box<dyn Module>> {
         "break"     => Some(Box::new(Break::new())),
         "colors"    => Some(Box::new(Colors::new())),
         "cpu"       => Some(Box::new(Cpu::new())),
+        "datetime"  => Some(Box::new(Datetime::new())),
         "locale"    => Some(Box::new(Locale::new())),
         "os"        => Some(Box::new(Os::new())),
         "processes" => Some(Box::new(Processes::new())),
