@@ -23,6 +23,7 @@
 mod sync;
 mod os;
 mod macros;
+mod ansi;
 mod modules;
 mod color;
 mod logo;
@@ -39,7 +40,10 @@ use alloc::{
 };
 
 use crate::{
-    logo::LogoInfo, modules::{Colors, FormatValue, Locale, Module, Os, Processes, Version, Weather}, os::{allocator::Allocator, env}
+    logo::LogoInfo,
+    modules::{Colors, FormatValue, Locale, Module, Os, Processes, Version, Weather},
+    os::allocator::Allocator,
+    os::env
 };
 
 #[global_allocator]
@@ -52,8 +56,9 @@ pub mod padding {
     pub const RIGHT : usize = 3;
     pub const LEFT  : usize = 4;
 }
-pub const MODULES: [&str; 8] = [
+pub const MODULES: [&str; 9] = [
     "title",
+    "separator",
     "locale",
     "cpu",
     "os",
@@ -222,7 +227,7 @@ extern "C" fn main() -> c_int {
             println!("{line}\x1b[0m");
         }
     }
-    
+
 
     0
 }
