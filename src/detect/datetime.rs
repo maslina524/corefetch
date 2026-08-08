@@ -129,4 +129,71 @@ impl Date {
         
         day_os_year
     }
+
+    fn time_zone() -> i16 {
+        let mut tzi = TIME_ZONE_INFORMATION::default();
+
+        // SAFETY: Completely safe
+        let ret = unsafe {
+            GetTimeZoneInformation(&raw mut tzi)
+        };
+        if ret == 0xFFFF_FFFF {
+            ErrorCode::last().panic()
+        }
+
+        let mut bias_mins = tzi.Bias;
+
+        if ret == 2 {
+            bias_mins += tzi.DaylightBias;
+        }
+
+        (-bias_mins) as i16
+    }
+
+    fn offset_utc_string() -> String {
+        let mut tz = Self::time_zone();
+        let symb = if tz < 0 { '-' } else { '+' };
+        tz = tz.abs();
+        let hours = tz / 60;
+        let mins = tz % 60;
+
+        format!("{symb}{hours:02}{mins:02}")
+    }
+
+    fn is_daylight() -> bool {
+        let mut tzi = TIME_ZONE_INFORMATION::default();
+
+        // SAFETY: Completely safe
+        let ret = unsafe {
+            GetTimeZoneInformation(&raw mut tzi)
+        };
+        if ret == 0xFFFF_FFFF {
+            ErrorCode::last().panic()
+        }
+
+        let current_bias = tzi.Bias + if tzi.DaylightBias != 0 {
+            tzi.DaylightBias
+        } else {
+            tzi.StandardBias
+        };
+        
+        tzi.DaylightBias != 0 &&current_bias != (tzi.Bias + tzi.StandardBias)
+    }
+
+    fn time_zone_string() -> String {
+        let mut tzi = DYNAMIC_TIME_ZONE_INFORMATION::default();
+        // SAFETY: Completely safe
+        unsafe {
+            GetDynamicTimeZoneInformation(&raw mut tzi)
+        };
+
+        let is_daylight = Self::is_daylight();
+        let buf = if is_daylight {
+            tzi.DaylightName
+        } else {
+            tzi.StandardName
+        };
+
+        String::from_utf16_lossy(&buf).rsplit('\0').collect()
+    }
 }
