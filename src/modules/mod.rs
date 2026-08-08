@@ -1,3 +1,4 @@
+pub mod breakk;    // 7)  Break         : Print an empty line
 pub mod colors;    // 14) Colors        : Display the terminal's 16-color palette
 pub mod cpu;       // 15) CPU           : Print CPU name, frequency, etc.
 pub mod locale;    // 37) Locale        : Print system locale name
@@ -8,6 +9,7 @@ pub mod title;     // 63) Title         : Print the title, including your userna
 pub mod version;   // 68) Version       : Print the Fastfetch version and build information
 pub mod weather;   // 71) Weather       : Print weather information
 
+pub use breakk::Break;
 pub use colors::Colors;
 pub use cpu::Cpu;
 pub use locale::Locale;
@@ -37,6 +39,7 @@ pub trait Module {
 
 pub fn from_str(string: &str) -> Option<Box<dyn Module>> {
     match string.to_lowercase().as_str() {
+        "break"     => Some(Box::new(Break::new())),
         "colors"    => Some(Box::new(Colors::new())),
         "cpu"       => Some(Box::new(Cpu::new())),
         "locale"    => Some(Box::new(Locale::new())),

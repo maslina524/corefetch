@@ -30,8 +30,8 @@ pub struct Os<'a> {
 impl Module for Os<'_> {
     fn new() -> Self {
         let ver = env::os_version();
-        let pretty_name = format!("{} {} ({})", ver.name, ver.version, ver.codename);
         let id = format!("{} {}", ver.name, ver.version);
+        let pretty_name = format!("{id} {} ({})", ver.variant, ver.codename);
         Self { 
             sysname: ver.sysname.clone(), 
             name: ver.name, 
@@ -59,7 +59,7 @@ impl Module for Os<'_> {
     }
 
     fn title(&self) -> &'static str {
-        "{pretty-name}"
+        "{pretty-name} {arch}"
     }
 
     fn string_name(&self) -> &'static str {
