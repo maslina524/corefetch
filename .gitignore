@@ -1,6 +1,4 @@
 /target
-/wingen
+/wingen/target
 Cargo.lock
-wingen.py
-winlinks.txt
 sum.ps1

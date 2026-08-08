@@ -145,7 +145,7 @@ impl GUID {
             data1: (uuid >> 96) as u32,
             data2: (uuid >> 80 & 0xffff) as u16,
             data3: (uuid >> 64 & 0xffff) as u16,
-            data4: ((uuid & 0xFFFF_FFFF_FFFF_FFFF) as u64).to_be_bytes(),
+            data4: (uuid as u64).to_be_bytes(),
         }
     }
 }
