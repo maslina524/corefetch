@@ -33,6 +33,7 @@ pub struct Date {
     pub year: u16,
     pub month: u16,
     pub month_name: String,
+    pub month_name_short: String,
 
     pub hour: u16,
     pub minute: u16,
@@ -59,6 +60,7 @@ impl Date {
         let year = time.wYear;
         let month = time.wMonth;
         let month_name = Self::month_name(time.wMonth);
+        let month_name_short = Self::month_name_short(time.wMonth);
 
         let hour = time.wHour;
         let minute = time.wMinute;
@@ -81,7 +83,7 @@ impl Date {
         };
 
         Self {
-            year, month, month_name,
+            year, month, month_name, month_name_short,
             hour, minute, second, week,
             weekday, weekday_short, day_in_year, day_in_month,
             day_in_week, offset_utc, timezone_name, am_pm
@@ -102,6 +104,24 @@ impl Date {
             10 => "October",
             11 => "November",
             12 => "December",
+            _ => unreachable!()
+        }.to_owned()
+    }
+
+    fn month_name_short(num: u16) -> String {
+        match num {
+            1  => "Jan",
+            2  => "Feb",
+            3  => "Mar",
+            4  => "Apr",
+            5  => "May",
+            6  => "Jun",
+            7  => "Jul",
+            8  => "Aug",
+            9  => "Sep",
+            10 => "Oct",
+            11 => "Nov",
+            12 => "Dec",
             _ => unreachable!()
         }.to_owned()
     }
