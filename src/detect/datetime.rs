@@ -85,4 +85,30 @@ impl Date {
             offset_utc, timezone_name, am_pm
         }
     }
+
+    fn week_of_day(num: u16) -> String {
+        match num {
+            0 => "Sunday",
+            1 => "Monday",
+            2 => "Tuesday",
+            3 => "Wednesday",
+            4 => "Thursday",
+            5 => "Friday",
+            6 => "Saturday",
+            _ => unreachable!()
+        }.to_owned()
+    }
+
+    fn week_of_day_short(num: u16) -> String {
+        match num {
+            0 => "Sun",
+            1 => "Mon",
+            2 => "Tue",
+            3 => "Wed",
+            4 => "Thu",
+            5 => "Fri",
+            6 => "Sat",
+            _ => unreachable!()
+        }.to_owned()
+    }
 }
