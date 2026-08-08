@@ -3,6 +3,7 @@ pub mod cpu;       // 15) CPU           : Print CPU name, frequency, etc.
 pub mod locale;    // 37) Locale        : Print system locale name
 pub mod os;        // 47) OS            : Print the OS or Linux distribution name and version
 pub mod processes; // 53) Processes     : Print number of running processes
+pub mod title;     // 63) Title         : Print the title, including your username and hostname
 pub mod version;   // 68) Version       : Print the Fastfetch version and build information
 pub mod weather;   // 71) Weather       : Print weather information
 
@@ -11,6 +12,7 @@ pub use cpu::Cpu;
 pub use locale::Locale;
 pub use os::Os;
 pub use processes::Processes;
+pub use title::Title;
 pub use version::Version;
 pub use weather::Weather;
 
@@ -38,6 +40,7 @@ pub fn from_str(string: &str) -> Option<Box<dyn Module>> {
         "locale"    => Some(Box::new(Locale::new())),
         "os"        => Some(Box::new(Os::new())),
         "processes" => Some(Box::new(Processes::new())),
+        "title"     => Some(Box::new(Title::new())),
         "version"   => Some(Box::new(Version::new())),
         "weather"   => Some(Box::new(Weather::new())),
         _ => None,
@@ -75,6 +78,17 @@ macro_rules! format_for_module {
             let value_string = $crate::format_module!(value_format, self, $($field),*);
 
             $crate::format!("\x1b[{key_color}m{key_string}\x1b[0m: {value_string}")
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! format_for_module_wo_key {
+    ($name:ident, $($field:ident),*) => {
+        fn format(&self, _key: super::FormatValue, format: super::FormatValue) -> alloc::string::String {
+            let value_color = format.color.unwrap_or($crate::logo::LogoInfo::get().unwrap().color_title);
+            let value_format = format.format.unwrap_or(self.title());
+            $crate::format_module!(value_format, self, $($field),*)
         }
     };
 }
