@@ -28,6 +28,7 @@ mod modules;
 mod color;
 mod logo;
 mod detect;
+mod json;
 
 extern crate alloc;
 
