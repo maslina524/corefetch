@@ -180,7 +180,7 @@ pub fn processes_count() -> usize {
     count
 }
 
-pub fn timestamp_secs() -> u64 {
+pub fn timestamp_mils() -> u64 {
     let mut info = FILETIME::default();
 
     // SAFETY: Completely safe
@@ -189,7 +189,11 @@ pub fn timestamp_secs() -> u64 {
     };
 
     let uli = ((info.dwHighDateTime as u64) << 32) | (info.dwLowDateTime as u64);
-    (uli - EPOCH_DIFF) / 10_000_000
+    (uli - EPOCH_DIFF) / 10_000
+}
+
+pub fn timestamp_secs() -> u64 {
+    timestamp_mils() / 1_000
 }
 
 pub fn timestamp_mins() -> u64 {

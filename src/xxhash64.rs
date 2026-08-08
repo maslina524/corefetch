@@ -159,11 +159,26 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_xxhash64() {
+    fn hash_test() {
         let data = b"Hello World";
         let seed = 0;
         let hash = XXHash64::hash_bytes(data, seed);
         assert_eq!(hash, 0x63_34_d2_07_19_24_5b_c2);
         println!("Hash: {hash:016x}");
+    }
+
+    #[test]
+    fn bench_test() {
+        use crate::os::env;
+
+        let end = env::timestamp_mils() + 1000;
+        let mut counter = 0;
+
+        while end > env::timestamp_mils() {
+            let hash = XXHash64::hash_bytes(b"Hello World", 0);
+            counter += 1;
+        }
+        
+        println!("{counter} Hashes");
     }
 }
