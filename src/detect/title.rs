@@ -58,13 +58,13 @@ pub fn user_name() -> &'static String {
             return String::new();
         }
 
-        String::from_utf16_lossy(&buf)
+        String::from_utf16_lossy(&buf).rsplit('\0').collect()
     })
 }
 
 pub fn colored_user_name() -> String {
     format!(
-        "{}{}\x1b[0m",
+        "\x1b[{}m{}\x1b[0m",
         LogoInfo::get().unwrap().color_title,
         user_name()
     )
@@ -86,13 +86,13 @@ pub fn host_name() -> &'static String {
             return String::new();
         }
 
-        String::from_utf16_lossy(&buf).to_lowercase()
+        String::from_utf16_lossy(&buf).to_lowercase().rsplit('\0').collect()
     })
 }
 
 pub fn colored_host_name() -> String {
     format!(
-        "{}{}\x1b[0m",
+        "\x1b[{}m{}\x1b[0m",
         LogoInfo::get().unwrap().color_title,
         host_name()
     )
@@ -114,7 +114,7 @@ pub fn full_user_name() -> String {
         return String::new();
     }
 
-    String::from_utf16_lossy(&buf)
+    String::from_utf16_lossy(&buf).rsplit('\0').collect()
 }
 
 pub fn home_dir() -> Path {
@@ -144,7 +144,7 @@ pub fn cwd() -> String {
         return String::new();
     }
 
-    String::from_utf16_lossy(&buf)
+    String::from_utf16_lossy(&buf).rsplit('\0').collect()
 }
 
 pub fn pid() -> u32 {
