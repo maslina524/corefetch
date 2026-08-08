@@ -197,3 +197,14 @@ impl Date {
         String::from_utf16_lossy(&buf).rsplit('\0').collect()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::detect::datetime::Date;
+
+    #[test]
+    fn date_test() {
+        let date = Date::new();
+        println!("{date:#?}");
+    }
+}
