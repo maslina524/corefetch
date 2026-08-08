@@ -59,9 +59,10 @@ pub mod padding {
     pub const RIGHT : usize = 3;
     pub const LEFT  : usize = 4;
 }
-pub const MODULES: [&str; 10] = [
+pub const MODULES: [&str; 11] = [
     "title",
     "separator",
+    "datetime",
     "locale",
     "cpu",
     "os",
