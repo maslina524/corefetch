@@ -25,7 +25,7 @@ mod os;
 mod macros;
 mod ansi;
 mod xxhash64;
-mod config;
+mod preset;
 
 mod modules;
 mod color;
@@ -45,6 +45,7 @@ use alloc::{
 
 use crate::{
     logo::LogoInfo,
+    preset::Preset,
     modules::{
         Colors, FormatValue, Locale, Module, Os,
         Processes, Version, Weather, Break
@@ -63,19 +64,6 @@ pub mod padding {
     pub const RIGHT : usize = 3;
     pub const LEFT  : usize = 4;
 }
-pub const MODULES: [&str; 11] = [
-    "title",
-    "separator",
-    "datetime",
-    "locale",
-    "cpu",
-    "os",
-    "processes",
-    "version",
-    "weather",
-    "break",
-    "colors"
-];
 // -----------------------------------------------
 
 const MIN_OFFSET: usize = 24;
@@ -186,9 +174,10 @@ fn build_info_buf(max_len: usize) -> Vec<String> {
     let (w, _) = env::terminal_size();
     let max_len_line = w - max_len - padding::LEFT - padding::RIGHT; 
     let mut ret = Vec::new();
+    let preset = Preset::get().unwrap();
 
-    for name in MODULES {
-        if let Some(m) = get_module_lines(name, max_len_line) {
+    for module in preset.modules() {
+        if let Some(m) = get_module_lines(&module.typ, max_len_line) {
             ret.extend(m);
         }
     }
@@ -199,14 +188,12 @@ fn build_info_buf(max_len: usize) -> Vec<String> {
 // #[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
-    // println!("{}",    Colors::get());
-    // println!("{:#?}", Locale::get());
-    // println!("{:#?}", Os::get());
-    // println!("{:#?}", Processes::get());
-    // println!("{:#?}", Version::get());
-    // println!("{:#?}", Weather::get());
-    let (w, _) = env::terminal_size();
+    // Config init
+    let config = Preset::default() ; //Default preset for nofetch
+    Preset::get_or_init(config);
 
+    // Build buffers
+    let (w, _) = env::terminal_size();
     let logo_lines = LogoInfo::new(&Os::get().id).get_ansi_lines();
     let max_logo_len = max_line_len(&logo_lines);
     let max_logo_len_padding = max_logo_len + padding::LEFT + padding::RIGHT;
@@ -221,6 +208,7 @@ extern "C" fn main() -> c_int {
     let info_buf = build_info_buf(split_len);
     let max_lines = logo_buf.len().max(info_buf.len());
 
+    // Print buffers
     if max_logo_len_padding + MIN_OFFSET < w {
         let empty_logo_line = " ".repeat(max_logo_len_padding);
         for i in 0..max_lines {
