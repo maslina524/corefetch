@@ -225,6 +225,9 @@ extern "C" fn main() -> c_int {
         }
     }
 
+    // The handle is created not with GetStdHandle,
+    // but with CreateFile, which requires manual freeing
+    env::close_terminal_handle();
 
     0
 }
