@@ -140,6 +140,17 @@ pub fn terminal_size() -> (usize, usize) {
     (w as usize, h as usize)
 }
 
+pub fn close_terminal_handle() -> error::Result<()> {
+    // SAFETY: Completely safe
+    let ret = unsafe {
+        CloseHandle(terminal_handle() as *mut c_void)
+    };
+    if ret == 0 {
+        return Err(ErrorCode::last());
+    }
+    Ok(())
+}
+
 pub fn processes_count() -> usize {
     // SAFETY: Just a WinAPI function, the return value is checked
     let snapshot = unsafe {

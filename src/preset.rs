@@ -33,7 +33,7 @@ impl Preset {
         None
     }
 
-    pub fn modules(&self) -> &Vec<Module> {
+    pub const fn modules(&self) -> &Vec<Module> {
         &self.modules
     }
 }
