@@ -45,13 +45,10 @@ use alloc::{
 
 use crate::{
     logo::LogoInfo,
-    preset::Preset,
-    modules::{
-        Colors, FormatValue, Locale, Module, Os,
-        Processes, Version, Weather, Break
-    },
+    modules::{Break, Colors, FormatValue, Locale, Module, Os, Processes, Version, Weather},
     os::allocator::Allocator,
-    os::env
+    os::env,
+    preset::Preset
 };
 
 #[global_allocator]
@@ -191,12 +188,15 @@ fn build_info_buf(max_len: usize) -> Vec<String> {
     ret
 }
 
-#[cfg(not(test))]
+// #[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
     // Config init
     let config = Preset::default();
     Preset::get_or_init(config);
+
+    // Args
+    let args = env::args();
 
     // Build buffers
     let (w, _) = env::terminal_size();
@@ -228,6 +228,13 @@ extern "C" fn main() -> c_int {
         }
         for line in info_buf {
             println!("{line}\x1b[0m");
+        }
+    }
+
+    if args.contains(&"--wait".to_owned()) {
+        loop {
+            // SAFETY: Just a nop
+            unsafe { core::arch::asm!("nop") };
         }
     }
 

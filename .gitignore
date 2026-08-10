@@ -2,3 +2,6 @@
 /wingen/target
 Cargo.lock
 sum.ps1
+
+# WIP
+src/detect/uptime.rs
