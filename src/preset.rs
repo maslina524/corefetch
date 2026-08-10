@@ -58,7 +58,7 @@ impl Default for Preset<'_> {
                 PresetModule::from_str("separator"),
                 PresetModule::from_str("os"),
                 PresetModule::from_str("cpu"),
-                PresetModule::from_str("weather"),
+                PresetModule::from_str("memory"),
                 PresetModule::from_str("locale"),
                 PresetModule::from_str("break"),
                 PresetModule::from_str("colors")
