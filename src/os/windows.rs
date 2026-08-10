@@ -42,6 +42,7 @@ link!("kernel32" "system" fn GetLogicalProcessorInformation(buffer : *mut SYSTEM
 link!("kernel32" "system" fn GetNumaHighestNodeNumber(highestnodenumber : *mut u32) -> BOOL);
 link!("kernel32" "system" fn GetProcessHeap() -> HANDLE);
 link!("kernel32" "system" fn GetStdHandle(nstdhandle : STD_HANDLE) -> HANDLE);
+link!("kernel32" "system" fn GetSystemInfo(lpsysteminfo : *mut SYSTEM_INFO));
 link!("kernel32" "system" fn GetSystemTimeAsFileTime(lpsystemtimeasfiletime : *mut FILETIME));
 link!("kernel32" "system" fn GetTimeZoneInformation(lptimezoneinformation : *mut TIME_ZONE_INFORMATION) -> u32);
 link!("advapi32" "system" fn GetTokenInformation(tokenhandle : HANDLE, tokeninformationclass : TOKEN_INFORMATION_CLASS, tokeninformation : *mut core::ffi::c_void, tokeninformationlength : u32, returnlength : *mut u32) -> BOOL);
@@ -242,6 +243,7 @@ impl Default for PROCESSENTRY32 {
 		unsafe { core::mem::zeroed() }
     }
 }
+pub type PROCESSOR_ARCHITECTURE = u16;
 pub type PROCESSOR_CACHE_TYPE = i32;
 pub type PSID = *mut core::ffi::c_void;
 pub type PSTR = *mut u8;
@@ -283,6 +285,44 @@ pub struct SYSTEMTIME {
     pub wMinute: u16,
     pub wSecond: u16,
     pub wMilliseconds: u16,
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct SYSTEM_INFO {
+    pub Anonymous: SYSTEM_INFO_0,
+    pub dwPageSize: u32,
+    pub lpMinimumApplicationAddress: *mut core::ffi::c_void,
+    pub lpMaximumApplicationAddress: *mut core::ffi::c_void,
+    pub dwActiveProcessorMask: usize,
+    pub dwNumberOfProcessors: u32,
+    pub dwProcessorType: u32,
+    pub dwAllocationGranularity: u32,
+    pub wProcessorLevel: u16,
+    pub wProcessorRevision: u16,
+}
+impl Default for SYSTEM_INFO {
+    fn default() -> Self {
+        // SAFETY: All types are guaranteed to be zeroable
+		unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub union SYSTEM_INFO_0 {
+    pub dwOemId: u32,
+    pub Anonymous: SYSTEM_INFO_0_0,
+}
+impl Default for SYSTEM_INFO_0 {
+    fn default() -> Self {
+        // SAFETY: All types are guaranteed to be zeroable
+		unsafe { core::mem::zeroed() }
+    }
+}
+#[repr(C)]
+#[derive(Clone, Copy, Default)]
+pub struct SYSTEM_INFO_0_0 {
+    pub wProcessorArchitecture: PROCESSOR_ARCHITECTURE,
+    pub wReserved: u16,
 }
 #[repr(C)]
 #[derive(Clone, Copy)]
