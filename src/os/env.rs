@@ -28,7 +28,8 @@ const TIME_ZONE_ID_INVALID : u32         = u32::MAX;
 const TIME_ZONE_ID_DAYLIGHT: u32         = 2;
 const EPOCH_DIFF           : u64         = 116_444_736_000_000_000;
 
-static TERMINAL_HANDLE     : OnceLock<isize> = OnceLock::new();
+static TERMINAL_HANDLE     : OnceLock<isize>   = OnceLock::new();
+static CURRENT_VERSION     : OnceLock<Regedit> = OnceLock::new();
 
 pub struct OsVersion {
     pub sysname: &'static str,
@@ -36,6 +37,16 @@ pub struct OsVersion {
     pub version: String,
     pub codename: String,
     pub variant: String
+}
+
+pub fn current_version() -> &'static Regedit {
+    CURRENT_VERSION.get_or_init(|| {
+        Regedit::open(
+            Hkey::LocalMachine, 
+            "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", 
+            regedit::Access::Read
+        ).unwrap()
+    })
 }
 
 pub fn get_version() -> (u32, u32, u32) {
@@ -99,11 +110,7 @@ pub fn os_version() -> OsVersion {
         _ => ""
     }.to_owned();
 
-    let value = Regedit::open(
-        Hkey::LocalMachine, 
-        "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", 
-        regedit::Access::Read
-    ).unwrap().read("ProductName").unwrap_or(RegValue::None);
+    let value = current_version().read("ProductName").unwrap_or(RegValue::None);
 
     let mut variant = value
         .as_string()
