@@ -31,22 +31,30 @@ const EPOCH_DIFF           : u64         = 116_444_736_000_000_000;
 static TERMINAL_HANDLE     : OnceLock<isize> = OnceLock::new();
 
 pub struct OsVersion {
-    pub sysname: String,
-    pub name: String,
+    pub sysname: &'static str,
+    pub name: &'static str,
     pub version: String,
     pub codename: String,
     pub variant: String
 }
 
-pub fn os_version() -> OsVersion {
-    let sysname = "WIN32_NT".to_owned();
-    let name = "Windows".to_owned();
-
+pub fn get_version() -> (u32, u32, u32) {
     let mut osvi = OSVERSIONINFOW::default();
     // SAFETY: Completely safe
     unsafe { RtlGetVersion(&raw mut osvi) };
 
-    let build = osvi.dwBuildNumber;
+    (
+        osvi.dwMajorVersion,
+        osvi.dwMinorVersion,
+        osvi.dwBuildNumber,
+    )
+}
+
+pub fn os_version() -> OsVersion {
+    let sysname = "WIN32_NT";
+    let name = "Windows";
+
+    let (_, _, build) = get_version();
     
     let version = match build {
         6002 => "Vista",
