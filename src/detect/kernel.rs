@@ -1,7 +1,12 @@
-use alloc::string::String;
+use alloc::{
+    string::String,
+    borrow::ToOwned
+};
 
 use crate::{
     os::env,
+    os::regedit::RegValue,
+    os::windows::{SYSTEM_INFO, GetSystemInfo},
     format
 };
 
@@ -9,9 +14,30 @@ pub const fn sysname() -> &'static str {
     "WIN32_NT"
 }
 
+fn ubr() -> u32 {
+    let value = env::current_version().read("UBR").unwrap_or(RegValue::None);
+    value.as_u32().unwrap_or(0)
+}
+
 pub fn release() -> String {
     let (major, minor, build) = env::get_version();
-    format!("{major}.{minor}.{build}")
+    let ubr = ubr();
+    format!("{major}.{minor}.{build}.{ubr}")
+}
+
+pub fn version() -> String {
+    let value = env::current_version().read("BuildLabEx").unwrap_or(RegValue::None);
+    value.as_string().map(ToOwned::to_owned).unwrap_or_default()
+}
+
+pub fn page_size() -> f64 {
+    let mut si = SYSTEM_INFO::default();
+    // SAFETY: Completely safe
+    unsafe {
+        GetSystemInfo(&raw mut si);
+    }
+
+    si.dwPageSize as f64 / 1024.0
 }
 
 #[cfg(test)]
@@ -23,5 +49,17 @@ mod tests {
     fn release_test() {
         let release = kernel::release();
         println!("{release}");
+    }
+
+    #[test]
+    fn version_test() {
+        let version = kernel::version();
+        println!("{version}");
+    }
+
+    #[test]
+    fn page_size_test() {
+        let size = kernel::page_size();
+        println!("{size:.02} KiB");
     }
 }

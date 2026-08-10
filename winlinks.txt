@@ -67,3 +67,4 @@ GetTimeZoneInformation
 GetTimeZoneInformation
 GetDynamicTimeZoneInformation
 GlobalMemoryStatusEx
+GetSystemInfo
