@@ -13,11 +13,11 @@ static OS: OnceLock<Os> = OnceLock::new();
 
 #[derive(Debug)]
 pub struct Os<'a> {
-    pub sysname: String,
-    pub name: String,
+    pub sysname: &'static str,
+    pub name: &'static str,
     pub pretty_name: String,
     pub id: String,
-    pub id_like: String,
+    pub id_like: &'static str,
     pub variant: String,
     pub variant_id: String,
     pub version: String,
@@ -33,7 +33,7 @@ impl Module for Os<'_> {
         let id = format!("{} {}", ver.name, ver.version);
         let pretty_name = format!("{id} {} ({})", ver.variant, ver.codename);
         Self { 
-            sysname: ver.sysname.clone(), 
+            sysname: ver.sysname, 
             name: ver.name, 
             pretty_name, 
             id, 

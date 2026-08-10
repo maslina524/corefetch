@@ -4,3 +4,4 @@ pub mod title;
 pub mod weather;
 pub mod datetime;
 pub mod memory;
+pub mod kernel;
