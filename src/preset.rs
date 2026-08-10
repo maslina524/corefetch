@@ -5,26 +5,31 @@ use alloc::{
     vec
 };
 
-use crate::sync::OnceLock;
+use crate::{
+    modules::Module, 
+    sync::OnceLock
+};
 
-static CONFIG: OnceLock<Preset> = OnceLock::new();
+static PRESET: OnceLock<Preset> = OnceLock::new();
 
-pub struct Preset {
-    modules: Vec<Module>
+pub struct Preset<'a> {
+    modules: Vec<PresetModule<'a>>
 }
 
-impl Preset {
+impl Preset<'_> {
     pub fn get_or_init(config: Self) -> &'static Self {
-        CONFIG.get_or_init(|| {
+        PRESET.get_or_init(|| {
             config
         })
     }
 
-    pub fn get() -> Option<&'static Self> {
-        CONFIG.get()
+    pub fn get() -> &'static Self {
+        PRESET
+            .get()
+            .expect("Preset was not initialized at the start of the program")
     }
 
-    pub fn module_by_typ(&self, string: &str) -> Option<&Module> {
+    pub fn module_by_typ(&self, string: &str) -> Option<&PresetModule<'_>> {
         for m in &self.modules {
             if m.typ == string {
                 return Some(m)
@@ -33,35 +38,46 @@ impl Preset {
         None
     }
 
-    pub const fn modules(&self) -> &Vec<Module> {
+    pub const fn modules(&self) -> &Vec<PresetModule<'_>> {
         &self.modules
+    }
+
+    pub fn get_module_format(&self, module: &dyn Module) -> &str {
+        let preset_module = self.module_by_typ(module.string_name()).unwrap();
+        preset_module
+        .format
+        .unwrap_or_else(|| module.title())
     }
 }
 
-impl Default for Preset {
+impl Default for Preset<'_> {
     fn default() -> Self {
         Self {
             modules: vec![
-                Module::from_str("title"),
-                Module::from_str("separator"),
-                Module::from_str("os"),
-                Module::from_str("cpu"),
-                Module::from_str("weather"),
-                Module::from_str("locale"),
-                Module::from_str("break"),
-                Module::from_str("colors")
+                PresetModule::from_str("title"),
+                PresetModule::from_str("separator"),
+                PresetModule::from_str("os"),
+                PresetModule::from_str("cpu"),
+                PresetModule::from_str("weather"),
+                PresetModule::from_str("locale"),
+                PresetModule::from_str("break"),
+                PresetModule::from_str("colors")
             ]
         }
     }
 }
 
-pub struct Module {
-    pub typ: String,
-    pub format: Option<String>
+pub struct PresetModule<'a> {
+    pub typ: &'a str,
+    pub format: Option<&'a str>
 }
 
-impl Module {
-    pub fn from_str(string: &str) -> Self {
-        Self { typ: string.to_owned(), format: None }
+impl<'a> PresetModule<'a> {
+    pub const fn from_str(typ: &'a str) -> Self {
+        Self { typ, format: None }
+    }
+
+    pub const fn new(typ: &'a str, format: Option<&'a str>) -> Self {
+        Self { typ, format }
     }
 }
