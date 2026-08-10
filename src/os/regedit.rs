@@ -1,5 +1,6 @@
 use core::{
     ffi::c_void,
+    sync::atomic::{AtomicPtr, Ordering},
     ptr
 };
 
@@ -9,10 +10,12 @@ use alloc::{
 };
 
 use crate::{
-    os::windows::{RegQueryValueExW, RegCloseKey, RegCreateKeyExW, RegOpenKeyExW, HANDLE},
+    os::windows::{RegQueryValueExW, RegCloseKey, RegCreateKeyExW, RegOpenKeyExW},
     os::encoding::wide,
     os::error::{self, ErrorCode}
 };
+
+pub type Handle = AtomicPtr<c_void>;
 
 #[repr(u32)]
 pub enum Hkey {
@@ -88,7 +91,10 @@ impl RegValue {
     }
 }
 
-pub struct Regedit(HANDLE);
+pub struct Regedit(Handle);
+
+// SAFETY: Completely safe
+unsafe impl Sync for Regedit {}
 
 impl Regedit {
     pub fn create(root: Hkey, subkey: &str, access: Access) -> error::Result<Self> {
@@ -114,7 +120,9 @@ impl Regedit {
             return Err(ErrorCode::last());
         }
 
-        Ok(Self(handle))
+        Ok(Self(
+            AtomicPtr::new(handle)
+        ))
     }
 
     pub fn open(root: Hkey, subkey: &str, access: Access) -> error::Result<Self> {
@@ -136,7 +144,9 @@ impl Regedit {
             return Err(ErrorCode::last());
         }
 
-        Ok(Self(handle))
+        Ok(Self(
+            AtomicPtr::new(handle)
+        ))
     }
 
     pub fn read(&self, key: &str) -> error::Result<RegValue> {
@@ -147,7 +157,7 @@ impl Regedit {
         // SAFETY: Getting the buffer size and type, safe
         let ret = unsafe {
             RegQueryValueExW(
-                self.0, 
+                self.0.load(Ordering::Acquire), 
                 wide.as_ptr(),
                 ptr::null(),
                 &raw mut typ, 
@@ -164,7 +174,7 @@ impl Regedit {
         // SAFETY: Completely safe
         let ret = unsafe {
             RegQueryValueExW(
-                self.0, 
+                self.0.load(Ordering::Acquire), 
                 wide.as_ptr(),
                 ptr::null(),
                 &raw mut typ, 
@@ -280,7 +290,7 @@ impl Regedit {
         // SAFETY: The handle is always valid,
         // the function is only used in `Drop`
         let ret = unsafe {
-            RegCloseKey(self.0)
+            RegCloseKey(self.0.load(Ordering::Acquire))
         };
         if ret != 0 {
             return Err(ErrorCode::last());
