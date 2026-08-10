@@ -46,7 +46,7 @@ pub fn get_version() -> (u32, u32, u32) {
     (
         osvi.dwMajorVersion,
         osvi.dwMinorVersion,
-        osvi.dwBuildNumber,
+        osvi.dwBuildNumber
     )
 }
 
