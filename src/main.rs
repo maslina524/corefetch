@@ -159,7 +159,13 @@ fn split_by_len(string: &str, len: usize) -> Vec<&str> {
 
 fn get_module_lines(name: &str, max_len_line: usize) -> Option<Vec<String>> {
     modules::from_str(name).map(|module| {
-        let string = module.format(FormatValue::default(), FormatValue::default());
+        let string = module.format(
+            FormatValue::default(), 
+            FormatValue {
+                format: Some(Preset::get().get_module_format(&*module)), 
+                color: None
+            }
+        );
         let splitted = if name == "colors" {
             string.split('\n').collect()
         } else {
@@ -174,10 +180,10 @@ fn build_info_buf(max_len: usize) -> Vec<String> {
     let (w, _) = env::terminal_size();
     let max_len_line = w - max_len - padding::LEFT - padding::RIGHT; 
     let mut ret = Vec::new();
-    let preset = Preset::get().unwrap();
+    let preset = Preset::get();
 
     for module in preset.modules() {
-        if let Some(m) = get_module_lines(&module.typ, max_len_line) {
+        if let Some(m) = get_module_lines(module.typ, max_len_line) {
             ret.extend(m);
         }
     }
@@ -189,7 +195,7 @@ fn build_info_buf(max_len: usize) -> Vec<String> {
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
     // Config init
-    let config = Preset::default() ; //Default preset for nofetch
+    let config = Preset::default();
     Preset::get_or_init(config);
 
     // Build buffers

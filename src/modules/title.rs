@@ -4,7 +4,13 @@ use alloc::{
 };
 
 use crate::{
-    detect::title, format, format_for_module, format_for_module_wo_key, impl_display_for_module, modules::Module, os::{env, path::Path}, sync::OnceLock
+    detect::title,
+    format,
+    format_for_module_wo_key,
+    impl_display_for_module,
+    modules::Module,
+    os::{env, path::Path},
+    sync::OnceLock
 };
 
 static TITLE: OnceLock<Title> = OnceLock::new();
@@ -73,4 +79,3 @@ impl Module for Title {
 }
 
 impl_display_for_module!(Title);
-
