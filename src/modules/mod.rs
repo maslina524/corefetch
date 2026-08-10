@@ -3,6 +3,7 @@ pub mod colors;    // 14) Colors        : Display the terminal's 16-color palett
 pub mod cpu;       // 15) CPU           : Print CPU name, frequency, etc.
 pub mod datetime;  // 20) DateTime      : Print the current date and time
 pub mod locale;    // 37) Locale        : Print system locale name
+pub mod memory;    // 41) Memory        : Print system memory usage information
 pub mod os;        // 47) OS            : Print the OS or Linux distribution name and version
 pub mod processes; // 53) Processes     : Print number of running processes
 pub mod separator; // 55) Separator     : Print a separator line
@@ -15,6 +16,7 @@ pub use colors::Colors;
 pub use cpu::Cpu;
 pub use datetime::Datetime;
 pub use locale::Locale;
+pub use memory::Memory;
 pub use os::Os;
 pub use processes::Processes;
 pub use separator::Separator;
@@ -46,6 +48,7 @@ pub fn from_str(string: &str) -> Option<Box<dyn Module>> {
         "cpu"       => Some(Box::new(Cpu::new())),
         "datetime"  => Some(Box::new(Datetime::new())),
         "locale"    => Some(Box::new(Locale::new())),
+        "memory"    => Some(Box::new(Memory::new())),
         "os"        => Some(Box::new(Os::new())),
         "processes" => Some(Box::new(Processes::new())),
         "separator" => Some(Box::new(Separator::new())),

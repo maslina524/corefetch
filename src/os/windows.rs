@@ -47,6 +47,7 @@ link!("kernel32" "system" fn GetTimeZoneInformation(lptimezoneinformation : *mut
 link!("advapi32" "system" fn GetTokenInformation(tokenhandle : HANDLE, tokeninformationclass : TOKEN_INFORMATION_CLASS, tokeninformation : *mut core::ffi::c_void, tokeninformationlength : u32, returnlength : *mut u32) -> BOOL);
 link!("secur32" "system" fn GetUserNameExW(nameformat : EXTENDED_NAME_FORMAT, lpnamebuffer : PWSTR, nsize : *mut u32) -> bool);
 link!("advapi32" "system" fn GetUserNameW(lpbuffer : PWSTR, pcbbuffer : *mut u32) -> BOOL);
+link!("kernel32" "system" fn GlobalMemoryStatusEx(lpbuffer : *mut MEMORYSTATUSEX) -> BOOL);
 link!("kernel32" "system" fn HeapAlloc(hheap : HANDLE, dwflags : HEAP_FLAGS, dwbytes : usize) -> *mut core::ffi::c_void);
 link!("kernel32" "system" fn HeapFree(hheap : HANDLE, dwflags : HEAP_FLAGS, lpmem : *const core::ffi::c_void) -> BOOL);
 link!("kernel32" "system" fn LocalFree(hmem : HLOCAL) -> HLOCAL);
@@ -156,6 +157,19 @@ pub type HLOCAL = *mut core::ffi::c_void;
 pub type HRESULT = i32;
 pub type KNOWN_FOLDER_FLAG = i32;
 pub type LOGICAL_PROCESSOR_RELATIONSHIP = i32;
+#[repr(C)]
+#[derive(Clone, Copy, Default)]
+pub struct MEMORYSTATUSEX {
+    pub dwLength: u32,
+    pub dwMemoryLoad: u32,
+    pub ullTotalPhys: u64,
+    pub ullAvailPhys: u64,
+    pub ullTotalPageFile: u64,
+    pub ullAvailPageFile: u64,
+    pub ullTotalVirtual: u64,
+    pub ullAvailVirtual: u64,
+    pub ullAvailExtendedVirtual: u64,
+}
 pub type MULTI_BYTE_TO_WIDE_CHAR_FLAGS = u32;
 pub type NTSTATUS = i32;
 #[repr(C)]
