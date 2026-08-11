@@ -104,6 +104,26 @@ impl Map {
         }
         None
     }
+
+    pub fn get_string(&self, key: &str) -> Option<&String> {
+        self.get(key).and_then(Value::as_string)
+    }
+
+    pub fn get_number(&self, key: &str) -> Option<f64> {
+        self.get(key).and_then(Value::as_number)
+    }
+
+    pub fn get_bool(&self, key: &str) -> Option<bool> {
+        self.get(key).and_then(Value::as_bool)
+    }
+
+    pub fn get_array(&self, key: &str) -> Option<&Vec<Value>> {
+        self.get(key).and_then(Value::as_array)
+    }
+
+    pub fn get_object(&self, key: &str) -> Option<&Self> {
+        self.get(key).and_then(Value::as_object)
+    }
 }
 
 pub struct Parser {
