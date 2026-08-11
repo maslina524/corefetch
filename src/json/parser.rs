@@ -19,13 +19,13 @@ pub enum Value {
     Null
 }
 
-struct Parser {
+pub struct Parser {
     iter: TokenStream,
     current: Option<Token>,
 }
 
 impl Parser {
-    fn new(mut iter: TokenStream) -> Self {
+    pub fn new(mut iter: TokenStream) -> Self {
         let current = iter.next();
         Self { iter, current }
     }
@@ -49,7 +49,7 @@ impl Parser {
         }
     }
 
-    fn parse_value(&mut self) -> Value {
+    pub fn parse_value(&mut self) -> Value {
         match self.peek() {
             Some(Token::LCurly) => {
                 Value::Dict(self.parse_object())
@@ -85,7 +85,7 @@ impl Parser {
         }
     }
 
-    fn parse_object(&mut self) -> BTreeMap<String, Value> {
+    pub fn parse_object(&mut self) -> BTreeMap<String, Value> {
         self.next();
         let mut map = BTreeMap::new();
 
@@ -121,7 +121,7 @@ impl Parser {
         map
     }
 
-    fn parse_array(&mut self) -> Vec<Value> {
+    pub fn parse_array(&mut self) -> Vec<Value> {
         self.next();
         let mut vec = Vec::new();
 
