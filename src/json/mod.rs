@@ -14,7 +14,8 @@ use alloc::{
 
 use crate::{
     os::path::Path,
-    os::fs
+    os::fs,
+    xxhash64::XXHash64
 };
 
 #[derive(Debug)]
@@ -31,6 +32,12 @@ impl Json {
         let stream = TokenStream::new(s);
         let mut parser = Parser::new(stream);
         parser.parse_object()
+    }
+
+    pub fn hash(s: &str) -> u64 {
+        let mut stream = TokenStream::new(s);
+        let data = stream.as_str();
+        XXHash64::hash_bytes(data.as_bytes(), 0)
     }
 }
 
