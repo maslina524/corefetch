@@ -12,7 +12,7 @@ use crate::format;
 pub enum Token {
     // Literals
     String(String), // with "..."
-    Num(String),
+    Number(String),
     False,
     True,
     Null,
@@ -28,7 +28,7 @@ pub enum Token {
 impl Token {
     pub fn lexeme(&self) -> &str {
         match self {
-            Self::String(s) | Self::Num(s) => s,
+            Self::String(s) | Self::Number(s) => s,
             Self::False => "False",
             Self::True => "true",
             Self::Null => "null",
@@ -108,7 +108,7 @@ impl TokenStream {
             self.pos += 1;
         }
 
-        Token::Num(ret)
+        Token::Number(ret)
     }
 
     fn read_keyword(&mut self, string: &str, token: Token) -> Option<Token> {
@@ -131,6 +131,9 @@ impl Iterator for TokenStream {
     fn next(&mut self) -> Option<Self::Item> {
         while self.pos < self.chars.len() {
             self.skip_whitespace();
+            if self.pos >= self.chars.len() {
+                return None;
+            }
 
             // Single
             if let Some(t) = self.read_single() {
@@ -229,16 +232,16 @@ mod tests {
         assert_eq!(stream.next(), Some(Token::Colon));
         assert_eq!(stream.next(), Some(Token::LBrace));
 
-        assert_eq!(stream.next(), Some(Token::Num("42".to_owned())));
+        assert_eq!(stream.next(), Some(Token::Number("42".to_owned())));
         assert_eq!(stream.next(), Some(Token::Comma));
 
-        assert_eq!(stream.next(), Some(Token::Num("55".to_owned())));
+        assert_eq!(stream.next(), Some(Token::Number("55".to_owned())));
         assert_eq!(stream.next(), Some(Token::Comma));
 
-        assert_eq!(stream.next(), Some(Token::Num("10.70".to_owned())));
+        assert_eq!(stream.next(), Some(Token::Number("10.70".to_owned())));
         assert_eq!(stream.next(), Some(Token::Comma));
 
-        assert_eq!(stream.next(), Some(Token::Num("-98.84".to_owned())));
+        assert_eq!(stream.next(), Some(Token::Number("-98.84".to_owned())));
 
         assert_eq!(stream.next(), Some(Token::RBrace));
         assert_eq!(stream.next(), Some(Token::RCurly));
