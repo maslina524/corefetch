@@ -50,6 +50,7 @@ use crate::{
     os::allocator::Allocator,
     os::env,
     preset::Preset,
+    args::{ArgResult, ArgsParser},
     json::Json
 };
 
@@ -199,7 +200,17 @@ extern "C" fn main() -> c_int {
     Preset::get_or_init(config);
 
     // Args
+    let mut parser = ArgsParser::new(
+        "nofetch", 
+        "fastfetch-based program written in rust with #![no_std]"
+    );
+    parser.add_arg("wait", Some('w'), false);
+
     let args = env::args();
+    let args = match parser.parse(&args) {
+        Ok(a) => a,
+        Err(e) => panic!("{e}")
+    };
 
     // Build buffers
     let (w, _) = env::terminal_size();
@@ -234,7 +245,7 @@ extern "C" fn main() -> c_int {
         }
     }
 
-    if args.contains(&"--wait".to_owned()) {
+    if args.map.contains_key("wait") {
         loop {
             // SAFETY: Just a nop
             unsafe { core::arch::asm!("nop") };
@@ -242,7 +253,7 @@ extern "C" fn main() -> c_int {
     }
 
     // The handle is created not with GetStdHandle,
-    // but with CreateFile, which requires manual freeing
+    // but with `CreateFile`, which requires manual freeing
     env::close_terminal_handle();
 
     0
