@@ -48,7 +48,8 @@ use crate::{
     modules::{Break, Colors, FormatValue, Locale, Module, Os, Processes, Version, Weather},
     os::allocator::Allocator,
     os::env,
-    preset::Preset
+    preset::Preset,
+    json::Json
 };
 
 #[global_allocator]
@@ -180,7 +181,7 @@ fn build_info_buf(max_len: usize) -> Vec<String> {
     let preset = Preset::get();
 
     for module in preset.modules() {
-        if let Some(m) = get_module_lines(module.typ, max_len_line) {
+        if let Some(m) = get_module_lines(&module.typ, max_len_line) {
             ret.extend(m);
         }
     }
@@ -188,11 +189,12 @@ fn build_info_buf(max_len: usize) -> Vec<String> {
     ret
 }
 
-#[cfg(not(test))]
+// #[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
     // Config init
-    let config = Preset::default();
+    let json = Json::from_file("presets/modules_test.jsonc").unwrap();
+    let config = Preset::from_json(&json);
     Preset::get_or_init(config);
 
     // Args

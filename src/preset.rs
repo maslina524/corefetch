@@ -7,20 +7,46 @@ use alloc::{
 
 use crate::{
     modules::Module, 
-    sync::OnceLock
+    sync::OnceLock,
+    json::Map
 };
 
 static PRESET: OnceLock<Preset> = OnceLock::new();
 
-pub struct Preset<'a> {
-    modules: Vec<PresetModule<'a>>
+pub struct Preset {
+    modules: Vec<PresetModule>
 }
 
-impl Preset<'_> {
+impl Preset {
     pub fn get_or_init(config: Self) -> &'static Self {
         PRESET.get_or_init(|| {
             config
         })
+    }
+
+    pub fn from_json(json: &Map) -> Self {
+        // Build modules
+        let map_modules = json.get_array("modules").expect("msg");
+        let mut ret_modules = Vec::with_capacity(map_modules.len());
+
+        for m in map_modules {
+            if let Some(obj) = m.as_object() {
+                let Some(typ) = obj.get_string("type") else {
+                    continue;
+                };
+                let format = obj.get_string("format").map(String::to_owned);
+
+                let preset_mod = PresetModule::new(typ, format);
+                ret_modules.push(preset_mod);
+            } else if let Some(typ) = m.as_string() {
+                let preset_mod = PresetModule::from_str(typ);
+                ret_modules.push(preset_mod);
+            }
+        }
+
+        Self {
+            modules: ret_modules
+        }
     }
 
     pub fn get() -> &'static Self {
@@ -29,7 +55,7 @@ impl Preset<'_> {
             .expect("Preset was not initialized at the start of the program")
     }
 
-    pub fn module_by_typ(&self, string: &str) -> Option<&PresetModule<'_>> {
+    pub fn module_by_typ(&self, string: &str) -> Option<&PresetModule> {
         for m in &self.modules {
             if m.typ == string {
                 return Some(m)
@@ -38,19 +64,20 @@ impl Preset<'_> {
         None
     }
 
-    pub const fn modules(&self) -> &Vec<PresetModule<'_>> {
+    pub const fn modules(&self) -> &Vec<PresetModule> {
         &self.modules
     }
 
     pub fn get_module_format(&self, module: &dyn Module) -> &str {
         let preset_module = self.module_by_typ(module.string_name()).unwrap();
         preset_module
-        .format
-        .unwrap_or_else(|| module.title())
+            .format
+            .as_deref()
+            .unwrap_or_else(|| module.title())
     }
 }
 
-impl Default for Preset<'_> {
+impl Default for Preset {
     fn default() -> Self {
         Self {
             modules: vec![
@@ -71,17 +98,17 @@ impl Default for Preset<'_> {
     }
 }
 
-pub struct PresetModule<'a> {
-    pub typ: &'a str,
-    pub format: Option<&'a str>
+pub struct PresetModule {
+    pub typ: String,
+    pub format: Option<String>
 }
 
-impl<'a> PresetModule<'a> {
-    pub const fn from_str(typ: &'a str) -> Self {
-        Self { typ, format: None }
+impl PresetModule {
+    pub fn from_str(typ: &str) -> Self {
+        Self { typ: typ.to_owned(), format: None }
     }
 
-    pub const fn new(typ: &'a str, format: Option<&'a str>) -> Self {
-        Self { typ, format }
+    pub fn new(typ: &str, format: Option<String>) -> Self {
+        Self { typ: typ.to_owned(), format }
     }
 }
