@@ -1,0 +1,10 @@
+{
+    "modules": [
+        "title",
+        "separator",
+        {
+            "type": "os",
+            "format": "{name} @ {arch}"
+        }
+    ]
+}
