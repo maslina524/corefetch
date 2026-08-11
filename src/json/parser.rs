@@ -52,11 +52,9 @@ impl Parser {
     fn parse_value(&mut self) -> Value {
         match self.peek() {
             Some(Token::LCurly) => {
-                self.next();
                 Value::Dict(self.parse_object())
             }
             Some(Token::LBrace) => {
-                self.next();
                 Value::Array(self.parse_array())
             }
             Some(Token::String(s)) => {
@@ -88,6 +86,7 @@ impl Parser {
     }
 
     fn parse_object(&mut self) -> BTreeMap<String, Value> {
+        self.next();
         let mut map = BTreeMap::new();
 
         if matches!(self.peek(), Some(Token::RCurly)) {
@@ -123,6 +122,7 @@ impl Parser {
     }
 
     fn parse_array(&mut self) -> Vec<Value> {
+        self.next();
         let mut vec = Vec::new();
 
         if matches!(self.peek(), Some(Token::RBrace)) {
@@ -147,5 +147,29 @@ impl Parser {
         }
 
         vec
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::json::lexer::{Token, TokenStream};
+    use crate::json::parser::Parser;
+
+    #[test]
+    fn single_chars_test() {
+        let source = r#"{
+            "key": "value",
+            "array": [80, 42.55, true, null, "string"],
+            "dict": {
+                "type": "title",
+                "idx": 1
+            }
+        }"#;
+        let mut stream = TokenStream::new(source);
+
+        let mut parser = Parser::new(stream);
+        let obj = parser.parse_object();
+
+        println!("{obj:#?}");
     }
 }
