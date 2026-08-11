@@ -7,7 +7,10 @@ use alloc::{
     collections::BTreeMap,
 };
 
-use crate::json::lexer::{Token, TokenStream};
+use crate::{
+    json::lexer::{Token, TokenStream},
+    ansi::unicode_to_hex
+};
 
 #[derive(Debug)]
 pub enum Value {
@@ -167,7 +170,7 @@ impl Parser {
             Some(Token::String(s)) => {
                 let s = s.clone();
                 self.next();
-                let content = s[1..s.len() - 1].to_owned();
+                let content = unicode_to_hex(&s[1..s.len() - 1]);
                 Value::String(content)
             }
             Some(Token::Number(s)) => {
