@@ -67,6 +67,12 @@ impl TokenStream {
         }
     }
 
+    fn skip_comment(&mut self) {
+        while self.pos < self.chars.len() && self.chars[self.pos] != '\n' {
+            self.pos += 1;
+        }
+    }
+
     fn read_single(&self) -> Option<Token> {
         match self.chars[self.pos] {
             '{' => Some(Token::LCurly),
@@ -135,13 +141,20 @@ impl Iterator for TokenStream {
                 return None;
             }
 
+            let ch = self.chars[self.pos];
+            if self.pos + 1 < self.chars.len()
+                && ch == '/'
+                && self.chars[self.pos + 1] == '/'
+            {
+                self.skip_comment();
+                continue;
+            }
+
             // Single
             if let Some(t) = self.read_single() {
                 self.pos += 1;
                 return Some(t);
             }
-
-            let ch = self.chars[self.pos];
 
             // Strings
             if ch == '"' {
@@ -264,5 +277,21 @@ mod tests {
 
         let string = source.replace([' ', '\n'], "");
         assert_eq!(string, stream.as_str());
+    }
+
+    #[test]
+    fn comments_test() {
+        let source = r#"{
+            // Comment
+            "key": "value"
+            // Another comment
+        }"#;
+        let mut stream = TokenStream::new(source);
+
+        assert_eq!(stream.next(), Some(Token::LCurly));
+        assert_eq!(stream.next(), Some(Token::String("\"key\"".to_owned())));
+        assert_eq!(stream.next(), Some(Token::Colon));
+        assert_eq!(stream.next(), Some(Token::String("\"value\"".to_owned())));
+        assert_eq!(stream.next(), Some(Token::RCurly));
     }
 }

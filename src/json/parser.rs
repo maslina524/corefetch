@@ -193,7 +193,7 @@ impl Parser {
     }
 
     pub fn parse_object(&mut self) -> Map {
-        self.next();
+        self.next(); // consume '{'
         let mut map = Map::new();
 
         if matches!(self.peek(), Some(Token::RCurly)) {
@@ -215,7 +215,11 @@ impl Parser {
 
             match self.peek() {
                 Some(Token::Comma) => {
-                    self.next();
+                    self.next(); // consume ','
+                    if matches!(self.peek(), Some(Token::RCurly)) {
+                        self.next(); // consume '}'
+                        break;
+                    }
                 }
                 Some(Token::RCurly) => {
                     self.next();
@@ -229,7 +233,7 @@ impl Parser {
     }
 
     pub fn parse_array(&mut self) -> Vec<Value> {
-        self.next();
+        self.next(); // consume '['
         let mut vec = Vec::new();
 
         if matches!(self.peek(), Some(Token::RBrace)) {
@@ -243,7 +247,11 @@ impl Parser {
 
             match self.peek() {
                 Some(Token::Comma) => {
-                    self.next();
+                    self.next(); // consume ','
+                    if matches!(self.peek(), Some(Token::RBrace)) {
+                        self.next(); // consume ']'
+                        break;
+                    }
                 }
                 Some(Token::RBrace) => {
                     self.next();
