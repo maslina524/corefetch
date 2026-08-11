@@ -49,6 +49,7 @@ use crate::{
     modules::{Break, Colors, FormatValue, Locale, Module, Os, Processes, Version, Weather},
     os::allocator::Allocator,
     os::env,
+    os::https::{Url, Request, Response},
     preset::Preset,
     args::{ArgResult, ArgsParser},
     json::Json
@@ -191,26 +192,44 @@ fn build_info_buf(max_len: usize) -> Vec<String> {
     ret
 }
 
-// #[cfg(not(test))]
+#[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
-    // Config init
-    let json = Json::from_file("presets/modules_test.jsonc").unwrap();
-    let config = Preset::from_json(&json);
-    Preset::get_or_init(config);
-
     // Args
     let mut parser = ArgsParser::new(
         "nofetch", 
         "fastfetch-based program written in rust with #![no_std]"
     );
     parser.add_arg("wait", Some('w'), false);
+    parser.add_arg("config", Some('c'), true);
 
     let args = env::args();
     let args = match parser.parse(&args) {
         Ok(a) => a,
         Err(e) => panic!("{e}")
     };
+
+    // Config init
+    let config = args.map.get("config").map_or_else(Preset::default, |path| {
+        Url::new(path).map_or_else(|| { // FS Path
+            let json = Json::from_file(path).unwrap();
+            Preset::from_json(&json)
+        }, |url| { // Http Url
+            let response = Request::from_url(url).get();
+            if response.is_success() {
+                let text = match response.as_text() {
+                    Ok(t) => t,
+                    Err(e) => panic!("Utf8 err: {e}")
+                };
+                let json = Json::from_str(&text);
+                Preset::from_json(&json)
+            } else {
+                eprintln!("Failed to get preset from URL, Code: {}\n", response.code());
+                Preset::default()
+            }
+        })
+    });
+    Preset::get_or_init(config);
 
     // Build buffers
     let (w, _) = env::terminal_size();
