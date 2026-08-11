@@ -153,6 +153,10 @@ impl Request {
         )
     }
 
+    pub const fn from_url(url: Url) -> Self {
+        Self { url }
+    }
+
     pub fn get(self) -> Response {
         self.send("GET")
     }
