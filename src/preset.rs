@@ -14,7 +14,8 @@ use crate::{
 static PRESET: OnceLock<Preset> = OnceLock::new();
 
 pub struct Preset {
-    modules: Vec<PresetModule>
+    modules: Vec<PresetModule>,
+    display: Display
 }
 
 impl Preset {
@@ -45,8 +46,15 @@ impl Preset {
             }
         }
 
+        // Display
+        let separator = json
+            .get_object("display")
+            .and_then(|m| m.get_string("separator").map(ToOwned::to_owned))
+            .unwrap_or_else(|| ": ".to_owned());
+
         Self {
-            modules: ret_modules
+            modules: ret_modules,
+            display: Display { separator }
         }
     }
 
@@ -84,6 +92,10 @@ impl Preset {
             .as_deref()
             .unwrap_or_else(|| module.title())
     }
+
+    pub fn get_display_separator(&self) -> &str {
+        &self.display.separator
+    }
 }
 
 impl Default for Preset {
@@ -102,7 +114,10 @@ impl Default for Preset {
                 PresetModule::from_str("locale"),
                 PresetModule::from_str("break"),
                 PresetModule::from_str("colors")
-            ]
+            ],
+            display: Display {
+                separator: ": ".to_owned()
+            }
         }
     }
 }
@@ -120,5 +135,15 @@ impl PresetModule {
 
     pub fn new(typ: &str, format: Option<String>, key: Option<String>) -> Self {
         Self { typ: typ.to_owned(), format, key }
+    }
+}
+
+pub struct Display {
+    pub separator: String
+}
+
+impl Default for Display {
+    fn default() -> Self {
+        Self { separator: String::from(": ") }
     }
 }
