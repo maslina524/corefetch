@@ -15,8 +15,34 @@ pub enum Value {
     Number(f64),
     Bool(bool),
     Array(Vec<Self>),
-    Dict(BTreeMap<String, Self>),
+    Dict(Map),
     Null
+}
+
+#[derive(Debug)]
+pub struct Map {
+    keys: Vec<String>,
+    values: Vec<Value>
+}
+
+impl Map {
+    pub const fn new() -> Self {
+        Self { keys: Vec::new(), values: Vec::new() }
+    }
+
+    pub fn insert(&mut self, key: String, value: Value) {
+        self.keys.push(key);
+        self.values.push(value);
+    }
+
+    pub fn get(&self, key: &str) -> Option<&Value> {
+        for (i, k) in self.keys.iter().enumerate() {
+            if k == key {
+                return Some(&self.values[i])
+            }
+        }
+        None
+    }
 }
 
 pub struct Parser {
@@ -85,9 +111,9 @@ impl Parser {
         }
     }
 
-    pub fn parse_object(&mut self) -> BTreeMap<String, Value> {
+    pub fn parse_object(&mut self) -> Map {
         self.next();
-        let mut map = BTreeMap::new();
+        let mut map = Map::new();
 
         if matches!(self.peek(), Some(Token::RCurly)) {
             self.next();

@@ -1,8 +1,9 @@
 mod lexer;
-mod parser;
+pub mod parser;
 
 use lexer::TokenStream;
 use parser::{Value, Parser};
+pub use parser::Map;
 
 use core::str::FromStr;
 
@@ -12,18 +13,13 @@ use alloc::{
 };
 
 #[derive(Debug)]
-pub struct Json {
-    root: BTreeMap<String, Value>
-}
+pub struct Json;
 
-impl FromStr for Json {
-    type Err = &'static str;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
+impl Json {
+    fn from_str(s: &str) -> Map {
         let stream = TokenStream::new(s);
         let mut parser = Parser::new(stream);
-        let root = parser.parse_object();
-
-        Ok(Self { root })
+        parser.parse_object()
     }
 }
 
@@ -46,8 +42,7 @@ mod tests {
             "boolean": true
         }"#;
         
-        let json = Json::from_str(source).unwrap();
-
+        let json = Json::from_str(source);
         println!("{json:#?}");
     }
 }
