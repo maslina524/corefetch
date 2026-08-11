@@ -63,6 +63,19 @@ impl TokenStream {
 
         Token::String(ret)
     }
+
+    fn read_keyword(&mut self, string: &str, token: Token) -> Option<Token> {
+        let len = string.len();
+
+        if self.pos + len <= self.chars.len() 
+            && self.chars[self.pos..self.pos + len].iter().copied().eq(string.chars())
+        {   
+            self.pos += len;
+            return Some(token);
+        }
+
+        None
+    }
 }
 
 impl Iterator for TokenStream {
@@ -72,13 +85,26 @@ impl Iterator for TokenStream {
         while self.pos < self.chars.len() {
             self.skip_whitespace();
 
+            // Single
             if let Some(t) = self.read_single() {
                 self.pos += 1;
                 return Some(t);
             }
 
+            // Strings
             if self.chars[self.pos] == '"' {
                 return Some(self.read_string());
+            }
+
+            // Keywords
+            if let Some(token) = self.read_keyword("null", Token::Null) {
+                return Some(token);
+            }
+            if let Some(token) = self.read_keyword("true", Token::True) {
+                return Some(token);
+            }
+            if let Some(token) = self.read_keyword("false", Token::False) {
+                return Some(token);
             }
 
             self.pos += 1;
@@ -113,6 +139,22 @@ mod tests {
         assert_eq!(stream.next(), Some(Token::String("key".to_owned())));
         assert_eq!(stream.next(), Some(Token::Colon));
         assert_eq!(stream.next(), Some(Token::String("value".to_owned())));
+        assert_eq!(stream.next(), Some(Token::RCurly));
+    }
+
+    #[test]
+    fn keywods_test() {
+        let source = "{\"boolean\": true, \"null\": null}";
+        let mut stream = TokenStream::new(source);
+
+        assert_eq!(stream.next(), Some(Token::LCurly));
+        assert_eq!(stream.next(), Some(Token::String("boolean".to_owned())));
+        assert_eq!(stream.next(), Some(Token::Colon));
+        assert_eq!(stream.next(), Some(Token::True));
+        assert_eq!(stream.next(), Some(Token::Comma));
+        assert_eq!(stream.next(), Some(Token::String("null".to_owned())));
+        assert_eq!(stream.next(), Some(Token::Colon));
+        assert_eq!(stream.next(), Some(Token::Null));
         assert_eq!(stream.next(), Some(Token::RCurly));
     }
 }
