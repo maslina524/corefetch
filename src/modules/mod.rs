@@ -1,6 +1,7 @@
 pub mod breakk;    // 7)  Break         : Print an empty line
 pub mod colors;    // 14) Colors        : Display the terminal's 16-color palette
 pub mod cpu;       // 15) CPU           : Print CPU name, frequency, etc.
+pub mod custom;    // 19) Custom        : Print a custom string, with or without key
 pub mod datetime;  // 20) DateTime      : Print the current date and time
 pub mod kernel;    // 33) Kernel        : Print system kernel version
 pub mod locale;    // 37) Locale        : Print system locale name
@@ -15,6 +16,7 @@ pub mod weather;   // 71) Weather       : Print weather information
 pub use breakk::Break;
 pub use colors::Colors;
 pub use cpu::Cpu;
+pub use custom::Custom;
 pub use datetime::Datetime;
 pub use kernel::Kernel;
 pub use locale::Locale;
@@ -27,6 +29,8 @@ pub use version::Version;
 pub use weather::Weather;
 
 use alloc::boxed::Box;
+
+use crate::preset::PresetModule;
 
 #[derive(Default)]
 pub struct FormatValue<'a> {
@@ -43,21 +47,22 @@ pub trait Module {
     fn format(&self, key: FormatValue, format: FormatValue) -> alloc::string::String;
 }
 
-pub fn from_str(string: &str) -> Option<Box<dyn Module>> {
-    match string.to_lowercase().as_str() {
-        "break"     => Some(Box::new(Break::new())),
-        "colors"    => Some(Box::new(Colors::new())),
-        "cpu"       => Some(Box::new(Cpu::new())),
-        "datetime"  => Some(Box::new(Datetime::new())),
-        "kernel"    => Some(Box::new(Kernel::new())),
-        "locale"    => Some(Box::new(Locale::new())),
-        "memory"    => Some(Box::new(Memory::new())),
-        "os"        => Some(Box::new(Os::new())),
-        "processes" => Some(Box::new(Processes::new())),
-        "separator" => Some(Box::new(Separator::new())),
-        "title"     => Some(Box::new(Title::new())),
-        "version"   => Some(Box::new(Version::new())),
-        "weather"   => Some(Box::new(Weather::new())),
+pub fn from_preset_module(module: &PresetModule) -> Option<Box<dyn Module>> {
+    match module.typ.to_lowercase().as_str() {
+        "break"     => Some(Box::new( Break::new()     )),
+        "colors"    => Some(Box::new( Colors::new()    )),
+        "cpu"       => Some(Box::new( Cpu::new()       )),
+        "custom"    => Some(Box::new( Custom::new()    )),
+        "datetime"  => Some(Box::new( Datetime::new()  )),
+        "kernel"    => Some(Box::new( Kernel::new()    )),
+        "locale"    => Some(Box::new( Locale::new()    )),
+        "memory"    => Some(Box::new( Memory::new()    )),
+        "os"        => Some(Box::new( Os::new()        )),
+        "processes" => Some(Box::new( Processes::new() )),
+        "separator" => Some(Box::new( Separator::new() )),
+        "title"     => Some(Box::new( Title::new()     )),
+        "version"   => Some(Box::new( Version::new()   )),
+        "weather"   => Some(Box::new( Weather::new()   )),
         _ => None,
     }
 }
@@ -88,7 +93,11 @@ macro_rules! format_for_module {
             let key_raw = key.format.unwrap_or(self.key());
             let value_raw = format.format.unwrap_or(self.title());
 
-            let full_string = $crate::format!("\x1b[1;{key_color}m{key_raw}\x1b[0m: {value_raw}");
+            let full_string = if key_raw.len() == 0 {
+                alloc::borrow::ToOwned::to_owned(value_raw)
+            } else {
+                $crate::format!("\x1b[1;{key_color}m{key_raw}\x1b[0m: {value_raw}")
+            };
             $crate::format_module!(&full_string, self, $($field),*)
         }
     };

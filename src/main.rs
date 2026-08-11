@@ -45,14 +45,7 @@ use alloc::{
 };
 
 use crate::{
-    logo::LogoInfo,
-    modules::{Break, Colors, FormatValue, Locale, Module, Os, Processes, Version, Weather},
-    os::allocator::Allocator,
-    os::env,
-    os::https::{Url, Request, Response},
-    preset::Preset,
-    args::{ArgResult, ArgsParser},
-    json::Json
+    args::{ArgResult, ArgsParser}, json::Json, logo::LogoInfo, modules::{Break, Colors, FormatValue, Locale, Module, Os, Processes, Version, Weather}, os::{allocator::Allocator, env, https::{Request, Response, Url}}, preset::{Preset, PresetModule}
 };
 
 #[global_allocator]
@@ -158,19 +151,19 @@ fn split_by_len(string: &str, len: usize) -> Vec<&str> {
     result
 }
 
-fn get_module_lines(name: &str, max_len_line: usize) -> Option<Vec<String>> {
-    modules::from_str(name).map(|module| {
+fn get_module_lines(preset_module: &PresetModule, max_len_line: usize) -> Option<Vec<String>> {
+    modules::from_preset_module(preset_module).map(|module| {
         let string = module.format(
             FormatValue {
-                format: Some(Preset::get().get_module_key(&*module)), 
+                format: preset_module.key.as_deref(), 
                 color: None
             }, 
             FormatValue {
-                format: Some(Preset::get().get_module_format(&*module)), 
+                format: preset_module.format.as_deref(), 
                 color: None
             }
         );
-        let splitted = if name == "colors" {
+        let splitted = if preset_module.typ == "colors" {
             string.split('\n').collect()
         } else {
             split_by_len(&string, max_len_line)
@@ -187,7 +180,7 @@ fn build_info_buf(max_len: usize) -> Vec<String> {
     let preset = Preset::get();
 
     for module in preset.modules() {
-        if let Some(m) = get_module_lines(&module.typ, max_len_line) {
+        if let Some(m) = get_module_lines(module, max_len_line) {
             ret.extend(m);
         }
     }

@@ -6,6 +6,10 @@
             "type": "os",
             "format": "{name} @ {arch}",
             "key": "| OS"
+        },
+        {
+            "type": "custom",
+            "format": "Custom"
         }
     ]
 }
