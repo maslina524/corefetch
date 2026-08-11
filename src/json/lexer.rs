@@ -6,12 +6,13 @@ use alloc::{
     borrow::ToOwned
 };
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum Token {
     // Literals
     String(String),
-    Num(f64),
-    Bool(bool),
+    Num(String),
+    False,
+    True,
     Null,
 
     // Paren
@@ -49,6 +50,19 @@ impl TokenStream {
             _ => None
         }
     }
+
+    fn read_string(&mut self) -> Token {
+        self.pos += 1;
+        let mut ret = String::new();
+
+        while self.pos < self.chars.len() && self.chars[self.pos] != '"' {
+            ret.push(self.chars[self.pos]);
+            self.pos += 1;
+        }
+        self.pos += 1;
+
+        Token::String(ret)
+    }
 }
 
 impl Iterator for TokenStream {
@@ -63,6 +77,9 @@ impl Iterator for TokenStream {
                 return Some(t);
             }
 
+            if self.chars[self.pos] == '"' {
+                return Some(self.read_string());
+            }
 
             self.pos += 1;
         }
@@ -85,5 +102,17 @@ mod tests {
         assert_eq!(stream.next(), Some(Token::LBrace));
         assert_eq!(stream.next(), Some(Token::Comma));
         assert_eq!(stream.next(), Some(Token::RBrace));
+    }
+
+    #[test]
+    fn string_test() {
+        let source = "{\"key\": \"value\"}";
+        let mut stream = TokenStream::new(source);
+
+        assert_eq!(stream.next(), Some(Token::LCurly));
+        assert_eq!(stream.next(), Some(Token::String("key".to_owned())));
+        assert_eq!(stream.next(), Some(Token::Colon));
+        assert_eq!(stream.next(), Some(Token::String("value".to_owned())));
+        assert_eq!(stream.next(), Some(Token::RCurly));
     }
 }
