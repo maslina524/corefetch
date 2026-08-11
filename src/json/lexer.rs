@@ -6,10 +6,12 @@ use alloc::{
     borrow::ToOwned
 };
 
+use crate::format;
+
 #[derive(Debug, PartialEq, Eq)]
 pub enum Token {
     // Literals
-    String(String),
+    String(String), // with "..."
     Num(String),
     False,
     True,
@@ -53,15 +55,34 @@ impl TokenStream {
 
     fn read_string(&mut self) -> Token {
         self.pos += 1;
-        let mut ret = String::new();
+        let mut ret = String::from('\"');
 
         while self.pos < self.chars.len() && self.chars[self.pos] != '"' {
             ret.push(self.chars[self.pos]);
             self.pos += 1;
         }
+        ret.push('"');
         self.pos += 1;
 
         Token::String(ret)
+    }
+
+    fn read_number(&mut self) -> Token {
+        let mut ret = String::new();
+        
+        loop {
+            let ch = self.chars[self.pos];
+            if self.pos >= self.chars.len()
+                || (ch != '-' && ch != '.' && !ch.is_numeric())
+            {
+                break;
+            }
+
+            ret.push(self.chars[self.pos]);
+            self.pos += 1;
+        }
+
+        Token::Num(ret)
     }
 
     fn read_keyword(&mut self, string: &str, token: Token) -> Option<Token> {
@@ -91,9 +112,16 @@ impl Iterator for TokenStream {
                 return Some(t);
             }
 
+            let ch = self.chars[self.pos];
+
             // Strings
-            if self.chars[self.pos] == '"' {
+            if ch == '"' {
                 return Some(self.read_string());
+            }
+
+            // Number
+            if ch == '-' || ch.is_numeric() {
+                return Some(self.read_number());
             }
 
             // Keywords
@@ -136,9 +164,9 @@ mod tests {
         let mut stream = TokenStream::new(source);
 
         assert_eq!(stream.next(), Some(Token::LCurly));
-        assert_eq!(stream.next(), Some(Token::String("key".to_owned())));
+        assert_eq!(stream.next(), Some(Token::String("\"key\"".to_owned())));
         assert_eq!(stream.next(), Some(Token::Colon));
-        assert_eq!(stream.next(), Some(Token::String("value".to_owned())));
+        assert_eq!(stream.next(), Some(Token::String("\"value\"".to_owned())));
         assert_eq!(stream.next(), Some(Token::RCurly));
     }
 
@@ -148,13 +176,45 @@ mod tests {
         let mut stream = TokenStream::new(source);
 
         assert_eq!(stream.next(), Some(Token::LCurly));
-        assert_eq!(stream.next(), Some(Token::String("boolean".to_owned())));
+        assert_eq!(stream.next(), Some(Token::String("\"boolean\"".to_owned())));
         assert_eq!(stream.next(), Some(Token::Colon));
         assert_eq!(stream.next(), Some(Token::True));
         assert_eq!(stream.next(), Some(Token::Comma));
-        assert_eq!(stream.next(), Some(Token::String("null".to_owned())));
+        assert_eq!(stream.next(), Some(Token::String("\"null\"".to_owned())));
         assert_eq!(stream.next(), Some(Token::Colon));
         assert_eq!(stream.next(), Some(Token::Null));
+        assert_eq!(stream.next(), Some(Token::RCurly));
+    }
+
+    #[test]
+    fn number_test() {
+        let source = r#"{
+            "array": [
+                42,
+                55,
+                10.70,
+                -98.84
+            ]
+        }"#;
+        let mut stream = TokenStream::new(source);
+
+        assert_eq!(stream.next(), Some(Token::LCurly));
+        assert_eq!(stream.next(), Some(Token::String("\"array\"".to_owned())));
+        assert_eq!(stream.next(), Some(Token::Colon));
+        assert_eq!(stream.next(), Some(Token::LBrace));
+
+        assert_eq!(stream.next(), Some(Token::Num("42".to_owned())));
+        assert_eq!(stream.next(), Some(Token::Comma));
+
+        assert_eq!(stream.next(), Some(Token::Num("55".to_owned())));
+        assert_eq!(stream.next(), Some(Token::Comma));
+
+        assert_eq!(stream.next(), Some(Token::Num("10.70".to_owned())));
+        assert_eq!(stream.next(), Some(Token::Comma));
+
+        assert_eq!(stream.next(), Some(Token::Num("-98.84".to_owned())));
+
+        assert_eq!(stream.next(), Some(Token::RBrace));
         assert_eq!(stream.next(), Some(Token::RCurly));
     }
 }
