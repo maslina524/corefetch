@@ -4,7 +4,8 @@
         "separator",
         {
             "type": "os",
-            "format": "{name} @ {arch}"
+            "format": "{name} @ {arch}",
+            "key": "| OS"
         }
     ]
 }

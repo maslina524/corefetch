@@ -161,7 +161,10 @@ fn split_by_len(string: &str, len: usize) -> Vec<&str> {
 fn get_module_lines(name: &str, max_len_line: usize) -> Option<Vec<String>> {
     modules::from_str(name).map(|module| {
         let string = module.format(
-            FormatValue::default(), 
+            FormatValue {
+                format: Some(Preset::get().get_module_key(&*module)), 
+                color: None
+            }, 
             FormatValue {
                 format: Some(Preset::get().get_module_format(&*module)), 
                 color: None
@@ -192,7 +195,7 @@ fn build_info_buf(max_len: usize) -> Vec<String> {
     ret
 }
 
-#[cfg(not(test))]
+// #[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
     // Args

@@ -35,8 +35,9 @@ impl Preset {
                     continue;
                 };
                 let format = obj.get_string("format").map(String::to_owned);
+                let key = obj.get_string("key").map(String::to_owned);
 
-                let preset_mod = PresetModule::new(typ, format);
+                let preset_mod = PresetModule::new(typ, format, key);
                 ret_modules.push(preset_mod);
             } else if let Some(typ) = m.as_string() {
                 let preset_mod = PresetModule::from_str(typ);
@@ -75,6 +76,14 @@ impl Preset {
             .as_deref()
             .unwrap_or_else(|| module.title())
     }
+
+    pub fn get_module_key(&self, module: &dyn Module) -> &str {
+        let preset_module = self.module_by_typ(module.string_name()).unwrap();
+        preset_module
+            .key
+            .as_deref()
+            .unwrap_or_else(|| module.title())
+    }
 }
 
 impl Default for Preset {
@@ -100,15 +109,16 @@ impl Default for Preset {
 
 pub struct PresetModule {
     pub typ: String,
-    pub format: Option<String>
+    pub format: Option<String>,
+    pub key: Option<String>
 }
 
 impl PresetModule {
     pub fn from_str(typ: &str) -> Self {
-        Self { typ: typ.to_owned(), format: None }
+        Self { typ: typ.to_owned(), format: None, key: None }
     }
 
-    pub fn new(typ: &str, format: Option<String>) -> Self {
-        Self { typ: typ.to_owned(), format }
+    pub fn new(typ: &str, format: Option<String>, key: Option<String>) -> Self {
+        Self { typ: typ.to_owned(), format, key }
     }
 }
