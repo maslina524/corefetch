@@ -26,6 +26,7 @@ mod macros;
 mod ansi;
 mod xxhash64;
 mod preset;
+mod args;
 
 mod modules;
 mod color;
