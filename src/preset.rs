@@ -37,8 +37,9 @@ impl Preset {
                 };
                 let format = obj.get_string("format").map(String::to_owned);
                 let key = obj.get_string("key").map(String::to_owned);
+                let key_color = obj.get_string("keyColor").map(String::to_owned);
 
-                let preset_mod = PresetModule::new(typ, format, key);
+                let preset_mod = PresetModule::new(typ, format, key, key_color);
                 ret_modules.push(preset_mod);
             } else if let Some(typ) = m.as_string() {
                 let preset_mod = PresetModule::from_str(typ);
@@ -125,16 +126,17 @@ impl Default for Preset {
 pub struct PresetModule {
     pub typ: String,
     pub format: Option<String>,
-    pub key: Option<String>
+    pub key: Option<String>,
+    pub key_color: Option<String>,
 }
 
 impl PresetModule {
     pub fn from_str(typ: &str) -> Self {
-        Self { typ: typ.to_owned(), format: None, key: None }
+        Self { typ: typ.to_owned(), format: None, key: None, key_color: None }
     }
 
-    pub fn new(typ: &str, format: Option<String>, key: Option<String>) -> Self {
-        Self { typ: typ.to_owned(), format, key }
+    pub fn new(typ: &str, format: Option<String>, key: Option<String>, key_color: Option<String>) -> Self {
+        Self { typ: typ.to_owned(), format, key, key_color }
     }
 }
 

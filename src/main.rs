@@ -156,7 +156,7 @@ fn get_module_lines(preset_module: &PresetModule, max_len_line: usize) -> Option
         let string = module.format(
             FormatValue {
                 format: preset_module.key.as_deref(), 
-                color: None
+                color: preset_module.key_color.as_deref()
             }, 
             FormatValue {
                 format: preset_module.format.as_deref(), 
