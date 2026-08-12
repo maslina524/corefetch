@@ -51,15 +51,6 @@ use crate::{
 #[global_allocator]
 static ALLOCATOR: Allocator = Allocator;
 
-// --- THESE CONSTANTS ARE CONFIG PLACEHOLDERS ---
-pub mod padding {
-    pub const TOP   : usize = 1;
-    pub const BOTTOM: usize = 2;
-    pub const RIGHT : usize = 3;
-    pub const LEFT  : usize = 4;
-}
-// -----------------------------------------------
-
 const MIN_OFFSET: usize = 24;
 
 #[cfg(not(test))]
@@ -93,7 +84,8 @@ fn max_line_len(lines: &Vec<(String, usize)>) -> usize {
 }
 
 fn build_logo_buf(lines: &Vec<(String, usize)>, max_len: usize) -> Vec<String> {
-    let max_len_padding = max_len + padding::LEFT + padding::RIGHT;
+    let padding = Preset::get().get_logo_padding();
+    let max_len_padding = max_len + padding.left + padding.right;
     let mut ret = Vec::new();
 
     let (w, h) = env::terminal_size();
@@ -101,19 +93,19 @@ fn build_logo_buf(lines: &Vec<(String, usize)>, max_len: usize) -> Vec<String> {
         return Vec::new();
     }
     
-    for _ in 0..padding::TOP {
+    for _ in 0..padding.top {
         ret.push(" ".repeat(max_len_padding));
     }
     for (line, len) in lines {
         let string = format!(
             "{}{}{}",
-            " ".repeat(padding::LEFT),
+            " ".repeat(padding.left),
             line,
-            " ".repeat(padding::RIGHT + max_len - len)
+            " ".repeat(padding.right + max_len - len)
         );
         ret.push(string);
     }
-    for _ in 0..padding::BOTTOM {
+    for _ in 0..padding.bottom {
         ret.push(" ".repeat(max_len_padding));
     }
 
@@ -174,8 +166,9 @@ fn get_module_lines(preset_module: &PresetModule, max_len_line: usize) -> Option
 }
 
 fn build_info_buf(max_len: usize) -> Vec<String> {
+    let padding = Preset::get().get_logo_padding();
     let (w, _) = env::terminal_size();
-    let max_len_line = w - max_len - padding::LEFT - padding::RIGHT; 
+    let max_len_line = w - max_len - padding.left - padding.right; 
     let mut ret = Vec::new();
     let preset = Preset::get();
 
@@ -231,7 +224,8 @@ extern "C" fn main() -> c_int {
     let (w, _) = env::terminal_size();
     let logo_lines = LogoInfo::new(&Os::get().id).get_ansi_lines();
     let max_logo_len = max_line_len(&logo_lines);
-    let max_logo_len_padding = max_logo_len + padding::LEFT + padding::RIGHT;
+    let padding = Preset::get().get_logo_padding();
+    let max_logo_len_padding = max_logo_len + padding.left + padding.right;
 
     let split_len = if max_logo_len_padding + MIN_OFFSET < w {
         max_logo_len
