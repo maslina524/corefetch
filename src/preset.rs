@@ -2,13 +2,14 @@ use alloc::{
     string::String,
     borrow::ToOwned,
     vec::Vec,
+    collections::BTreeMap,
     vec
 };
 
 use crate::{
     modules::Module, 
     sync::OnceLock,
-    json::Map,
+    json::{Map, Value},
     // Why does clippy think this variant is better than `colors::*`?
     color::{
         MODE_RESET, MODE_DIM, MODE_ITALIC, MODE_UNDERLINE, MODE_BLINK, MODE_INVERSE,
@@ -63,7 +64,16 @@ impl Preset {
                 let key = obj.get_string("key").map(String::to_owned);
                 let key_color = obj.get_string("keyColor").map(String::to_owned);
 
-                let preset_mod = PresetModule::new(typ, format, key, key_color);
+                let mut map = BTreeMap::new();
+                if typ.as_str() == "colors" {
+                    let symbol = obj.get("symbol").unwrap_or(&Value::Null).clone();
+                    map.insert("symbol".to_owned(), symbol);
+
+                    let padding_left = obj.get("paddingLeft").unwrap_or(&Value::Null).clone();
+                    map.insert("paddingLeft".to_owned(), padding_left);
+                }
+
+                let preset_mod = PresetModule::new(typ, format, key, key_color, map);
                 ret_modules.push(preset_mod);
             } else if let Some(typ) = m.as_string() {
                 let preset_mod = PresetModule::from_str(typ);
@@ -172,16 +182,17 @@ pub struct PresetModule {
     pub format: Option<String>,
     pub key: Option<String>,
     pub key_color: Option<String>,
+    pub map: BTreeMap<String, Value>
 }
 
 impl PresetModule {
     pub fn from_str(typ: &str) -> Self {
-        Self { typ: typ.to_owned(), format: None, key: None, key_color: None }
+        Self { typ: typ.to_owned(), format: None, key: None, key_color: None, map: BTreeMap::new() }
     }
 
-    pub fn new(typ: &str, format: Option<String>, key: Option<String>, key_color: Option<String>) -> Self {
+    pub fn new(typ: &str, format: Option<String>, key: Option<String>, key_color: Option<String>, map: BTreeMap<String, Value>) -> Self {
         let key_color = key_color.map(|s| Self::format_color(&s, Plan::FG));
-        Self { typ: typ.to_owned(), format, key, key_color }
+        Self { typ: typ.to_owned(), format, key, key_color, map }
     }
 
     fn format_color(s: &str, plan: Plan) -> String {
@@ -269,12 +280,17 @@ impl Default for PresetDisplay {
     }
 }
 
-#[derive(Default)]
 pub struct PresetPadding {
     pub top: usize,
     pub bottom: usize,
     pub right: usize,
     pub left: usize,
+}
+
+impl Default for PresetPadding {
+    fn default() -> Self {
+        Self { top: 0, bottom: 2, right: 3, left: 0 }
+    }
 }
 
 #[derive(Default)]
