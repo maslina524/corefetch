@@ -16,7 +16,7 @@ use crate::{
     os::windows::{
         CONSOLE_SCREEN_BUFFER_INFO, CloseHandle, CommandLineToArgvW, CreateToolhelp32Snapshot,
         FILETIME, GetCommandLineW, GetConsoleScreenBufferInfo, GetSystemTimeAsFileTime,
-        OSVERSIONINFOW, PROCESSENTRY32, Process32First, Process32Next, RtlGetVersion
+        OSVERSIONINFOW, PROCESSENTRY32, EnumProcesses, RtlGetVersion
     },
     os::regedit::{self, Regedit, RegValue, Hkey},
     sync::OnceLock
@@ -167,43 +167,21 @@ pub fn close_terminal_handle() -> error::Result<()> {
 }
 
 pub fn processes_count() -> usize {
-    // SAFETY: Just a WinAPI function, the return value is checked
-    let snapshot = unsafe {
-        CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0)
+    let mut pids = [0u32; 1024];
+    let mut needed = 0;
+
+    // SAFETY: Completely safe
+    let ret = unsafe {
+        EnumProcesses(
+            pids.as_mut_ptr(), 
+            (pids.len() * 4) as u32, 
+            &raw mut needed
+        )
     };
-    if snapshot == INVALID_HANDLE {
+    if ret == 0 {
         ErrorCode::last().panic();
     }
-
-    let mut pe = PROCESSENTRY32 {
-        dwSize: mem::size_of::<PROCESSENTRY32>() as u32,
-        ..Default::default()
-    };
-
-    let mut count = 0;
-    // SAFETY: Completely safe
-    let first = unsafe {
-        Process32First(snapshot, &raw mut pe)
-    };
-    
-    if first == 1 {
-        count += 1;
-        loop {
-            // SAFETY: Just a WinAPI function, the return value is checked
-            let next = unsafe {
-                Process32Next(snapshot, &raw mut pe)
-            };
-            if next == 0 {
-                break;
-            }
-            count += 1;
-        }
-    }
-
-    // SAFETY: Completely safe
-    unsafe { CloseHandle(snapshot); }
-    
-    count
+    needed as usize / 4
 }
 
 pub fn timestamp_mils() -> u64 {

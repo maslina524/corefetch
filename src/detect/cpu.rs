@@ -27,8 +27,52 @@ type LogicalInfo = SYSTEM_LOGICAL_PROCESSOR_INFORMATION;
 
 static VEC_LOGICAL_INFO: OnceLock<Vec<LogicalInfo>> = OnceLock::new();
 
-fn logical_info() -> &'static Vec<LogicalInfo> {
-    VEC_LOGICAL_INFO.get_or_init(|| {
+pub struct CpuInfo {
+    pub name: String,
+    pub vendor: String,
+    pub numa_nodes: usize,
+    pub physical_cores: usize,
+    pub logical_cores: usize,
+    pub online_cores: usize,
+    pub packages: usize,
+    pub code_name: String,
+    pub technology: String,
+    pub base_freq: String,
+    pub temperature: String,
+    pub max_freq: String,
+    pub logical_grouped: String,
+    pub micro_arch: String
+}
+
+impl CpuInfo {
+    pub fn new() -> Self {
+        let cpu_regedit_handle = Regedit::open(
+            Hkey::LocalMachine, 
+            "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0", 
+            Access::Read
+        ).unwrap();
+
+        let logical_info = Self::logical_info();
+
+        Self {
+            name: Self::name(&cpu_regedit_handle),
+            vendor: Self::vendor(),
+            numa_nodes: Self::numa_nodes_count(),
+            physical_cores: Self::physical_cores_count(&logical_info),
+            logical_cores: Self::logical_cores_count(&logical_info),
+            online_cores: Self::online_cores_count(),
+            packages: Self::package_count(&logical_info),
+            code_name: Self::code_name(),
+            technology: Self::technology(),
+            base_freq: Self::base_freq_formatted(&cpu_regedit_handle),
+            temperature: Self::temperature(),
+            max_freq: Self::max_freq_formatted(),
+            logical_grouped: Self::logical_grouped(),
+            micro_arch: Self::micro_arch()
+        }
+    }
+
+    fn logical_info() -> Vec<LogicalInfo> {
         let mut size = 0;
 
         // SAFETY: Completely safe
@@ -57,159 +101,203 @@ fn logical_info() -> &'static Vec<LogicalInfo> {
         // SAFETY: WinAPI modifies data in `Vec<_>`, you must update the len
         unsafe { buf.set_len(buf_size) };
         buf
-    })
-}
-
-pub fn vendor() -> String {
-    let ret = __cpuid(0);
-    let (eax, ebx, ecx, edx) = (ret.eax, ret.ebx, ret.ecx, ret.edx);
-
-    let vendor = vec![
-        (ebx & 0xFF) as u8,
-        ((ebx >> 8) & 0xFF) as u8,
-        ((ebx >> 16) & 0xFF) as u8,
-        ((ebx >> 24) & 0xFF) as u8,
-        (edx & 0xFF) as u8,
-        ((edx >> 8) & 0xFF) as u8,
-        ((edx >> 16) & 0xFF) as u8,
-        ((edx >> 24) & 0xFF) as u8,
-        (ecx & 0xFF) as u8,
-        ((ecx >> 8) & 0xFF) as u8,
-        ((ecx >> 16) & 0xFF) as u8,
-        ((ecx >> 24) & 0xFF) as u8,
-    ];
-    
-    String::from_utf8(vendor).unwrap()
-}
-
-pub fn numa_nodes_count() -> usize {
-    let mut highest = 0;
-    // SAFETY: Completely safe
-    let ret = unsafe {
-        GetNumaHighestNodeNumber(&raw mut highest)
-    };
-    if ret == 0 {
-        return 0
     }
-    highest as usize + 1
-}
 
-pub fn physical_cores_count() -> usize {
-    let buf = logical_info();
+    fn vendor() -> String {
+        let ret = __cpuid(0);
+        let (eax, ebx, ecx, edx) = (ret.eax, ret.ebx, ret.ecx, ret.edx);
 
-    let mut physical = 0;
-    for info in buf {
-        if info.Relationship == 0 {
-            physical += 1;
+        let vendor = vec![
+            (ebx & 0xFF) as u8,
+            ((ebx >> 8) & 0xFF) as u8,
+            ((ebx >> 16) & 0xFF) as u8,
+            ((ebx >> 24) & 0xFF) as u8,
+            (edx & 0xFF) as u8,
+            ((edx >> 8) & 0xFF) as u8,
+            ((edx >> 16) & 0xFF) as u8,
+            ((edx >> 24) & 0xFF) as u8,
+            (ecx & 0xFF) as u8,
+            ((ecx >> 8) & 0xFF) as u8,
+            ((ecx >> 16) & 0xFF) as u8,
+            ((ecx >> 24) & 0xFF) as u8,
+        ];
+        
+        String::from_utf8(vendor).unwrap()
+    }
+
+    fn numa_nodes_count() -> usize {
+        let mut highest = 0;
+        // SAFETY: Completely safe
+        let ret = unsafe {
+            GetNumaHighestNodeNumber(&raw mut highest)
+        };
+        if ret == 0 {
+            return 0
         }
+        highest as usize + 1
     }
 
-    physical
-}
-
-pub fn logical_cores_count() -> usize {
-    let buf = logical_info();
-
-    let mut logical = 0;
-    for info in buf {
-        if info.Relationship == 0 {
-            let mut mask = info.ProcessorMask;
-            while mask != 0 {
-                mask &= (mask - 1);
-                logical += 1;
+    fn physical_cores_count(buf: &Vec<LogicalInfo>) -> usize {
+        let mut physical = 0;
+        for info in buf {
+            if info.Relationship == 0 {
+                physical += 1;
             }
         }
+
+        physical
     }
 
-    logical
-}
-
-pub fn package_count() -> usize {
-    let buf = logical_info();
-    
-    let mut package = 0;
-    let mut idx = 0;
-    while idx < buf.len() {
-        let info = &buf[idx];
-        if info.Relationship == 3 {
-            package += 1;
+    fn logical_cores_count(buf: &Vec<LogicalInfo>) -> usize {
+        let mut logical = 0;
+        for info in buf {
+            if info.Relationship == 0 {
+                let mut mask = info.ProcessorMask;
+                while mask != 0 {
+                    mask &= (mask - 1);
+                    logical += 1;
+                }
+            }
         }
-        idx += 1;
+
+        logical
     }
 
-    package
-}
+    fn package_count(buf: &[LogicalInfo]) -> usize {
+        let mut package = 0;
+        let mut idx = 0;
+        while idx < buf.len() {
+            let info = &buf[idx];
+            if info.Relationship == 3 {
+                package += 1;
+            }
+            idx += 1;
+        }
 
-pub fn online_cores_count() -> usize {
-    // SAFETY: Completely safe
-    (unsafe { GetActiveProcessorCount(0) }) as usize
-}
+        package
+    }
 
-pub const fn code_name() -> String {
-    if cfg!(any(target_arch = "x86_64", target_arch = "x86")) {
-        todo_or!("fn code_name is not implemented", String::new())
-    } else {
-        String::new()
+    fn online_cores_count() -> usize {
+        // SAFETY: Completely safe
+        (unsafe { GetActiveProcessorCount(0) }) as usize
+    }
+
+    const fn code_name() -> String {
+        if cfg!(any(target_arch = "x86_64", target_arch = "x86")) {
+            todo_or!("fn code_name is not implemented", String::new())
+        } else {
+            String::new()
+        }
+    }
+
+    fn technology() -> String {
+        if cfg!(any(target_arch = "x86_64", target_arch = "x86")) {
+            let eax = __cpuid(1).eax;
+            let mut model = (eax >> 4) & 0x0F;
+            let mut family = (eax >> 8) & 0xF;
+
+            if family == 0xF {
+                family += (eax >> 20) & 0xFF;
+            }
+
+            if family == 0x6 {
+                model += ((eax >> 16) & 0xF) << 4;
+            }
+
+            if family != 0x6 {
+                return String::new();
+            }
+
+            match model {
+                0x97 | 0x9A | 0xB7 | 0xBA | 0xBE => "Intel 7",
+                0xAA => "Intel 4",
+                0xC7 | 0xD7 => "Intel 20A / 18A",
+                0x7D | 0x7E => "Intel 10nm (Ice Lake)",
+                0x8C | 0x8D => "Intel 10nm SuperFin (Tiger Lake)",
+                0x8E | 0x9E | 0xA7 => "Intel 14nm (Rocket Lake / Coffee Lake)",
+                0x4E | 0x5E => "Intel 14nm (Skylake)",
+                0x3C | 0x3D => "Intel 22nm (Haswell)",
+                _ => ""
+            }.to_owned()
+        } else {
+            String::new()
+        }
+    }
+
+    fn base_freq_formatted(handle: &Regedit) -> String {
+        handle.read("~MHz").map_or_else(|_| String::new(), |key| {
+            let mhz = key.as_u32().unwrap_or(0);
+            let ghz = mhz as f64 / 1000.0;
+            format!("{ghz:.2} GHz")
+        })
+    }
+
+    fn name(handle: &Regedit) -> String {
+        let reg = handle.read("ProcessorNameString").unwrap();
+        let string = reg.as_string().unwrap();
+        string.to_owned()
+    }
+
+    fn level_x86_64() -> u8 {
+        if !cpuid_has_feature(1, 0, 2, 0) { return 1 }
+        if !cpuid_has_feature(1, 0, 2, 19) { return 1 }
+        if !cpuid_has_feature(1, 0, 2, 20) { return 1 }
+        if !cpuid_has_feature(1, 0, 2, 23) { return 1 }
+
+        if !cpuid_has_feature(0x8000_0001, 0, 2, 0) { return 1 }
+        if !cpuid_has_feature(1, 0, 2, 13) { return 1 }
+
+        if !os_supports_ymm() { return 2 }
+
+        if (!cpuid_has_feature(1, 0, 2, 28)) { return 2 }
+        if (!cpuid_has_feature(1, 0, 2, 27)) { return 2 }
+        
+        let ret = __cpuid(7);
+        let ebx = ret.ebx;
+        if ebx & (1 << 5) == 0 { return 2 }
+        if ebx & (1 << 3) == 0 { return 2 }
+        if ebx & (1 << 8) == 0 { return 2 }
+        if !cpuid_has_feature(1, 0, 2, 29) { return 2 }
+        if !cpuid_has_feature(1, 0, 2, 12) { return 2 }
+        
+        if !cpuid_has_feature(1, 0, 2, 22) { return 2 }
+        if !cpuid_has_feature(0x8000_0001, 0, 2, 5) { return 2 }
+
+        if !os_supports_zmm() { return 3 }
+
+        if ebx & (1 << 16) == 0 { return 3 }
+        if ebx & (1 << 30) == 0 { return 3 }
+        if ebx & (1 << 28) == 0 { return 3 }
+        if ebx & (1 << 17) == 0 { return 3 }
+        if ebx & (1 << 31) == 0 { return 3 }
+
+        4
+    }
+
+    fn micro_arch() -> String {
+        let arch = env!("TARGET_ARCH");
+        if cfg!(any(target_arch = "x86_64", target_arch = "x86")) {
+            let level = Self::level_x86_64();
+            format!("{arch}-v{level}")
+        } else {
+            arch.to_owned()
+        }
+    }
+
+    // NOT IMPLEMENTED
+    const fn logical_grouped() -> String {
+        todo_or!("Will be implemented in the future", String::new())
+    }
+
+    const fn max_freq_formatted() -> String {
+        todo_or!("Cannot be implemented on Windows (or very difficult)", String::new())
+    }
+
+    const fn temperature() -> String {
+        todo_or!("Cannot be implemented on Windows (or very difficult)", String::new())
     }
 }
 
-pub fn technology() -> String {
-    if cfg!(any(target_arch = "x86_64", target_arch = "x86")) {
-        let eax = __cpuid(1).eax;
-        let mut model = (eax >> 4) & 0x0F;
-        let mut family = (eax >> 8) & 0xF;
-
-        if family == 0xF {
-            family += (eax >> 20) & 0xFF;
-        }
-
-        if family == 0x6 {
-            model += ((eax >> 16) & 0xF) << 4;
-        }
-
-        if family != 0x6 {
-            return String::new();
-        }
-
-        match model {
-            0x97 | 0x9A | 0xB7 | 0xBA | 0xBE => "Intel 7",
-            0xAA => "Intel 4",
-            0xC7 | 0xD7 => "Intel 20A / 18A",
-            0x7D | 0x7E => "Intel 10nm (Ice Lake)",
-            0x8C | 0x8D => "Intel 10nm SuperFin (Tiger Lake)",
-            0x8E | 0x9E | 0xA7 => "Intel 14nm (Rocket Lake / Coffee Lake)",
-            0x4E | 0x5E => "Intel 14nm (Skylake)",
-            0x3C | 0x3D => "Intel 22nm (Haswell)",
-            _ => ""
-        }.to_owned()
-    } else {
-        String::new()
-    }
-}
-
-pub fn base_freq_formatted() -> String {
-    let handle = Regedit::open(
-        Hkey::LocalMachine, 
-        "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0", 
-        Access::Read
-    ).unwrap();
-    handle.read("~MHz").map_or_else(|_| String::new(), |key| {
-        let mhz = key.as_u32().unwrap_or(0);
-        let ghz = mhz as f64 / 1000.0;
-        format!("{ghz:.2} GHz")
-    })
-}
-
-pub fn name() -> String {
-    let handle = Regedit::open(
-        Hkey::LocalMachine, 
-        "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0", 
-        Access::Read
-    ).unwrap();
-    let reg = handle.read("ProcessorNameString").unwrap();
-    let string = reg.as_string().unwrap();
-    string.to_owned()
-}
 
 fn cpuid_has_feature(leaf: u32, subleaf: u32, reg: usize, bit: usize) -> bool {
     let ret = __cpuid_count(leaf, subleaf);
@@ -231,122 +319,54 @@ fn os_supports_zmm() -> bool {
     xgetbv_test(7)
 }
 
-pub fn level_x86_64() -> u8 {
-    if !cpuid_has_feature(1, 0, 2, 0) { return 1 }
-    if !cpuid_has_feature(1, 0, 2, 19) { return 1 }
-    if !cpuid_has_feature(1, 0, 2, 20) { return 1 }
-    if !cpuid_has_feature(1, 0, 2, 23) { return 1 }
-
-    if !cpuid_has_feature(0x8000_0001, 0, 2, 0) { return 1 }
-    if !cpuid_has_feature(1, 0, 2, 13) { return 1 }
-
-    if !os_supports_ymm() { return 2 }
-
-    if (!cpuid_has_feature(1, 0, 2, 28)) { return 2 }
-    if (!cpuid_has_feature(1, 0, 2, 27)) { return 2 }
-    
-    let ret = __cpuid(7);
-    let ebx = ret.ebx;
-    if ebx & (1 << 5) == 0 { return 2 }
-    if ebx & (1 << 3) == 0 { return 2 }
-    if ebx & (1 << 8) == 0 { return 2 }
-    if !cpuid_has_feature(1, 0, 2, 29) { return 2 }
-    if !cpuid_has_feature(1, 0, 2, 12) { return 2 }
-    
-    if !cpuid_has_feature(1, 0, 2, 22) { return 2 }
-    if !cpuid_has_feature(0x8000_0001, 0, 2, 5) { return 2 }
-
-    if !os_supports_zmm() { return 3 }
-
-    if ebx & (1 << 16) == 0 { return 3 }
-    if ebx & (1 << 30) == 0 { return 3 }
-    if ebx & (1 << 28) == 0 { return 3 }
-    if ebx & (1 << 17) == 0 { return 3 }
-    if ebx & (1 << 31) == 0 { return 3 }
-
-    4
-}
-
-pub fn micro_arch() -> String {
-    let arch = env!("TARGET_ARCH");
-    if cfg!(any(target_arch = "x86_64", target_arch = "x86")) {
-        let level = level_x86_64();
-        format!("{arch}-v{level}")
-    } else {
-        arch.to_owned()
-    }
-}
-
-// NOT IMPLEMENTED
-pub const fn logical_grouped() -> String {
-    todo_or!("Will be implemented in the future", String::new())
-}
-
-pub const fn max_freq_formatted() -> String {
-    todo_or!("Cannot be implemented on Windows (or very difficult)", String::new())
-}
-
-pub const fn temperature() -> String {
-    todo_or!("Cannot be implemented on Windows (or very difficult)", String::new())
-}
-
 #[cfg(test)]
 mod tests {
-    use crate::detect::cpu;
+    use crate::detect::cpu::{self, CpuInfo};
 
     extern crate std;
 
     #[test]
     fn vendor_test() {
-        std::println!("Vendor: {}", cpu::vendor());
+        let info = CpuInfo::new();
+        std::println!("Vendor: {}", info.vendor);
     }
 
     #[test]
     fn cores_test() {
-        let physical = cpu::physical_cores_count();
-        assert!(physical != 0);
+        let info = CpuInfo::new();
 
-        let logical = cpu::logical_cores_count();
-        assert!(logical != 0);
-
-        let online = cpu::online_cores_count();
-        
-        assert!(online != 0);
-
-        println!("Physical: {physical}, Logical: {logical}, Online: {online}");
+        assert!(info.physical_cores != 0);
+        assert!(info.logical_cores != 0);
+        assert!(info.online_cores != 0);
     }
 
     #[test]
     fn numa_nodes_test() {
-        let numa = cpu::numa_nodes_count();
-        assert!(numa != 0);
-        println!("{numa}");
+        let info = CpuInfo::new();
+        assert!(info.numa_nodes != 0);
     }
 
     #[test]
     fn technology_test() {
-        let tech = cpu::technology();
-        assert!(!tech.is_empty());
-        println!("{tech}");
+        let info = CpuInfo::new();
+        assert!(!info.technology.is_empty());
     }
 
     #[test]
     fn base_freq_test() {
-        let bf = cpu::base_freq_formatted();
-        assert!(bf.contains("GHz"));
-        println!("{bf}");
+        let info = CpuInfo::new();
+        assert!(info.base_freq.contains("GHz"));
     }
 
     #[test]
     fn micro_arch_test() {
-        let arch = cpu::micro_arch();
-        println!("{arch}");
+        let info = CpuInfo::new();
+        println!("{}", info.micro_arch);
     }
 
     #[test]
     fn package_test() {
-        let package = cpu::package_count();
-        println!("{package}");
-        assert!(package != 0);
+        let info = CpuInfo::new();
+        assert!(info.packages != 0);
     }
 }

@@ -4,7 +4,7 @@ use crate::{
     format,
     impl_display_for_module,
     format_for_module,
-    detect::cpu,
+    detect::cpu::CpuInfo,
     modules::Module, 
     sync::OnceLock
 };
@@ -31,21 +31,22 @@ pub struct Cpu {
 
 impl Module for Cpu {
     fn new() -> Self {
+        let info = CpuInfo::new();
         Self {
-            name: cpu::name(),
-            vendor: cpu::vendor(),
-            cores_physical: cpu::physical_cores_count(),
-            cores_logical: cpu::logical_cores_count(),
-            cores_online: cpu::online_cores_count(),
-            freq_base: cpu::base_freq_formatted(),
-            freq_max: cpu::max_freq_formatted(),
-            temperature: cpu::temperature(),
-            core_types: cpu::logical_grouped(),
-            packages: cpu::package_count(),
-            march: cpu::micro_arch(),
-            numa_nodes: cpu::numa_nodes_count(),
-            code_name: cpu::code_name(),
-            technology: cpu::technology()
+            name: info.name,
+            vendor: info.vendor,
+            cores_physical: info.physical_cores,
+            cores_logical: info.logical_cores,
+            cores_online: info.online_cores,
+            freq_base: info.base_freq,
+            freq_max: info.max_freq,
+            temperature: info.temperature,
+            core_types: info.logical_grouped,
+            packages: info.packages,
+            march: info.micro_arch,
+            numa_nodes: info.numa_nodes,
+            code_name: info.code_name,
+            technology: info.technology
         }
     }
 

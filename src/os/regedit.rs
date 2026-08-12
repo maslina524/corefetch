@@ -308,7 +308,7 @@ impl Drop for Regedit {
 #[cfg(test)]
 mod tests {
     use crate::{
-        detect::cpu,
+        detect::cpu::CpuInfo,
         os::regedit::{Access, Hkey, RegValue, Regedit}
     };
 
@@ -324,7 +324,7 @@ mod tests {
         let key = handle.read("VendorIdentifier").unwrap();
 
         let reg_vendor = key.as_string().unwrap();
-        let cpuid_vendor = cpu::vendor();
+        let cpuid_vendor = CpuInfo::new().vendor;
 
         assert_eq!(reg_vendor, cpuid_vendor);
     }
