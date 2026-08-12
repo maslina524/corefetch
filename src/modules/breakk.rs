@@ -1,9 +1,13 @@
-use alloc::string::String;
+use alloc::{
+    string::String,
+    collections::BTreeMap
+};
 
 use crate::{
     impl_display_for_module, 
     modules::Module, 
-    sync::OnceLock
+    sync::OnceLock,
+    json::Value
 };
 
 static BREAK: OnceLock<Break> = OnceLock::new();
@@ -34,7 +38,7 @@ impl Module for Break {
         "break"
     }
 
-    fn format(&self, key: super::FormatValue, format: super::FormatValue) -> String {
+    fn format(&self, _key: super::FormatValue, _format: super::FormatValue, _map: &BTreeMap<String, Value>) -> String {
         String::from('\n')
     }
 }

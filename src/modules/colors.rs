@@ -1,10 +1,16 @@
-use alloc::string::String;
+use alloc::{
+    string::String,
+    collections::BTreeMap,
+    borrow::ToOwned,
+    vec
+};
 
 use crate::{
     format,
     impl_display_for_module, 
     modules::Module, 
-    sync::OnceLock
+    sync::OnceLock,
+    json::Value
 };
 
 static COLORS: OnceLock<Colors> = OnceLock::new();
@@ -35,16 +41,41 @@ impl Module for Colors {
         "colors"
     }
 
-    fn format(&self, key: super::FormatValue, format: super::FormatValue) -> String {
-        let mut ret = String::with_capacity(8 * 8 * 2);
-        for i in 40..=47 {
-            ret.push_str(&format!("\x1b[{i}m   "));
+    fn format(&self, key: super::FormatValue, format: super::FormatValue, map: &BTreeMap<String, Value>) -> String {
+        let padding_left_num = map
+            .get("paddingLeft")
+            .unwrap_or(&Value::Null)
+            .as_number()
+            .unwrap_or(0.0) as usize;
+        let padding_left = " ".repeat(padding_left_num);
+
+        let symbol_map = map
+            .get("symbol")
+            .unwrap_or(&Value::Null)
+            .as_string()
+            .map_or_else(|| "block", String::as_str);
+
+        let symbol = match symbol_map {
+            "block" => "███",
+            "circle" => "● ",
+            _ => symbol_map
+        };
+
+        let ranges = if symbol_map == "block" {
+            vec![30, 90]
+        } else {
+            vec![30]
+        };
+
+        let mut ret = String::with_capacity(8 * (symbol.len() + 5) * ranges.len());
+        
+        for r in ranges {
+            ret.push_str(&padding_left);
+            for i in r..=r + 7 {
+                ret.push_str(&format!("\x1b[{i}m{symbol}"));
+            }
+            ret.push_str("\x1b[0m\n");
         }
-        ret.push_str("\x1b[0m\n");
-        for i in 100..=107 {
-            ret.push_str(&format!("\x1b[{i}m   "));
-        }
-        ret.push_str("\x1b[0m");
         ret
     }
 }

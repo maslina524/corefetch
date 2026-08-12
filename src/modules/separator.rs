@@ -1,11 +1,15 @@
-use alloc::string::String;
+use alloc::{
+    string::String,
+    collections::BTreeMap
+};
 
 use crate::{
     format,
     impl_display_for_module, 
     modules::{Module, Title, FormatValue},
     sync::OnceLock,
-    ansi
+    ansi,
+    json::Value
 };
 
 static SEPARATOR: OnceLock<Separator> = OnceLock::new();
@@ -36,8 +40,8 @@ impl Module for Separator {
         "separator"
     }
 
-    fn format(&self, key: super::FormatValue, format: super::FormatValue) -> String {
-        let title = Title::get().format(FormatValue::default(), FormatValue::default());
+    fn format(&self, _key: super::FormatValue, _format: super::FormatValue, _map: &BTreeMap<String, Value>) -> String {
+        let title = Title::get().format(FormatValue::default(), FormatValue::default(), &BTreeMap::new());
         "-".repeat(ansi::visible_len(&title))
     }
 }

@@ -2,8 +2,8 @@ mod lexer;
 pub mod parser;
 
 use lexer::TokenStream;
-use parser::{Value, Parser};
-pub use parser::Map;
+use parser::Parser;
+pub use parser::{Map, Value};
 
 use core::str::FromStr;
 
