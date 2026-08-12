@@ -1,12 +1,12 @@
-pub const MODE_RESET: &str = "0;";
-pub const MODE_BOLD: &str = "1;";
-pub const MODE_DIM: &str = "2;";
-pub const MODE_ITALIC: &str = "3;";
-pub const MODE_UNDERLINE: &str = "4;";
-pub const MODE_BLINK: &str = "5;";
-pub const MODE_INVERSE: &str = "7;";
-pub const MODE_HIDDEN: &str = "8;";
-pub const MODE_STRIKETHROUGH: &str = "9;";
+pub const MODE_RESET: &str = "0";
+pub const MODE_BOLD: &str = "1";
+pub const MODE_DIM: &str = "2";
+pub const MODE_ITALIC: &str = "3";
+pub const MODE_UNDERLINE: &str = "4";
+pub const MODE_BLINK: &str = "5";
+pub const MODE_INVERSE: &str = "7";
+pub const MODE_HIDDEN: &str = "8";
+pub const MODE_STRIKETHROUGH: &str = "9";
 
 pub const FG_BLACK: &str = "30";
 pub const FG_RED: &str = "31";
