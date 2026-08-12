@@ -12,7 +12,7 @@ use crate::{
     ansi::unicode_to_hex
 };
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Value {
     String(String),
     Number(f64),
@@ -83,7 +83,7 @@ impl Value {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Map {
     keys: Vec<String>,
     values: Vec<Value>

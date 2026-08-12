@@ -153,7 +153,8 @@ fn get_module_lines(preset_module: &PresetModule, max_len_line: usize) -> Option
             FormatValue {
                 format: preset_module.format.as_deref(), 
                 color: None
-            }
+            },
+            &preset_module.map
         );
         let splitted = if preset_module.typ == "colors" {
             string.split('\n').collect()

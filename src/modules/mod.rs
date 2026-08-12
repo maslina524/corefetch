@@ -28,9 +28,16 @@ pub use title::Title;
 pub use version::Version;
 pub use weather::Weather;
 
-use alloc::boxed::Box;
+use alloc::{
+    boxed::Box,
+    string::String,
+    collections::BTreeMap
+};
 
-use crate::preset::PresetModule;
+use crate::{
+    preset::PresetModule,
+    json::Value
+};
 
 #[derive(Default)]
 pub struct FormatValue<'a> {
@@ -44,7 +51,7 @@ pub trait Module {
     fn key(&self) -> &'static str;
     fn title(&self) -> &'static str;
     fn string_name(&self) -> &'static str;
-    fn format(&self, key: FormatValue, format: FormatValue) -> alloc::string::String;
+    fn format(&self, key: FormatValue, format: FormatValue, map: &BTreeMap<String, Value>) -> alloc::string::String;
 }
 
 pub fn from_preset_module(module: &PresetModule) -> Option<Box<dyn Module>> {
@@ -72,14 +79,26 @@ macro_rules! impl_display_for_module {
     ($name:ident) => {
         impl core::fmt::Display for $name {
             fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-                write!(f, "{}", self.format($crate::modules::FormatValue::default(), $crate::modules::FormatValue::default()))
+                write!(
+                    f, "{}", self.format(
+                        $crate::modules::FormatValue::default(), 
+                        $crate::modules::FormatValue::default(), 
+                        &alloc::collections::BTreeMap::new()
+                    )
+                )
             }
         }
     };
     ($name:ident, $lt:lifetime) => {
         impl core::fmt::Display for $name<$lt> {
             fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-                write!(f, "{}", self.format($crate::modules::FormatValue::default(), $crate::modules::FormatValue::default()))
+                write!(
+                    f, "{}", self.format(
+                        $crate::modules::FormatValue::default(), 
+                        $crate::modules::FormatValue::default(), 
+                        &alloc::collections::BTreeMap::new()
+                    )
+                )
             }
         }
     };
@@ -88,7 +107,12 @@ macro_rules! impl_display_for_module {
 #[macro_export]
 macro_rules! format_for_module {
     ($name:ident, $($field:ident),*) => {
-        fn format(&self, key: super::FormatValue, format: super::FormatValue) -> alloc::string::String {
+        fn format(
+            &self,
+            key: super::FormatValue, 
+            format: super::FormatValue, 
+            map: &alloc::collections::BTreeMap<alloc::string::String, $crate::json::Value>
+        ) -> alloc::string::String {
             let key_color = key.color.unwrap_or($crate::logo::LogoInfo::get().unwrap().color_keys);
             let key_raw = key.format.unwrap_or(self.key());
             let value_raw = format.format.unwrap_or(self.title());
@@ -108,7 +132,12 @@ macro_rules! format_for_module {
 #[macro_export]
 macro_rules! format_for_module_wo_key {
     ($name:ident, $($field:ident),*) => {
-        fn format(&self, _key: super::FormatValue, format: super::FormatValue) -> alloc::string::String {
+        fn format(
+            &self, 
+            _key: super::FormatValue, 
+            format: super::FormatValue,
+            map: &alloc::collections::BTreeMap<alloc::string::String, $crate::json::Value>
+        ) -> alloc::string::String {
             let value_color = format.color.unwrap_or($crate::logo::LogoInfo::get().unwrap().color_title);
             let value_format = format.format.unwrap_or(self.title());
             $crate::format_module!(value_format, self, $($field),*)
