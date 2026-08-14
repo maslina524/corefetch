@@ -69,3 +69,4 @@ GetDynamicTimeZoneInformation
 GlobalMemoryStatusEx
 GetSystemInfo
 EnumProcesses
+SystemParametersInfoW

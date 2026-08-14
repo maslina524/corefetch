@@ -2,7 +2,7 @@ use core::fmt::Display;
 
 use crate::{
     os::windows::{FormatMessageW, GetLastError},
-    os::encoding::utf16le_to_utf8
+    os::encoding::{utf16le_to_utf8, Utf16Len}
 };
 
 pub type Result<T> = core::result::Result<T, ErrorCode>;
@@ -55,8 +55,7 @@ impl Display for ErrorCode {
             )
         };
 
-        let len_isize = len as isize;
-        let utf8 = utf16le_to_utf8(&buf, len_isize)
+        let utf8 = utf16le_to_utf8(&buf, Utf16Len::Len(len as usize))
             .expect("WinAPI passed an invalid UTF-16LE string");
 
         let utf8_str = utf8.trim();
