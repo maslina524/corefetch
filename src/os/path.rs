@@ -13,7 +13,7 @@ use crate::{
     os::encoding::wide,
     os::error,
     os::windows::{GUID, SHGetKnownFolderPath, PathFileExistsW},
-    os::encoding::utf16le_to_utf8
+    os::encoding::{utf16le_to_utf8, Utf16Len}
 };
 
 const FOLDERID_LOCALAPPDATA: GUID = GUID::from_u128(
@@ -54,8 +54,7 @@ impl Path {
 
         // SAFETY: Between `path_ptr..path_ptr + len` there is a string
         let slice = unsafe { slice::from_raw_parts(path_ptr, len) };
-        let len_isize = len as isize;
-        let inner = utf16le_to_utf8(slice, len_isize).expect("UNREACHABLE");
+        let inner = utf16le_to_utf8(slice, Utf16Len::Len(len)).expect("UNREACHABLE");
 
         Self::from(inner)
     }

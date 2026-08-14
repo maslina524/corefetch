@@ -66,6 +66,7 @@ link!("advapi32" "system" fn RegQueryValueExW(hkey : HKEY, lpvaluename : PCWSTR,
 link!("ntdll" "system" fn RtlGetVersion(lpversioninformation : *mut OSVERSIONINFOW) -> NTSTATUS);
 link!("shell32" "system" fn SHGetKnownFolderPath(rfid : *const GUID, dwflags : u32, htoken : HANDLE, ppszpath : *mut PWSTR) -> HRESULT);
 link!("kernel32" "system" fn SetConsoleOutputCP(wcodepageid : u32) -> BOOL);
+link!("user32" "system" fn SystemParametersInfoW(uiaction : SYSTEM_PARAMETERS_INFO_ACTION, uiparam : u32, pvparam : *mut core::ffi::c_void, fwinini : SYSTEM_PARAMETERS_INFO_UPDATE_FLAGS) -> BOOL);
 link!("kernel32" "system" fn WideCharToMultiByte(codepage : u32, dwflags : u32, lpwidecharstr : PCWSTR, cchwidechar : i32, lpmultibytestr : PSTR, cbmultibyte : i32, lpdefaultchar : PCSTR, lpuseddefaultchar : *mut BOOL) -> i32);
 link!("winhttp" "system" fn WinHttpCloseHandle(hinternet : *mut core::ffi::c_void) -> BOOL);
 link!("winhttp" "system" fn WinHttpConnect(hsession : *mut core::ffi::c_void, pswzservername : PCWSTR, nserverport : u16, dwreserved : u32) -> *mut core::ffi::c_void);
@@ -362,6 +363,8 @@ pub struct SYSTEM_LOGICAL_PROCESSOR_INFORMATION_0_1 {
 pub struct SYSTEM_LOGICAL_PROCESSOR_INFORMATION_0_0 {
     pub Flags: u8,
 }
+pub type SYSTEM_PARAMETERS_INFO_ACTION = u32;
+pub type SYSTEM_PARAMETERS_INFO_UPDATE_FLAGS = u32;
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct TIME_ZONE_INFORMATION {

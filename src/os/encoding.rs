@@ -12,11 +12,21 @@ use crate::os::{
 
 const CP_UTF8: u32 = 65001;
 
+#[derive(Clone, Copy)]
+pub enum Utf16Len {
+    NullTerminated,
+    Len(usize)
+}
+
 pub fn utf16le_to_utf8(
     src: &[u16], 
-    len: isize,
+    len: Utf16Len,
 ) -> error::Result<String> {
-    if len == 0 {
+    let len_isize = match len {
+        Utf16Len::NullTerminated => -1isize,
+        Utf16Len::Len(l) => l as isize
+    };
+    if len_isize == 0 {
         return Ok(String::new());
     }
 
@@ -26,7 +36,7 @@ pub fn utf16le_to_utf8(
             CP_UTF8, 
             0, 
             src.as_ptr(), 
-            len as i32, 
+            len_isize as i32, 
             ptr::null_mut(), 
             0, 
             ptr::null(), 
@@ -46,7 +56,7 @@ pub fn utf16le_to_utf8(
             CP_UTF8, 
             0, 
             src.as_ptr(), 
-            len as i32, 
+            len_isize as i32, 
             buf.as_mut_ptr(), 
             size, 
             ptr::null(), 
