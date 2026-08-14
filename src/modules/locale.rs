@@ -8,7 +8,7 @@ use crate::{
     detect::locale
 };
 
-static LOCALE                 : OnceLock<Locale> = OnceLock::new();
+static LOCALE: OnceLock<Locale> = OnceLock::new();
 
 #[derive(Debug)]
 pub struct Locale {

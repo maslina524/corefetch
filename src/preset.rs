@@ -166,6 +166,7 @@ impl Default for Preset {
                 PresetModule::from_str("memory"),
                 PresetModule::from_str("weather"),
                 PresetModule::from_str("locale"),
+                PresetModule::from_str("wallpaper"),
                 PresetModule::from_str("break"),
                 PresetModule::from_str("colors")
             ],
