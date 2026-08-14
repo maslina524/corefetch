@@ -133,6 +133,10 @@ impl Path {
         clone.pop()?;
         Some(clone)
     }
+
+    pub fn into_inner(self) -> String {
+        self.inner
+    }
 }
 
 impl From<String> for Path {
