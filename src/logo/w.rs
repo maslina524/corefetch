@@ -16,7 +16,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
         vec![
             // Windows2025
             LogoInfo {
-                names: vec!["Windows Server 2025"],
+                names: vec!["windows server 2025"],
                 lines: include_str!("w/windows_2025.txt"),
                 colors: vec![
                     color::FG_BLUE,
@@ -29,7 +29,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             // Windows11
             LogoInfo {
-                names: vec!["Windows 11", "Windows Server 2022"],
+                names: vec!["windows 11", "windows server 2022"],
                 lines: include_str!("w/windows_11.txt"),
                 colors: vec![
                     color::FG_BLUE,
@@ -42,7 +42,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             // Windows11Small
             LogoInfo {
-                names: vec!["Windows 11_small"],
+                names: vec!["windows 11 small"],
                 lines: include_str!("w/windows_11_small.txt"),
                 colors: vec![
                     color::FG_BLUE,
@@ -56,8 +56,8 @@ pub fn get() -> &'static Vec<LogoInfo> {
             // Windows8
             LogoInfo {
                 names: vec![
-                    "Windows 8", "Windows 8.1", "Windows 10", "Windows Server 2012",
-                    "Windows Server 2012 R2", "Windows Server 2016", "Windows Server 2019"
+                    "windows 8", "windows 8.1", "windows 10", "windows server 2012",
+                    "windows server 2012 r2", "windows server 2016", "windows server 2019"
                 ],
                 lines: include_str!("w/windows_8.txt"),
                 colors: vec![
@@ -69,11 +69,11 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_keys: color::FG_YELLOW,
                 color_title: color::FG_DEFAULT,
             },
-            // Windows
+            // windows
             LogoInfo {
                 names: vec![
-                    "Windows", "Windows 7",
-                    "Windows Server 2008", "Windows Server 2008 R2"
+                    "windows", "windows 7",
+                    "windows server 2008", "windows server 2008 r2"
                 ],
                 lines: include_str!("w/windows.txt"),
                 colors: vec![
@@ -85,9 +85,9 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_keys: color::FG_BLUE,
                 color_title: color::FG_GREEN,
             },
-            // Windows95
+            // windows95
             LogoInfo {
-                names: vec!["Windows 95", "Windows 9x"],
+                names: vec!["windows 95", "windows 9x"],
                 lines: include_str!("w/windows_95.txt"),
                 colors: vec![
                     color::FG_CYAN,

@@ -43,7 +43,7 @@ impl LogoInfo {
             };
 
             for logo in stack {
-                if logo.names.contains(&name)  {
+                if logo.names.contains(&name.to_lowercase().as_str())  {
                     return logo;
                 }
             }
