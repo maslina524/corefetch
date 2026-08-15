@@ -24,7 +24,7 @@ impl Module for Memory {
         let mem = MemoryInfo::new();
         let total = mem.total;
         let used = mem.in_use;
-        let percentage = (used.as_bytes() / total.as_bytes() * 100) as u8;
+        let percentage = (used.as_kilobytes() / total.as_kilobytes() * 100.0) as u8;
 
         Self {
             used: format!("{used:.02}"),
