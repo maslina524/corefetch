@@ -1,8 +1,25 @@
-use std::process::Command;
-use std::fs;
+use std::{
+    fs, 
+    path::PathBuf, 
+    process::Command
+};
+
+use zlib_rs::{
+    ReturnCode,
+    DeflateConfig, 
+    compress_bound, 
+    compress_slice,
+};
+
+use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
+
+const VALID_CHARS: &[char] = &[
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '_'
+];
 
 fn main() {
-    // Bypasses caching, runs every time during compilation.
+    // Bypasses caching, runs every time during compilation
     let timestamp = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .unwrap()
@@ -41,4 +58,29 @@ fn main() {
     }
 
     println!("cargo:rustc-env=RUSTC_VERSION={}", rustc_version.trim());
+
+    // Compress logos
+    let base_path = PathBuf::from("src/logo");
+    let mut all_paths = Vec::new();
+    for letter in VALID_CHARS {
+        let letter_path = base_path.join(letter.to_string());
+        if let Ok(entries) = fs::read_dir(letter_path) {
+            for entry in entries.flatten() {
+                all_paths.push(entry.path());
+            }
+        }
+    }
+
+    all_paths.par_iter().for_each(|path| {
+        let content = fs::read(path).unwrap();
+        let mut compressed_buf = vec![0u8; compress_bound(content.len())];
+        let (compressed, rc) = compress_slice(&mut compressed_buf, &content, DeflateConfig::default());
+        assert_eq!(rc, ReturnCode::Ok);
+        
+        let letter = path.parent().and_then(|p| p.file_name()).unwrap().to_str().unwrap();
+        let dest_dir = format!("temp/{letter}");
+        fs::create_dir_all(&dest_dir).ok();
+        let dest_path = PathBuf::from(dest_dir).join(path.file_name().unwrap());
+        fs::write(dest_path, compressed).ok();
+    });
 }

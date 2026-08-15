@@ -29,3 +29,5 @@ strip = true
 
 [build-dependencies]
 chrono = "0.4.45"
+zlib-rs = "0.6.7"
+rayon = "1.12.0"
