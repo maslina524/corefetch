@@ -1,16 +1,20 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static N: OnceLock<[LogoInfo; 21]> = OnceLock::new();
+static N: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 21] {
+pub fn get() -> &'static Vec<LogoInfo> {
     N.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
-                names: &["Namib"],
+                names: &["namib"],
                 lines: include_str!("n/namib.txt"),
                 colors: &[
                     color::FG_RED,
@@ -20,7 +24,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["NebiOS"],
+                names: &["nebios"],
                 lines: include_str!("n/nebios.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -31,7 +35,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Nekos"],
+                names: &["nekos"],
                 lines: include_str!("n/nekos.txt"),
                 colors: &[
                     color::FG_YELLOW,
@@ -42,7 +46,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Neptune"],
+                names: &["neptune"],
                 lines: include_str!("n/neptune.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -52,7 +56,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["NetRunner"],
+                names: &["netrunner"],
                 lines: include_str!("n/netrunner.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -72,7 +76,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Nitrux"],
+                names: &["nitrux"],
                 lines: include_str!("n/nitrux.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -82,7 +86,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["NixOS"],
+                names: &["nixos"],
                 lines: include_str!("n/nixos.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -96,7 +100,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["NixOS_small"],
+                names: &["nixos_small"],
                 lines: include_str!("n/nixos_small.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -130,7 +134,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["NixOS2"],
+                names: &["nixos2"],
                 lines: include_str!("n/nixos2.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -140,7 +144,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["NetBSD"],
+                names: &["netbsd"],
                 lines: include_str!("n/netbsd.txt"),
                 colors: &[
                     color::FG_RED,
@@ -150,7 +154,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["NetBSD2"],
+                names: &["netbsd2"],
                 lines: include_str!("n/netbsd2.txt"),
                 colors: &[
                     color::FG_RED,
@@ -160,7 +164,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["NetBSD_small"],
+                names: &["netbsd_small"],
                 lines: include_str!("n/netbsd_small.txt"),
                 colors: &[
                     color::FG_RED,
@@ -188,7 +192,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["NurOS"],
+                names: &["nuros"],
                 lines: include_str!("n/nuros.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -200,7 +204,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Nurunner"],
+                names: &["nurunner"],
                 lines: include_str!("n/nurunner.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -210,7 +214,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["NuTyX"],
+                names: &["nutyx"],
                 lines: include_str!("n/nutyx.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -220,7 +224,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["NetHydra"],
+                names: &["nethydra"],
                 lines: include_str!("n/nethydra.txt"),
                 colors: &[
                     color::FG_RED,

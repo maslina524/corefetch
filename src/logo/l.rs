@@ -1,16 +1,20 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static L: OnceLock<[LogoInfo; 25]> = OnceLock::new();
+static L: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 25] {
+pub fn get() -> &'static Vec<LogoInfo> {
     L.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
-                names: &["LainOS"],
+                names: &["lainos"],
                 lines: include_str!("l/lainos.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -31,7 +35,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["Laxeros"],
+                names: &["laxeros"],
                 lines: include_str!("l/laxeros.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -41,7 +45,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["LEDE"],
+                names: &["lede"],
                 lines: include_str!("l/lede.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -51,7 +55,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["LibreELEC"],
+                names: &["libreelec"],
                 lines: include_str!("l/libreelec.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -64,7 +68,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_YELLOW,
             },
             LogoInfo {
-                names: &["Lilidog"],
+                names: &["lilidog"],
                 lines: include_str!("l/lilidog.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -73,7 +77,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Lingmo", "LingmoOS"],
+                names: &["lingmo", "lingmoos"],
                 lines: include_str!("l/lingmo.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -83,7 +87,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["LimeOS"],
+                names: &["limeos"],
                 lines: include_str!("l/limeos.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -92,7 +96,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Linspire", "Lindows"],
+                names: &["linspire", "lindows"],
                 lines: include_str!("l/linspire.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -102,7 +106,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["Linux", "linux-generic"],
+                names: &["linux", "linux-generic"],
                 lines: include_str!("l/linux.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -113,7 +117,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_YELLOW,
             },
             LogoInfo {
-                names: &["LinuxFromScratch", "lfs"],
+                names: &["linuxfromscratch", "lfs"],
                 lines: include_str!("l/lfs.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -124,7 +128,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_YELLOW,
             },
             LogoInfo {
-                names: &["Linux_small", "linux-generic_small"],
+                names: &["linux_small", "linux-generic_small"],
                 lines: include_str!("l/linux_small.txt"),
                 colors: &[
                     color::FG_BLACK,
@@ -135,7 +139,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["LinuxLite"],
+                names: &["linuxlite"],
                 lines: include_str!("l/linuxlite.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -145,7 +149,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["LinuxLite_small"],
+                names: &["linuxlite_small"],
                 lines: include_str!("l/linuxlite_small.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -205,7 +209,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["Live Raizo", "Live_Raizo"],
+                names: &["live raizo", "live_raizo"],
                 lines: include_str!("l/live_raizo.txt"),
                 colors: &[
                     color::FG_YELLOW,
@@ -214,7 +218,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["LliureX"],
+                names: &["lliurex"],
                 lines: include_str!("l/lliurex.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -223,7 +227,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["LMDE"],
+                names: &["lmde"],
                 lines: include_str!("l/lmde.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -233,7 +237,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["locos", "loc-os", "Loc-OS Linux"],
+                names: &["locos", "loc-os", "loc-os linux"],
                 lines: include_str!("l/locos.txt"),
                 colors: &[
                     color::FG_BLACK,
@@ -254,7 +258,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Lunar"],
+                names: &["lunar"],
                 lines: include_str!("l/lunar.txt"),
                 colors: &[
                     color::FG_BLUE,

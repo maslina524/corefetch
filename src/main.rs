@@ -240,11 +240,10 @@ extern "C" fn main() -> c_int {
     #[allow(clippy::option_if_let_else)] // Clippy suggests a variant that would require an extra heap allocation
     let logo_name = if let Some(pos) = args.iter().position(|a| a == "--logo" || a == "-l") {
         &args.get(pos + 1).map_or_else(|| help(None), |val| {
-                println!("LOGO: {val}");
                 val.to_lowercase().replace('_', " ")
             })
     } else {
-        &Os::get().id
+        &Os::get().id.to_lowercase()
     };
 
     // Build buffers

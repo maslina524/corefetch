@@ -1,16 +1,20 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static R: OnceLock<[LogoInfo; 23]> = OnceLock::new();
+static R: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 23] {
+pub fn get() -> &'static Vec<LogoInfo> {
     R.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
-                names: &["Radix"],
+                names: &["radix"],
                 lines: include_str!("r/radix.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -40,7 +44,7 @@ pub fn get() -> &'static [LogoInfo; 23] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["RavynOS"],
+                names: &["ravynos"],
                 lines: include_str!("r/ravynos.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -50,7 +54,7 @@ pub fn get() -> &'static [LogoInfo; 23] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["RebornOS"],
+                names: &["rebornos"],
                 lines: include_str!("r/rebornos.txt"),
                 colors: &[
                     color::FG_BLACK,
@@ -61,7 +65,7 @@ pub fn get() -> &'static [LogoInfo; 23] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["RebornOS_small"],
+                names: &["rebornos_small"],
                 lines: include_str!("r/rebornos_small.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -70,7 +74,7 @@ pub fn get() -> &'static [LogoInfo; 23] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["RedCore"],
+                names: &["redcore"],
                 lines: include_str!("r/redcore.txt"),
                 colors: &[
                     color::FG_RED,
@@ -108,7 +112,7 @@ pub fn get() -> &'static [LogoInfo; 23] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["RedOS"],
+                names: &["redos"],
                 lines: include_str!("r/redos.txt"),
                 colors: &[
                     color::FG_RED,
@@ -118,7 +122,7 @@ pub fn get() -> &'static [LogoInfo; 23] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["RedOS_small"],
+                names: &["redos_small"],
                 lines: include_str!("r/redos_small.txt"),
                 colors: &[
                     color::FG_RED,
@@ -128,7 +132,7 @@ pub fn get() -> &'static [LogoInfo; 23] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["Redstar"],
+                names: &["redstar"],
                 lines: include_str!("r/redstar.txt"),
                 colors: &[
                     color::FG_RED,
@@ -137,7 +141,7 @@ pub fn get() -> &'static [LogoInfo; 23] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["Redrose"],
+                names: &["redrose"],
                 lines: include_str!("r/redrose.txt"),
                 colors: &[
                     color::FG_RED,
@@ -147,7 +151,7 @@ pub fn get() -> &'static [LogoInfo; 23] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["Refracta"],
+                names: &["refracta"],
                 lines: include_str!("r/refracta.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -157,7 +161,7 @@ pub fn get() -> &'static [LogoInfo; 23] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Regata"],
+                names: &["regata"],
                 lines: include_str!("r/regata.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -171,7 +175,7 @@ pub fn get() -> &'static [LogoInfo; 23] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Regolith"],
+                names: &["regolith"],
                 lines: include_str!("r/regolith.txt"),
                 colors: &[
                     color::FG_RED,
@@ -181,7 +185,7 @@ pub fn get() -> &'static [LogoInfo; 23] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["RhaymOS"],
+                names: &["rhaymos"],
                 lines: include_str!("r/rhaymos.txt"),
                 colors: &[
                     color::FG_RED,
@@ -209,7 +213,7 @@ pub fn get() -> &'static [LogoInfo; 23] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["ROSA"],
+                names: &["rosa"],
                 lines: include_str!("r/rosa.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -219,7 +223,7 @@ pub fn get() -> &'static [LogoInfo; 23] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Rhino Linux"],
+                names: &["rhino linux"],
                 lines: include_str!("r/rhino.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -231,7 +235,7 @@ pub fn get() -> &'static [LogoInfo; 23] {
                 color_title: color::FG_MAGENTA,
             },
             LogoInfo {
-                names: &["RengeOS"],
+                names: &["rengeos"],
                 lines: include_str!("r/rengeos.txt"),
                 colors: &[
                     color::FG_MAGENTA,

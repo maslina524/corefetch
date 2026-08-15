@@ -1,16 +1,20 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static P: OnceLock<[LogoInfo; 33]> = OnceLock::new();
+static P: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 33] {
+pub fn get() -> &'static Vec<LogoInfo> {
     P.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
-                names: &["PacBSD"],
+                names: &["pacbsd"],
                 lines: include_str!("p/pacbsd.txt"),
                 colors: &[
                     color::FG_RED,
@@ -20,7 +24,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Panwah"],
+                names: &["panwah"],
                 lines: include_str!("p/panwah.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -31,7 +35,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Parabola"],
+                names: &["parabola"],
                 lines: include_str!("p/parabola.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -40,7 +44,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_MAGENTA,
             },
             LogoInfo {
-                names: &["Parabola_small"],
+                names: &["parabola_small"],
                 lines: include_str!("p/parabola_small.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -49,7 +53,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_MAGENTA,
             },
             LogoInfo {
-                names: &["Parabola2_small"],
+                names: &["parabola2_small"],
                 lines: include_str!("p/parabola2_small.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -58,7 +62,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["Parch"],
+                names: &["parch"],
                 lines: include_str!("p/parch.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -69,7 +73,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Pardus"],
+                names: &["pardus"],
                 lines: include_str!("p/pardus.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -79,7 +83,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Parrot"],
+                names: &["parrot"],
                 lines: include_str!("p/parrot.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -89,7 +93,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Parsix"],
+                names: &["parsix"],
                 lines: include_str!("p/parsix.txt"),
                 colors: &[
                     color::FG_YELLOW,
@@ -101,7 +105,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["PCBSD", "TrueOS"],
+                names: &["pcbsd", "trueos"],
                 lines: include_str!("p/pcbsd.txt"),
                 colors: &[
                     color::FG_RED,
@@ -111,7 +115,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["PCLinuxOS"],
+                names: &["pclinuxos"],
                 lines: include_str!("p/pclinuxos.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -121,7 +125,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["PearOS"],
+                names: &["pearos"],
                 lines: include_str!("p/pearos.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -134,7 +138,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Pengwin"],
+                names: &["pengwin"],
                 lines: include_str!("p/pengwin.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -145,7 +149,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Pentoo"],
+                names: &["pentoo"],
                 lines: include_str!("p/pentoo.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -155,7 +159,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Peppermint"],
+                names: &["peppermint"],
                 lines: include_str!("p/peppermint.txt"),
                 colors: &[
                     color::FG_RED,
@@ -165,7 +169,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Peropesis"],
+                names: &["peropesis"],
                 lines: include_str!("p/peropesis.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -174,7 +178,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["PhyOS"],
+                names: &["phyos"],
                 lines: include_str!("p/phyos.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -184,7 +188,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["PikaOS"],
+                names: &["pikaos"],
                 lines: include_str!("p/pikaos.txt"),
                 colors: &[
                     color::FG_YELLOW,
@@ -193,7 +197,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["PisiLinux"],
+                names: &["pisilinux"],
                 lines: include_str!("p/pisi.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -203,7 +207,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["PNM Linux"],
+                names: &["pnm linux"],
                 lines: include_str!("p/pnm_linux.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -234,7 +238,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_CYAN,
             },
             LogoInfo {
-                names: &["Porteus"],
+                names: &["porteus"],
                 lines: include_str!("p/porteus.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -244,7 +248,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["PostMarketOS"],
+                names: &["postmarketos"],
                 lines: include_str!("p/postmarketos.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -254,7 +258,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["PostMarketOS2"],
+                names: &["postmarketos2"],
                 lines: include_str!("p/postmarketos2.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -264,7 +268,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["PostMarketOS_small"],
+                names: &["postmarketos_small"],
                 lines: include_str!("p/postmarketos_small.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -274,7 +278,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Proxmox"],
+                names: &["proxmox"],
                 lines: include_str!("p/proxmox.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -284,7 +288,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["PuffOS"],
+                names: &["puffos"],
                 lines: include_str!("p/puffos.txt"),
                 colors: &[
                     color::FG_YELLOW,
@@ -294,7 +298,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Puppy"],
+                names: &["puppy"],
                 lines: include_str!("p/puppy.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -304,7 +308,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["PureOS"],
+                names: &["pureos"],
                 lines: include_str!("p/pureos.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -314,7 +318,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["PureOS_small"],
+                names: &["pureos_small"],
                 lines: include_str!("p/pureos_small.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -324,7 +328,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["PrismLinux"],
+                names: &["prismlinux"],
                 lines: include_str!("p/prismlinux.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -334,7 +338,7 @@ pub fn get() -> &'static [LogoInfo; 33] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["PrismLinux_small"],
+                names: &["prismlinux_small"],
                 lines: include_str!("p/prismlinux_small.txt"),
                 colors: &[
                     color::FG_BLUE,

@@ -1,14 +1,18 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static B: OnceLock<[LogoInfo; 16]> = OnceLock::new();
+static B: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 16] {
+pub fn get() -> &'static Vec<LogoInfo> {
     B.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
                 names: &["bedrock"],
                 lines: include_str!("b/bedrock.txt"),
@@ -30,7 +34,7 @@ pub fn get() -> &'static [LogoInfo; 16] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["BerserkArch"],
+                names: &["berserkarch"],
                 lines: include_str!("b/berserkarch.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -40,7 +44,7 @@ pub fn get() -> &'static [LogoInfo; 16] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["BigLinux"],
+                names: &["biglinux"],
                 lines: include_str!("b/biglinux.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -51,7 +55,7 @@ pub fn get() -> &'static [LogoInfo; 16] {
                 color_title: color::FG_CYAN,
             },
             LogoInfo {
-                names: &["Bitrig"],
+                names: &["bitrig"],
                 lines: include_str!("b/bitrig.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -60,7 +64,7 @@ pub fn get() -> &'static [LogoInfo; 16] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["Blackarch"],
+                names: &["blackarch"],
                 lines: include_str!("b/blackarch.txt"),
                 colors: &[
                     color::FG_RED,
@@ -71,7 +75,7 @@ pub fn get() -> &'static [LogoInfo; 16] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["BlackMesa", "black-mesa"],
+                names: &["blackmesa", "black-mesa"],
                 lines: include_str!("b/blackmesa.txt"),
                 colors: &[
                     color::FG_BLACK,
@@ -80,7 +84,7 @@ pub fn get() -> &'static [LogoInfo; 16] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["BlackPanther"],
+                names: &["blackpanther"],
                 lines: include_str!("b/blackpanther.txt"),
                 colors: &[
                     color::FG_RED,
@@ -91,7 +95,7 @@ pub fn get() -> &'static [LogoInfo; 16] {
                 color_title: color::FG_YELLOW,
             },
             LogoInfo {
-                names: &["BLAG"],
+                names: &["blag"],
                 lines: include_str!("b/blag.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -100,7 +104,7 @@ pub fn get() -> &'static [LogoInfo; 16] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["BlankOn"],
+                names: &["blankon"],
                 lines: include_str!("b/blankon.txt"),
                 colors: &[
                     color::FG_RED,
@@ -110,7 +114,7 @@ pub fn get() -> &'static [LogoInfo; 16] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["BlueLight"],
+                names: &["bluelight"],
                 lines: include_str!("b/bluelight.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -120,7 +124,7 @@ pub fn get() -> &'static [LogoInfo; 16] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["Bodhi"],
+                names: &["bodhi"],
                 lines: include_str!("b/bodhi.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -131,7 +135,7 @@ pub fn get() -> &'static [LogoInfo; 16] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["Bonsai"],
+                names: &["bonsai"],
                 lines: include_str!("b/bonsai.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -142,7 +146,7 @@ pub fn get() -> &'static [LogoInfo; 16] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["Bredos"],
+                names: &["bredos"],
                 lines: include_str!("b/bredos.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -151,7 +155,7 @@ pub fn get() -> &'static [LogoInfo; 16] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["BSD"],
+                names: &["bsd"],
                 lines: include_str!("b/bsd.txt"),
                 colors: &[
                     color::FG_RED,
@@ -164,7 +168,7 @@ pub fn get() -> &'static [LogoInfo; 16] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["BunsenLabs"],
+                names: &["bunsenlabs"],
                 lines: include_str!("b/bunsenlabs.txt"),
                 colors: &[
                     color::FG_DEFAULT,

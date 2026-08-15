@@ -1,16 +1,20 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static X: OnceLock<[LogoInfo; 10]> = OnceLock::new();
+static X: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 10] {
+pub fn get() -> &'static Vec<LogoInfo> {
     X.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
-                names: &["XCP-ng", "xenenterprise"],
+                names: &["xcp-ng", "xenenterprise"],
                 lines: include_str!("x/xcp_ng.txt"),
                 colors: &[
                     color::FG_RED,
@@ -24,7 +28,7 @@ pub fn get() -> &'static [LogoInfo; 10] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Xenia"],
+                names: &["xenia"],
                 lines: include_str!("x/xenia.txt"),
                 colors: &[
                     color::FG_RED,
@@ -34,7 +38,7 @@ pub fn get() -> &'static [LogoInfo; 10] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["Xenia_old"],
+                names: &["xenia_old"],
                 lines: include_str!("x/xenia_old.txt"),
                 colors: &[
                     color::FG_YELLOW,
@@ -45,7 +49,7 @@ pub fn get() -> &'static [LogoInfo; 10] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["XeroArch"],
+                names: &["xeroarch"],
                 lines: include_str!("x/xeroarch.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -59,7 +63,7 @@ pub fn get() -> &'static [LogoInfo; 10] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Xferience"],
+                names: &["xferience"],
                 lines: include_str!("x/xferience.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -69,7 +73,7 @@ pub fn get() -> &'static [LogoInfo; 10] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Xubuntu"],
+                names: &["xubuntu"],
                 lines: include_str!("x/xubuntu.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -79,7 +83,7 @@ pub fn get() -> &'static [LogoInfo; 10] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Xray_OS"],
+                names: &["xray_os"],
                 lines: include_str!("x/xray_os.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -90,7 +94,7 @@ pub fn get() -> &'static [LogoInfo; 10] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Xinux"],
+                names: &["xinux"],
                 lines: include_str!("x/xinux.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -100,7 +104,7 @@ pub fn get() -> &'static [LogoInfo; 10] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["XJ380"],
+                names: &["xj380"],
                 lines: include_str!("x/xj380.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -110,7 +114,7 @@ pub fn get() -> &'static [LogoInfo; 10] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Ximper"],
+                names: &["ximper"],
                 lines: include_str!("x/ximper.txt"),
                 colors: &[
                     color::FG_DEFAULT,

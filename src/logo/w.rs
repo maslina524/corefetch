@@ -1,16 +1,20 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static W: OnceLock<[LogoInfo; 8]> = OnceLock::new();
+static W: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 8] {
+pub fn get() -> &'static Vec<LogoInfo> {
     W.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
-                names: &["WiiLinuxNgx", "WiiLinux", "Wii-Linux", "Wii Linux"],
+                names: &["wiilinuxngx", "wiilinux", "wii-linux", "wii linux"],
                 lines: include_str!("w/wii_linux.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -20,7 +24,7 @@ pub fn get() -> &'static [LogoInfo; 8] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Windows Server 2025"],
+                names: &["windows server 2025"],
                 lines: include_str!("w/windows_2025.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -32,7 +36,7 @@ pub fn get() -> &'static [LogoInfo; 8] {
                 color_title: color::FG_CYAN,
             },
             LogoInfo {
-                names: &["Windows 11", "Windows Server 2022"],
+                names: &["windows 11", "windows server 2022"],
                 lines: include_str!("w/windows_11.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -44,7 +48,7 @@ pub fn get() -> &'static [LogoInfo; 8] {
                 color_title: color::FG_CYAN,
             },
             LogoInfo {
-                names: &["Windows 11_small"],
+                names: &["windows 11_small"],
                 lines: include_str!("w/windows_11_small.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -56,7 +60,7 @@ pub fn get() -> &'static [LogoInfo; 8] {
                 color_title: color::FG_CYAN,
             },
             LogoInfo {
-                names: &["Windows 8", "Windows 8.1", "Windows 10", "Windows Server 2012", "Windows Server 2012 R2", "Windows Server 2016", "Windows Server 2019"],
+                names: &["windows 8", "windows 8.1", "windows 10", "windows server 2012", "windows server 2012 r2", "windows server 2016", "windows server 2019"],
                 lines: include_str!("w/windows_8.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -68,7 +72,7 @@ pub fn get() -> &'static [LogoInfo; 8] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Windows", "Windows 7", "Windows Server 2008", "Windows Server 2008 R2"],
+                names: &["windows", "windows 7", "windows server 2008", "windows server 2008 r2"],
                 lines: include_str!("w/windows.txt"),
                 colors: &[
                     color::FG_RED,
@@ -80,7 +84,7 @@ pub fn get() -> &'static [LogoInfo; 8] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["Windows 95", "Windows 9x"],
+                names: &["windows 95", "windows 9x"],
                 lines: include_str!("w/windows_95.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -94,7 +98,7 @@ pub fn get() -> &'static [LogoInfo; 8] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["WolfOS"],
+                names: &["wolfos"],
                 lines: include_str!("w/wolfos.txt"),
                 colors: &[
                     color::FG_BLUE,

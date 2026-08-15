@@ -1,16 +1,20 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static O: OnceLock<[LogoInfo; 38]> = OnceLock::new();
+static O: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 38] {
+pub fn get() -> &'static Vec<LogoInfo> {
     O.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
-                names: &["Obarun"],
+                names: &["obarun"],
                 lines: include_str!("o/obarun.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -20,7 +24,7 @@ pub fn get() -> &'static [LogoInfo; 38] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["OBRevenge"],
+                names: &["obrevenge"],
                 lines: include_str!("o/obrevenge.txt"),
                 colors: &[
                     color::FG_RED,
@@ -30,7 +34,7 @@ pub fn get() -> &'static [LogoInfo; 38] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["ObsidianOS"],
+                names: &["obsidianos"],
                 lines: include_str!("o/obsidianos.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -41,7 +45,7 @@ pub fn get() -> &'static [LogoInfo; 38] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["OmniOS"],
+                names: &["omnios"],
                 lines: include_str!("o/omnios.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -52,7 +56,7 @@ pub fn get() -> &'static [LogoInfo; 38] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["openKylin"],
+                names: &["openkylin"],
                 lines: include_str!("o/openkylin.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -85,7 +89,7 @@ pub fn get() -> &'static [LogoInfo; 38] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["OpenEuler"],
+                names: &["openeuler"],
                 lines: include_str!("o/openeuler.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -95,7 +99,7 @@ pub fn get() -> &'static [LogoInfo; 38] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["OpenIndiana"],
+                names: &["openindiana"],
                 lines: include_str!("o/openindiana.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -105,7 +109,7 @@ pub fn get() -> &'static [LogoInfo; 38] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["OpenMamba"],
+                names: &["openmamba"],
                 lines: include_str!("o/openmamba.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -115,7 +119,7 @@ pub fn get() -> &'static [LogoInfo; 38] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["openRuyi"],
+                names: &["openruyi"],
                 lines: include_str!("o/openruyi.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -126,7 +130,7 @@ pub fn get() -> &'static [LogoInfo; 38] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["OpenStage"],
+                names: &["openstage"],
                 lines: include_str!("o/openstage.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -227,7 +231,7 @@ pub fn get() -> &'static [LogoInfo; 38] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["OpenMandriva"],
+                names: &["openmandriva"],
                 lines: include_str!("o/openmandriva.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -265,7 +269,7 @@ pub fn get() -> &'static [LogoInfo; 38] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["OPNsense"],
+                names: &["opnsense"],
                 lines: include_str!("o/opnsense.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -306,7 +310,7 @@ pub fn get() -> &'static [LogoInfo; 38] {
                 color_title: color::FG_MAGENTA,
             },
             LogoInfo {
-                names: &["Oreon"],
+                names: &["oreon"],
                 lines: include_str!("o/oreon.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -316,7 +320,7 @@ pub fn get() -> &'static [LogoInfo; 38] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Origami"],
+                names: &["origami"],
                 lines: include_str!("o/origami.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -326,7 +330,7 @@ pub fn get() -> &'static [LogoInfo; 38] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Origami_small"],
+                names: &["origami_small"],
                 lines: include_str!("o/origami_small.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -336,7 +340,7 @@ pub fn get() -> &'static [LogoInfo; 38] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["OS2Warp"],
+                names: &["os2warp"],
                 lines: include_str!("o/os2warp.txt"),
                 colors: &[
                     color::FG_LIGHT_WHITE,
@@ -346,7 +350,7 @@ pub fn get() -> &'static [LogoInfo; 38] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["OS Elbrus"],
+                names: &["os elbrus"],
                 lines: include_str!("o/os_elbrus.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -356,7 +360,7 @@ pub fn get() -> &'static [LogoInfo; 38] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["OSMC", "Open Source Media Center"],
+                names: &["osmc", "open source media center"],
                 lines: include_str!("o/osmc.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -366,7 +370,7 @@ pub fn get() -> &'static [LogoInfo; 38] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["OSX"],
+                names: &["osx"],
                 lines: include_str!("m/macos.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -380,7 +384,7 @@ pub fn get() -> &'static [LogoInfo; 38] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["OSX_small"],
+                names: &["osx_small"],
                 lines: include_str!("m/macos_small.txt"),
                 colors: &[
                     color::FG_GREEN,
