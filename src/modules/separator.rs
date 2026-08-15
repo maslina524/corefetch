@@ -8,7 +8,7 @@ use crate::{
     impl_display_for_module, 
     modules::{Module, Title, FormatValue},
     sync::OnceLock,
-    ansi,
+    formats,
     json::Value
 };
 
@@ -42,7 +42,7 @@ impl Module for Separator {
 
     fn format(&self, _key: super::FormatValue, _format: super::FormatValue, _map: &BTreeMap<String, Value>) -> String {
         let title = Title::get().format(FormatValue::default(), FormatValue::default(), &BTreeMap::new());
-        "-".repeat(ansi::visible_len(&title))
+        "-".repeat(formats::visible_len(&title))
     }
 }
 

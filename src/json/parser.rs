@@ -9,7 +9,7 @@ use alloc::{
 
 use crate::{
     json::lexer::{Token, TokenStream},
-    ansi::unicode_to_hex
+    formats::unicode_to_hex
 };
 
 #[derive(Debug, Clone)]

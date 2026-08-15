@@ -23,7 +23,7 @@
 mod sync;
 mod os;
 mod macros;
-mod ansi;
+mod formats;
 mod xxhash64;
 mod preset;
 mod args;
@@ -182,7 +182,7 @@ fn build_info_buf(max_len: usize) -> Vec<String> {
     ret
 }
 
-// #[cfg(not(test))]
+#[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
     // Args

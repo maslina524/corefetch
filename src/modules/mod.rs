@@ -9,6 +9,7 @@ pub mod memory;    // 41) Memory        : Print system memory usage information
 pub mod os;        // 47) OS            : Print the OS or Linux distribution name and version
 pub mod processes; // 53) Processes     : Print number of running processes
 pub mod separator; // 55) Separator     : Print a separator line
+// pub mod swap;      // 58) Swap          : Print swap (paging file) space usage
 pub mod title;     // 63) Title         : Print the title, including your username and hostname
 pub mod version;   // 68) Version       : Print the Fastfetch version and build information
 pub mod wallpaper; // 70) Wallpaper     : Print the file path of the current wallpaper
