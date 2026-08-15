@@ -38,7 +38,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["xenia_old"],
+                names: &["xenia old"],
                 lines: include_str!("x/xenia_old.txt"),
                 colors: &[
                     color::FG_YELLOW,
@@ -83,7 +83,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["xray_os"],
+                names: &["xray os"],
                 lines: include_str!("x/xray_os.txt"),
                 colors: &[
                     color::FG_DEFAULT,

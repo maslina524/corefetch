@@ -54,7 +54,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["fedora_small"],
+                names: &["fedora small"],
                 lines: include_str!("f/fedora_small.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -63,7 +63,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["fedora2_small"],
+                names: &["fedora2 small"],
                 lines: include_str!("f/fedora2_small.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -72,7 +72,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["fedora_old"],
+                names: &["fedora old"],
                 lines: include_str!("f/fedora_old.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -190,7 +190,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["freebsd_small"],
+                names: &["freebsd small"],
                 lines: include_str!("f/freebsd_small.txt"),
                 colors: &[
                     color::FG_RED,

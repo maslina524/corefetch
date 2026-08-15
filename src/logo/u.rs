@@ -25,7 +25,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["ublinux_small"],
+                names: &["ublinux small"],
                 lines: include_str!("u/ublinux_small.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -46,7 +46,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["ubuntu_small"],
+                names: &["ubuntu small"],
                 lines: include_str!("u/ubuntu_small.txt"),
                 colors: &[
                     color::FG_RED,
@@ -56,7 +56,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["ubuntu_old"],
+                names: &["ubuntu old"],
                 lines: include_str!("u/ubuntu_old.txt"),
                 colors: &[
                     color::FG_RED,
@@ -66,7 +66,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["ubuntu_old2"],
+                names: &["ubuntu old2"],
                 lines: include_str!("u/ubuntu_old2.txt"),
                 colors: &[
                     color::FG_RED,
@@ -77,7 +77,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["ubuntu_old2_small"],
+                names: &["ubuntu old2 small"],
                 lines: include_str!("u/ubuntu_old2_small.txt"),
                 colors: &[
                     color::FG_RED,
@@ -190,7 +190,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["ultramarine_small"],
+                names: &["ultramarine small"],
                 lines: include_str!("u/ultramarine_small.txt"),
                 colors: &[
                     color::FG_BLUE,

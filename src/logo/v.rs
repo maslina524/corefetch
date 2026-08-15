@@ -41,7 +41,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_YELLOW,
             },
             LogoInfo {
-                names: &["vanilla_small"],
+                names: &["vanilla small"],
                 lines: include_str!("v/vanilla_small.txt"),
                 colors: &[
                     color::FG_LIGHT_YELLOW,
@@ -61,7 +61,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["venom_small"],
+                names: &["venom small"],
                 lines: include_str!("v/venom_small.txt"),
                 colors: &[
                     color::FG_LIGHT_BLACK,
@@ -115,7 +115,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["void_small"],
+                names: &["void small"],
                 lines: include_str!("v/void_small.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -135,7 +135,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["void2_small"],
+                names: &["void2 small"],
                 lines: include_str!("v/void2_small.txt"),
                 colors: &[
                     color::FG_GREEN,

@@ -26,7 +26,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["t2_small", "t2 sde_small", "t2/linux_small"],
+                names: &["t2 small", "t2 sde small", "t2/linux small"],
                 lines: include_str!("t/t2_small.txt"),
                 colors: &[
                     color::FG_WHITE,

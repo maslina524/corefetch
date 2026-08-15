@@ -48,7 +48,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_CYAN,
             },
             LogoInfo {
-                names: &["windows 11_small"],
+                names: &["windows 11 small"],
                 lines: include_str!("w/windows_11_small.txt"),
                 colors: &[
                     color::FG_BLUE,

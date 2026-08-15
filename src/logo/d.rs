@@ -46,7 +46,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["debian_small"],
+                names: &["debian small"],
                 lines: include_str!("d/debian_small.txt"),
                 colors: &[
                     color::FG_RED,
@@ -83,7 +83,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_MAGENTA,
             },
             LogoInfo {
-                names: &["devuan_small"],
+                names: &["devuan small"],
                 lines: include_str!("d/devuan_small.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -122,7 +122,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["dragonfly_small"],
+                names: &["dragonfly small"],
                 lines: include_str!("d/dragonfly_small.txt"),
                 colors: &[
                     color::FG_RED,
@@ -132,7 +132,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["dragonfly_old"],
+                names: &["dragonfly old"],
                 lines: include_str!("d/dragonfly_old.txt"),
                 colors: &[
                     color::FG_RED,

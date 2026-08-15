@@ -79,7 +79,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["openbsd_small"],
+                names: &["openbsd small"],
                 lines: include_str!("o/openbsd_small.txt"),
                 colors: &[
                     color::FG_YELLOW,
@@ -150,7 +150,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["opensuse_small"],
+                names: &["opensuse small"],
                 lines: include_str!("o/opensuse_small.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -177,7 +177,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["opensuse-leap_old"],
+                names: &["opensuse-leap old"],
                 lines: include_str!("o/opensuse_leap_old.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -195,7 +195,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["opensuse-tumbleweed_small"],
+                names: &["opensuse-tumbleweed small"],
                 lines: include_str!("o/opensuse_tumbleweed_small.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -204,7 +204,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["opensuse-tumbleweed_old"],
+                names: &["opensuse-tumbleweed old"],
                 lines: include_str!("o/opensuse_tumbleweed_old.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -250,7 +250,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["openwrt_small"],
+                names: &["openwrt small"],
                 lines: include_str!("o/openwrt_small.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -260,7 +260,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["openwrt_old"],
+                names: &["openwrt old"],
                 lines: include_str!("o/openwrt_old.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -299,7 +299,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_MAGENTA,
             },
             LogoInfo {
-                names: &["orchid_small"],
+                names: &["orchid small"],
                 lines: include_str!("o/orchid_small.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -330,7 +330,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["origami_small"],
+                names: &["origami small"],
                 lines: include_str!("o/origami_small.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -384,7 +384,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["osx_small"],
+                names: &["osx small"],
                 lines: include_str!("m/macos_small.txt"),
                 colors: &[
                     color::FG_GREEN,

@@ -34,7 +34,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_YELLOW,
             },
             LogoInfo {
-                names: &["haiku_small"],
+                names: &["haiku small"],
                 lines: include_str!("h/haiku_small.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -150,7 +150,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["hyperbola_small"],
+                names: &["hyperbola small"],
                 lines: include_str!("h/hyperbola_small.txt"),
                 colors: &[
                     color::FG_LIGHT_BLACK,
