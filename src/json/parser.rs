@@ -9,7 +9,7 @@ use alloc::{
 
 use crate::{
     json::lexer::{Token, TokenStream},
-    formats::unicode_to_hex
+    formats::expand_unicode
 };
 
 #[derive(Debug, Clone)]
@@ -170,7 +170,7 @@ impl Parser {
             Some(Token::String(s)) => {
                 let s = s.clone();
                 self.next();
-                let content = unicode_to_hex(&s[1..s.len() - 1]);
+                let content = expand_unicode(&s[1..s.len() - 1]);
                 Value::String(content)
             }
             Some(Token::Number(s)) => {
