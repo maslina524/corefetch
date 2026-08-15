@@ -88,7 +88,7 @@ pub fn visible_len(s: &str) -> usize {
     count
 }
 
-pub fn unicode_to_hex(s: &str) -> String {
+pub fn expand_unicode(s: &str) -> String {
     let mut ret = String::new();
     let chars: Vec<char> = s.chars().collect();
     let mut pos = 0;
@@ -99,8 +99,10 @@ pub fn unicode_to_hex(s: &str) -> String {
             && chars[pos + 1] == 'u'
         {
             let hex: String = chars[pos + 2..pos + 6].iter().collect();
-            if let Ok(num) = u8::from_str_radix(&hex, 16) {
-                ret.push(num as char);
+            if let Ok(num) = u32::from_str_radix(&hex, 16) {
+                if let Some(ch) = char::from_u32(num) {
+                    ret.push(ch);
+                }
                 pos += 6;
                 continue;
             }
@@ -113,11 +115,11 @@ pub fn unicode_to_hex(s: &str) -> String {
 
 #[cfg(test)]
 mod tests {
-    use crate::formats::{FileSize, unicode_to_hex};
+    use crate::formats::{FileSize, expand_unicode};
 
     #[test]
     fn test_conversion() {
-        println!("{}", unicode_to_hex(r"\u001b[31m \u001b[32m \u001b[33m \u001b[34m \u001b[0m"));
+        println!("{}", expand_unicode(r"\u001b[31m \u001b[32m \u001b[33m \u001b[34m \u001b[0m"));
     }
 
     #[test]
