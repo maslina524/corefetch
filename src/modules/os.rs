@@ -25,6 +25,7 @@ pub struct Os<'a> {
     pub codename: String,
     pub build_id: String,
     pub arch: &'a str,
+    pub nerd_emoji: char
 }
 
 impl Module for Os<'_> {
@@ -32,6 +33,12 @@ impl Module for Os<'_> {
         let ver = env::os_version();
         let id = format!("{} {}", ver.name, ver.version);
         let pretty_name = format!("{id} {} ({})", ver.variant, ver.codename);
+        let nerd_emoji = match (ver.name, ver.version.as_str()) {
+            ("Windows", "11") => '\u{e62a}',
+            ("Windows", _)    => '\u{e70f}',
+            _ => ' '
+        };
+
         Self { 
             sysname: ver.sysname, 
             name: ver.name, 
@@ -44,7 +51,8 @@ impl Module for Os<'_> {
             version_id: String::new(), 
             codename: ver.codename, 
             build_id: String::new(), 
-            arch: env!("TARGET_ARCH")
+            arch: env!("TARGET_ARCH"),
+            nerd_emoji
         }
     }
 
@@ -70,7 +78,8 @@ impl Module for Os<'_> {
         Os,
         sysname, name, pretty_name, id,
         id_like, variant, variant_id, version,
-        version_id, codename, build_id, arch
+        version_id, codename, build_id, arch,
+        nerd_emoji
     );
 }
 

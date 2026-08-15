@@ -41,6 +41,15 @@ impl FileSize {
             Self::Gb(b) => (b * 1024.0 * 1024.0 * 1024.0) as u64
         }
     }
+
+    pub fn as_kilobytes(&self) -> f64 {
+        match self {
+            Self::Byte(b) => *b as f64 / 1024.0,
+            Self::Kb(b) => *b as f64,
+            Self::Mb(b) => (b * 1024.0) as f64,
+            Self::Gb(b) => (b * 1024.0 * 1024.0) as f64
+        }
+    }
 }
 
 impl Default for FileSize {

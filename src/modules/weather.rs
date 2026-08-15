@@ -106,7 +106,15 @@ impl Module for Weather {
         "weather"
     }
 
-    format_for_module!(Weather, result);
+    format_for_module!(
+        Weather,
+        result, condition_emoji, condition, condition_symbol, 
+        humidity, temperature_actual, temperature_feels, wind, 
+        location, moon_emoji, moon_day, precipitation, 
+        pressure, uv_index, dawn, sunrise, 
+        zenith, sunset, dusk, time, 
+        timezone
+    );
 }
 
 impl_display_for_module!(Weather);
