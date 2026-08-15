@@ -15,9 +15,9 @@ mod w;
 
 const UNKNOWN: &str = include_str!("_/unknown.txt");
 static UNKNOWN_PTR: &LogoInfo = &LogoInfo {
-    names: vec![], 
+    names: &[], 
     lines: UNKNOWN, 
-    colors: vec![], 
+    colors: &[], 
     color_keys: color::FG_DEFAULT, 
     color_title: color::FG_DEFAULT
 };
@@ -25,9 +25,9 @@ static UNKNOWN_PTR: &LogoInfo = &LogoInfo {
 static LOGO_INFO: OnceLock<&'static LogoInfo> = OnceLock::new();
 
 pub struct LogoInfo {
-    pub names: Vec<&'static str>,
+    pub names: &'static [&'static str],
     pub lines: &'static str,
-    pub colors: Vec<&'static str>,
+    pub colors: &'static [&'static str],
     pub color_keys: &'static str,
     pub color_title: &'static str
 }
