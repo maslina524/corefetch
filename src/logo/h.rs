@@ -1,16 +1,20 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static H: OnceLock<[LogoInfo; 15]> = OnceLock::new();
+static H: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 15] {
+pub fn get() -> &'static Vec<LogoInfo> {
     H.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
-                names: &["Haiku"],
+                names: &["haiku"],
                 lines: include_str!("h/haiku.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -20,7 +24,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_YELLOW,
             },
             LogoInfo {
-                names: &["Haiku2"],
+                names: &["haiku2"],
                 lines: include_str!("h/haiku2.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -30,7 +34,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_YELLOW,
             },
             LogoInfo {
-                names: &["Haiku_small"],
+                names: &["haiku_small"],
                 lines: include_str!("h/haiku_small.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -39,7 +43,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_YELLOW,
             },
             LogoInfo {
-                names: &["HamoniKR"],
+                names: &["hamonikr"],
                 lines: include_str!("h/hamonikr.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -50,7 +54,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["HarDClanZ"],
+                names: &["hardclanz"],
                 lines: include_str!("h/hardclanz.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -61,7 +65,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["HardenedBSD"],
+                names: &["hardenedbsd"],
                 lines: include_str!("f/freebsd.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -71,7 +75,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["HarmonyOS"],
+                names: &["harmonyos"],
                 lines: include_str!("h/harmonyos.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -81,7 +85,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["Hash"],
+                names: &["hash"],
                 lines: include_str!("h/hash.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -91,7 +95,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["HeliumOS"],
+                names: &["heliumos"],
                 lines: include_str!("h/heliumos.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -100,7 +104,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Huawei Cloud EulerOS", "hce"],
+                names: &["huawei cloud euleros", "hce"],
                 lines: include_str!("h/hce.txt"),
                 colors: &[
                     color::FG_RED,
@@ -109,7 +113,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["Huayra"],
+                names: &["huayra"],
                 lines: include_str!("h/huayra.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -118,7 +122,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["Hybrid"],
+                names: &["hybrid"],
                 lines: include_str!("h/hybrid.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -128,7 +132,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["HydroOS"],
+                names: &["hydroos"],
                 lines: include_str!("h/hydroos.txt"),
                 colors: &[
                     color::FG_RED,
@@ -137,7 +141,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["Hyperbola"],
+                names: &["hyperbola"],
                 lines: include_str!("h/hyperbola.txt"),
                 colors: &[
                     color::FG_LIGHT_BLACK,
@@ -146,7 +150,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Hyperbola_small"],
+                names: &["hyperbola_small"],
                 lines: include_str!("h/hyperbola_small.txt"),
                 colors: &[
                     color::FG_LIGHT_BLACK,

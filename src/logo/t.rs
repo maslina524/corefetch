@@ -1,16 +1,20 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static T: OnceLock<[LogoInfo; 13]> = OnceLock::new();
+static T: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 13] {
+pub fn get() -> &'static Vec<LogoInfo> {
     T.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
-                names: &["T2", "T2 SDE", "T2/Linux"],
+                names: &["t2", "t2 sde", "t2/linux"],
                 lines: include_str!("t/t2.txt"),
                 colors: &[
                     color::FG_RED,
@@ -22,7 +26,7 @@ pub fn get() -> &'static [LogoInfo; 13] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["T2_small", "T2 SDE_small", "T2/Linux_small"],
+                names: &["t2_small", "t2 sde_small", "t2/linux_small"],
                 lines: include_str!("t/t2_small.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -32,7 +36,7 @@ pub fn get() -> &'static [LogoInfo; 13] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Tails"],
+                names: &["tails"],
                 lines: include_str!("t/tails.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -42,7 +46,7 @@ pub fn get() -> &'static [LogoInfo; 13] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Tatra"],
+                names: &["tatra"],
                 lines: include_str!("t/tatra.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -52,7 +56,7 @@ pub fn get() -> &'static [LogoInfo; 13] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["TeArch"],
+                names: &["tearch"],
                 lines: include_str!("t/tearch.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -62,7 +66,7 @@ pub fn get() -> &'static [LogoInfo; 13] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["TempleOS"],
+                names: &["templeos"],
                 lines: include_str!("t/templeos.txt"),
                 colors: &[
                     color::FG_YELLOW,
@@ -73,7 +77,7 @@ pub fn get() -> &'static [LogoInfo; 13] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["TileOS"],
+                names: &["tileos"],
                 lines: include_str!("t/tileos.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -84,7 +88,7 @@ pub fn get() -> &'static [LogoInfo; 13] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Torizon OS", "TorizonCore"],
+                names: &["torizon os", "torizoncore"],
                 lines: include_str!("t/torizoncore.txt"),
                 colors: &[
                     color::FG_LIGHT_WHITE,
@@ -95,7 +99,7 @@ pub fn get() -> &'static [LogoInfo; 13] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Trisquel"],
+                names: &["trisquel"],
                 lines: include_str!("t/trisquel.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -105,7 +109,7 @@ pub fn get() -> &'static [LogoInfo; 13] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["TrueNAS-Scale"],
+                names: &["truenas-scale"],
                 lines: include_str!("t/truenas_scale.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -116,7 +120,7 @@ pub fn get() -> &'static [LogoInfo; 13] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Turkish"],
+                names: &["turkish"],
                 lines: include_str!("t/turkish.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -125,7 +129,7 @@ pub fn get() -> &'static [LogoInfo; 13] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["Tuxedo OS", "tuxedo"],
+                names: &["tuxedo os", "tuxedo"],
                 lines: include_str!("t/tuxedo_os.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -135,7 +139,7 @@ pub fn get() -> &'static [LogoInfo; 13] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Twister"],
+                names: &["twister"],
                 lines: include_str!("t/twister.txt"),
                 colors: &[
                     color::FG_GREEN,

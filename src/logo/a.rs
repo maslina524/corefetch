@@ -1,16 +1,20 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static A: OnceLock<[LogoInfo; 68]> = OnceLock::new();
+static A: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 68] {
+pub fn get() -> &'static Vec<LogoInfo> {
     A.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
-                names: &["Adélie", "Adelie"],
+                names: &["adélie", "adelie"],
                 lines: include_str!("a/adelie.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -21,7 +25,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["aerOS"],
+                names: &["aeros"],
                 lines: include_str!("a/aeros.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -31,7 +35,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Aeon"],
+                names: &["aeon"],
                 lines: include_str!("a/aeon.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -41,7 +45,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["AerynOS"],
+                names: &["aerynos"],
                 lines: include_str!("a/aerynos.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -51,7 +55,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["AerynOS_old"],
+                names: &["aerynos_old"],
                 lines: include_str!("a/aerynos_old.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -61,7 +65,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Afterglow"],
+                names: &["afterglow"],
                 lines: include_str!("a/afterglow.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -83,7 +87,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Almalinux"],
+                names: &["almalinux"],
                 lines: include_str!("a/almalinux.txt"),
                 colors: &[
                     color::FG_RED,
@@ -96,7 +100,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["Alpine"],
+                names: &["alpine"],
                 lines: include_str!("a/alpine.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -105,7 +109,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["Alpine2"],
+                names: &["alpine2"],
                 lines: include_str!("a/alpine2.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -115,7 +119,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["Alpine_small"],
+                names: &["alpine_small"],
                 lines: include_str!("a/alpine_small.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -144,7 +148,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["Alter"],
+                names: &["alter"],
                 lines: include_str!("a/alter.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -153,7 +157,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_CYAN,
             },
             LogoInfo {
-                names: &["ALTLinux"],
+                names: &["altlinux"],
                 lines: include_str!("a/altlinux.txt"),
                 colors: &[
                     color::FG_YELLOW,
@@ -164,7 +168,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_YELLOW,
             },
             LogoInfo {
-                names: &["Amazon"],
+                names: &["amazon"],
                 lines: include_str!("a/amazon.txt"),
                 colors: &[
                     color::FG_YELLOW,
@@ -174,7 +178,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Amazon Linux", "amzn"],
+                names: &["amazon linux", "amzn"],
                 lines: include_str!("a/amazon_linux.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -184,7 +188,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Amiga"],
+                names: &["amiga"],
                 lines: include_str!("a/amiga.txt"),
                 colors: &[
                     color::FG_RED,
@@ -199,7 +203,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["AmogOS"],
+                names: &["amogos"],
                 lines: include_str!("a/amogos.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -209,7 +213,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_CYAN,
             },
             LogoInfo {
-                names: &["Anarchy"],
+                names: &["anarchy"],
                 lines: include_str!("a/anarchy.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -248,7 +252,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Antergos"],
+                names: &["antergos"],
                 lines: include_str!("a/antergos.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -258,7 +262,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_CYAN,
             },
             LogoInfo {
-                names: &["antiX"],
+                names: &["antix"],
                 lines: include_str!("a/antix.txt"),
                 colors: &[
                     color::FG_RED,
@@ -267,7 +271,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["AnushOS"],
+                names: &["anushos"],
                 lines: include_str!("a/anushos.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -280,7 +284,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Aosc OS/Retro", "aoscosretro"],
+                names: &["aosc os/retro", "aoscosretro"],
                 lines: include_str!("a/aoscosretro.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -290,7 +294,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Aosc OS/Retro_small", "aoscosretro_small"],
+                names: &["aosc os/retro_small", "aoscosretro_small"],
                 lines: include_str!("a/aoscosretro_small.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -300,7 +304,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Aosc OS", "aoscos"],
+                names: &["aosc os", "aoscos"],
                 lines: include_str!("a/aoscos.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -312,7 +316,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Aosc OS_old", "aoscos_old"],
+                names: &["aosc os_old", "aoscos_old"],
                 lines: include_str!("a/aoscos_old.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -321,7 +325,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Aperture"],
+                names: &["aperture"],
                 lines: include_str!("a/aperture.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -337,7 +341,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Apple"],
+                names: &["apple"],
                 lines: include_str!("m/macos.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -351,7 +355,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["Apple_small"],
+                names: &["apple_small"],
                 lines: include_str!("m/macos_small.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -364,7 +368,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["Apricity"],
+                names: &["apricity"],
                 lines: include_str!("a/apricity.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -373,7 +377,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["ArchBox"],
+                names: &["archbox"],
                 lines: include_str!("a/archbox.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -382,7 +386,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Archcraft"],
+                names: &["archcraft"],
                 lines: include_str!("a/archcraft.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -391,7 +395,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["Archcraft2"],
+                names: &["archcraft2"],
                 lines: include_str!("a/archcraft2.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -450,7 +454,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["ARCHlabs"],
+                names: &["archlabs"],
                 lines: include_str!("a/archlabs.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -460,7 +464,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["ArchStrike"],
+                names: &["archstrike"],
                 lines: include_str!("a/archstrike.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -470,7 +474,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_CYAN,
             },
             LogoInfo {
-                names: &["Arkane", "Arkane Linux"],
+                names: &["arkane", "arkane linux"],
                 lines: include_str!("a/arkane.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -481,7 +485,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Armbian"],
+                names: &["armbian"],
                 lines: include_str!("a/armbian.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -491,7 +495,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["Armbian2"],
+                names: &["armbian2"],
                 lines: include_str!("a/armbian2.txt"),
                 colors: &[
                     color::FG_RED,
@@ -557,7 +561,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Arya"],
+                names: &["arya"],
                 lines: include_str!("a/arya.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -606,7 +610,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_CYAN,
             },
             LogoInfo {
-                names: &["AsteroidOS"],
+                names: &["asteroidos"],
                 lines: include_str!("a/asteroidos.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -618,7 +622,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["astOS"],
+                names: &["astos"],
                 lines: include_str!("a/astos.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -627,7 +631,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Astra", "Astra Linux", "astralinux"],
+                names: &["astra", "astra linux", "astralinux"],
                 lines: include_str!("a/astra_linux.txt"),
                 colors: &[
                     color::FG_LIGHT_RED,
@@ -637,7 +641,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Ataraxia"],
+                names: &["ataraxia"],
                 lines: include_str!("j/januslinux.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -647,7 +651,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_MAGENTA,
             },
             LogoInfo {
-                names: &["AthenaOS"],
+                names: &["athenaos"],
                 lines: include_str!("a/athenaos.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -657,7 +661,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_LIGHT_BLUE,
             },
             LogoInfo {
-                names: &["AthenaOS_old"],
+                names: &["athenaos_old"],
                 lines: include_str!("a/athenaos_old.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -667,7 +671,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Aurora"],
+                names: &["aurora"],
                 lines: include_str!("a/aurora.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -679,7 +683,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["AxOS"],
+                names: &["axos"],
                 lines: include_str!("a/axos.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -689,7 +693,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Azos"],
+                names: &["azos"],
                 lines: include_str!("a/azos.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -699,7 +703,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["AzureLinux"],
+                names: &["azurelinux"],
                 lines: include_str!("a/azurelinux.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -710,7 +714,7 @@ pub fn get() -> &'static [LogoInfo; 68] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["AzureLinux2"],
+                names: &["azurelinux2"],
                 lines: include_str!("a/azurelinux2.txt"),
                 colors: &[
                     color::FG_GREEN,

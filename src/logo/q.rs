@@ -1,14 +1,18 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static Q: OnceLock<[LogoInfo; 8]> = OnceLock::new();
+static Q: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 8] {
+pub fn get() -> &'static Vec<LogoInfo> {
     Q.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
                 names: &["qts"],
                 lines: include_str!("q/qts.txt"),
@@ -20,7 +24,7 @@ pub fn get() -> &'static [LogoInfo; 8] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["Quasar"],
+                names: &["quasar"],
                 lines: include_str!("q/quasar.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -29,7 +33,7 @@ pub fn get() -> &'static [LogoInfo; 8] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Q4OS"],
+                names: &["q4os"],
                 lines: include_str!("q/q4os.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -39,7 +43,7 @@ pub fn get() -> &'static [LogoInfo; 8] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Qubes"],
+                names: &["qubes"],
                 lines: include_str!("q/qubes.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -49,7 +53,7 @@ pub fn get() -> &'static [LogoInfo; 8] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Qubes_small"],
+                names: &["qubes_small"],
                 lines: include_str!("q/qubes_small.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -59,7 +63,7 @@ pub fn get() -> &'static [LogoInfo; 8] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Qubyt"],
+                names: &["qubyt"],
                 lines: include_str!("q/qubyt.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -70,7 +74,7 @@ pub fn get() -> &'static [LogoInfo; 8] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Quibian"],
+                names: &["quibian"],
                 lines: include_str!("q/quibian.txt"),
                 colors: &[
                     color::FG_YELLOW,
@@ -80,7 +84,7 @@ pub fn get() -> &'static [LogoInfo; 8] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Quirinux"],
+                names: &["quirinux"],
                 lines: include_str!("q/quirinux.txt"),
                 colors: &[
                     color::FG_WHITE,

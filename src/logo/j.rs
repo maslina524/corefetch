@@ -1,14 +1,18 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static J: OnceLock<[LogoInfo; 1]> = OnceLock::new();
+static J: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 1] {
+pub fn get() -> &'static Vec<LogoInfo> {
     J.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
                 names: &["januslinux"],
                 lines: include_str!("j/januslinux.txt"),

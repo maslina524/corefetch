@@ -1,16 +1,20 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static I: OnceLock<[LogoInfo; 6]> = OnceLock::new();
+static I: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 6] {
+pub fn get() -> &'static Vec<LogoInfo> {
     I.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
-                names: &["Iglunix", "Iglu"],
+                names: &["iglunix", "iglu"],
                 lines: include_str!("i/iglunix.txt"),
                 colors: &[
                     color::FG_LIGHT_BLACK,
@@ -19,7 +23,7 @@ pub fn get() -> &'static [LogoInfo; 6] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["InstantOS"],
+                names: &["instantos"],
                 lines: include_str!("i/instantos.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -29,7 +33,7 @@ pub fn get() -> &'static [LogoInfo; 6] {
                 color_title: color::FG_CYAN,
             },
             LogoInfo {
-                names: &["Interix"],
+                names: &["interix"],
                 lines: include_str!("i/interix.txt"),
                 colors: &[
                     color::FG_RED,
@@ -42,7 +46,7 @@ pub fn get() -> &'static [LogoInfo; 6] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["IRIX"],
+                names: &["irix"],
                 lines: include_str!("i/irix.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -51,7 +55,7 @@ pub fn get() -> &'static [LogoInfo; 6] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Ironclad"],
+                names: &["ironclad"],
                 lines: include_str!("i/ironclad.txt"),
                 colors: &[
                     color::FG_BLACK,
@@ -60,7 +64,7 @@ pub fn get() -> &'static [LogoInfo; 6] {
                 color_title: color::FG_MAGENTA,
             },
             LogoInfo {
-                names: &["Itc"],
+                names: &["itc"],
                 lines: include_str!("i/itc.txt"),
                 colors: &[
                     color::FG_RED,

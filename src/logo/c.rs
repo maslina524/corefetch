@@ -1,16 +1,20 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static C: OnceLock<[LogoInfo; 41]> = OnceLock::new();
+static C: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 41] {
+pub fn get() -> &'static Vec<LogoInfo> {
     C.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
-                names: &["CachyOS"],
+                names: &["cachyos"],
                 lines: include_str!("c/cachyos.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -21,7 +25,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["CachyOS_small"],
+                names: &["cachyos_small"],
                 lines: include_str!("c/cachyos_small.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -31,7 +35,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["CachyOS_old_small"],
+                names: &["cachyos_old_small"],
                 lines: include_str!("c/cachyos_old_small.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -40,7 +44,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["Calculate"],
+                names: &["calculate"],
                 lines: include_str!("c/calculate.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -50,7 +54,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["CalinixOS"],
+                names: &["calinixos"],
                 lines: include_str!("c/calinixos.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -59,7 +63,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["CalinixOS_small"],
+                names: &["calinixos_small"],
                 lines: include_str!("c/calinixos_small.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -68,7 +72,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["Carbs"],
+                names: &["carbs"],
                 lines: include_str!("c/carbs.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -77,7 +81,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["CBL-Mariner"],
+                names: &["cbl-mariner"],
                 lines: include_str!("c/cbl_mariner.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -86,7 +90,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_CYAN,
             },
             LogoInfo {
-                names: &["CelOS"],
+                names: &["celos"],
                 lines: include_str!("c/celos.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -96,7 +100,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["Center"],
+                names: &["center"],
                 lines: include_str!("c/center.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -105,7 +109,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["CentOS"],
+                names: &["centos"],
                 lines: include_str!("c/centos.txt"),
                 colors: &[
                     color::FG_YELLOW,
@@ -118,7 +122,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_YELLOW,
             },
             LogoInfo {
-                names: &["CentOS_small"],
+                names: &["centos_small"],
                 lines: include_str!("c/centos_small.txt"),
                 colors: &[
                     color::FG_YELLOW,
@@ -130,7 +134,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_YELLOW,
             },
             LogoInfo {
-                names: &["Cereus"],
+                names: &["cereus"],
                 lines: include_str!("c/cereus.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -143,7 +147,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Chakra"],
+                names: &["chakra"],
                 lines: include_str!("c/chakra.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -152,7 +156,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_MAGENTA,
             },
             LogoInfo {
-                names: &["ChaletOS"],
+                names: &["chaletos"],
                 lines: include_str!("c/chaletos.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -162,7 +166,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Chapeau"],
+                names: &["chapeau"],
                 lines: include_str!("c/chapeau.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -172,7 +176,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Chimera"],
+                names: &["chimera"],
                 lines: include_str!("c/chimera_linux.txt"),
                 colors: &[
                     color::FG_RED,
@@ -184,7 +188,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["Chimera2"],
+                names: &["chimera2"],
                 lines: include_str!("c/chimera_linux2.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -195,7 +199,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["Chimera_small"],
+                names: &["chimera_small"],
                 lines: include_str!("c/chimera_linux_small.txt"),
                 colors: &[
                     color::FG_RED,
@@ -207,7 +211,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["ChonkySealOS"],
+                names: &["chonkysealos"],
                 lines: include_str!("c/chonkysealos.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -216,7 +220,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Chrom", "ChromeOS"],
+                names: &["chrom", "chromeos"],
                 lines: include_str!("c/chrom.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -229,7 +233,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["Cleanjaro"],
+                names: &["cleanjaro"],
                 lines: include_str!("c/cleanjaro.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -238,7 +242,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Cleanjaro_small"],
+                names: &["cleanjaro_small"],
                 lines: include_str!("c/cleanjaro_small.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -247,7 +251,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Clear Linux", "clearlinux", "Clear Linux OS"],
+                names: &["clear linux", "clearlinux", "clear linux os"],
                 lines: include_str!("c/clear_linux.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -257,7 +261,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_YELLOW,
             },
             LogoInfo {
-                names: &["ClearOS"],
+                names: &["clearos"],
                 lines: include_str!("c/clearos.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -266,7 +270,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["Clover"],
+                names: &["clover"],
                 lines: include_str!("c/clover.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -276,7 +280,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_CYAN,
             },
             LogoInfo {
-                names: &["Cobalt"],
+                names: &["cobalt"],
                 lines: include_str!("c/cobalt.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -289,7 +293,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["Codex Linux"],
+                names: &["codex linux"],
                 lines: include_str!("c/codex.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -298,7 +302,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Condres"],
+                names: &["condres"],
                 lines: include_str!("c/condres.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -309,7 +313,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_YELLOW,
             },
             LogoInfo {
-                names: &["CoreOS", "Container Linux by CoreOS"],
+                names: &["coreos", "container linux by coreos"],
                 lines: include_str!("f/fedora_coreos.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -331,7 +335,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Cosmic"],
+                names: &["cosmic"],
                 lines: include_str!("c/cosmic.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -344,7 +348,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_YELLOW,
             },
             LogoInfo {
-                names: &["CRUX"],
+                names: &["crux"],
                 lines: include_str!("c/crux.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -355,7 +359,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["CRUX_small"],
+                names: &["crux_small"],
                 lines: include_str!("c/crux_small.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -366,7 +370,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["Crystal", "Crystal", "crystal-linux", "Crystal-Linux"],
+                names: &["crystal", "crystal", "crystal-linux", "crystal-linux"],
                 lines: include_str!("c/crystal.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -375,7 +379,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_MAGENTA,
             },
             LogoInfo {
-                names: &["Cucumber", "CucumberOS"],
+                names: &["cucumber", "cucumberos"],
                 lines: include_str!("c/cucumber.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -385,7 +389,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_YELLOW,
             },
             LogoInfo {
-                names: &["CuerdOS", "CuerdOS GNU/Linux"],
+                names: &["cuerdos", "cuerdos gnu/linux"],
                 lines: include_str!("c/cuerdos.txt"),
                 colors: &[
                     color::FG_YELLOW,
@@ -395,7 +399,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_YELLOW,
             },
             LogoInfo {
-                names: &["CutefishOS"],
+                names: &["cutefishos"],
                 lines: include_str!("c/cutefishos.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -406,7 +410,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["CuteOS"],
+                names: &["cuteos"],
                 lines: include_str!("c/cuteos.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -417,7 +421,7 @@ pub fn get() -> &'static [LogoInfo; 41] {
                 color_title: color::FG_CYAN,
             },
             LogoInfo {
-                names: &["CyberOS"],
+                names: &["cyberos"],
                 lines: include_str!("c/cyberos.txt"),
                 colors: &[
                     color::FG_BLUE,

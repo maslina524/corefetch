@@ -1,16 +1,20 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static M: OnceLock<[LogoInfo; 30]> = OnceLock::new();
+static M: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 30] {
+pub fn get() -> &'static Vec<LogoInfo> {
     M.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
-                names: &["Macaroni"],
+                names: &["macaroni"],
                 lines: include_str!("m/macaronios.txt"),
                 colors: &[
                     color::FG_YELLOW,
@@ -20,7 +24,7 @@ pub fn get() -> &'static [LogoInfo; 30] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["macOS"],
+                names: &["macos"],
                 lines: include_str!("m/macos.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -34,7 +38,7 @@ pub fn get() -> &'static [LogoInfo; 30] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["macOS_small"],
+                names: &["macos_small"],
                 lines: include_str!("m/macos_small.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -47,7 +51,7 @@ pub fn get() -> &'static [LogoInfo; 30] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["macOS2"],
+                names: &["macos2"],
                 lines: include_str!("m/macos2.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -61,7 +65,7 @@ pub fn get() -> &'static [LogoInfo; 30] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["macOS2_small"],
+                names: &["macos2_small"],
                 lines: include_str!("m/macos2_small.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -74,7 +78,7 @@ pub fn get() -> &'static [LogoInfo; 30] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["macOS3"],
+                names: &["macos3"],
                 lines: include_str!("m/macos3.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -88,7 +92,7 @@ pub fn get() -> &'static [LogoInfo; 30] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["MainsailOS"],
+                names: &["mainsailos"],
                 lines: include_str!("m/mainsailos.txt"),
                 colors: &[
                     color::FG_RED,
@@ -97,7 +101,7 @@ pub fn get() -> &'static [LogoInfo; 30] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["MainsailOS_small"],
+                names: &["mainsailos_small"],
                 lines: include_str!("m/mainsailos_small.txt"),
                 colors: &[
                     color::FG_RED,
@@ -106,7 +110,7 @@ pub fn get() -> &'static [LogoInfo; 30] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Mageia"],
+                names: &["mageia"],
                 lines: include_str!("m/mageia.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -116,7 +120,7 @@ pub fn get() -> &'static [LogoInfo; 30] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Mageia_small"],
+                names: &["mageia_small"],
                 lines: include_str!("m/mageia_small.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -154,7 +158,7 @@ pub fn get() -> &'static [LogoInfo; 30] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["MassOS"],
+                names: &["massos"],
                 lines: include_str!("m/massos.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -163,7 +167,7 @@ pub fn get() -> &'static [LogoInfo; 30] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["MatuusOS", "Matuus"],
+                names: &["matuusos", "matuus"],
                 lines: include_str!("m/matuusos.txt"),
                 colors: &[
                     color::FG_YELLOW,
@@ -173,7 +177,7 @@ pub fn get() -> &'static [LogoInfo; 30] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["MaUI"],
+                names: &["maui"],
                 lines: include_str!("m/maui.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -182,7 +186,7 @@ pub fn get() -> &'static [LogoInfo; 30] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Mauna"],
+                names: &["mauna"],
                 lines: include_str!("m/mauna.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -192,7 +196,7 @@ pub fn get() -> &'static [LogoInfo; 30] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Meowix"],
+                names: &["meowix"],
                 lines: include_str!("m/meowix.txt"),
                 colors: &[
                     color::FG_RED,
@@ -204,7 +208,7 @@ pub fn get() -> &'static [LogoInfo; 30] {
                 color_title: color::FG_YELLOW,
             },
             LogoInfo {
-                names: &["Mer"],
+                names: &["mer"],
                 lines: include_str!("m/mer.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -213,7 +217,7 @@ pub fn get() -> &'static [LogoInfo; 30] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["MidnightBSD"],
+                names: &["midnightbsd"],
                 lines: include_str!("m/midnightbsd.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -222,7 +226,7 @@ pub fn get() -> &'static [LogoInfo; 30] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["MidOS"],
+                names: &["midos"],
                 lines: include_str!("m/midos.txt"),
                 colors: &[
                     color::FG_LIGHT_BLACK,
@@ -231,7 +235,7 @@ pub fn get() -> &'static [LogoInfo; 30] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["MidOS_old"],
+                names: &["midos_old"],
                 lines: include_str!("m/midos_old.txt"),
                 colors: &[
                     color::FG_LIGHT_BLACK,
@@ -241,7 +245,7 @@ pub fn get() -> &'static [LogoInfo; 30] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Minimal_System"],
+                names: &["minimal_system"],
                 lines: include_str!("m/minimal.txt"),
                 colors: &[
                     color::FG_RED,
@@ -250,7 +254,7 @@ pub fn get() -> &'static [LogoInfo; 30] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Minix"],
+                names: &["minix"],
                 lines: include_str!("m/minix.txt"),
                 colors: &[
                     color::FG_RED,
@@ -270,7 +274,7 @@ pub fn get() -> &'static [LogoInfo; 30] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["MOS"],
+                names: &["mos"],
                 lines: include_str!("m/mos.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -280,7 +284,7 @@ pub fn get() -> &'static [LogoInfo; 30] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Msys2"],
+                names: &["msys2"],
                 lines: include_str!("m/msys2.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -291,7 +295,7 @@ pub fn get() -> &'static [LogoInfo; 30] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["MX"],
+                names: &["mx"],
                 lines: include_str!("m/mx.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -300,7 +304,7 @@ pub fn get() -> &'static [LogoInfo; 30] {
                 color_title: color::FG_CYAN,
             },
             LogoInfo {
-                names: &["MX_small"],
+                names: &["mx_small"],
                 lines: include_str!("m/mx_small.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -309,7 +313,7 @@ pub fn get() -> &'static [LogoInfo; 30] {
                 color_title: color::FG_CYAN,
             },
             LogoInfo {
-                names: &["MX2"],
+                names: &["mx2"],
                 lines: include_str!("m/mx2.txt"),
                 colors: &[
                     color::FG_DEFAULT,

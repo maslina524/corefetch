@@ -1,16 +1,20 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static F: OnceLock<[LogoInfo; 21]> = OnceLock::new();
+static F: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 21] {
+pub fn get() -> &'static Vec<LogoInfo> {
     F.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
-                names: &["Fastfetch", "FF"],
+                names: &["fastfetch", "ff"],
                 lines: include_str!("f/fastfetch.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -25,7 +29,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_YELLOW,
             },
             LogoInfo {
-                names: &["Fedora"],
+                names: &["fedora"],
                 lines: include_str!("f/fedora.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -50,7 +54,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["Fedora_small"],
+                names: &["fedora_small"],
                 lines: include_str!("f/fedora_small.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -59,7 +63,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Fedora2_small"],
+                names: &["fedora2_small"],
                 lines: include_str!("f/fedora2_small.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -68,7 +72,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Fedora_old"],
+                names: &["fedora_old"],
                 lines: include_str!("f/fedora_old.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -78,7 +82,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Fedora-Silverblue"],
+                names: &["fedora-silverblue"],
                 lines: include_str!("f/fedora_silverblue.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -89,7 +93,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Fedora-Kinoite"],
+                names: &["fedora-kinoite"],
                 lines: include_str!("f/fedora_kinoite.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -99,7 +103,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Fedora-Sericea"],
+                names: &["fedora-sericea"],
                 lines: include_str!("f/fedora_sericea.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -109,7 +113,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Fedora-CoreOS"],
+                names: &["fedora-coreos"],
                 lines: include_str!("f/fedora_coreos.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -120,7 +124,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["FemboyOS"],
+                names: &["femboyos"],
                 lines: include_str!("f/femboyos.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -129,7 +133,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Feren"],
+                names: &["feren"],
                 lines: include_str!("f/feren.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -138,7 +142,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Flatcar"],
+                names: &["flatcar"],
                 lines: include_str!("f/flatcar.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -148,7 +152,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Filotimo"],
+                names: &["filotimo"],
                 lines: include_str!("f/filotimo.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -157,7 +161,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Finnix"],
+                names: &["finnix"],
                 lines: include_str!("f/finnix.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -167,7 +171,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Floflis"],
+                names: &["floflis"],
                 lines: include_str!("f/floflis.txt"),
                 colors: &[
                     color::FG_LIGHT_CYAN,
@@ -176,7 +180,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Freebsd"],
+                names: &["freebsd"],
                 lines: include_str!("f/freebsd.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -195,7 +199,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["FreeMiNT"],
+                names: &["freemint"],
                 lines: include_str!("f/freemint.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -204,7 +208,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Frugalware", "frugalware-linux"],
+                names: &["frugalware", "frugalware-linux"],
                 lines: include_str!("f/frugalware.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -214,7 +218,7 @@ pub fn get() -> &'static [LogoInfo; 21] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Funtoo"],
+                names: &["funtoo"],
                 lines: include_str!("f/funtoo.txt"),
                 colors: &[
                     color::FG_MAGENTA,

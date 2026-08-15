@@ -1,16 +1,20 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static Y: OnceLock<[LogoInfo; 1]> = OnceLock::new();
+static Y: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 1] {
+pub fn get() -> &'static Vec<LogoInfo> {
     Y.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
-                names: &["YiffOS"],
+                names: &["yiffos"],
                 lines: include_str!("y/yiffos.txt"),
                 colors: &[
                     color::FG_DEFAULT,

@@ -1,16 +1,20 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static D: OnceLock<[LogoInfo; 15]> = OnceLock::new();
+static D: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 15] {
+pub fn get() -> &'static Vec<LogoInfo> {
     D.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
-                names: &["dahliaOS"],
+                names: &["dahliaos"],
                 lines: include_str!("d/dahlia.txt"),
                 colors: &[
                     color::FG_RED,
@@ -19,7 +23,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["DarkOS"],
+                names: &["darkos"],
                 lines: include_str!("d/darkos.txt"),
                 colors: &[
                     color::FG_RED,
@@ -32,7 +36,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_CYAN,
             },
             LogoInfo {
-                names: &["Debian"],
+                names: &["debian"],
                 lines: include_str!("d/debian.txt"),
                 colors: &[
                     color::FG_RED,
@@ -42,7 +46,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["Debian_small"],
+                names: &["debian_small"],
                 lines: include_str!("d/debian_small.txt"),
                 colors: &[
                     color::FG_RED,
@@ -51,7 +55,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["Deepin"],
+                names: &["deepin"],
                 lines: include_str!("d/deepin.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -60,7 +64,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["DesaOS"],
+                names: &["desaos"],
                 lines: include_str!("d/desaos.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -70,7 +74,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Devuan"],
+                names: &["devuan"],
                 lines: include_str!("d/devuan.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -79,7 +83,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_MAGENTA,
             },
             LogoInfo {
-                names: &["Devuan_small"],
+                names: &["devuan_small"],
                 lines: include_str!("d/devuan_small.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -88,7 +92,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_MAGENTA,
             },
             LogoInfo {
-                names: &["DietPi"],
+                names: &["dietpi"],
                 lines: include_str!("d/dietpi.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -98,7 +102,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["DracOS"],
+                names: &["dracos"],
                 lines: include_str!("d/dracos.txt"),
                 colors: &[
                     color::FG_RED,
@@ -108,7 +112,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["DragonFly"],
+                names: &["dragonfly"],
                 lines: include_str!("d/dragonfly.txt"),
                 colors: &[
                     color::FG_RED,
@@ -118,7 +122,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["DragonFly_small"],
+                names: &["dragonfly_small"],
                 lines: include_str!("d/dragonfly_small.txt"),
                 colors: &[
                     color::FG_RED,
@@ -128,7 +132,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["DragonFly_old"],
+                names: &["dragonfly_old"],
                 lines: include_str!("d/dragonfly_old.txt"),
                 colors: &[
                     color::FG_RED,
@@ -139,7 +143,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["DraugerOS", "Drauger"],
+                names: &["draugeros", "drauger"],
                 lines: include_str!("d/drauger.txt"),
                 colors: &[
                     color::FG_RED,
@@ -149,7 +153,7 @@ pub fn get() -> &'static [LogoInfo; 15] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Droidian"],
+                names: &["droidian"],
                 lines: include_str!("d/droidian.txt"),
                 colors: &[
                     color::FG_GREEN,

@@ -1,16 +1,20 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static S: OnceLock<[LogoInfo; 45]> = OnceLock::new();
+static S: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 45] {
+pub fn get() -> &'static Vec<LogoInfo> {
     S.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
-                names: &["Sabayon"],
+                names: &["sabayon"],
                 lines: include_str!("s/sabayon.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -20,7 +24,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Sabotage"],
+                names: &["sabotage"],
                 lines: include_str!("s/sabotage.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -29,7 +33,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Sailfish"],
+                names: &["sailfish"],
                 lines: include_str!("s/sailfish.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -39,7 +43,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["SalentOS"],
+                names: &["salentos"],
                 lines: include_str!("s/salentos.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -51,7 +55,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Salient OS", "SalientOS"],
+                names: &["salient os", "salientos"],
                 lines: include_str!("s/salientos.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -61,7 +65,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Salix"],
+                names: &["salix"],
                 lines: include_str!("s/salix.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -71,7 +75,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["SambaBOX"],
+                names: &["sambabox"],
                 lines: include_str!("s/sambabox.txt"),
                 colors: &[
                     color::FG_YELLOW,
@@ -81,7 +85,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Sasanqua"],
+                names: &["sasanqua"],
                 lines: include_str!("s/sasanqua.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -91,7 +95,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Scientific"],
+                names: &["scientific"],
                 lines: include_str!("s/scientific.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -113,7 +117,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Serpent OS"],
+                names: &["serpent os"],
                 lines: include_str!("s/serpent_os.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -133,7 +137,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Septor"],
+                names: &["septor"],
                 lines: include_str!("s/septor.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -144,7 +148,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Serene"],
+                names: &["serene"],
                 lines: include_str!("s/serene.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -154,7 +158,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["SharkLinux"],
+                names: &["sharklinux"],
                 lines: include_str!("s/sharklinux.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -164,7 +168,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["ShastraOS"],
+                names: &["shastraos"],
                 lines: include_str!("s/shastraos.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -174,7 +178,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Shebang"],
+                names: &["shebang"],
                 lines: include_str!("s/shebang.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -184,7 +188,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Siduction"],
+                names: &["siduction"],
                 lines: include_str!("s/siduction.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -194,7 +198,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["SkiffOS"],
+                names: &["skiffos"],
                 lines: include_str!("s/skiffos.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -204,7 +208,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["SleeperOS"],
+                names: &["sleeperos"],
                 lines: include_str!("s/sleeperos.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -214,7 +218,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["SleeperOS_small"],
+                names: &["sleeperos_small"],
                 lines: include_str!("s/sleeperos_small.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -224,7 +228,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Slitaz"],
+                names: &["slitaz"],
                 lines: include_str!("s/slitaz.txt"),
                 colors: &[
                     color::FG_YELLOW,
@@ -234,7 +238,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["SpoinkOS", "spoink-os"],
+                names: &["spoinkos", "spoink-os"],
                 lines: include_str!("s/spoinkos.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -243,7 +247,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Slackel"],
+                names: &["slackel"],
                 lines: include_str!("s/slackel.txt"),
                 colors: &[
                     color::FG_YELLOW,
@@ -253,7 +257,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Slackware"],
+                names: &["slackware"],
                 lines: include_str!("s/slackware.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -263,7 +267,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["Slackware_small"],
+                names: &["slackware_small"],
                 lines: include_str!("s/slackware_small.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -273,7 +277,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["SmartOS"],
+                names: &["smartos"],
                 lines: include_str!("s/smartos.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -283,7 +287,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["SnigdhaOS", "Snigdha"],
+                names: &["snigdhaos", "snigdha"],
                 lines: include_str!("s/snigdhaos.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -293,7 +297,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Soda"],
+                names: &["soda"],
                 lines: include_str!("s/soda.txt"),
                 colors: &[
                     color::FG_RED,
@@ -303,7 +307,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Source Mage", "Source Mage GNU/Linux", "source_mage", "sourcemage"],
+                names: &["source mage", "source mage gnu/linux", "source_mage", "sourcemage"],
                 lines: include_str!("s/source_mage.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -330,7 +334,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Solus", "solus-linux"],
+                names: &["solus", "solus-linux"],
                 lines: include_str!("s/solus.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -340,7 +344,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Sparky"],
+                names: &["sparky"],
                 lines: include_str!("s/sparky.txt"),
                 colors: &[
                     color::FG_RED,
@@ -350,7 +354,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Star"],
+                names: &["star"],
                 lines: include_str!("s/star.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -360,7 +364,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Stock Linux"],
+                names: &["stock linux"],
                 lines: include_str!("s/stock_linux.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -370,7 +374,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["SteamOS"],
+                names: &["steamos"],
                 lines: include_str!("s/steamos.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -380,7 +384,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["SteamDeck"],
+                names: &["steamdeck"],
                 lines: include_str!("s/steamdeck.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -390,7 +394,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["SteamDeck_small"],
+                names: &["steamdeck_small"],
                 lines: include_str!("s/steamdeck_small.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -400,7 +404,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["SteamDeckOled"],
+                names: &["steamdeckoled"],
                 lines: include_str!("s/steamdeck.txt"),
                 colors: &[
                     color::FG_RED,
@@ -410,7 +414,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["Sulin"],
+                names: &["sulin"],
                 lines: include_str!("s/sulin.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -420,7 +424,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["SummitOS"],
+                names: &["summitos"],
                 lines: include_str!("s/summitos.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -451,7 +455,7 @@ pub fn get() -> &'static [LogoInfo; 45] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Swagarch"],
+                names: &["swagarch"],
                 lines: include_str!("s/swagarch.txt"),
                 colors: &[
                     color::FG_BLUE,

@@ -1,14 +1,18 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static E: OnceLock<[LogoInfo; 19]> = OnceLock::new();
+static E: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 19] {
+pub fn get() -> &'static Vec<LogoInfo> {
     E.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
                 names: &["elbrus"],
                 lines: include_str!("e/elbrus.txt"),
@@ -19,7 +23,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["Elementary"],
+                names: &["elementary"],
                 lines: include_str!("e/elementary.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -28,7 +32,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Elementary_small"],
+                names: &["elementary_small"],
                 lines: include_str!("e/elementary_small.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -37,7 +41,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Elive"],
+                names: &["elive"],
                 lines: include_str!("e/elive.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -48,7 +52,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_CYAN,
             },
             LogoInfo {
-                names: &["Emmabuntus"],
+                names: &["emmabuntus"],
                 lines: include_str!("e/emmabuntus.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -58,7 +62,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["ENOS"],
+                names: &["enos"],
                 lines: include_str!("e/enos.txt"),
                 colors: &[
                     color::FG_LIGHT_BLUE,
@@ -67,7 +71,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_LIGHT_BLUE,
             },
             LogoInfo {
-                names: &["EncryptOS"],
+                names: &["encryptos"],
                 lines: include_str!("e/encryptos.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -76,7 +80,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["EndeavourOS"],
+                names: &["endeavouros"],
                 lines: include_str!("e/endeavouros.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -87,7 +91,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["EndeavourOS_small"],
+                names: &["endeavouros_small"],
                 lines: include_str!("e/endeavouros_small.txt"),
                 colors: &[
                     color::FG_RED,
@@ -98,7 +102,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Endless"],
+                names: &["endless"],
                 lines: include_str!("e/endless.txt"),
                 colors: &[
                     color::FG_RED,
@@ -108,7 +112,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Enso"],
+                names: &["enso"],
                 lines: include_str!("e/enso.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -117,7 +121,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["EshanizedOS"],
+                names: &["eshanizedos"],
                 lines: include_str!("e/eshanizedos.txt"),
                 colors: &[
                     color::FG_RED,
@@ -127,7 +131,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["EuroLinux"],
+                names: &["eurolinux"],
                 lines: include_str!("e/eurolinux.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -137,7 +141,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["EvolutionOS"],
+                names: &["evolutionos"],
                 lines: include_str!("e/evolutionos.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -147,7 +151,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["EvolutionOS_small"],
+                names: &["evolutionos_small"],
                 lines: include_str!("e/evolutionos_small.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -157,7 +161,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["EvolutionOS_old"],
+                names: &["evolutionos_old"],
                 lines: include_str!("e/evolutionos_old.txt"),
                 colors: &[
                     color::FG_LIGHT_BLUE,
@@ -167,7 +171,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["eweOS"],
+                names: &["eweos"],
                 lines: include_str!("e/eweos.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -180,7 +184,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Exherbo"],
+                names: &["exherbo"],
                 lines: include_str!("e/exherbo.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -191,7 +195,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["Exodia"],
+                names: &["exodia"],
                 lines: include_str!("e/exodia_predator.txt"),
                 colors: &[
                     color::FG_MAGENTA,

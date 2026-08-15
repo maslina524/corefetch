@@ -1,16 +1,20 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static Z: OnceLock<[LogoInfo; 4]> = OnceLock::new();
+static Z: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 4] {
+pub fn get() -> &'static Vec<LogoInfo> {
     Z.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
-                names: &["Zerene"],
+                names: &["zerene"],
                 lines: include_str!("z/zerene.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -19,7 +23,7 @@ pub fn get() -> &'static [LogoInfo; 4] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["Zorin"],
+                names: &["zorin"],
                 lines: include_str!("z/zorin.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -28,7 +32,7 @@ pub fn get() -> &'static [LogoInfo; 4] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["z/OS", "zos"],
+                names: &["z/os", "zos"],
                 lines: include_str!("z/zos.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -37,7 +41,7 @@ pub fn get() -> &'static [LogoInfo; 4] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Zraxyl"],
+                names: &["zraxyl"],
                 lines: include_str!("z/zraxyl.txt"),
                 colors: &[
                     color::FG_BLUE,

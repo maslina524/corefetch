@@ -1,16 +1,20 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static V: OnceLock<[LogoInfo; 13]> = OnceLock::new();
+static V: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 13] {
+pub fn get() -> &'static Vec<LogoInfo> {
     V.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
-                names: &["Valhalla", "valhallaos", "valhalla-linux"],
+                names: &["valhalla", "valhallaos", "valhalla-linux"],
                 lines: include_str!("v/valhalla.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -47,7 +51,7 @@ pub fn get() -> &'static [LogoInfo; 13] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Venom"],
+                names: &["venom"],
                 lines: include_str!("v/venom.txt"),
                 colors: &[
                     color::FG_LIGHT_BLACK,
@@ -57,7 +61,7 @@ pub fn get() -> &'static [LogoInfo; 13] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Venom_small"],
+                names: &["venom_small"],
                 lines: include_str!("v/venom_small.txt"),
                 colors: &[
                     color::FG_LIGHT_BLACK,
@@ -67,7 +71,7 @@ pub fn get() -> &'static [LogoInfo; 13] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["VincentOS"],
+                names: &["vincentos"],
                 lines: include_str!("v/vincentos.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -77,7 +81,7 @@ pub fn get() -> &'static [LogoInfo; 13] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Vnux"],
+                names: &["vnux"],
                 lines: include_str!("v/vnux.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -90,7 +94,7 @@ pub fn get() -> &'static [LogoInfo; 13] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Vzlinux"],
+                names: &["vzlinux"],
                 lines: include_str!("v/vzlinux.txt"),
                 colors: &[
                     color::FG_RED,

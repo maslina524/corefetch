@@ -63,7 +63,32 @@ impl LogoInfo {
             let first_char = name.chars().next().unwrap();
 
             let stack = match first_char {
+                'a' | 'A' => a::get(),
+                'b' | 'B' => b::get(),
+                'c' | 'C' => c::get(),
+                'd' | 'D' => d::get(),
+                'e' | 'E' => e::get(),
+                'f' | 'F' => f::get(),
+                'g' | 'G' => g::get(),
+                'h' | 'H' => h::get(),
+                'i' | 'I' => i::get(),
+                'j' | 'J' => j::get(),
+                'k' | 'K' => k::get(),
+                'l' | 'L' => l::get(),
+                'm' | 'M' => m::get(),
+                'n' | 'N' => n::get(),
+                'o' | 'O' => o::get(),
+                'p' | 'P' => p::get(),
+                'q' | 'Q' => q::get(),
+                'r' | 'R' => r::get(),
+                's' | 'S' => s::get(),
+                't' | 'T' => t::get(),
+                'u' | 'U' => u::get(),
+                'v' | 'V' => v::get(),
                 'w' | 'W' => w::get(),
+                'x' | 'X' => x::get(),
+                'y' | 'Y' => y::get(),
+                'z' | 'Z' => z::get(),
                 _ => return UNKNOWN_PTR
             };
 

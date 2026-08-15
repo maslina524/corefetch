@@ -1,16 +1,20 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static U: OnceLock<[LogoInfo; 25]> = OnceLock::new();
+static U: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 25] {
+pub fn get() -> &'static Vec<LogoInfo> {
     U.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
-                names: &["UBLinux"],
+                names: &["ublinux"],
                 lines: include_str!("u/ublinux.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -21,7 +25,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["UBLinux_small"],
+                names: &["ublinux_small"],
                 lines: include_str!("u/ublinux_small.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -176,7 +180,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Ultramarine"],
+                names: &["ultramarine"],
                 lines: include_str!("u/ultramarine.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -186,7 +190,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Ultramarine_small"],
+                names: &["ultramarine_small"],
                 lines: include_str!("u/ultramarine_small.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -196,7 +200,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Unifi"],
+                names: &["unifi"],
                 lines: include_str!("u/unifi.txt"),
                 colors: &[
                     color::FG_WHITE,
@@ -206,7 +210,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Univalent"],
+                names: &["univalent"],
                 lines: include_str!("u/univalent.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -216,7 +220,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Univention"],
+                names: &["univention"],
                 lines: include_str!("u/univention.txt"),
                 colors: &[
                     color::FG_RED,
@@ -226,7 +230,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["UOS"],
+                names: &["uos"],
                 lines: include_str!("u/uos.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -235,7 +239,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["UrukOS"],
+                names: &["urukos"],
                 lines: include_str!("u/urukos.txt"),
                 colors: &[
                     color::FG_LIGHT_BLUE,
@@ -259,7 +263,7 @@ pub fn get() -> &'static [LogoInfo; 25] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Uzbek"],
+                names: &["uzbek"],
                 lines: include_str!("u/uzbek.txt"),
                 colors: &[
                     color::FG_GREEN,

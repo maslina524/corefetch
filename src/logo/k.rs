@@ -1,16 +1,20 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static K: OnceLock<[LogoInfo; 18]> = OnceLock::new();
+static K: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 18] {
+pub fn get() -> &'static Vec<LogoInfo> {
     K.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
-                names: &["Kaisen"],
+                names: &["kaisen"],
                 lines: include_str!("k/kaisen.txt"),
                 colors: &[
                     color::FG_RED,
@@ -20,7 +24,7 @@ pub fn get() -> &'static [LogoInfo; 18] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Kali"],
+                names: &["kali"],
                 lines: include_str!("k/kali.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -30,7 +34,7 @@ pub fn get() -> &'static [LogoInfo; 18] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Kali_small"],
+                names: &["kali_small"],
                 lines: include_str!("k/kali_small.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -49,7 +53,7 @@ pub fn get() -> &'static [LogoInfo; 18] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["KaOS"],
+                names: &["kaos"],
                 lines: include_str!("k/kaos.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -59,7 +63,7 @@ pub fn get() -> &'static [LogoInfo; 18] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["KernelOS"],
+                names: &["kernelos"],
                 lines: include_str!("k/kernelos.txt"),
                 colors: &[
                     color::FG_RED,
@@ -79,7 +83,7 @@ pub fn get() -> &'static [LogoInfo; 18] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["KDE Neon"],
+                names: &["kde neon"],
                 lines: include_str!("k/kdeneon.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -89,7 +93,7 @@ pub fn get() -> &'static [LogoInfo; 18] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["KibaOS"],
+                names: &["kibaos"],
                 lines: include_str!("k/kibaos.txt"),
                 colors: &[
                     color::BG_WHITE,
@@ -99,7 +103,7 @@ pub fn get() -> &'static [LogoInfo; 18] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Kibojoe"],
+                names: &["kibojoe"],
                 lines: include_str!("k/kibojoe.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -110,7 +114,7 @@ pub fn get() -> &'static [LogoInfo; 18] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["KISS"],
+                names: &["kiss"],
                 lines: include_str!("k/kiss.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -132,7 +136,7 @@ pub fn get() -> &'static [LogoInfo; 18] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["Kogaion"],
+                names: &["kogaion"],
                 lines: include_str!("k/kogaion.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -142,7 +146,7 @@ pub fn get() -> &'static [LogoInfo; 18] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Korora"],
+                names: &["korora"],
                 lines: include_str!("k/korora.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -152,7 +156,7 @@ pub fn get() -> &'static [LogoInfo; 18] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["KrassOS", "Krass"],
+                names: &["krassos", "krass"],
                 lines: include_str!("k/krassos.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -162,7 +166,7 @@ pub fn get() -> &'static [LogoInfo; 18] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["KSLinux"],
+                names: &["kslinux"],
                 lines: include_str!("k/kslinux.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -172,7 +176,7 @@ pub fn get() -> &'static [LogoInfo; 18] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Kubuntu", "kubuntu-linux", "kde-ubuntu"],
+                names: &["kubuntu", "kubuntu-linux", "kde-ubuntu"],
                 lines: include_str!("k/kubuntu.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -182,7 +186,7 @@ pub fn get() -> &'static [LogoInfo; 18] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["Kylin"],
+                names: &["kylin"],
                 lines: include_str!("k/kylin.txt"),
                 colors: &[
                     color::FG_BLUE,

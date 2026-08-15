@@ -1,16 +1,20 @@
+use alloc::{
+    vec::Vec,
+    vec
+};
 use crate::{
     color,
     logo::LogoInfo,
     sync::OnceLock
 };
 
-static G: OnceLock<[LogoInfo; 19]> = OnceLock::new();
+static G: OnceLock<Vec<LogoInfo>> = OnceLock::new();
 
-pub fn get() -> &'static [LogoInfo; 19] {
+pub fn get() -> &'static Vec<LogoInfo> {
     G.get_or_init(|| {
-        [
+        vec![
             LogoInfo {
-                names: &["GalliumOS"],
+                names: &["galliumos"],
                 lines: include_str!("g/galliumos.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -20,7 +24,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Garuda"],
+                names: &["garuda"],
                 lines: include_str!("g/garuda.txt"),
                 colors: &[
                     color::FG_RED,
@@ -29,7 +33,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["GarudaDragon", "garuda-dragon"],
+                names: &["garudadragon", "garuda-dragon"],
                 lines: include_str!("g/garuda_dragon.txt"),
                 colors: &[
                     color::FG_RED,
@@ -38,7 +42,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["Garuda_small", "garuda-linux_small"],
+                names: &["garuda_small", "garuda-linux_small"],
                 lines: include_str!("g/garuda_small.txt"),
                 colors: &[
                     color::FG_RED,
@@ -47,7 +51,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["Gentoo"],
+                names: &["gentoo"],
                 lines: include_str!("g/gentoo.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -57,7 +61,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_MAGENTA,
             },
             LogoInfo {
-                names: &["Gentoo_small"],
+                names: &["gentoo_small"],
                 lines: include_str!("g/gentoo_small.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -67,7 +71,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_MAGENTA,
             },
             LogoInfo {
-                names: &["GhostBSD"],
+                names: &["ghostbsd"],
                 lines: include_str!("g/ghostbsd.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -76,7 +80,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["GhostFreak"],
+                names: &["ghostfreak"],
                 lines: include_str!("g/ghostfreak.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -85,7 +89,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["Glaucus"],
+                names: &["glaucus"],
                 lines: include_str!("g/glaucus.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -94,7 +98,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_MAGENTA,
             },
             LogoInfo {
-                names: &["gNewSense"],
+                names: &["gnewsense"],
                 lines: include_str!("g/gnewsense.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -103,7 +107,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["GNOME OS"],
+                names: &["gnome os"],
                 lines: include_str!("g/gnome.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -112,7 +116,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["GNU"],
+                names: &["gnu"],
                 lines: include_str!("g/gnu.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -121,7 +125,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["GoboLinux", "Gobo"],
+                names: &["gobolinux", "gobo"],
                 lines: include_str!("g/gobolinux.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -130,7 +134,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_MAGENTA,
             },
             LogoInfo {
-                names: &["GoldenDogLinux"],
+                names: &["goldendoglinux"],
                 lines: include_str!("g/goldendoglinux.txt"),
                 colors: &[
                     color::FG_YELLOW,
@@ -139,7 +143,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["GrapheneOS"],
+                names: &["grapheneos"],
                 lines: include_str!("g/grapheneos.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -148,7 +152,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["Grombyang"],
+                names: &["grombyang"],
                 lines: include_str!("g/grombyang.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -159,7 +163,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["Guix"],
+                names: &["guix"],
                 lines: include_str!("g/guix.txt"),
                 colors: &[
                     color::FG_YELLOW,
@@ -168,7 +172,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["Guix_small"],
+                names: &["guix_small"],
                 lines: include_str!("g/guix_small.txt"),
                 colors: &[
                     color::FG_YELLOW,
@@ -177,7 +181,7 @@ pub fn get() -> &'static [LogoInfo; 19] {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["GXDE"],
+                names: &["gxde"],
                 lines: include_str!("g/gxde.txt"),
                 colors: &[
                     color::FG_RED,
