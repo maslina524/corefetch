@@ -109,19 +109,27 @@ impl LogoInfo {
     pub fn get_ansi_lines(&self) -> Vec<(String, usize)> {
         let lines: Vec<String> = self.lines.lines().map(ToOwned::to_owned).collect();
         let mut ret = Vec::new();
-
+        let mut cur_code = "";
         for line in lines {
             let mut ret_len = 0;
-            let mut ret_line = "\x1b[1m".to_owned();
+            let mut ret_line = format!("\x1b[1;{cur_code}m");
             let mut in_percent = false;
+            
             for ch in line.chars() {
                 if ch == '$' {
+                    if in_percent {
+                        ret_line.push('$');
+                        ret_len += 1;
+                        in_percent = false;
+                        continue;
+                    }
                     in_percent = true;
                     continue;
                 }
                 if in_percent {
                     if let Some(i) = ch.to_digit(10) && i > 0 {
-                        let code = self.colors[i as usize - 1];
+                        let code = self.colors.get(i as usize - 1).unwrap_or(&"0");
+                        cur_code = code;
                         ret_line.push_str(&format!("\x1b[{code}m"));
                     } else {
                         ret_line.push('$');

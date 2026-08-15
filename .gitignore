@@ -1,5 +1,6 @@
 /target
 /wingen/target
+/nofetch-logo-gen
 Cargo.lock
 sum.ps1
 
