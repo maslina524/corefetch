@@ -26,7 +26,6 @@ mod macros;
 mod formats;
 mod xxhash64;
 mod preset;
-mod args;
 
 mod modules;
 mod color;
@@ -36,7 +35,10 @@ mod json;
 
 extern crate alloc;
 
-use core::ffi::c_int;
+use core::{
+    ffi::c_int,
+    slice::Iter
+};
 
 use alloc::{
     string::{String, ToString},
@@ -45,14 +47,15 @@ use alloc::{
 };
 
 use crate::{
-    args::{ArgResult, ArgsParser},
     json::Json,
     logo::LogoInfo,
     modules::{Break, Colors, FormatValue, Locale, Module, Os, Processes, Version, Weather},
     os::allocator::Allocator,
     os::env,
     os::https::{Request, Response, Url},
-    preset::{Preset, PresetModule}
+    os::windows::ExitProcess,
+    preset::{Preset, PresetModule},
+    color::{MODE_UNDERLINE, MODE_BOLD, MODE_ITALIC}
 };
 
 #[global_allocator]
@@ -66,6 +69,7 @@ mod panic_impl {
 
     use crate::{
         os::windows::ExitProcess,
+        exit,
         eprintln
     };
 
@@ -75,8 +79,7 @@ mod panic_impl {
             eprintln!("{loc}");
         }
         eprintln!("{}", info.message());
-        // SAFETY: The function is used in the binary, everything is safe
-        unsafe { ExitProcess(101) }
+        exit(101)
     }
 }
 
@@ -189,43 +192,49 @@ fn build_info_buf(max_len: usize) -> Vec<String> {
     ret
 }
 
-#[cfg(not(test))]
+fn exit(code: u32) -> ! {
+    // SAFETY: The function is used in the binary, everything is safe
+    unsafe { ExitProcess(code) }
+}
+
+fn help(theme: Option<&str>) -> ! {
+    println!("Nofetch is a neofetch-like tool for beautiful system information display with flexible output customization\n");
+    println!("\x1b[{MODE_UNDERLINE};{MODE_BOLD}mUsage: \x1b[{MODE_BOLD}mnofetch\x1b[{MODE_ITALIC}m <?options>\x1b[0m");
+
+    exit(0)
+}
+
+fn get_config(args: &mut Iter<'_, String>) -> Preset {
+    args.position(|a| a == "--config" || a == "-c").map_or_else(Preset::default, |pos| args.next().map_or_else(|| {
+            help(None);
+        }, |path| Url::new(path).map_or_else(|| { // FS Path
+                let json = Json::from_file(path).unwrap();
+                Preset::from_json(&json)
+                
+            }, |url| { // Http Url
+                let response = Request::from_url(url).get();
+                if response.is_success() {
+                    let text = match response.as_text() {
+                        Ok(t) => t,
+                        Err(e) => panic!("Utf8 err: {e}")
+                    };
+                    let json = Json::from_str(&text);
+                    Preset::from_json(&json)
+                } else {
+                    eprintln!("Failed to get preset from URL, Code: {}\n", response.code());
+                    Preset::default()
+                }
+            })))
+}
+
+// #[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
-    // Args
-    let mut parser = ArgsParser::new(
-        "nofetch", 
-        "fastfetch-based program written in rust with #![no_std]"
-    );
-    parser.add_arg("wait", Some('w'), false);
-    parser.add_arg("config", Some('c'), true);
-
     let args = env::args();
-    let args = match parser.parse(&args) {
-        Ok(a) => a,
-        Err(e) => panic!("{e}")
-    };
+    let mut args_iter = args.iter();
 
     // Config init
-    let config = args.map.get("config").map_or_else(Preset::default, |path| {
-        Url::new(path).map_or_else(|| { // FS Path
-            let json = Json::from_file(path).unwrap();
-            Preset::from_json(&json)
-        }, |url| { // Http Url
-            let response = Request::from_url(url).get();
-            if response.is_success() {
-                let text = match response.as_text() {
-                    Ok(t) => t,
-                    Err(e) => panic!("Utf8 err: {e}")
-                };
-                let json = Json::from_str(&text);
-                Preset::from_json(&json)
-            } else {
-                eprintln!("Failed to get preset from URL, Code: {}\n", response.code());
-                Preset::default()
-            }
-        })
-    });
+    let config = get_config(&mut args_iter);
     Preset::get_or_init(config);
 
     // Build buffers
@@ -262,7 +271,7 @@ extern "C" fn main() -> c_int {
         }
     }
 
-    if args.map.contains_key("wait") {
+    if args_iter.any(|a| a == "--wait" || a == "-w")  {
         loop {
             // SAFETY: Just a nop
             unsafe { core::arch::asm!("nop") };
