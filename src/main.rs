@@ -231,15 +231,25 @@ fn get_config(args: &mut Iter<'_, String>) -> Preset {
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
     let args = env::args();
-    let mut args_iter = args.iter();
 
     // Config init
-    let config = get_config(&mut args_iter);
+    let config = get_config(&mut args.iter());
     Preset::get_or_init(config);
+
+    // Logo init
+    #[allow(clippy::option_if_let_else)] // Clippy suggests a variant that would require an extra heap allocation
+    let logo_name = if let Some(pos) = args.iter().position(|a| a == "--logo" || a == "-l") {
+        &args.get(pos + 1).map_or_else(|| help(None), |val| {
+                println!("LOGO: {val}");
+                val.to_lowercase().replace('_', " ")
+            })
+    } else {
+        &Os::get().id
+    };
 
     // Build buffers
     let (w, _) = env::terminal_size();
-    let logo_lines = LogoInfo::new(&Os::get().id).get_ansi_lines();
+    let logo_lines = LogoInfo::new(logo_name).get_ansi_lines();
     let max_logo_len = max_line_len(&logo_lines);
     let padding = Preset::get().get_logo_padding();
     let max_logo_len_padding = max_logo_len + padding.left + padding.right;
@@ -271,7 +281,7 @@ extern "C" fn main() -> c_int {
         }
     }
 
-    if args_iter.any(|a| a == "--wait" || a == "-w")  {
+    if args.iter().any(|a| a == "--wait" || a == "-w")  {
         loop {
             // SAFETY: Just a nop
             unsafe { core::arch::asm!("nop") };
