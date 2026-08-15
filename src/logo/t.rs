@@ -15,7 +15,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
         vec![
             LogoInfo {
                 names: &["t2", "t2 sde", "t2/linux"],
-                lines: include_str!("t/t2.txt"),
+                lines: include_bytes!("../../temp/t/t2.txt"),
                 colors: &[
                     color::FG_RED,
                     color::FG_WHITE,
@@ -27,7 +27,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["t2 small", "t2 sde small", "t2/linux small"],
-                lines: include_str!("t/t2_small.txt"),
+                lines: include_bytes!("../../temp/t/t2_small.txt"),
                 colors: &[
                     color::FG_WHITE,
                     color::FG_BLUE,
@@ -37,7 +37,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["tails"],
-                lines: include_str!("t/tails.txt"),
+                lines: include_bytes!("../../temp/t/tails.txt"),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_WHITE,
@@ -47,7 +47,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["tatra"],
-                lines: include_str!("t/tatra.txt"),
+                lines: include_bytes!("../../temp/t/tatra.txt"),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_GREEN,
@@ -57,7 +57,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["tearch"],
-                lines: include_str!("t/tearch.txt"),
+                lines: include_bytes!("../../temp/t/tearch.txt"),
                 colors: &[
                     color::FG_DEFAULT,
                     color::FG_WHITE,
@@ -67,7 +67,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["templeos"],
-                lines: include_str!("t/templeos.txt"),
+                lines: include_bytes!("../../temp/t/templeos.txt"),
                 colors: &[
                     color::FG_YELLOW,
                     color::FG_RED,
@@ -78,7 +78,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["tileos"],
-                lines: include_str!("t/tileos.txt"),
+                lines: include_bytes!("../../temp/t/tileos.txt"),
                 colors: &[
                     color::FG_MAGENTA,
                     color::FG_BLUE,
@@ -89,7 +89,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["torizon os", "torizoncore"],
-                lines: include_str!("t/torizoncore.txt"),
+                lines: include_bytes!("../../temp/t/torizoncore.txt"),
                 colors: &[
                     color::FG_LIGHT_WHITE,
                     color::FG_YELLOW,
@@ -100,7 +100,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["trisquel"],
-                lines: include_str!("t/trisquel.txt"),
+                lines: include_bytes!("../../temp/t/trisquel.txt"),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_CYAN,
@@ -110,7 +110,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["truenas-scale"],
-                lines: include_str!("t/truenas_scale.txt"),
+                lines: include_bytes!("../../temp/t/truenas_scale.txt"),
                 colors: &[
                     color::FG_DEFAULT,
                     color::FG_DEFAULT,
@@ -121,7 +121,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["turkish"],
-                lines: include_str!("t/turkish.txt"),
+                lines: include_bytes!("../../temp/t/turkish.txt"),
                 colors: &[
                     color::FG_DEFAULT,
                 ],
@@ -130,7 +130,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["tuxedo os", "tuxedo"],
-                lines: include_str!("t/tuxedo_os.txt"),
+                lines: include_bytes!("../../temp/t/tuxedo_os.txt"),
                 colors: &[
                     color::FG_WHITE,
                     color::FG_RED,
@@ -140,7 +140,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["twister"],
-                lines: include_str!("t/twister.txt"),
+                lines: include_bytes!("../../temp/t/twister.txt"),
                 colors: &[
                     color::FG_GREEN,
                     color::FG_RED,

@@ -15,7 +15,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
         vec![
             LogoInfo {
                 names: &["yiffos"],
-                lines: include_str!("y/yiffos.txt"),
+                lines: include_bytes!("../../temp/y/yiffos.txt"),
                 colors: &[
                     color::FG_DEFAULT,
                     color::FG_DEFAULT,
