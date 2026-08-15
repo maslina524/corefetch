@@ -1,11 +1,14 @@
 use core::mem;
 
-use crate::os::windows::{GlobalMemoryStatusEx, MEMORYSTATUSEX};
+use crate::{
+    os::windows::{GlobalMemoryStatusEx, MEMORYSTATUSEX},
+    formats::FileSize
+};
 
 #[derive(Default)]
 pub struct MemoryInfo {
-    pub total_gb: f64,
-    pub in_use_gb: f64
+    pub total: FileSize,
+    pub in_use: FileSize
 }
 
 impl MemoryInfo {
@@ -26,28 +29,29 @@ impl MemoryInfo {
         let total_raw = mem_status.ullTotalPhys;
         let in_use_raw = mem_status.ullTotalPhys - mem_status.ullAvailPhys;
 
-        #[allow(clippy::cast_precision_loss)]
-        let total_gb = total_raw as f64 / (1024.0 * 1024.0 * 1024.0);
-        #[allow(clippy::cast_precision_loss)]
-        let in_use_gb = in_use_raw as f64 / (1024.0 * 1024.0 * 1024.0);
+        let total = FileSize::from_bytes(total_raw);
+        let in_use = FileSize::from_bytes(in_use_raw);
 
-        Self { total_gb, in_use_gb }
+        Self { total, in_use }
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::detect::memory::MemoryInfo;
+    use crate::{
+        detect::memory::MemoryInfo,
+        formats::FileSize
+    };
 
     #[test]
     fn ram_test() {
         let mem = MemoryInfo::new();
-        let total = mem.total_gb;
-        let in_use = mem.in_use_gb;
+        let total = mem.total;
+        let in_use = mem.in_use;
 
-        println!("Total: {total:.02}, In use: {in_use:.02}");
+        println!("Total: {total}, In use: {in_use}");
 
-        assert!(total != 0.0);
-        assert!(in_use != 0.0);
+        assert!(total != FileSize::default());
+        assert!(in_use != FileSize::default());
     }
 }

@@ -45,7 +45,14 @@ use alloc::{
 };
 
 use crate::{
-    args::{ArgResult, ArgsParser}, json::Json, logo::LogoInfo, modules::{Break, Colors, FormatValue, Locale, Module, Os, Processes, Version, Weather}, os::{allocator::Allocator, env, https::{Request, Response, Url}}, preset::{Preset, PresetModule}
+    args::{ArgResult, ArgsParser},
+    json::Json,
+    logo::LogoInfo,
+    modules::{Break, Colors, FormatValue, Locale, Module, Os, Processes, Version, Weather},
+    os::allocator::Allocator,
+    os::env,
+    os::https::{Request, Response, Url},
+    preset::{Preset, PresetModule}
 };
 
 #[global_allocator]
