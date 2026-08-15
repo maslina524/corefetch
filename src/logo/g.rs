@@ -42,7 +42,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["garuda_small", "garuda-linux_small"],
+                names: &["garuda small", "garuda-linux small"],
                 lines: include_str!("g/garuda_small.txt"),
                 colors: &[
                     color::FG_RED,
@@ -61,7 +61,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_MAGENTA,
             },
             LogoInfo {
-                names: &["gentoo_small"],
+                names: &["gentoo small"],
                 lines: include_str!("g/gentoo_small.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -172,7 +172,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["guix_small"],
+                names: &["guix small"],
                 lines: include_str!("g/guix_small.txt"),
                 colors: &[
                     color::FG_YELLOW,

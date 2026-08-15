@@ -25,7 +25,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["cachyos_small"],
+                names: &["cachyos small"],
                 lines: include_str!("c/cachyos_small.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -35,7 +35,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["cachyos_old_small"],
+                names: &["cachyos old small"],
                 lines: include_str!("c/cachyos_old_small.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -63,7 +63,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["calinixos_small"],
+                names: &["calinixos small"],
                 lines: include_str!("c/calinixos_small.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -122,7 +122,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_YELLOW,
             },
             LogoInfo {
-                names: &["centos_small"],
+                names: &["centos small"],
                 lines: include_str!("c/centos_small.txt"),
                 colors: &[
                     color::FG_YELLOW,
@@ -199,7 +199,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["chimera_small"],
+                names: &["chimera small"],
                 lines: include_str!("c/chimera_linux_small.txt"),
                 colors: &[
                     color::FG_RED,
@@ -242,7 +242,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["cleanjaro_small"],
+                names: &["cleanjaro small"],
                 lines: include_str!("c/cleanjaro_small.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -359,7 +359,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["crux_small"],
+                names: &["crux small"],
                 lines: include_str!("c/crux_small.txt"),
                 colors: &[
                     color::FG_BLUE,

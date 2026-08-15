@@ -218,7 +218,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["sleeperos_small"],
+                names: &["sleeperos small"],
                 lines: include_str!("s/sleeperos_small.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -267,7 +267,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["slackware_small"],
+                names: &["slackware small"],
                 lines: include_str!("s/slackware_small.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -307,7 +307,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["source mage", "source mage gnu/linux", "source_mage", "sourcemage"],
+                names: &["source mage", "source mage gnu/linux", "source mage", "sourcemage"],
                 lines: include_str!("s/source_mage.txt"),
                 colors: &[
                     color::FG_DEFAULT,
@@ -325,7 +325,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["solaris_small", "sunos_small"],
+                names: &["solaris small", "sunos small"],
                 lines: include_str!("s/solaris_small.txt"),
                 colors: &[
                     color::FG_YELLOW,
@@ -394,7 +394,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["steamdeck_small"],
+                names: &["steamdeck small"],
                 lines: include_str!("s/steamdeck_small.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -445,7 +445,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["suse_small", "suse-linux_small"],
+                names: &["suse small", "suse-linux small"],
                 lines: include_str!("o/opensuse_small.txt"),
                 colors: &[
                     color::FG_GREEN,

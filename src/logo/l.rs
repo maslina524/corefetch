@@ -128,7 +128,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_YELLOW,
             },
             LogoInfo {
-                names: &["linux_small", "linux-generic_small"],
+                names: &["linux small", "linux-generic small"],
                 lines: include_str!("l/linux_small.txt"),
                 colors: &[
                     color::FG_BLACK,
@@ -149,7 +149,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["linuxlite_small"],
+                names: &["linuxlite small"],
                 lines: include_str!("l/linuxlite_small.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -169,7 +169,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["linuxmint_small"],
+                names: &["linuxmint small"],
                 lines: include_str!("l/linuxmint_small.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -189,7 +189,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["linuxmint2_small"],
+                names: &["linuxmint2 small"],
                 lines: include_str!("l/linuxmint2_small.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -199,7 +199,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["linuxmint_old"],
+                names: &["linuxmint old"],
                 lines: include_str!("l/linuxmint_old.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -209,7 +209,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["live raizo", "live_raizo"],
+                names: &["live raizo", "live raizo"],
                 lines: include_str!("l/live_raizo.txt"),
                 colors: &[
                     color::FG_YELLOW,

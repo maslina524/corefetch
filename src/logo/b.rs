@@ -24,7 +24,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["bedrock_small"],
+                names: &["bedrock small"],
                 lines: include_str!("b/bedrock_small.txt"),
                 colors: &[
                     color::FG_LIGHT_BLACK,

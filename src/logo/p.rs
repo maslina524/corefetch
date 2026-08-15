@@ -44,7 +44,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_MAGENTA,
             },
             LogoInfo {
-                names: &["parabola_small"],
+                names: &["parabola small"],
                 lines: include_str!("p/parabola_small.txt"),
                 colors: &[
                     color::FG_MAGENTA,
@@ -53,7 +53,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_MAGENTA,
             },
             LogoInfo {
-                names: &["parabola2_small"],
+                names: &["parabola2 small"],
                 lines: include_str!("p/parabola2_small.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -229,7 +229,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_CYAN,
             },
             LogoInfo {
-                names: &["pop_small", "popos_small"],
+                names: &["pop small", "popos small"],
                 lines: include_str!("p/pop_small.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -268,7 +268,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["postmarketos_small"],
+                names: &["postmarketos small"],
                 lines: include_str!("p/postmarketos_small.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -318,7 +318,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["pureos_small"],
+                names: &["pureos small"],
                 lines: include_str!("p/pureos_small.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -338,7 +338,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["prismlinux_small"],
+                names: &["prismlinux small"],
                 lines: include_str!("p/prismlinux_small.txt"),
                 colors: &[
                     color::FG_BLUE,

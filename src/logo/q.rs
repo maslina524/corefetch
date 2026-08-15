@@ -53,7 +53,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["qubes_small"],
+                names: &["qubes small"],
                 lines: include_str!("q/qubes_small.txt"),
                 colors: &[
                     color::FG_BLUE,

@@ -100,7 +100,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["nixos_small"],
+                names: &["nixos small"],
                 lines: include_str!("n/nixos_small.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -114,7 +114,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["nixos_old"],
+                names: &["nixos old"],
                 lines: include_str!("n/nixos_old.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -124,7 +124,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["nixos_old_small"],
+                names: &["nixos old small"],
                 lines: include_str!("n/nixos_old_small.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -164,7 +164,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["netbsd_small"],
+                names: &["netbsd small"],
                 lines: include_str!("n/netbsd_small.txt"),
                 colors: &[
                     color::FG_RED,

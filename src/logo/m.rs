@@ -38,7 +38,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["macos_small"],
+                names: &["macos small"],
                 lines: include_str!("m/macos_small.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -65,7 +65,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["macos2_small"],
+                names: &["macos2 small"],
                 lines: include_str!("m/macos2_small.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -101,7 +101,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["mainsailos_small"],
+                names: &["mainsailos small"],
                 lines: include_str!("m/mainsailos_small.txt"),
                 colors: &[
                     color::FG_RED,
@@ -120,7 +120,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["mageia_small"],
+                names: &["mageia small"],
                 lines: include_str!("m/mageia_small.txt"),
                 colors: &[
                     color::FG_CYAN,
@@ -149,7 +149,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["manjaro_small", "manjaro-arm_small"],
+                names: &["manjaro small", "manjaro-arm small"],
                 lines: include_str!("m/manjaro_small.txt"),
                 colors: &[
                     color::FG_GREEN,
@@ -235,7 +235,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["midos_old"],
+                names: &["midos old"],
                 lines: include_str!("m/midos_old.txt"),
                 colors: &[
                     color::FG_LIGHT_BLACK,
@@ -245,7 +245,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["minimal_system"],
+                names: &["minimal system"],
                 lines: include_str!("m/minimal.txt"),
                 colors: &[
                     color::FG_RED,
@@ -304,7 +304,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_CYAN,
             },
             LogoInfo {
-                names: &["mx_small"],
+                names: &["mx small"],
                 lines: include_str!("m/mx_small.txt"),
                 colors: &[
                     color::FG_DEFAULT,

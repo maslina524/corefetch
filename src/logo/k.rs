@@ -34,7 +34,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_DEFAULT,
             },
             LogoInfo {
-                names: &["kali_small"],
+                names: &["kali small"],
                 lines: include_str!("k/kali_small.txt"),
                 colors: &[
                     color::FG_BLUE,

@@ -34,7 +34,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["raspbian_small"],
+                names: &["raspbian small"],
                 lines: include_str!("r/raspbian_small.txt"),
                 colors: &[
                     color::FG_RED,
@@ -65,7 +65,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_BLUE,
             },
             LogoInfo {
-                names: &["rebornos_small"],
+                names: &["rebornos small"],
                 lines: include_str!("r/rebornos_small.txt"),
                 colors: &[
                     color::FG_BLUE,
@@ -93,7 +93,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["rhel_small", "redhat_small"],
+                names: &["rhel small", "redhat small"],
                 lines: include_str!("r/rhel_small.txt"),
                 colors: &[
                     color::FG_RED,
@@ -102,7 +102,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["rhel_old", "redhat_old"],
+                names: &["rhel old", "redhat old"],
                 lines: include_str!("r/rhel_old.txt"),
                 colors: &[
                     color::FG_RED,
@@ -122,7 +122,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_RED,
             },
             LogoInfo {
-                names: &["redos_small"],
+                names: &["redos small"],
                 lines: include_str!("r/redos_small.txt"),
                 colors: &[
                     color::FG_RED,
@@ -204,7 +204,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
                 color_title: color::FG_GREEN,
             },
             LogoInfo {
-                names: &["rocky_small"],
+                names: &["rocky small"],
                 lines: include_str!("r/rocky_small.txt"),
                 colors: &[
                     color::FG_GREEN,
