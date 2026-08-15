@@ -5,6 +5,7 @@ use alloc::{
 
 use crate::format;
 
+#[derive(Clone, PartialEq)]
 pub enum FileSize {
     Byte(u16),
     Kb(f32),
@@ -13,8 +14,9 @@ pub enum FileSize {
 }
 
 impl FileSize {
-    pub fn from_bytes(bytes: u32) -> Self {
+    pub fn from_bytes(bytes: u64) -> Self {
         let mut divisions = 0;
+        #[allow(clippy::cast_precision_loss)] // Mantissa is 52 bits, 2^52 = 4 petabytes
         let mut f_bytes = bytes as f64;
 
         while f_bytes >= 1024.0 && divisions < 3 {
@@ -29,6 +31,21 @@ impl FileSize {
             3 => Self::Gb(f_bytes as f32),
             _ => unreachable!()
         }
+    }
+
+    pub fn as_bytes(&self) -> u64 {
+        match self {
+            Self::Byte(b) => *b as u64,
+            Self::Kb(b) => (b * 1024.0) as u64,
+            Self::Mb(b) => (b * 1024.0 * 1024.0) as u64,
+            Self::Gb(b) => (b * 1024.0 * 1024.0 * 1024.0) as u64
+        }
+    }
+}
+
+impl Default for FileSize {
+    fn default() -> Self {
+        Self::Byte(0)
     }
 }
 

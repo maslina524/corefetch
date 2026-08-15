@@ -22,9 +22,9 @@ pub struct Memory {
 impl Module for Memory {
     fn new() -> Self {
         let mem = MemoryInfo::new();
-        let total = mem.total_gb;
-        let used = mem.in_use_gb;
-        let percentage = (used / total * 100.0) as u8;
+        let total = mem.total;
+        let used = mem.in_use;
+        let percentage = (used.as_bytes() / total.as_bytes() * 100) as u8;
 
         Self {
             used: format!("{used:.02}"),

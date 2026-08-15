@@ -1,4 +1,4 @@
-use alloc::string::String;
+use alloc::string::{String, ToString};
 
 use crate::{
     format,
@@ -34,7 +34,7 @@ impl Module for Kernel {
             version: kernel::version(),
             arch: env!("TARGET_ARCH"),
             display_version,
-            page_size: format!("{page_size:.02} KiB")
+            page_size: page_size.to_string()
         }
     }
 
