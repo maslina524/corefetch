@@ -15,7 +15,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
         vec![
             LogoInfo {
                 names: &["zerene"],
-                lines: include_str!("z/zerene.txt"),
+                lines: include_bytes!("../../temp/z/zerene.txt"),
                 colors: &[
                     color::FG_BLUE,
                 ],
@@ -24,7 +24,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["zorin"],
-                lines: include_str!("z/zorin.txt"),
+                lines: include_bytes!("../../temp/z/zorin.txt"),
                 colors: &[
                     color::FG_BLUE,
                 ],
@@ -33,7 +33,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["z/os", "zos"],
-                lines: include_str!("z/zos.txt"),
+                lines: include_bytes!("../../temp/z/zos.txt"),
                 colors: &[
                     color::FG_BLUE,
                 ],
@@ -42,7 +42,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["zraxyl"],
-                lines: include_str!("z/zraxyl.txt"),
+                lines: include_bytes!("../../temp/z/zraxyl.txt"),
                 colors: &[
                     color::FG_BLUE,
                 ],

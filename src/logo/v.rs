@@ -15,7 +15,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
         vec![
             LogoInfo {
                 names: &["valhalla", "valhallaos", "valhalla-linux"],
-                lines: include_str!("v/valhalla.txt"),
+                lines: include_bytes!("../../temp/v/valhalla.txt"),
                 colors: &[
                     color::FG_DEFAULT,
                 ],
@@ -24,7 +24,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["vanilla"],
-                lines: include_str!("v/vanilla.txt"),
+                lines: include_bytes!("../../temp/v/vanilla.txt"),
                 colors: &[
                     color::FG_YELLOW,
                 ],
@@ -33,7 +33,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["vanilla2"],
-                lines: include_str!("v/vanilla2.txt"),
+                lines: include_bytes!("../../temp/v/vanilla2.txt"),
                 colors: &[
                     color::FG_YELLOW,
                 ],
@@ -42,7 +42,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["vanilla small"],
-                lines: include_str!("v/vanilla_small.txt"),
+                lines: include_bytes!("../../temp/v/vanilla_small.txt"),
                 colors: &[
                     color::FG_LIGHT_YELLOW,
                     color::FG_YELLOW,
@@ -52,7 +52,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["venom"],
-                lines: include_str!("v/venom.txt"),
+                lines: include_bytes!("../../temp/v/venom.txt"),
                 colors: &[
                     color::FG_LIGHT_BLACK,
                     color::FG_BLUE,
@@ -62,7 +62,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["venom small"],
-                lines: include_str!("v/venom_small.txt"),
+                lines: include_bytes!("../../temp/v/venom_small.txt"),
                 colors: &[
                     color::FG_LIGHT_BLACK,
                     color::FG_BLUE,
@@ -72,7 +72,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["vincentos"],
-                lines: include_str!("v/vincentos.txt"),
+                lines: include_bytes!("../../temp/v/vincentos.txt"),
                 colors: &[
                     color::FG_GREEN,
                     color::FG_DEFAULT,
@@ -82,7 +82,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["vnux"],
-                lines: include_str!("v/vnux.txt"),
+                lines: include_bytes!("../../temp/v/vnux.txt"),
                 colors: &[
                     color::FG_DEFAULT,
                     color::FG_DEFAULT,
@@ -95,7 +95,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["vzlinux"],
-                lines: include_str!("v/vzlinux.txt"),
+                lines: include_bytes!("../../temp/v/vzlinux.txt"),
                 colors: &[
                     color::FG_RED,
                     color::FG_WHITE,
@@ -106,7 +106,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["void"],
-                lines: include_str!("v/void.txt"),
+                lines: include_bytes!("../../temp/v/void.txt"),
                 colors: &[
                     color::FG_GREEN,
                     color::FG_LIGHT_BLACK,
@@ -116,7 +116,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["void small"],
-                lines: include_str!("v/void_small.txt"),
+                lines: include_bytes!("../../temp/v/void_small.txt"),
                 colors: &[
                     color::FG_GREEN,
                 ],
@@ -125,7 +125,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["void2"],
-                lines: include_str!("v/void2.txt"),
+                lines: include_bytes!("../../temp/v/void2.txt"),
                 colors: &[
                     color::FG_YELLOW,
                     color::FG_DEFAULT,
@@ -136,7 +136,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["void2 small"],
-                lines: include_str!("v/void2_small.txt"),
+                lines: include_bytes!("../../temp/v/void2_small.txt"),
                 colors: &[
                     color::FG_GREEN,
                 ],
