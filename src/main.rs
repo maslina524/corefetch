@@ -21,17 +21,18 @@
 #![allow(clippy::cast_sign_loss)]
 
 mod sync;
-mod os;
 mod macros;
 mod formats;
 mod xxhash64;
 mod preset;
-
-mod modules;
 mod color;
+
+mod os;
+mod modules;
 mod logo;
 mod detect;
 mod json;
+mod zlib;
 
 extern crate alloc;
 
