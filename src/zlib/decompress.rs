@@ -145,3 +145,19 @@ pub fn decompress(bytes: Vec<u8>, buf: &mut Vec<u8>) -> u32 {
     inflate(&mut stream, buf);
     stream.read_bytes(4) as u32
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::zlib::decompress;
+
+    #[test]
+    fn decompress_logo() {
+        let compressed = include_bytes!("../../temp/d/debian.txt");
+        let mut decompressed = Vec::new();
+
+        decompress(compressed.to_vec(), &mut decompressed);
+        let string = String::from_utf8(decompressed).expect("Non Utf8 logo");
+
+        println!("{string}");
+    }
+}
