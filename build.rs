@@ -81,6 +81,17 @@ fn main() {
         let dest_dir = format!("temp/{letter}");
         fs::create_dir_all(&dest_dir).ok();
         let dest_path = PathBuf::from(dest_dir).join(path.file_name().unwrap());
-        fs::write(dest_path, compressed).ok();
+        fs::write(dest_path, &*compressed).ok();
+        
+        #[allow(clippy::cast_precision_loss)]
+        {
+            println!(
+                "cargo:warning={}: {}b -> {}b = {:.02}%",
+                path.display(),
+                content.len(), 
+                compressed.len(),
+                (compressed.len() as f64 / content.len() as f64).mul_add(-100.0, 100.0)
+            );
+        }
     });
 }
