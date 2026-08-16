@@ -48,15 +48,7 @@ use alloc::{
 };
 
 use crate::{
-    json::Json,
-    logo::LogoInfo,
-    modules::{Break, Colors, FormatValue, Locale, Module, Os, Processes, Version, Weather},
-    os::allocator::Allocator,
-    os::env,
-    os::https::{Request, Response, Url},
-    os::windows::ExitProcess,
-    preset::{Preset, PresetModule},
-    color::{MODE_UNDERLINE, MODE_BOLD, MODE_ITALIC}
+    color::{MODE_BOLD, MODE_ITALIC, MODE_UNDERLINE}, json::Json, logo::LogoInfo, modules::{Break, Colors, FormatValue, Locale, Module, Os, Processes, Version, Weather}, os::{allocator::Allocator, env, fs, https::{Request, Response, Url}, windows::ExitProcess}, preset::{Preset, PresetModule}
 };
 
 #[global_allocator]
@@ -228,7 +220,7 @@ fn get_config(args: &mut Iter<'_, String>) -> Preset {
             })))
 }
 
-#[cfg(not(test))]
+// #[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
     let args = env::args();
@@ -239,17 +231,21 @@ extern "C" fn main() -> c_int {
 
     // Logo init
     #[allow(clippy::option_if_let_else)] // Clippy suggests a variant that would require an extra heap allocation
-    let logo_name = if let Some(pos) = args.iter().position(|a| a == "--logo" || a == "-l") {
-        &args.get(pos + 1).map_or_else(|| help(None), |val| {
-                val.to_lowercase().replace('_', " ")
-            })
+    let (logo_name, custom) = if let Some(pos) = args.iter().position(|a| a == "--logo" || a == "-l") {
+        args.get(pos + 1).map_or_else(|| help(None), |val| {
+            let custom = fs::read_to_string(val).ok();
+            (val.to_lowercase().replace('_', " "), custom)
+        })
     } else {
-        &Os::get().id.to_lowercase()
+        (Os::get().id.to_lowercase(), None)
     };
 
     // Build buffers
     let (w, _) = env::terminal_size();
-    let logo_lines = LogoInfo::new(logo_name).get_ansi_lines();
+    // let mut decompressed = Vec::new();
+    // decompress(self.lines.to_vec(), &mut decompressed);
+    // let lines_string = String::from_utf8(decompressed).expect("Non Utf8 in logo");
+    let logo_lines = LogoInfo::new(&logo_name).get_ready_logo_lines(custom);
     let max_logo_len = max_line_len(&logo_lines);
     let padding = Preset::get().get_logo_padding();
     let max_logo_len_padding = max_logo_len + padding.left + padding.right;

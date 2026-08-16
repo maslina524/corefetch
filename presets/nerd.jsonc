@@ -1,0 +1,18 @@
+{
+    "modules": [
+        "title",
+        "separator",
+        {
+            "type": "os",
+            "format": "{pretty-name}",
+            "key": "{nerd-emoji} ",
+            "keyColor": "reset_yellow"
+        },
+        {
+            "type": "cpu",
+            "format": "{name} ({core-types}) @ {freq-base}",
+            "key": "\uf4bc ",
+            "keyColor": "reset_yellow"
+        }
+    ]
+}
