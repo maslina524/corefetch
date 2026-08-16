@@ -9,7 +9,7 @@ use crate::{
     color,
     format,
     sync::OnceLock,
-    zlib::decompress
+    zlib
 };
 
 mod a;
@@ -107,11 +107,13 @@ impl LogoInfo {
         LOGO_INFO.get().map(|v| &**v)
     }
 
-    pub fn get_ansi_lines(&self) -> Vec<(String, usize)> {
-        let mut decompressed = Vec::new();
-        decompress(self.lines.to_vec(), &mut decompressed);
-        let lines_string = String::from_utf8(decompressed).expect("Non Utf8 in logo");
-
+    pub fn get_ready_logo_lines(&self, string: Option<String>) -> Vec<(String, usize)> {
+        let lines_string = string.unwrap_or_else(|| {
+            let mut decompressed = Vec::new();
+            zlib::decompress(self.lines.to_vec(), &mut decompressed);
+            String::from_utf8(decompressed).expect("Non Utf8 in logo")
+        });
+        
         let lines: Vec<String> = lines_string.lines().map(ToOwned::to_owned).collect();
         let mut ret = Vec::new();
         let mut cur_code = "";
