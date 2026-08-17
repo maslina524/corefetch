@@ -19,7 +19,7 @@ use crate::{
         LocalFree, CloseHandle, PSID
     },
     sync::OnceLock,
-    todo_or
+    todo_or_default
 };
 
 static USER_NAME : OnceLock<String> = OnceLock::new();
@@ -126,7 +126,7 @@ pub fn exe_path() -> String {
 }
 
 pub const fn user_shell() -> String {
-    todo_or!("Will be implemented in the future", String::new())
+    todo_or_default!("Will be implemented in the future", String::new())
 }
 
 pub fn cwd() -> String {
