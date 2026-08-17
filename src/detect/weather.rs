@@ -18,7 +18,7 @@ pub struct WeatherInfo {
     pub result: String,
     pub condition_emoji: String,
     pub condition: String,
-    pub condition_symbol: char,
+    pub condition_symbol: String,
     pub humidity: String,
     pub temperature_actual: String,
     pub temperature_feels: String,
@@ -81,9 +81,7 @@ impl WeatherInfo {
             result: format!("{temperature_actual} — {condition} ({location})"),
             condition_emoji: condition_emoji.to_owned(),
             condition: condition.to_owned(), 
-            condition_symbol: condition_symbol
-                .parse::<char>()
-                .expect("Strange response from wttr.is"), 
+            condition_symbol: condition_symbol.to_owned(), 
             humidity: humidity.to_owned(), 
             temperature_actual: temperature_actual.to_owned(), 
             temperature_feels: temperature_feels.to_owned(), 

@@ -34,7 +34,7 @@ unsafe impl GlobalAlloc for Allocator {
                 0, 
                 layout.size()
             );
-            assert!(!ptr.is_null(), "HeapAlloc error!");
+            assert!(!ptr.is_null(), "`HeapAlloc` error!");
             ptr.cast::<u8>()
         }
     }
@@ -52,7 +52,7 @@ unsafe impl GlobalAlloc for Allocator {
                 0, 
                 ptr.cast::<c_void>()
             );
-            assert!(ret != 0, "HeapFree error!");
+            assert!(ret != 0, "`HeapFree` error!");
         }
     }
 }
