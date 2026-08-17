@@ -19,7 +19,7 @@ use crate::{
     },
     os::regedit::{Regedit, RegValue, Access, Hkey},
     sync::OnceLock,
-    todo_or,
+    todo_or_default,
     format
 };
 
@@ -184,7 +184,7 @@ impl CpuInfo {
 
     const fn code_name() -> String {
         if cfg!(any(target_arch = "x86_64", target_arch = "x86")) {
-            todo_or!("fn code_name is not implemented", String::new())
+            todo_or_default!("fn code_name is not implemented", String::new())
         } else {
             String::new()
         }
@@ -286,15 +286,15 @@ impl CpuInfo {
 
     // NOT IMPLEMENTED
     const fn logical_grouped() -> String {
-        todo_or!("Will be implemented in the future", String::new())
+        todo_or_default!("Will be implemented in the future", String::new())
     }
 
     const fn max_freq_formatted() -> String {
-        todo_or!("Cannot be implemented on Windows (or very difficult)", String::new())
+        todo_or_default!("Cannot be implemented on Windows (or very difficult)", String::new())
     }
 
     const fn temperature() -> String {
-        todo_or!("Cannot be implemented on Windows (or very difficult)", String::new())
+        todo_or_default!("Cannot be implemented on Windows (or very difficult)", String::new())
     }
 }
 
