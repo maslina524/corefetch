@@ -145,7 +145,7 @@ impl File {
 
         // SAFETY: The handle is always correct, 
         // errors are checked, the function is safe
-        let ret = unsafe {
+        unsafe {
             ReadFile(
                 self.0,
                 buf.as_mut_ptr(), 

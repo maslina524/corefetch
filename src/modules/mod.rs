@@ -115,7 +115,7 @@ macro_rules! format_for_module {
             &self,
             key: super::FormatValue, 
             format: super::FormatValue, 
-            map: &alloc::collections::BTreeMap<alloc::string::String, $crate::json::Value>
+            _map: &alloc::collections::BTreeMap<alloc::string::String, $crate::json::Value>
         ) -> alloc::string::String {
             let key_color = key.color.unwrap_or($crate::logo::LogoInfo::get().unwrap().color_keys);
             let key_raw = key.format.unwrap_or(self.key());
@@ -140,19 +140,23 @@ macro_rules! format_for_module_wo_key {
             &self, 
             _key: super::FormatValue, 
             format: super::FormatValue,
-            map: &alloc::collections::BTreeMap<alloc::string::String, $crate::json::Value>
+            _map: &alloc::collections::BTreeMap<alloc::string::String, $crate::json::Value>
         ) -> alloc::string::String {
-            let value_color = format.color.unwrap_or($crate::logo::LogoInfo::get().unwrap().color_title);
+            // let value_color = format.color.unwrap_or($crate::logo::LogoInfo::get().unwrap().color_title);
             let value_format = format.format.unwrap_or(self.title());
             $crate::format_module!(value_format, self, $($field),*)
         }
     };
 }
 
+
 #[macro_export]
 macro_rules! format_module {
     ($format:expr, $obj:ident, $($field:ident),*) => {{
+        #[allow(unused_mut)]
         let mut result = alloc::string::ToString::to_string($format);
+        #[allow(unused_mut)]
+        #[allow(unused_variables)]
         let mut idx = 1;
         
         $(
@@ -167,7 +171,8 @@ macro_rules! format_module {
             let placeholder_idx = alloc::fmt::format(format_args!("{{{}}}", idx));
             result = result.replace(&placeholder_idx, value);
             
-            idx += 1;
+            #[allow(unused_assignments)]
+            { idx += 1 };
         )*
         
         result

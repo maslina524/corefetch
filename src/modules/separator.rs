@@ -4,7 +4,6 @@ use alloc::{
 };
 
 use crate::{
-    format,
     impl_display_for_module, 
     modules::{Module, Title, FormatValue},
     sync::OnceLock,

@@ -1,12 +1,7 @@
-use alloc::string::String;
-
 use crate::{
-    format,
     impl_display_for_module,
     format_for_module,
-    detect::kernel,
     modules::Module, 
-    preset::PresetModule,
     sync::OnceLock
 };
 

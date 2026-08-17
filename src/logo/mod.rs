@@ -1,8 +1,7 @@
 use alloc::{
     borrow::ToOwned,
     string::String,
-    vec::Vec,
-    vec
+    vec::Vec
 };
 
 use crate::{

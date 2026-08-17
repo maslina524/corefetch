@@ -183,8 +183,6 @@ impl core::fmt::Display for Path {
 
 #[cfg(test)]
 mod tests {
-    use alloc::string::String;
-
     use crate::os::path::Path;
   
     extern crate std;
