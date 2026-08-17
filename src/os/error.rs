@@ -2,7 +2,8 @@ use core::fmt::Display;
 
 use crate::{
     os::windows::{FormatMessageW, GetLastError},
-    os::encoding::{utf16le_to_utf8, Utf16Len}
+    os::encoding::{utf16le_to_utf8, Utf16Len},
+    abort
 };
 
 pub type Result<T> = core::result::Result<T, ErrorCode>;
@@ -31,15 +32,15 @@ impl ErrorCode {
     #[cold]
     #[track_caller]
     pub fn panic(&self) -> ! {
-        panic!("WinApi: {self}")
+        abort!("WinApi: {}", self)
     }
 
     pub fn panic_code(&self) -> ! {
-        panic!("WinApi: Code {}", self.0)
+        abort!("WinApi: Code {}", self.0)
     }
 
     pub const fn is_file_not_found(&self) -> bool {
-        self.0 == 2
+        self.0 == 0x2
     }
 }
 

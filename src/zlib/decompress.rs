@@ -1,8 +1,13 @@
-use alloc::vec::Vec;
-use alloc::vec;
+use alloc::{
+    vec::Vec,
+    vec
+};
 
-use crate::zlib::huffman::{HuffmanTree, decode_symb};
-use crate::zlib::stream::Stream;
+use crate::{
+    abort,
+    zlib::huffman::{HuffmanTree, decode_symb},
+    zlib::stream::Stream
+};
 
 const LENGTH_BASE: [u32; 29] = [3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31, 35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258];
 const LENGTH_EXTRA_BITS: [u32; 29] = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0];
@@ -62,7 +67,7 @@ pub fn inflate_compressed_block(
                 inflated.push(inflated[inflated.len() - distance as usize]);
             }
         } else {
-            panic!("Invalid Huffman symbol: {symb}");
+            abort!("Invalid Huffman symbol: {}", symb);
         }
     }
 }

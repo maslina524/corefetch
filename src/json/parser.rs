@@ -9,7 +9,8 @@ use alloc::{
 
 use crate::{
     json::lexer::{Token, TokenStream},
-    formats::expand_unicode
+    formats::expand_unicode,
+    format
 };
 
 #[derive(Debug, Clone)]
@@ -150,12 +151,12 @@ impl Parser {
         token
     }
 
-    fn consume(&mut self, expected: &Token) -> Token {
+    fn consume(&mut self, expected: &Token) -> Result<Token, String> {
         let token = self.next().expect("Unexpected end of input");
         if token == *expected {
-            token
+            Ok(token)
         } else {
-            panic!("Expected {expected:?}, got {token:?}");
+            Err(format!("Expected {expected:?}, got {token:?}"))
         }
     }
 
@@ -191,7 +192,7 @@ impl Parser {
                 self.next();
                 Ok(Value::Null)
             }
-            _ => panic!("Unexpected token while parsing value"),
+            _ => Err("Unexpected token while parsing value"),
         }
     }
 
@@ -260,7 +261,7 @@ impl Parser {
                     self.next();
                     break;
                 }
-                _ => panic!("Expected ',' or ']' in array"),
+                _ => return Err("Expected ',' or ']' in array"),
             }
         }
 

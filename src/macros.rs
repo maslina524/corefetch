@@ -11,13 +11,13 @@ macro_rules! todo_or_default {
 #[macro_export]
 macro_rules! warning {
     ($lit:literal) => {{
-        eprintln!(
+        $crate::eprintln!(
             concat!("\x1b[1;{}mwarning\x1b[0m: ", $lit),
             $crate::color::FG_YELLOW
         );
     }};
     ($lit:literal, $($args:tt)*) => {{
-        eprintln!(
+        $crate::eprintln!(
             concat!("\x1b[1;{}mwarning\x1b[0m: ", $lit),
             $crate::color::FG_YELLOW,
             $($args)*
@@ -28,14 +28,14 @@ macro_rules! warning {
 #[macro_export]
 macro_rules! abort {
     ($lit:literal) => {{
-        eprintln!(
+        $crate::eprintln!(
             concat!("\x1b[1;{}mabort\x1b[0m: ", $lit),
             $crate::color::FG_RED
         );
         $crate::exit(101)
     }};
     ($lit:literal, $($args:tt)*) => {{
-        eprintln!(
+        $crate::eprintln!(
             concat!("\x1b[1;{}mabort\x1b[0m: ", $lit),
             $crate::color::FG_RED,
             $($args)*

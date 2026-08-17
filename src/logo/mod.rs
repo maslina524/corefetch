@@ -9,7 +9,8 @@ use crate::{
     color,
     format,
     sync::OnceLock,
-    zlib
+    zlib,
+    abort
 };
 
 mod a;
@@ -61,7 +62,9 @@ pub struct LogoInfo {
 impl LogoInfo {
     pub fn new(name: &str) -> &Self {
         LOGO_INFO.get_or_init(|| {
-            let first_char = name.chars().next().unwrap();
+            let Some(first_char) = name.chars().next() else {
+                abort!("An empty string was passed for logo")
+            };
 
             let stack = match first_char {
                 'a' | 'A' => a::get(),

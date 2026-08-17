@@ -39,7 +39,7 @@ pub struct Weather {
     pub result: String,
     pub condition_emoji: String,
     pub condition: String,
-    pub condition_symbol: char,
+    pub condition_symbol: String,
     pub humidity: String,
     pub temperature_actual: String,
     pub temperature_feels: String,
