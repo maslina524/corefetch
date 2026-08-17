@@ -54,7 +54,7 @@ use crate::{
     modules::{Break, Colors, FormatValue, Locale, Module, Os, Processes, Version, Weather}, 
     os::allocator::Allocator,
     os::env,
-    os::fs,
+    os::fs::{self, ReadError},
     os::https::{Request, Response, Url},
     os::windows::ExitProcess, 
     preset::{Preset, PresetModule}
@@ -229,6 +229,29 @@ fn get_config(args: &mut Iter<'_, String>) -> Preset {
             })))
 }
 
+fn get_logo_name_and_custom(val: &str) -> (String, Option<String>) {
+    let ready_val = val.to_lowercase().replace('_', " ");
+    match fs::read_to_string(val) {
+        Ok(s) => (Os::get().id.to_lowercase(), Some(s)),
+        Err(e) => {
+            match e {
+                ReadError::Utf8(u) => {
+                    warning!("Failed to use logo from fs: {}", u);
+                    (Os::get().id.to_lowercase(), None)
+                }
+                ReadError::Code(c) => {
+                    if c.is_file_not_found() {
+                        (ready_val, None)
+                    } else {
+                        warning!("Failed to use logo from fs: {}", c);
+                        (Os::get().id.to_lowercase(), None)
+                    }
+                }
+            }
+        }
+    }
+}
+
 // #[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
@@ -242,8 +265,7 @@ extern "C" fn main() -> c_int {
     #[allow(clippy::option_if_let_else)] // Clippy suggests a variant that would require an extra heap allocation
     let (logo_name, custom) = if let Some(pos) = args.iter().position(|a| a == "--logo" || a == "-l") {
         args.get(pos + 1).map_or_else(|| help(None), |val| {
-            let custom = fs::read_to_string(val).ok();
-            (val.to_lowercase().replace('_', " "), custom)
+            get_logo_name_and_custom(val)
         })
     } else {
         (Os::get().id.to_lowercase(), None)

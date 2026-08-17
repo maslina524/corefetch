@@ -37,6 +37,10 @@ impl ErrorCode {
     pub fn panic_code(&self) -> ! {
         panic!("WinApi: Code {}", self.0)
     }
+
+    pub const fn is_file_not_found(&self) -> bool {
+        self.0 == 2
+    }
 }
 
 impl Display for ErrorCode {
