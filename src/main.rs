@@ -210,20 +210,31 @@ fn get_config(args: &mut Iter<'_, String>) -> Preset {
     args.position(|a| a == "--config" || a == "-c").map_or_else(Preset::default, |pos| args.next().map_or_else(|| {
             help(None);
         }, |path| Url::new(path).map_or_else(|| { // FS Path
-                let json = Json::from_file(path).unwrap();
-                Preset::from_json(&json)
-                
+                match Json::from_file(path) {
+                    Ok(c) => Preset::from_json(&c),
+                    Err(e) => {
+                        warning!("Failed to parse the json config");
+                        Preset::default()
+                    }
+                }
             }, |url| { // Http Url
                 let response = Request::from_url(url).get();
                 if response.is_success() {
-                    let text = match response.as_text() {
-                        Ok(t) => t,
-                        Err(e) => panic!("Utf8 err: {e}")
-                    };
-                    let json = Json::from_str(&text);
-                    Preset::from_json(&json)
+                    match response.as_text() {
+                        Ok(t) => match Json::from_str(&t) {
+                            Ok(c) => Preset::from_json(&c),
+                            Err(e) => {
+                                warning!("Failed to parse the json config: {}", e);
+                                Preset::default()
+                            }
+                        },
+                        Err(e) => {
+                            warning!("Failed to parse the response: {}", e);
+                            Preset::default()
+                        }
+                    }
                 } else {
-                    eprintln!("Failed to get preset from URL, Code: {}\n", response.code());
+                    warning!("Failed to get preset from URL, Code: {}", response.code());
                     Preset::default()
                 }
             })))

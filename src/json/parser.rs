@@ -159,61 +159,61 @@ impl Parser {
         }
     }
 
-    pub fn parse_value(&mut self) -> Value {
+    pub fn parse_value(&mut self) -> Result<Value, &'static str> {
         match self.peek() {
             Some(Token::LCurly) => {
-                Value::Dict(self.parse_object())
+                Ok(Value::Dict(self.parse_object()?))
             }
             Some(Token::LBrace) => {
-                Value::Array(self.parse_array())
+                Ok(Value::Array(self.parse_array()?))
             }
             Some(Token::String(s)) => {
                 let s = s.clone();
                 self.next();
                 let content = expand_unicode(&s[1..s.len() - 1]);
-                Value::String(content)
+                Ok(Value::String(content))
             }
             Some(Token::Number(s)) => {
                 let s = s.clone();
                 self.next();
                 let num = f64::from_str(&s).expect("Invalid number format");
-                Value::Number(num)
+                Ok(Value::Number(num))
             }
             Some(Token::True) => {
                 self.next();
-                Value::Bool(true)
+                Ok(Value::Bool(true))
             }
             Some(Token::False) => {
                 self.next();
-                Value::Bool(false)
+                Ok(Value::Bool(false))
             }
             Some(Token::Null) => {
                 self.next();
-                Value::Null
+                Ok(Value::Null)
             }
             _ => panic!("Unexpected token while parsing value"),
         }
     }
 
-    pub fn parse_object(&mut self) -> Map {
+    pub fn parse_object(&mut self) -> Result<Map, &'static str> {
         self.next(); // consume '{'
         let mut map = Map::new();
 
         if matches!(self.peek(), Some(Token::RCurly)) {
             self.next();
-            return map;
+            return Ok(map);
         }
 
         loop {
             let key_token = self.next().expect("Expected object key");
             let key = match key_token {
                 Token::String(s) => s[1..s.len() - 1].to_owned(),
-                _ => panic!("Object key must be a string"),
+                _ => return Err("Object key must be a string"),
             };
 
             self.consume(&Token::Colon);
 
-            let value = self.parse_value();
+            let value = self.parse_value()?;
             map.insert(key, value);
 
             match self.peek() {
@@ -228,24 +228,24 @@ impl Parser {
                     self.next();
                     break;
                 }
-                _ => panic!("Expected ',' or '}}' in object"),
+                _ => return Err("Expected ',' or '}}' in object"),
             }
         }
 
-        map
+        Ok(map)
     }
 
-    pub fn parse_array(&mut self) -> Vec<Value> {
+    pub fn parse_array(&mut self) -> Result<Vec<Value>, &'static str> {
         self.next(); // consume '['
         let mut vec = Vec::new();
 
         if matches!(self.peek(), Some(Token::RBrace)) {
             self.next();
-            return vec;
+            return Ok(vec);
         }
 
         loop {
-            let value = self.parse_value();
+            let value = self.parse_value()?;
             vec.push(value);
 
             match self.peek() {
@@ -264,7 +264,7 @@ impl Parser {
             }
         }
 
-        vec
+        Ok(vec)
     }
 }
 

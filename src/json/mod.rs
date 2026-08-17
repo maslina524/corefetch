@@ -8,7 +8,7 @@ pub use parser::{Map, Value};
 use core::str::FromStr;
 
 use alloc::{
-    string::String,
+    string::{String, ToString},
     collections::BTreeMap
 };
 
@@ -22,13 +22,16 @@ use crate::{
 pub struct Json;
 
 impl Json {
-    pub fn from_file(path: impl Into<Path>) -> Result<Map, fs::ReadError> {
-        let string = fs::read_to_string(path.into())?;
-        let map = Self::from_str(&string);
+    pub fn from_file(path: impl Into<Path>) -> Result<Map, String> {
+        let string = match fs::read_to_string(path.into()) {
+            Ok(c) => c,
+            Err(e) => return Err(e.to_string())
+        };
+        let map = Self::from_str(&string)?;
         Ok(map)
     }
 
-    pub fn from_str(s: &str) -> Map {
+    pub fn from_str(s: &str) -> Result<Map, &'static str> {
         let stream = TokenStream::new(s);
         let mut parser = Parser::new(stream);
         parser.parse_object()
