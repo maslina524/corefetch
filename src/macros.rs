@@ -27,8 +27,6 @@ macro_rules! abort {
 
 #[cfg(test)]
 mod tests {
-    use crate::warning;
-
     #[test]
     fn warning_test() {
         warning!("Example warn");

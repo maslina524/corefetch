@@ -6,7 +6,6 @@ use crate::{
     format,
     modules::Module,
     detect::datetime,
-    os::env,
     sync::OnceLock
 };
 

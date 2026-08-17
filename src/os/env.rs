@@ -14,18 +14,14 @@ use crate::{
     os::error::{self, ErrorCode},
     os::fs::{Access, File},
     os::windows::{
-        CONSOLE_SCREEN_BUFFER_INFO, CloseHandle, CommandLineToArgvW, CreateToolhelp32Snapshot,
+        CONSOLE_SCREEN_BUFFER_INFO, CloseHandle, CommandLineToArgvW,
         FILETIME, GetCommandLineW, GetConsoleScreenBufferInfo, GetSystemTimeAsFileTime,
-        OSVERSIONINFOW, PROCESSENTRY32, EnumProcesses, RtlGetVersion
+        OSVERSIONINFOW, EnumProcesses, RtlGetVersion
     },
     os::regedit::{self, Regedit, RegValue, Hkey},
     sync::OnceLock
 };
 
-const TH32CS_SNAPPROCESS   : u32         = 0x0002;
-const INVALID_HANDLE       : *mut c_void = (-1isize).cast_unsigned() as *mut c_void;
-const TIME_ZONE_ID_INVALID : u32         = u32::MAX;
-const TIME_ZONE_ID_DAYLIGHT: u32         = 2;
 const EPOCH_DIFF           : u64         = 116_444_736_000_000_000;
 
 static TERMINAL_HANDLE     : OnceLock<isize>   = OnceLock::new();
@@ -200,10 +196,6 @@ pub fn timestamp_secs() -> u64 {
     timestamp_mils() / 1_000
 }
 
-pub fn timestamp_mins() -> u64 {
-    timestamp_secs() / 60
-}
-
 pub fn timestamp_hours() -> u64 {
     timestamp_secs() / 3600
 }
@@ -215,7 +207,7 @@ pub fn args() -> Vec<String> {
 
     // SAFETY: Just a WinAPI function,
     // I don't know what to write, it's safe
-    let mut argv_ptrs = unsafe {
+    let argv_ptrs = unsafe {
         CommandLineToArgvW(
             ptr, 
             &raw mut argv_count
@@ -244,8 +236,6 @@ pub fn args() -> Vec<String> {
 
 #[cfg(test)]
 mod tests {
-    use alloc::string::String;
-
     use crate::os::env;
   
     extern crate std;

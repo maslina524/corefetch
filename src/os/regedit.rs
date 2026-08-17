@@ -172,7 +172,7 @@ impl Regedit {
         let size_usize = size as usize;
         let mut buf = Vec::with_capacity(size_usize);
         // SAFETY: Completely safe
-        let ret = unsafe {
+        unsafe {
             RegQueryValueExW(
                 self.0.load(Ordering::Acquire), 
                 wide.as_ptr(),
@@ -301,7 +301,7 @@ impl Regedit {
 
 impl Drop for Regedit {
     fn drop(&mut self) {
-        self.close();
+        let _ = self.close();
     }
 }
 
@@ -309,7 +309,7 @@ impl Drop for Regedit {
 mod tests {
     use crate::{
         detect::cpu::CpuInfo,
-        os::regedit::{Access, Hkey, RegValue, Regedit}
+        os::regedit::{Access, Hkey, Regedit}
     };
 
     extern crate std;

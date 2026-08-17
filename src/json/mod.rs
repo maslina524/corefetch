@@ -5,17 +5,13 @@ use lexer::TokenStream;
 use parser::Parser;
 pub use parser::{Map, Value};
 
-use core::str::FromStr;
-
 use alloc::{
     string::{String, ToString},
-    collections::BTreeMap
 };
 
 use crate::{
     os::path::Path,
     os::fs,
-    xxhash64::XXHash64
 };
 
 #[derive(Debug)]
@@ -31,23 +27,15 @@ impl Json {
         Ok(map)
     }
 
-    pub fn from_str(s: &str) -> Result<Map, &'static str> {
+    pub fn from_str(s: &str) -> Result<Map, String> {
         let stream = TokenStream::new(s);
         let mut parser = Parser::new(stream);
         parser.parse_object()
-    }
-
-    pub fn hash(s: &str) -> u64 {
-        let mut stream = TokenStream::new(s);
-        let data = stream.as_str();
-        XXHash64::hash_bytes(data.as_bytes(), 0)
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use core::str::FromStr;
-
     use crate::json::Json;
 
     #[test]

@@ -12,7 +12,7 @@
     clippy::mut_from_ref,
     clippy::fn_to_numeric_cast_any,
 )]
-#![allow(unused)]
+#![allow(dead_code)]
 #![allow(clippy::struct_field_names)]
 #![allow(clippy::too_many_lines)]
 #![allow(clippy::cast_lossless)]
@@ -43,7 +43,6 @@ use core::{
 
 use alloc::{
     string::{String, ToString},
-    borrow::ToOwned,
     vec::Vec
 };
 
@@ -51,11 +50,11 @@ use crate::{
     color::{MODE_BOLD, MODE_ITALIC, MODE_UNDERLINE},
     json::Json,
     logo::LogoInfo, 
-    modules::{Break, Colors, FormatValue, Locale, Module, Os, Processes, Version, Weather}, 
+    modules::{FormatValue, Module, Os}, 
     os::allocator::Allocator,
     os::env,
     os::fs::{self, ReadError},
-    os::https::{Request, Response, Url},
+    os::https::{Request, Url},
     os::windows::ExitProcess, 
     preset::{Preset, PresetModule}
 };
@@ -70,7 +69,6 @@ mod panic_impl {
     use core::panic::PanicInfo;
 
     use crate::{
-        os::windows::ExitProcess,
         exit,
         eprintln
     };
@@ -100,7 +98,7 @@ fn build_logo_buf(lines: &Vec<(String, usize)>, max_len: usize) -> Vec<String> {
     let max_len_padding = max_len + padding.left + padding.right;
     let mut ret = Vec::new();
 
-    let (w, h) = env::terminal_size();
+    let (w, _) = env::terminal_size();
     if w < max_len_padding {
         return Vec::new();
     }
@@ -127,7 +125,6 @@ fn build_logo_buf(lines: &Vec<(String, usize)>, max_len: usize) -> Vec<String> {
 fn split_by_len(string: &str, len: usize) -> Vec<&str> {
     let mut result = Vec::new();
     let mut chars = string.chars().peekable();
-    let mut start = 0;
     let mut byte_pos = 0;
 
     while chars.peek().is_some() {
@@ -199,7 +196,7 @@ pub fn exit(code: u32) -> ! {
     unsafe { ExitProcess(code) }
 }
 
-fn help(theme: Option<&str>) -> ! {
+fn help(_theme: Option<&str>) -> ! {
     println!("Nofetch is a neofetch-like tool for beautiful system information display with flexible output customization\n");
     println!("\x1b[{MODE_UNDERLINE};{MODE_BOLD}mUsage: \x1b[{MODE_BOLD}mnofetch\x1b[{MODE_ITALIC}m <?options>\x1b[0m");
 
@@ -207,13 +204,13 @@ fn help(theme: Option<&str>) -> ! {
 }
 
 fn get_config(args: &mut Iter<'_, String>) -> Preset {
-    args.position(|a| a == "--config" || a == "-c").map_or_else(Preset::default, |pos| args.next().map_or_else(|| {
+    args.position(|a| a == "--config" || a == "-c").map_or_else(Preset::default, |_| args.next().map_or_else(|| {
             help(None);
         }, |path| Url::new(path).map_or_else(|| { // FS Path
                 match Json::from_file(path) {
                     Ok(c) => Preset::from_json(&c),
                     Err(e) => {
-                        warning!("Failed to parse the json config");
+                        warning!("Failed to parse the json config: {e}");
                         Preset::default()
                     }
                 }
@@ -325,7 +322,7 @@ extern "C" fn main() -> c_int {
 
     // The handle is created not with GetStdHandle,
     // but with `CreateFile`, which requires manual freeing
-    env::close_terminal_handle();
+    let _ = env::close_terminal_handle();
 
     0
 }

@@ -1,12 +1,7 @@
-use core::str::Chars;
-
 use alloc::{
     string::String,
     vec::Vec,
-    borrow::ToOwned
 };
-
-use crate::format;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Token {
@@ -25,23 +20,6 @@ pub enum Token {
     Colon
 }
 
-impl Token {
-    pub fn lexeme(&self) -> &str {
-        match self {
-            Self::String(s) | Self::Number(s) => s,
-            Self::False => "False",
-            Self::True => "true",
-            Self::Null => "null",
-            Self::LCurly => "{",
-            Self::RCurly => "}",
-            Self::LBrace => "[",
-            Self::RBrace => "]",
-            Self::Comma => ",",
-            Self::Colon => ":",
-        }
-    }
-}
-
 #[derive(Clone)]
 pub struct TokenStream {
     chars: Vec<char>,
@@ -51,14 +29,6 @@ pub struct TokenStream {
 impl TokenStream {
     pub fn new(source: &str) -> Self {
         Self { chars: source.chars().collect(), pos: 0 }
-    }
-
-    pub fn as_str(&mut self) -> String {
-        let mut ret = String::new();
-        for t in self.by_ref() {
-            ret.push_str(t.lexeme());
-        }
-        ret
     }
 
     fn skip_whitespace(&mut self) {
@@ -258,25 +228,6 @@ mod tests {
 
         assert_eq!(stream.next(), Some(Token::RBrace));
         assert_eq!(stream.next(), Some(Token::RCurly));
-    }
-
-    #[test]
-    fn as_str_test() {
-        let source = r#"{
-            "array": [
-                42, 55, 10.70, -98.84
-            ],
-            "active": true,
-            "modules": [
-                {
-                    "type": "title"
-                }
-            ]
-        }"#;
-        let mut stream = TokenStream::new(source);
-
-        let string = source.replace([' ', '\n'], "");
-        assert_eq!(string, stream.as_str());
     }
 
     #[test]

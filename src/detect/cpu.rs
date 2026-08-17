@@ -12,20 +12,17 @@ use alloc::{
 };
 
 use crate::{
-    os::error::{self, ErrorCode},
+    os::error::ErrorCode,
     os::windows::{
         GetActiveProcessorCount, GetLogicalProcessorInformation, GetNumaHighestNodeNumber,
         SYSTEM_LOGICAL_PROCESSOR_INFORMATION
     },
-    os::regedit::{Regedit, RegValue, Access, Hkey},
-    sync::OnceLock,
+    os::regedit::{Regedit, Access, Hkey},
     todo_or_default,
     format
 };
 
 type LogicalInfo = SYSTEM_LOGICAL_PROCESSOR_INFORMATION;
-
-static VEC_LOGICAL_INFO: OnceLock<Vec<LogicalInfo>> = OnceLock::new();
 
 pub struct CpuInfo {
     pub name: String,
@@ -76,7 +73,7 @@ impl CpuInfo {
         let mut size = 0;
 
         // SAFETY: Completely safe
-        let ret = unsafe {
+        unsafe {
             GetLogicalProcessorInformation(
                 ptr::null_mut(), 
                 &raw mut size
@@ -90,7 +87,7 @@ impl CpuInfo {
         let mut buf = Vec::with_capacity(buf_size);
 
         // SAFETY: Completely safe
-        let ret = unsafe {
+        unsafe {
             GetLogicalProcessorInformation(
                 buf.as_mut_ptr(), 
                 &raw mut size
@@ -105,7 +102,7 @@ impl CpuInfo {
 
     fn vendor() -> String {
         let ret = __cpuid(0);
-        let (eax, ebx, ecx, edx) = (ret.eax, ret.ebx, ret.ecx, ret.edx);
+        let (_, ebx, ecx, edx) = (ret.eax, ret.ebx, ret.ecx, ret.edx);
 
         let vendor = vec![
             (ebx & 0xFF) as u8,
@@ -154,7 +151,7 @@ impl CpuInfo {
             if info.Relationship == 0 {
                 let mut mask = info.ProcessorMask;
                 while mask != 0 {
-                    mask &= (mask - 1);
+                    mask &= mask - 1;
                     logical += 1;
                 }
             }
@@ -249,8 +246,8 @@ impl CpuInfo {
 
         if !os_supports_ymm() { return 2 }
 
-        if (!cpuid_has_feature(1, 0, 2, 28)) { return 2 }
-        if (!cpuid_has_feature(1, 0, 2, 27)) { return 2 }
+        if !cpuid_has_feature(1, 0, 2, 28) { return 2 }
+        if !cpuid_has_feature(1, 0, 2, 27) { return 2 }
         
         let ret = __cpuid(7);
         let ebx = ret.ebx;
@@ -321,7 +318,7 @@ fn os_supports_zmm() -> bool {
 
 #[cfg(test)]
 mod tests {
-    use crate::detect::cpu::{self, CpuInfo};
+    use crate::detect::cpu::CpuInfo;
 
     extern crate std;
 

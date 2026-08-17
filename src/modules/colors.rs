@@ -1,7 +1,6 @@
 use alloc::{
     string::String,
     collections::BTreeMap,
-    borrow::ToOwned,
     vec
 };
 
@@ -41,7 +40,7 @@ impl Module for Colors {
         "colors"
     }
 
-    fn format(&self, key: super::FormatValue, format: super::FormatValue, map: &BTreeMap<String, Value>) -> String {
+    fn format(&self, _key: super::FormatValue, _format: super::FormatValue, map: &BTreeMap<String, Value>) -> String {
         let padding_left_num = map
             .get("paddingLeft")
             .unwrap_or(&Value::Null)

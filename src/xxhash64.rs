@@ -52,7 +52,7 @@ impl XXHash64 {
 
         self.total_len += input.len() as u64;
         let mut data = input;
-        let mut buf_used = self.buf_size;
+        let buf_used = self.buf_size;
 
         if buf_used + data.len() < MAX_BUF_SIZE {
             self.buf[buf_used..buf_used + data.len()].copy_from_slice(data);
@@ -175,7 +175,7 @@ mod tests {
         let mut counter = 0;
 
         while end > env::timestamp_mils() {
-            let hash = XXHash64::hash_bytes(b"Hello World", 0);
+            let _ = XXHash64::hash_bytes(b"Hello World", 0);
             counter += 1;
         }
         

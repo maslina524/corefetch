@@ -1,15 +1,12 @@
 use alloc::{
     string::String,
-    borrow::ToOwned
 };
 
 use crate::{
-    format,
     format_for_module,
     impl_display_for_module,
     modules::Module,
     detect::wallpaper,
-    os::env, 
     sync::OnceLock
 };
 

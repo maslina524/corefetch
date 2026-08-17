@@ -3,8 +3,6 @@ use alloc::{
     vec::Vec
 };
 
-use crate::format;
-
 #[derive(Clone, PartialEq)]
 pub enum FileSize {
     Byte(u16),

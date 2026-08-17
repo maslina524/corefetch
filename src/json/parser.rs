@@ -4,7 +4,6 @@ use alloc::{
     string::String,
     vec::Vec,
     borrow::ToOwned,
-    collections::BTreeMap,
 };
 
 use crate::{
@@ -160,7 +159,7 @@ impl Parser {
         }
     }
 
-    pub fn parse_value(&mut self) -> Result<Value, &'static str> {
+    pub fn parse_value(&mut self) -> Result<Value, String> {
         match self.peek() {
             Some(Token::LCurly) => {
                 Ok(Value::Dict(self.parse_object()?))
@@ -192,11 +191,11 @@ impl Parser {
                 self.next();
                 Ok(Value::Null)
             }
-            _ => Err("Unexpected token while parsing value"),
+            _ => Err("Unexpected token while parsing value".into()),
         }
     }
 
-    pub fn parse_object(&mut self) -> Result<Map, &'static str> {
+    pub fn parse_object(&mut self) -> Result<Map, String> {
         self.next(); // consume '{'
         let mut map = Map::new();
 
@@ -209,10 +208,10 @@ impl Parser {
             let key_token = self.next().expect("Expected object key");
             let key = match key_token {
                 Token::String(s) => s[1..s.len() - 1].to_owned(),
-                _ => return Err("Object key must be a string"),
+                _ => return Err("Object key must be a string".into()),
             };
 
-            self.consume(&Token::Colon);
+            self.consume(&Token::Colon)?;
 
             let value = self.parse_value()?;
             map.insert(key, value);
@@ -229,14 +228,14 @@ impl Parser {
                     self.next();
                     break;
                 }
-                _ => return Err("Expected ',' or '}}' in object"),
+                _ => return Err("Expected ',' or '}}' in object".into()),
             }
         }
 
         Ok(map)
     }
 
-    pub fn parse_array(&mut self) -> Result<Vec<Value>, &'static str> {
+    pub fn parse_array(&mut self) -> Result<Vec<Value>, String> {
         self.next(); // consume '['
         let mut vec = Vec::new();
 
@@ -261,7 +260,7 @@ impl Parser {
                     self.next();
                     break;
                 }
-                _ => return Err("Expected ',' or ']' in array"),
+                _ => return Err("Expected ',' or ']' in array".into()),
             }
         }
 
@@ -271,7 +270,7 @@ impl Parser {
 
 #[cfg(test)]
 mod tests {
-    use crate::json::lexer::{Token, TokenStream};
+    use crate::json::lexer::TokenStream;
     use crate::json::parser::Parser;
 
     #[test]
@@ -284,7 +283,7 @@ mod tests {
                 "idx": 1
             }
         }"#;
-        let mut stream = TokenStream::new(source);
+        let stream = TokenStream::new(source);
 
         let mut parser = Parser::new(stream);
         let obj = parser.parse_object();

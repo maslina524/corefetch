@@ -5,11 +5,10 @@ use alloc::{
 
 use crate::{
     detect::title,
-    format,
     format_for_module_wo_key,
     impl_display_for_module,
     modules::Module,
-    os::{env, path::Path},
+    os::path::Path,
     sync::OnceLock
 };
 
@@ -33,9 +32,6 @@ pub struct Title {
 
 impl Module for Title {
     fn new() -> Self {
-        let ver = env::os_version();
-        let pretty_name = format!("{} {} ({})", ver.name, ver.version, ver.codename);
-        let id = format!("{} {}", ver.name, ver.version);
         Self { 
             user_name: title::user_name().to_owned(),
             host_name: title::host_name().to_owned(),
