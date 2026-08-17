@@ -67,7 +67,7 @@ pub fn inflate_compressed_block(
                 inflated.push(inflated[inflated.len() - distance as usize]);
             }
         } else {
-            abort!("Invalid Huffman symbol: {}", symb);
+            abort!("Invalid Huffman symbol: {symb}");
         }
     }
 }

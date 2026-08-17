@@ -32,7 +32,7 @@ impl ErrorCode {
     #[cold]
     #[track_caller]
     pub fn panic(&self) -> ! {
-        abort!("WinApi: {}", self)
+        abort!("WinApi: {self}")
     }
 
     pub fn panic_code(&self) -> ! {

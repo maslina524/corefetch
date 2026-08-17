@@ -10,36 +10,17 @@ macro_rules! todo_or_default {
 
 #[macro_export]
 macro_rules! warning {
-    ($lit:literal) => {{
-        $crate::eprintln!(
-            concat!("\x1b[1;{}mwarning\x1b[0m: ", $lit),
-            $crate::color::FG_YELLOW
-        );
-    }};
-    ($lit:literal, $($args:tt)*) => {{
-        $crate::eprintln!(
-            concat!("\x1b[1;{}mwarning\x1b[0m: ", $lit),
-            $crate::color::FG_YELLOW,
-            $($args)*
-        );
+    ($($args:tt)*) => {{
+        $crate::eprintln!("\x1b[1;{}mwarning\x1b[0m: ", $crate::color::FG_YELLOW);
+        $crate::eprintln!($($args)*);
     }};
 }
 
 #[macro_export]
 macro_rules! abort {
-    ($lit:literal) => {{
-        $crate::eprintln!(
-            concat!("\x1b[1;{}mabort\x1b[0m: ", $lit),
-            $crate::color::FG_RED
-        );
-        $crate::exit(101)
-    }};
-    ($lit:literal, $($args:tt)*) => {{
-        $crate::eprintln!(
-            concat!("\x1b[1;{}mabort\x1b[0m: ", $lit),
-            $crate::color::FG_RED,
-            $($args)*
-        );
+    ($($args:tt)*) => {{
+        $crate::eprint!("\x1b[1;{}mabort\x1b[0m: ", $crate::color::FG_RED);
+        $crate::eprintln!($($args)*);
         $crate::exit(101)
     }};
 }

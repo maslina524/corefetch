@@ -224,12 +224,12 @@ fn get_config(args: &mut Iter<'_, String>) -> Preset {
                         Ok(t) => match Json::from_str(&t) {
                             Ok(c) => Preset::from_json(&c),
                             Err(e) => {
-                                warning!("Failed to parse the json config: {}", e);
+                                warning!("Failed to parse the json config: {e}");
                                 Preset::default()
                             }
                         },
                         Err(e) => {
-                            warning!("Failed to parse the response: {}", e);
+                            warning!("Failed to parse the response: {e}");
                             Preset::default()
                         }
                     }
@@ -247,14 +247,14 @@ fn get_logo_name_and_custom(val: &str) -> (String, Option<String>) {
         Err(e) => {
             match e {
                 ReadError::Utf8(u) => {
-                    warning!("Failed to use logo from fs: {}", u);
+                    warning!("Failed to use logo from fs: {u}");
                     (Os::get().id.to_lowercase(), None)
                 }
                 ReadError::Code(c) => {
                     if c.is_file_not_found() {
                         (ready_val, None)
                     } else {
-                        warning!("Failed to use logo from fs: {}", c);
+                        warning!("Failed to use logo from fs: {c}");
                         (Os::get().id.to_lowercase(), None)
                     }
                 }
