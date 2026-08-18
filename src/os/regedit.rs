@@ -149,6 +149,10 @@ impl Regedit {
         ))
     }
 
+    pub const fn from_handle(handle: Handle) -> Self {
+        Self(handle)
+    }
+
     pub fn read(&self, key: &str) -> error::Result<RegValue> {
         let mut size = 0;
         let mut typ = 0;
