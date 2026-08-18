@@ -64,6 +64,7 @@ def main():
     content = content.replace("windows_link::", "")
     content = content.replace(".dll", "")
     content = content.replace("unsafe { core::mem::zeroed() }", "// SAFETY: All types are guaranteed to be zeroable\n\t\tunsafe { core::mem::zeroed() }")
+    content = content.replace("#[derive(Clone, Copy)]\npub struct GUID {", "#[derive(Clone, Copy, Default)]\npub struct GUID {")
 
     with open(file_path, 'w', encoding='utf-8', newline='') as f:
         f.write(content)
