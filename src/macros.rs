@@ -27,10 +27,11 @@ macro_rules! abort {
 
 #[macro_export]
 macro_rules! colored {
-    ($string:literal) => {{
+    ($string:tt) => {{
         $string
             .replace("<bold>", "\x1b[1m")
             .replace("<italic>", "\x1b[3m")
+            .replace("<underline>", "\x1b[4m")
             .replace("<reset>", "\x1b[0m")
     }};
 }
