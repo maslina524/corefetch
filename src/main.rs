@@ -262,7 +262,8 @@ fn help(_theme: Option<&str>) -> ! {
         "",
         "<underline><bold>Commands:<reset>",
         "  -h, --help <?options> \tPrint this message",
-        // "  -v, --version         \tPrint nofetch version"
+        "  -v, --version         \tPrint nofetch version",
+        "      --version-raw     \tPrint raw nofetch version (major.minor.patch)",
     );
     println!("{}", colored!(multi));
     exit(0)
@@ -276,6 +277,16 @@ extern "C" fn main() -> c_int {
     // Commands
     if let Some(pos) = args.iter().position(|a| a == "--help" || a == "-h") {
         help(args.get(pos + 1).map(String::as_str))
+    }
+
+    if args.iter().any(|a| a == "--version" || a == "-v") {
+        println!("{} {} ({})", env!("CARGO_BIN_NAME"), env!("CARGO_PKG_VERSION"), env!("TARGET_ARCH"));
+        return 0;
+    }
+
+    if args.iter().any(|a| a == "--version-raw") {
+        println!("{}", env!("CARGO_PKG_VERSION"));
+        return 0;
     }
 
     // Config init
