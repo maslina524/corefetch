@@ -18,6 +18,7 @@ use crate::{
     },
     os::regedit::Regedit,
     os::encoding::{utf16le_to_utf8, Utf16Len},
+    nvidia,
     abort,
     warning
 };
@@ -28,7 +29,8 @@ pub struct GpuInfo {
     pub vendor: &'static str,
     pub name: String,
     pub device_id: u32,
-    pub driver: String
+    pub driver: String,
+    pub temperature: f32,
 }
 
 impl GpuInfo {
@@ -46,11 +48,20 @@ impl GpuInfo {
             || { warning!("Failed to get driver version"); String::from("Unknown") }
         );
 
+
         Self {
             vendor: Self::vendor_name(desc.VendorId),
             name,
             device_id: desc.DeviceId,
-            driver
+            driver,
+            temperature: Self::temperature(desc.VendorId)
+        }
+    }
+
+    pub fn temperature(vendor_id: u32) -> f32 {
+        match vendor_id {
+            0x10DE => nvidia::gpu_temperature() as f32,
+            _ => 0.0,
         }
     }
 
@@ -195,5 +206,14 @@ mod tests {
         let driver = info.driver;
         assert!(driver != "Unknown");
         println!("Driver: {driver}");
+    }
+
+    #[test]
+    fn temperature_test() {
+        let info = GpuInfo::new();
+        if info.vendor == "NVIDIA" {
+            assert!(info.temperature != 0.0);
+            println!("Temperature: {}", info.temperature);
+        }
     }
 }

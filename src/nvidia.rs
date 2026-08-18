@@ -56,7 +56,7 @@ fn unload(lib: HMODULE) {
     };
 }
 
-pub fn gpu_temperature() -> u32 {
+pub fn gpu_temperature() -> u16 {
     let lib = load();
 
     // SAFETY: `transmute` fully complies with the documentation
@@ -97,7 +97,7 @@ pub fn gpu_temperature() -> u32 {
         return 0;
     }
 
-    temp
+    temp as u16
 }
 
 #[cfg(test)]
