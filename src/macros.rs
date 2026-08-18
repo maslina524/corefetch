@@ -25,11 +25,28 @@ macro_rules! abort {
     }};
 }
 
+#[macro_export]
+macro_rules! colored {
+    ($string:literal) => {{
+        $string
+            .replace("<bold>", "\x1b[1m")
+            .replace("<italic>", "\x1b[3m")
+            .replace("<reset>", "\x1b[0m")
+    }};
+}
+
 #[cfg(test)]
 mod tests {
     #[test]
     fn warning_test() {
         warning!("Example warn");
         warning!("Formatted msg: 2 + 2 = {}", 2 + 2);
+    }
+
+    #[test]
+    fn colored_test() {
+        let colored = colored!("<bold><italic>String<reset>");
+        let ansi = "\x1b[1m\x1b[3mString\x1b[0m";
+        assert_eq!(colored, ansi);
     }
 }

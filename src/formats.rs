@@ -14,7 +14,8 @@ pub enum FileSize {
 impl FileSize {
     pub fn from_bytes(bytes: u64) -> Self {
         let mut divisions = 0;
-        #[allow(clippy::cast_precision_loss)] // Mantissa is 52 bits, 2^52 = 4 petabytes
+        #[allow(clippy::cast_precision_loss)]
+        // ^^ Mantissa is 52 bits, 2^52 = 4 petabytes
         let mut f_bytes = bytes as f64;
 
         while f_bytes >= 1024.0 && divisions < 3 {
