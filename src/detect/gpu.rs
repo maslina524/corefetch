@@ -18,6 +18,7 @@ use crate::{
     },
     os::regedit::Regedit,
     os::encoding::{utf16le_to_utf8, Utf16Len},
+    formats::Size,
     nvidia,
     abort,
     warning
@@ -31,6 +32,7 @@ pub struct GpuInfo {
     pub device_id: u32,
     pub driver: String,
     pub temperature: f32,
+    pub typ: &'static str,
 }
 
 impl GpuInfo {
@@ -48,13 +50,23 @@ impl GpuInfo {
             || { warning!("Failed to get driver version"); String::from("Unknown") }
         );
 
+        let memory_total = Size::from_bytes(desc.DedicatedVideoMemory as u64);
 
         Self {
             vendor: Self::vendor_name(desc.VendorId),
             name,
             device_id: desc.DeviceId,
             driver,
-            temperature: Self::temperature(desc.VendorId)
+            temperature: Self::temperature(desc.VendorId),
+            typ: Self::typ(desc.VendorId, &memory_total),
+        }
+    }
+
+    pub fn typ(vendor: u32, memory: &Size) -> &'static str {
+        if *memory > Size::Mb(256.0) && [0x10DE, 0x1002, 0x1022].contains(&vendor) {
+            "Discrete"
+        } else {
+            "Built-in"
         }
     }
 
@@ -215,5 +227,11 @@ mod tests {
             assert!(info.temperature != 0.0);
             println!("Temperature: {}", info.temperature);
         }
+    }
+
+    #[test]
+    fn type_test() {
+        let info = GpuInfo::new();
+        println!("Type: {}", info.typ);
     }
 }

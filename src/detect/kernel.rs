@@ -7,7 +7,7 @@ use crate::{
     os::env,
     os::regedit::RegValue,
     os::windows::{SYSTEM_INFO, GetSystemInfo},
-    formats::FileSize,
+    formats::Size,
     format
 };
 
@@ -31,14 +31,14 @@ pub fn version() -> String {
     value.as_string().map(ToOwned::to_owned).unwrap_or_default()
 }
 
-pub fn page_size() -> FileSize {
+pub fn page_size() -> Size {
     let mut si = SYSTEM_INFO::default();
     // SAFETY: Completely safe
     unsafe {
         GetSystemInfo(&raw mut si);
     }
 
-    FileSize::from_bytes(si.dwPageSize as u64)
+    Size::from_bytes(si.dwPageSize as u64)
 }
 
 #[cfg(test)]
