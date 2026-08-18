@@ -1,21 +1,33 @@
 use core::ptr;
 
+use alloc::string::String;
+
 use crate::{
     os::windows::{
         CreateDXGIFactory, IID_IDXGIFactory, IDXGIFactory_Vtbl, DXGI_ADAPTER_DESC, IDXGIAdapter_Vtbl, DXGI_ERROR_NOT_FOUND
     },
-    warning
+    os::encoding::{utf16le_to_utf8, Utf16Len},
+    abort
 };
 
 pub struct GpuInfo {
-    pub vendor: &'static str
+    pub vendor: &'static str,
+    pub name: String
 }
 
 impl GpuInfo {
     pub fn new() -> Self {
-        let vendor_id = Self::vendor_id();
+        let desc = Self::dxgi_adapter_desc().unwrap_or_else(
+            |e| abort!("CreateDXGIFactory error: {e}")
+        );
+        let name = utf16le_to_utf8(
+            &desc.Description, 
+            Utf16Len::NullTerminated
+        ).expect("WinAPI passed an invalid UTF-16LE string");
+
         Self {
-            vendor: Self::vendor_name(vendor_id)
+            vendor: Self::vendor_name(desc.VendorId),
+            name
         }
     }
 
@@ -30,7 +42,7 @@ impl GpuInfo {
         }
     }
 
-    pub fn vendor_id() -> u32 {
+    pub fn dxgi_adapter_desc() -> Result<DXGI_ADAPTER_DESC, i32> {
         let mut factory_void = ptr::null_mut();
         
         // SAFETY: Completely safe
@@ -39,8 +51,7 @@ impl GpuInfo {
         };
         
         if hr < 0 || factory_void.is_null() {
-            warning!("CreateDXGIFactory error: {hr}");
-            return 0;
+            return Err(hr);
         }
 
         // SAFETY: We check that the raw pointer is not null
@@ -53,7 +64,7 @@ impl GpuInfo {
             // SAFETY: A virtual table is guaranteed to be located at the raw pointer
             let hr = unsafe { ((*factory_vtbl).EnumAdapters)(factory_void, i, &raw mut adapter_void) };
             if hr == DXGI_ERROR_NOT_FOUND {
-                return 0;
+                return Err(hr);
             }
 
             if !adapter_void.is_null() {
@@ -65,7 +76,7 @@ impl GpuInfo {
                 let hr = unsafe { ((*adapter_vtbl).GetDesc)(adapter_void, &raw mut desc) };
                 
                 if hr >= 0 {
-                    return desc.VendorId;
+                    return Ok(desc);
                 }
             }
 
@@ -80,8 +91,17 @@ mod tests {
 
     #[test]
     fn vendor_test() {
-        let id = GpuInfo::vendor_id();
-        assert!(id != 0);
-        println!("Vendor: {id:x}");
+        let info = GpuInfo::new();
+        let name = info.vendor;
+        assert!(!name.is_empty());
+        println!("Vendor: {name}");
+    }
+
+    #[test]
+    fn name_test() {
+        let info = GpuInfo::new();
+        let name = info.name;
+        assert!(!name.is_empty());
+        println!("Name: {name}");
     }
 }
