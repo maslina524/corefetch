@@ -33,6 +33,7 @@ pub struct GpuInfo {
     pub driver: String,
     pub temperature: f32,
     pub typ: &'static str,
+    pub memory_total: Size
 }
 
 impl GpuInfo {
@@ -59,6 +60,7 @@ impl GpuInfo {
             driver,
             temperature: Self::temperature(desc.VendorId),
             typ: Self::typ(desc.VendorId, &memory_total),
+            memory_total
         }
     }
 
