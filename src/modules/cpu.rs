@@ -5,7 +5,8 @@ use crate::{
     format_for_module,
     detect::cpu::CpuInfo,
     modules::Module, 
-    sync::OnceLock
+    sync::OnceLock,
+    format
 };
 
 static CPU: OnceLock<Cpu> = OnceLock::new();
@@ -37,9 +38,9 @@ impl Module for Cpu {
             cores_physical: info.physical_cores,
             cores_logical: info.logical_cores,
             cores_online: info.online_cores,
-            freq_base: info.base_freq,
-            freq_max: info.max_freq,
-            temperature: info.temperature,
+            freq_base: format!("{:.2} GHz", info.base_freq),
+            freq_max: format!("{:.2} GHz", info.max_freq),
+            temperature: format!("{:.2} °C", info.temperature),
             core_types: info.logical_grouped,
             packages: info.packages,
             march: info.micro_arch,

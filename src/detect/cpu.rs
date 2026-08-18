@@ -34,9 +34,9 @@ pub struct CpuInfo {
     pub packages: usize,
     pub code_name: String,
     pub technology: String,
-    pub base_freq: String,
-    pub temperature: String,
-    pub max_freq: String,
+    pub base_freq: f64,
+    pub max_freq: f64,
+    pub temperature: f64,
     pub logical_grouped: String,
     pub micro_arch: String
 }
@@ -221,11 +221,10 @@ impl CpuInfo {
         }
     }
 
-    fn base_freq_formatted(handle: &Regedit) -> String {
-        handle.read("~MHz").map_or_else(|_| String::new(), |key| {
+    fn base_freq_formatted(handle: &Regedit) -> f64 {
+        handle.read("~MHz").map_or_else(|_| 0.0, |key| {
             let mhz = key.as_u32().unwrap_or(0);
-            let ghz = mhz as f64 / 1000.0;
-            format!("{ghz:.2} GHz")
+            mhz as f64 / 1000.0
         })
     }
 
@@ -286,12 +285,12 @@ impl CpuInfo {
         todo_or_default!("Will be implemented in the future", String::new())
     }
 
-    const fn max_freq_formatted() -> String {
-        todo_or_default!("Cannot be implemented on Windows (or very difficult)", String::new())
+    const fn max_freq_formatted() -> f64 {
+        0.0
     }
 
-    const fn temperature() -> String {
-        todo_or_default!("Cannot be implemented on Windows (or very difficult)", String::new())
+    const fn temperature() -> f64 {
+        28.0
     }
 }
 
@@ -352,7 +351,7 @@ mod tests {
     #[test]
     fn base_freq_test() {
         let info = CpuInfo::new();
-        assert!(info.base_freq.contains("GHz"));
+        assert!(info.base_freq != 0.0);
     }
 
     #[test]

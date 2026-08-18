@@ -18,8 +18,7 @@ use crate::{
         GetCurrentProcessId, GetTokenInformation, GetUserNameExW, GetUserNameW, OpenProcessToken,
         LocalFree, CloseHandle, PSID
     },
-    sync::OnceLock,
-    todo_or_default
+    sync::OnceLock
 };
 
 static USER_NAME : OnceLock<String> = OnceLock::new();
@@ -126,7 +125,7 @@ pub fn exe_path() -> String {
 }
 
 pub const fn user_shell() -> String {
-    todo_or_default!("Will be implemented in the future", String::new())
+    String::new() // No impl in windows
 }
 
 pub fn cwd() -> String {
