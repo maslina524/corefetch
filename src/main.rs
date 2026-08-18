@@ -12,13 +12,15 @@
     clippy::mut_from_ref,
     clippy::fn_to_numeric_cast_any,
 )]
-#![allow(dead_code)]
-#![allow(clippy::struct_field_names)]
-#![allow(clippy::too_many_lines)]
-#![allow(clippy::cast_lossless)]
-#![allow(clippy::cast_possible_truncation)]
-#![allow(clippy::cast_possible_wrap)]
-#![allow(clippy::cast_sign_loss)]
+#![allow(
+    dead_code,
+    clippy::struct_field_names,
+    clippy::too_many_lines,
+    clippy::cast_lossless,
+    clippy::cast_possible_truncation,
+    clippy::cast_possible_wrap,
+    clippy::cast_sign_loss
+)]
 
 mod sync;
 mod macros;
@@ -47,7 +49,6 @@ use alloc::{
 };
 
 use crate::{
-    color::{MODE_BOLD, MODE_ITALIC, MODE_UNDERLINE},
     json::Json,
     logo::LogoInfo, 
     modules::{FormatValue, Module, Os}, 
@@ -196,13 +197,6 @@ pub fn exit(code: u32) -> ! {
     unsafe { ExitProcess(code) }
 }
 
-fn help(_theme: Option<&str>) -> ! {
-    println!("Nofetch is a neofetch-like tool for beautiful system information display with flexible output customization\n");
-    println!("\x1b[{MODE_UNDERLINE};{MODE_BOLD}mUsage: \x1b[{MODE_BOLD}mnofetch\x1b[{MODE_ITALIC}m <?options>\x1b[0m");
-
-    exit(0)
-}
-
 fn get_config(args: &mut Iter<'_, String>) -> Preset {
     args.position(|a| a == "--config" || a == "-c").map_or_else(Preset::default, |_| args.next().map_or_else(|| {
             help(None);
@@ -260,17 +254,37 @@ fn get_logo_name_and_custom(val: &str) -> (String, Option<String>) {
     }
 }
 
+fn help(_theme: Option<&str>) -> ! {
+    let multi = multi_string!(
+        "Nofetch is a neofetch-like tool for beautiful system information display with flexible output customization",
+        "",
+        "<underline><bold>Usage:<reset><bold> nofetch<reset><italic> <?options><reset>",
+        "",
+        "<underline><bold>Commands:<reset>",
+        "  -h, --help <?options> \tPrint this message",
+        // "  -v, --version         \tPrint nofetch version"
+    );
+    println!("{}", colored!(multi));
+    exit(0)
+}
+
 // #[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
     let args = env::args();
+
+    // Commands
+    if let Some(pos) = args.iter().position(|a| a == "--help" || a == "-h") {
+        help(args.get(pos + 1).map(String::as_str))
+    }
 
     // Config init
     let config = get_config(&mut args.iter());
     Preset::get_or_init(config);
 
     // Logo init
-    #[allow(clippy::option_if_let_else)] // Clippy suggests a variant that would require an extra heap allocation
+    #[allow(clippy::option_if_let_else)]
+    // ^^ Clippy suggests a variant that would require an extra heap allocation
     let (logo_name, custom) = if let Some(pos) = args.iter().position(|a| a == "--logo" || a == "-l") {
         args.get(pos + 1).map_or_else(|| help(None), |val| {
             get_logo_name_and_custom(val)
