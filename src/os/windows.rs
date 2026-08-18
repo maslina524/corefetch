@@ -7,7 +7,7 @@
     dead_code,
     clippy::all
 )]
-
+#![allow(clippy::unreadable_literal)]
 macro_rules! link {
     ($library:literal $abi:literal $($link_name:literal)? $(#[$doc:meta])? fn $($function:tt)*) => (
         #[link(name = $library)]
@@ -21,9 +21,9 @@ macro_rules! link {
 link!("kernel32" "system" fn CloseHandle(hobject : HANDLE) -> BOOL);
 link!("shell32" "system" fn CommandLineToArgvW(lpcmdline : PCWSTR, pnumargs : *mut i32) -> *mut PWSTR);
 link!("advapi32" "system" fn ConvertSidToStringSidW(sid : PSID, stringsid : *mut PWSTR) -> BOOL);
+link!("dxgi" "system" fn CreateDXGIFactory(riid : *const GUID, ppfactory : *mut *mut core::ffi::c_void) -> HRESULT);
 link!("kernel32" "system" fn CreateDirectoryW(lppathname : PCWSTR, lpsecurityattributes : *const SECURITY_ATTRIBUTES) -> BOOL);
 link!("kernel32" "system" fn CreateFileW(lpfilename : PCWSTR, dwdesiredaccess : u32, dwsharemode : FILE_SHARE_MODE, lpsecurityattributes : *const SECURITY_ATTRIBUTES, dwcreationdisposition : FILE_CREATION_DISPOSITION, dwflagsandattributes : FILE_FLAGS_AND_ATTRIBUTES, htemplatefile : HANDLE) -> HANDLE);
-link!("kernel32" "system" fn CreateToolhelp32Snapshot(dwflags : CREATE_TOOLHELP_SNAPSHOT_FLAGS, th32processid : u32) -> HANDLE);
 link!("psapi" "system" fn EnumProcesses(lpidprocess : *mut u32, cb : u32, lpcbneeded : *mut u32) -> BOOL);
 link!("kernel32" "system" fn ExitProcess(uexitcode : u32) -> !);
 link!("kernel32" "system" fn FormatMessageW(dwflags : FORMAT_MESSAGE_OPTIONS, lpsource : *const core::ffi::c_void, dwmessageid : u32, dwlanguageid : u32, lpbuffer : PWSTR, nsize : u32, arguments : *const *const i8) -> u32);
@@ -56,8 +56,6 @@ link!("kernel32" "system" fn LocalFree(hmem : HLOCAL) -> HLOCAL);
 link!("kernel32" "system" fn MultiByteToWideChar(codepage : u32, dwflags : MULTI_BYTE_TO_WIDE_CHAR_FLAGS, lpmultibytestr : PCSTR, cbmultibyte : i32, lpwidecharstr : PWSTR, cchwidechar : i32) -> i32);
 link!("advapi32" "system" fn OpenProcessToken(processhandle : HANDLE, desiredaccess : TOKEN_ACCESS_MASK, tokenhandle : *mut HANDLE) -> BOOL);
 link!("shlwapi" "system" fn PathFileExistsW(pszpath : PCWSTR) -> BOOL);
-link!("kernel32" "system" fn Process32First(hsnapshot : HANDLE, lppe : *mut PROCESSENTRY32) -> BOOL);
-link!("kernel32" "system" fn Process32Next(hsnapshot : HANDLE, lppe : *mut PROCESSENTRY32) -> BOOL);
 link!("kernel32" "system" fn ReadFile(hfile : HANDLE, lpbuffer : *mut u8, nnumberofbytestoread : u32, lpnumberofbytesread : *mut u32, lpoverlapped : *mut OVERLAPPED) -> BOOL);
 link!("advapi32" "system" fn RegCloseKey(hkey : HKEY) -> WIN32_ERROR);
 link!("advapi32" "system" fn RegCreateKeyExW(hkey : HKEY, lpsubkey : PCWSTR, reserved : u32, lpclass : PCWSTR, dwoptions : REG_OPEN_CREATE_OPTIONS, samdesired : REG_SAM_FLAGS, lpsecurityattributes : *const SECURITY_ATTRIBUTES, phkresult : *mut HKEY, lpdwdisposition : *mut REG_CREATE_KEY_DISPOSITION) -> WIN32_ERROR);
@@ -104,7 +102,26 @@ pub struct COORD {
     pub X: i16,
     pub Y: i16,
 }
-pub type CREATE_TOOLHELP_SNAPSHOT_FLAGS = u32;
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DXGI_ADAPTER_DESC {
+    pub Description: [u16; 128],
+    pub VendorId: u32,
+    pub DeviceId: u32,
+    pub SubSysId: u32,
+    pub Revision: u32,
+    pub DedicatedVideoMemory: usize,
+    pub DedicatedSystemMemory: usize,
+    pub SharedSystemMemory: usize,
+    pub AdapterLuid: LUID,
+}
+impl Default for DXGI_ADAPTER_DESC {
+    fn default() -> Self {
+        // SAFETY: All types are guaranteed to be zeroable
+		unsafe { core::mem::zeroed() }
+    }
+}
+pub const DXGI_ERROR_NOT_FOUND: HRESULT = 0x887A0002_u32 as _;
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct DYNAMIC_TIME_ZONE_INFORMATION {
@@ -158,8 +175,76 @@ pub type HEAP_FLAGS = u32;
 pub type HKEY = *mut core::ffi::c_void;
 pub type HLOCAL = *mut core::ffi::c_void;
 pub type HRESULT = i32;
+pub const IID_IDXGIAdapter: GUID = GUID::from_u128(0x2411e7e1_12ac_4ccf_bd14_9798e8534dc0);
+#[repr(C)]
+pub struct IDXGIAdapter_Vtbl {
+    pub base__: IDXGIObject_Vtbl,
+    EnumOutputs: usize,
+    pub GetDesc:
+        unsafe extern "system" fn(*mut core::ffi::c_void, *mut DXGI_ADAPTER_DESC) -> HRESULT,
+    pub CheckInterfaceSupport:
+        unsafe extern "system" fn(*mut core::ffi::c_void, *const GUID, *mut i64) -> HRESULT,
+}
+pub const IID_IDXGIFactory: GUID = GUID::from_u128(0x7b7166ec_21c7_44ae_b21a_c9ae321ae369);
+#[repr(C)]
+pub struct IDXGIFactory_Vtbl {
+    pub base__: IDXGIObject_Vtbl,
+    pub EnumAdapters: unsafe extern "system" fn(
+        *mut core::ffi::c_void,
+        u32,
+        *mut *mut core::ffi::c_void,
+    ) -> HRESULT,
+    MakeWindowAssociation: usize,
+    GetWindowAssociation: usize,
+    CreateSwapChain: usize,
+    CreateSoftwareAdapter: usize,
+}
+pub const IID_IDXGIObject: GUID = GUID::from_u128(0xaec22fb8_76f3_4639_9be0_28eb43a67a2e);
+#[repr(C)]
+pub struct IDXGIObject_Vtbl {
+    pub base__: IUnknown_Vtbl,
+    pub SetPrivateData: unsafe extern "system" fn(
+        *mut core::ffi::c_void,
+        *const GUID,
+        u32,
+        *const core::ffi::c_void,
+    ) -> HRESULT,
+    pub SetPrivateDataInterface: unsafe extern "system" fn(
+        *mut core::ffi::c_void,
+        *const GUID,
+        *mut core::ffi::c_void,
+    ) -> HRESULT,
+    pub GetPrivateData: unsafe extern "system" fn(
+        *mut core::ffi::c_void,
+        *const GUID,
+        *mut u32,
+        *mut core::ffi::c_void,
+    ) -> HRESULT,
+    pub GetParent: unsafe extern "system" fn(
+        *mut core::ffi::c_void,
+        *const GUID,
+        *mut *mut core::ffi::c_void,
+    ) -> HRESULT,
+}
+pub const IID_IUnknown: GUID = GUID::from_u128(0x00000000_0000_0000_c000_000000000046);
+#[repr(C)]
+pub struct IUnknown_Vtbl {
+    pub QueryInterface: unsafe extern "system" fn(
+        this: *mut core::ffi::c_void,
+        iid: *const GUID,
+        interface: *mut *mut core::ffi::c_void,
+    ) -> HRESULT,
+    pub AddRef: unsafe extern "system" fn(this: *mut core::ffi::c_void) -> u32,
+    pub Release: unsafe extern "system" fn(this: *mut core::ffi::c_void) -> u32,
+}
 pub type KNOWN_FOLDER_FLAG = i32;
 pub type LOGICAL_PROCESSOR_RELATIONSHIP = i32;
+#[repr(C)]
+#[derive(Clone, Copy, Default)]
+pub struct LUID {
+    pub LowPart: u32,
+    pub HighPart: i32,
+}
 #[repr(C)]
 #[derive(Clone, Copy, Default)]
 pub struct MEMORYSTATUSEX {
@@ -225,26 +310,6 @@ pub struct OVERLAPPED_0_0 {
 }
 pub type PCSTR = *const u8;
 pub type PCWSTR = *const u16;
-#[repr(C)]
-#[derive(Clone, Copy)]
-pub struct PROCESSENTRY32 {
-    pub dwSize: u32,
-    pub cntUsage: u32,
-    pub th32ProcessID: u32,
-    pub th32DefaultHeapID: usize,
-    pub th32ModuleID: u32,
-    pub cntThreads: u32,
-    pub th32ParentProcessID: u32,
-    pub pcPriClassBase: i32,
-    pub dwFlags: u32,
-    pub szExeFile: [i8; 260],
-}
-impl Default for PROCESSENTRY32 {
-    fn default() -> Self {
-        // SAFETY: All types are guaranteed to be zeroable
-		unsafe { core::mem::zeroed() }
-    }
-}
 pub type PROCESSOR_ARCHITECTURE = u16;
 pub type PROCESSOR_CACHE_TYPE = i32;
 pub type PSID = *mut core::ffi::c_void;
