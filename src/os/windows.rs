@@ -27,6 +27,7 @@ link!("kernel32" "system" fn CreateFileW(lpfilename : PCWSTR, dwdesiredaccess : 
 link!("psapi" "system" fn EnumProcesses(lpidprocess : *mut u32, cb : u32, lpcbneeded : *mut u32) -> BOOL);
 link!("kernel32" "system" fn ExitProcess(uexitcode : u32) -> !);
 link!("kernel32" "system" fn FormatMessageW(dwflags : FORMAT_MESSAGE_OPTIONS, lpsource : *const core::ffi::c_void, dwmessageid : u32, dwlanguageid : u32, lpbuffer : PWSTR, nsize : u32, arguments : *const *const i8) -> u32);
+link!("kernel32" "system" fn FreeLibrary(hlibmodule : HMODULE) -> BOOL);
 link!("kernel32" "system" fn GetActiveProcessorCount(groupnumber : u16) -> u32);
 link!("kernel32" "system" fn GetCommandLineW() -> PCWSTR);
 link!("kernel32" "system" fn GetComputerNameW(lpbuffer : PWSTR, nsize : *mut u32) -> BOOL);
@@ -41,6 +42,7 @@ link!("kernel32" "system" fn GetLocalTime(lpsystemtime : *mut SYSTEMTIME));
 link!("kernel32" "system" fn GetLocaleInfoEx(lplocalename : PCWSTR, lctype : u32, lplcdata : PWSTR, cchdata : i32) -> i32);
 link!("kernel32" "system" fn GetLogicalProcessorInformation(buffer : *mut SYSTEM_LOGICAL_PROCESSOR_INFORMATION, returnedlength : *mut u32) -> BOOL);
 link!("kernel32" "system" fn GetNumaHighestNodeNumber(highestnodenumber : *mut u32) -> BOOL);
+link!("kernel32" "system" fn GetProcAddress(hmodule : HMODULE, lpprocname : PCSTR) -> FARPROC);
 link!("kernel32" "system" fn GetProcessHeap() -> HANDLE);
 link!("kernel32" "system" fn GetStdHandle(nstdhandle : STD_HANDLE) -> HANDLE);
 link!("kernel32" "system" fn GetSystemInfo(lpsysteminfo : *mut SYSTEM_INFO));
@@ -52,6 +54,7 @@ link!("advapi32" "system" fn GetUserNameW(lpbuffer : PWSTR, pcbbuffer : *mut u32
 link!("kernel32" "system" fn GlobalMemoryStatusEx(lpbuffer : *mut MEMORYSTATUSEX) -> BOOL);
 link!("kernel32" "system" fn HeapAlloc(hheap : HANDLE, dwflags : HEAP_FLAGS, dwbytes : usize) -> *mut core::ffi::c_void);
 link!("kernel32" "system" fn HeapFree(hheap : HANDLE, dwflags : HEAP_FLAGS, lpmem : *const core::ffi::c_void) -> BOOL);
+link!("kernel32" "system" fn LoadLibraryA(lplibfilename : PCSTR) -> HMODULE);
 link!("kernel32" "system" fn LocalFree(hmem : HLOCAL) -> HLOCAL);
 link!("kernel32" "system" fn MultiByteToWideChar(codepage : u32, dwflags : MULTI_BYTE_TO_WIDE_CHAR_FLAGS, lpmultibytestr : PCSTR, cbmultibyte : i32, lpwidecharstr : PWSTR, cchwidechar : i32) -> i32);
 link!("advapi32" "system" fn OpenProcessToken(processhandle : HANDLE, desiredaccess : TOKEN_ACCESS_MASK, tokenhandle : *mut HANDLE) -> BOOL);
@@ -146,6 +149,7 @@ impl Default for DYNAMIC_TIME_ZONE_INFORMATION {
     }
 }
 pub type EXTENDED_NAME_FORMAT = i32;
+pub type FARPROC = Option<unsafe extern "system" fn() -> isize>;
 #[repr(C)]
 #[derive(Clone, Copy, Default)]
 pub struct FILETIME {
@@ -178,8 +182,10 @@ pub const GUID_DEVCLASS_DISPLAY: GUID = GUID::from_u128(0x4d36e968_e325_11ce_bfc
 pub type HANDLE = *mut core::ffi::c_void;
 pub type HDEVINFO = isize;
 pub type HEAP_FLAGS = u32;
+pub type HINSTANCE = *mut core::ffi::c_void;
 pub type HKEY = *mut core::ffi::c_void;
 pub type HLOCAL = *mut core::ffi::c_void;
+pub type HMODULE = *mut core::ffi::c_void;
 pub type HRESULT = i32;
 pub type HWND = *mut core::ffi::c_void;
 pub const IID_IDXGIAdapter: GUID = GUID::from_u128(0x2411e7e1_12ac_4ccf_bd14_9798e8534dc0);
@@ -205,7 +211,11 @@ pub struct IDXGIFactory_Vtbl {
     pub GetWindowAssociation:
         unsafe extern "system" fn(*mut core::ffi::c_void, *mut HWND) -> HRESULT,
     CreateSwapChain: usize,
-    CreateSoftwareAdapter: usize,
+    pub CreateSoftwareAdapter: unsafe extern "system" fn(
+        *mut core::ffi::c_void,
+        HMODULE,
+        *mut *mut core::ffi::c_void,
+    ) -> HRESULT,
 }
 pub const IID_IDXGIObject: GUID = GUID::from_u128(0xaec22fb8_76f3_4639_9be0_28eb43a67a2e);
 #[repr(C)]
