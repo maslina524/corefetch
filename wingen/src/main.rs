@@ -5,6 +5,7 @@ fn main() {
         "--out", "../src/os/windows.rs",
         "--flat",
         "--sys",
+        "--flat",
         "--no-deps",
         "--filter"
     ];

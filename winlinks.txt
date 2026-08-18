@@ -7,9 +7,6 @@ WideCharToMultiByte
 FormatMessageW
 GetLastError
 WriteFile
-CreateToolhelp32Snapshot
-Process32First
-Process32Next
 CloseHandle
 WinHttpReadData
 WinHttpReceiveResponse
@@ -70,3 +67,8 @@ GlobalMemoryStatusEx
 GetSystemInfo
 EnumProcesses
 SystemParametersInfoW
+CreateDXGIFactory
+IDXGIFactory
+IDXGIAdapter
+DXGI_ADAPTER_DESC
+DXGI_ERROR_NOT_FOUND

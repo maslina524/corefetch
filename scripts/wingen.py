@@ -54,6 +54,7 @@ def main():
     finally:
         os.chdir(original_dir)
 
+    add_line_to_file("src/os/windows.rs", 10, "#![allow(clippy::unreadable_literal)]")
     add_line_to_file("src/os/windows.rs", 10, MACRO_STRING)
 
     file_path = Path("src/os/windows.rs")
