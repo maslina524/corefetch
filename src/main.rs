@@ -28,6 +28,7 @@ mod formats;
 mod xxhash64;
 mod preset;
 mod color;
+mod nvidia;
 
 mod os;
 mod modules;

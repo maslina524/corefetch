@@ -77,3 +77,6 @@ SetupDiEnumDeviceInfo
 GUID_DEVCLASS_DISPLAY
 DIGCF_PRESENT
 SetupDiOpenDevRegKey
+LoadLibraryA
+GetProcAddress
+FreeLibrary
