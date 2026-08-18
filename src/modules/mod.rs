@@ -3,6 +3,7 @@ pub mod colors;    // 14) Colors        : Display the terminal's 16-color palett
 pub mod cpu;       // 15) CPU           : Print CPU name, frequency, etc.
 pub mod custom;    // 19) Custom        : Print a custom string, with or without key
 pub mod datetime;  // 20) DateTime      : Print the current date and time
+pub mod gpu;       // 29) GPU           : Print GPU names, memory sizes, types, etc
 pub mod kernel;    // 33) Kernel        : Print system kernel version
 pub mod locale;    // 37) Locale        : Print system locale name
 pub mod memory;    // 41) Memory        : Print system memory usage information
@@ -20,6 +21,7 @@ pub use colors::Colors;
 pub use cpu::Cpu;
 pub use custom::Custom;
 pub use datetime::Datetime;
+pub use gpu::Gpu;
 pub use kernel::Kernel;
 pub use locale::Locale;
 pub use memory::Memory;
@@ -64,6 +66,7 @@ pub fn from_preset_module(module: &PresetModule) -> Option<Box<dyn Module>> {
         "cpu"       => Some(Box::new( Cpu::new()       )),
         "custom"    => Some(Box::new( Custom::new()    )),
         "datetime"  => Some(Box::new( Datetime::new()  )),
+        "gpu"       => Some(Box::new( Gpu::new()       )),
         "kernel"    => Some(Box::new( Kernel::new()    )),
         "locale"    => Some(Box::new( Locale::new()    )),
         "memory"    => Some(Box::new( Memory::new()    )),
@@ -160,7 +163,7 @@ macro_rules! format_module {
         let mut idx = 1;
         
         $(
-            let placeholder_underscore = alloc::fmt::format(format_args!("{{{}}}", stringify!($field)));
+            let placeholder_underscore = alloc::fmt::format(format_args!("{{{}}}", stringify!($field).trim_start_matches("r#")));
             let placeholder_hyphen = placeholder_underscore.replace('_', "-");
             
             let value = &$crate::format_module!(@to_string &$obj.$field);

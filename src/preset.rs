@@ -163,6 +163,7 @@ impl Default for Preset {
                 PresetModule::from_str("datetime"),
                 PresetModule::from_str("processes"),
                 PresetModule::from_str("cpu"),
+                PresetModule::from_str("gpu"),
                 PresetModule::from_str("memory"),
                 PresetModule::from_str("weather"),
                 PresetModule::from_str("locale"),
