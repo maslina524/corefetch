@@ -35,6 +35,19 @@ macro_rules! colored {
     }};
 }
 
+#[macro_export]
+macro_rules! multi_string {
+    ($($s:literal),* $(,)?) => {{
+        const COUNT: usize = [$(multi_string!(@count $s)),*].len();
+        
+        let strings: [&str; COUNT] = [$($s),*];
+        
+        strings.join("\n")
+    }};
+    
+    (@count $s:literal) => { 1 };
+}
+
 #[cfg(test)]
 mod tests {
     #[test]
@@ -48,5 +61,16 @@ mod tests {
         let colored = colored!("<bold><italic>String<reset>");
         let ansi = "\x1b[1m\x1b[3mString\x1b[0m";
         assert_eq!(colored, ansi);
+    }
+
+    #[test]
+    fn multi_string_test() {
+        let multi = multi_string!(
+            "Multi",
+            "String",
+            "Test"
+        );
+        let string = "Multi\nString\nTest";
+        assert_eq!(multi, string);
     }
 }
