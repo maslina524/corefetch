@@ -19,3 +19,5 @@ The project is created based on and with full compatibility with [fastfetch](htt
 Fully written in pure Rust with the !#[no_std] attribute and no third-party dependencies.
 
 Currently being developed only for Windows, with Linux support planned for the future.
+
+<img src="screenshots/jarvis.gif" width="75%" />
