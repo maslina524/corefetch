@@ -12,7 +12,8 @@ use crate::{
 
 pub struct GpuInfo {
     pub vendor: &'static str,
-    pub name: String
+    pub name: String,
+    pub device_id: u32
 }
 
 impl GpuInfo {
@@ -20,6 +21,7 @@ impl GpuInfo {
         let desc = Self::dxgi_adapter_desc().unwrap_or_else(
             |e| abort!("CreateDXGIFactory error: {e}")
         );
+
         let name = utf16le_to_utf8(
             &desc.Description, 
             Utf16Len::NullTerminated
@@ -27,7 +29,8 @@ impl GpuInfo {
 
         Self {
             vendor: Self::vendor_name(desc.VendorId),
-            name
+            name,
+            device_id: desc.DeviceId
         }
     }
 
@@ -103,5 +106,13 @@ mod tests {
         let name = info.name;
         assert!(!name.is_empty());
         println!("Name: {name}");
+    }
+
+    #[test]
+    fn device_id_test() {
+        let info = GpuInfo::new();
+        let id = info.device_id;
+        assert!(id != 0);
+        println!("Id: {id}");
     }
 }
