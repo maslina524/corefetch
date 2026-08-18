@@ -1,19 +1,34 @@
-use core::ptr;
+use core::{
+    ptr,
+    mem,
+    ffi::c_void,
+    sync::atomic::AtomicPtr
+};
 
-use alloc::string::String;
+use alloc::{
+    string::String,
+    borrow::ToOwned
+};
 
 use crate::{
     os::windows::{
-        CreateDXGIFactory, IID_IDXGIFactory, IDXGIFactory_Vtbl, DXGI_ADAPTER_DESC, IDXGIAdapter_Vtbl, DXGI_ERROR_NOT_FOUND
+        CreateDXGIFactory, IID_IDXGIFactory, IDXGIFactory_Vtbl, DXGI_ADAPTER_DESC,
+        IDXGIAdapter_Vtbl, DXGI_ERROR_NOT_FOUND, SetupDiEnumDeviceInfo, SetupDiGetClassDevsW,
+        DIGCF_PRESENT, GUID_DEVCLASS_DISPLAY, SP_DEVINFO_DATA, SetupDiOpenDevRegKey,
     },
+    os::regedit::Regedit,
     os::encoding::{utf16le_to_utf8, Utf16Len},
-    abort
+    abort,
+    warning
 };
+
+const INVALID_HANDLE: *mut c_void = (-1isize).cast_unsigned() as *mut c_void;
 
 pub struct GpuInfo {
     pub vendor: &'static str,
     pub name: String,
-    pub device_id: u32
+    pub device_id: u32,
+    pub driver: String
 }
 
 impl GpuInfo {
@@ -27,10 +42,15 @@ impl GpuInfo {
             Utf16Len::NullTerminated
         ).expect("WinAPI passed an invalid UTF-16LE string");
 
+        let driver = Self::driver_version().unwrap_or_else(
+            || { warning!("Failed to get driver version"); String::from("Unknown") }
+        );
+
         Self {
             vendor: Self::vendor_name(desc.VendorId),
             name,
-            device_id: desc.DeviceId
+            device_id: desc.DeviceId,
+            driver
         }
     }
 
@@ -86,6 +106,59 @@ impl GpuInfo {
             i += 1;
         }
     }
+
+    pub fn driver_version() -> Option<String> {
+        // SAFETY: Completely safe
+        let handle = unsafe {
+            SetupDiGetClassDevsW(
+                &GUID_DEVCLASS_DISPLAY, 
+                ptr::null(), 
+                ptr::null_mut(), 
+                DIGCF_PRESENT
+            )
+        };
+        if handle == -1 {
+            return None
+        }
+
+        let mut info = SP_DEVINFO_DATA {
+            cbSize: mem::size_of::<SP_DEVINFO_DATA>() as u32,
+            .. SP_DEVINFO_DATA::default()
+        };
+
+        // SAFETY: Completely safe
+        let ret = unsafe {
+            SetupDiEnumDeviceInfo(
+                handle, 
+                0, 
+                &raw mut info
+            )
+        };
+        if ret == 0 {
+            return None
+        }
+
+        // SAFETY: Completely safe
+        let hkey = unsafe {
+            SetupDiOpenDevRegKey(
+                handle, 
+                &raw mut info, 
+                1, 
+                0,
+                2, 
+                0x20019
+            )
+        };
+        if hkey == INVALID_HANDLE {
+            return None;
+        }
+
+        let reg = Regedit::from_handle(AtomicPtr::new(hkey));
+        let value = reg.read("DriverVersion").ok()?;
+        let string = value.as_string()?.to_owned();
+
+        Some(string)
+    }
 }
 
 #[cfg(test)]
@@ -114,5 +187,13 @@ mod tests {
         let id = info.device_id;
         assert!(id != 0);
         println!("Id: {id}");
+    }
+
+    #[test]
+    fn driver_test() {
+        let info = GpuInfo::new();
+        let driver = info.driver;
+        assert!(driver != "Unknown");
+        println!("Driver: {driver}");
     }
 }

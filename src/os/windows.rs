@@ -64,6 +64,9 @@ link!("advapi32" "system" fn RegQueryValueExW(hkey : HKEY, lpvaluename : PCWSTR,
 link!("ntdll" "system" fn RtlGetVersion(lpversioninformation : *mut OSVERSIONINFOW) -> NTSTATUS);
 link!("shell32" "system" fn SHGetKnownFolderPath(rfid : *const GUID, dwflags : u32, htoken : HANDLE, ppszpath : *mut PWSTR) -> HRESULT);
 link!("kernel32" "system" fn SetConsoleOutputCP(wcodepageid : u32) -> BOOL);
+link!("setupapi" "system" fn SetupDiEnumDeviceInfo(deviceinfoset : HDEVINFO, memberindex : u32, deviceinfodata : *mut SP_DEVINFO_DATA) -> BOOL);
+link!("setupapi" "system" fn SetupDiGetClassDevsW(classguid : *const GUID, enumerator : PCWSTR, hwndparent : HWND, flags : SETUP_DI_GET_CLASS_DEVS_FLAGS) -> HDEVINFO);
+link!("setupapi" "system" fn SetupDiOpenDevRegKey(deviceinfoset : HDEVINFO, deviceinfodata : *const SP_DEVINFO_DATA, scope : u32, hwprofile : u32, keytype : u32, samdesired : u32) -> HKEY);
 link!("user32" "system" fn SystemParametersInfoW(uiaction : SYSTEM_PARAMETERS_INFO_ACTION, uiparam : u32, pvparam : *mut core::ffi::c_void, fwinini : SYSTEM_PARAMETERS_INFO_UPDATE_FLAGS) -> BOOL);
 link!("kernel32" "system" fn WideCharToMultiByte(codepage : u32, dwflags : u32, lpwidecharstr : PCWSTR, cchwidechar : i32, lpmultibytestr : PSTR, cbmultibyte : i32, lpdefaultchar : PCSTR, lpuseddefaultchar : *mut BOOL) -> i32);
 link!("winhttp" "system" fn WinHttpCloseHandle(hinternet : *mut core::ffi::c_void) -> BOOL);
@@ -102,6 +105,7 @@ pub struct COORD {
     pub X: i16,
     pub Y: i16,
 }
+pub const DIGCF_PRESENT: SETUP_DI_GET_CLASS_DEVS_FLAGS = 2u32;
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct DXGI_ADAPTER_DESC {
@@ -153,7 +157,7 @@ pub type FILE_FLAGS_AND_ATTRIBUTES = u32;
 pub type FILE_SHARE_MODE = u32;
 pub type FORMAT_MESSAGE_OPTIONS = u32;
 #[repr(C)]
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Default)]
 pub struct GUID {
     pub data1: u32,
     pub data2: u16,
@@ -170,11 +174,14 @@ impl GUID {
         }
     }
 }
+pub const GUID_DEVCLASS_DISPLAY: GUID = GUID::from_u128(0x4d36e968_e325_11ce_bfc1_08002be10318);
 pub type HANDLE = *mut core::ffi::c_void;
+pub type HDEVINFO = isize;
 pub type HEAP_FLAGS = u32;
 pub type HKEY = *mut core::ffi::c_void;
 pub type HLOCAL = *mut core::ffi::c_void;
 pub type HRESULT = i32;
+pub type HWND = *mut core::ffi::c_void;
 pub const IID_IDXGIAdapter: GUID = GUID::from_u128(0x2411e7e1_12ac_4ccf_bd14_9798e8534dc0);
 #[repr(C)]
 pub struct IDXGIAdapter_Vtbl {
@@ -195,7 +202,8 @@ pub struct IDXGIFactory_Vtbl {
         *mut *mut core::ffi::c_void,
     ) -> HRESULT,
     MakeWindowAssociation: usize,
-    GetWindowAssociation: usize,
+    pub GetWindowAssociation:
+        unsafe extern "system" fn(*mut core::ffi::c_void, *mut HWND) -> HRESULT,
     CreateSwapChain: usize,
     CreateSoftwareAdapter: usize,
 }
@@ -332,6 +340,7 @@ impl Default for SECURITY_ATTRIBUTES {
 		unsafe { core::mem::zeroed() }
     }
 }
+pub type SETUP_DI_GET_CLASS_DEVS_FLAGS = u32;
 #[repr(C)]
 #[derive(Clone, Copy, Default)]
 pub struct SMALL_RECT {
@@ -339,6 +348,28 @@ pub struct SMALL_RECT {
     pub Top: i16,
     pub Right: i16,
     pub Bottom: i16,
+}
+#[repr(C, packed(1))]
+#[cfg(target_arch = "x86")]
+#[derive(Clone, Copy, Default)]
+pub struct SP_DEVINFO_DATA {
+    pub cbSize: u32,
+    pub ClassGuid: GUID,
+    pub DevInst: u32,
+    pub Reserved: usize,
+}
+#[repr(C)]
+#[cfg(any(
+    target_arch = "aarch64",
+    target_arch = "arm64ec",
+    target_arch = "x86_64"
+))]
+#[derive(Clone, Copy, Default)]
+pub struct SP_DEVINFO_DATA {
+    pub cbSize: u32,
+    pub ClassGuid: GUID,
+    pub DevInst: u32,
+    pub Reserved: usize,
 }
 pub type STD_HANDLE = u32;
 #[repr(C)]
