@@ -2,6 +2,7 @@
 /wingen/target
 /nofetch-logo-gen
 /temp
+/.VSCodeCounter
 Cargo.lock
 sum.ps1
 

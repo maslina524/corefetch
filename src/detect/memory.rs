@@ -2,13 +2,13 @@ use core::mem;
 
 use crate::{
     os::windows::{GlobalMemoryStatusEx, MEMORYSTATUSEX},
-    formats::FileSize
+    formats::Size
 };
 
 #[derive(Default)]
 pub struct MemoryInfo {
-    pub total: FileSize,
-    pub in_use: FileSize
+    pub total: Size,
+    pub in_use: Size
 }
 
 impl MemoryInfo {
@@ -29,8 +29,8 @@ impl MemoryInfo {
         let total_raw = mem_status.ullTotalPhys;
         let in_use_raw = mem_status.ullTotalPhys - mem_status.ullAvailPhys;
 
-        let total = FileSize::from_bytes(total_raw);
-        let in_use = FileSize::from_bytes(in_use_raw);
+        let total = Size::from_bytes(total_raw);
+        let in_use = Size::from_bytes(in_use_raw);
 
         Self { total, in_use }
     }
@@ -40,7 +40,7 @@ impl MemoryInfo {
 mod tests {
     use crate::{
         detect::memory::MemoryInfo,
-        formats::FileSize
+        formats::Size
     };
 
     #[test]
@@ -51,7 +51,7 @@ mod tests {
 
         println!("Total: {total}, In use: {in_use}");
 
-        assert!(total != FileSize::default());
-        assert!(in_use != FileSize::default());
+        assert!(total != Size::default());
+        assert!(in_use != Size::default());
     }
 }

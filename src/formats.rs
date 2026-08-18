@@ -1,17 +1,19 @@
+use core::cmp::Ordering;
+
 use alloc::{
     string::String,
     vec::Vec
 };
 
 #[derive(Clone, PartialEq)]
-pub enum FileSize {
+pub enum Size {
     Byte(u16),
     Kb(f32),
     Mb(f32),
     Gb(f32)
 }
 
-impl FileSize {
+impl Size {
     pub fn from_bytes(bytes: u64) -> Self {
         let mut divisions = 0;
         #[allow(clippy::cast_precision_loss)]
@@ -51,13 +53,13 @@ impl FileSize {
     }
 }
 
-impl Default for FileSize {
+impl Default for Size {
     fn default() -> Self {
         Self::Byte(0)
     }
 }
 
-impl core::fmt::Display for FileSize {
+impl core::fmt::Display for Size {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
             Self::Byte(b) => write!(f, "{b} Bytes"),
@@ -65,6 +67,12 @@ impl core::fmt::Display for FileSize {
             Self::Mb(b)   => write!(f, "{b:.02} Mb"),
             Self::Gb(b)   => write!(f, "{b:.02} Gb"),
         }
+    }
+}
+
+impl PartialOrd for Size {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.as_bytes().partial_cmp(&other.as_bytes())
     }
 }
 
@@ -114,7 +122,7 @@ pub fn expand_unicode(s: &str) -> String {
 
 #[cfg(test)]
 mod tests {
-    use crate::formats::{FileSize, expand_unicode};
+    use crate::formats::{Size, expand_unicode};
 
     #[test]
     fn test_conversion() {
@@ -123,10 +131,10 @@ mod tests {
 
     #[test]
     fn from_bytes_test() {
-        assert_eq!(FileSize::from_bytes(512).to_string(),           "512 Bytes");
-        assert_eq!(FileSize::from_bytes(1024).to_string(),          "1.00 Kb");
-        assert_eq!(FileSize::from_bytes(1536).to_string(),          "1.50 Kb");
-        assert_eq!(FileSize::from_bytes(536_870_912).to_string(),   "512.00 Mb");
-        assert_eq!(FileSize::from_bytes(2_147_483_648).to_string(), "2.00 Gb");
+        assert_eq!(Size::from_bytes(512).to_string(),           "512 Bytes");
+        assert_eq!(Size::from_bytes(1024).to_string(),          "1.00 Kb");
+        assert_eq!(Size::from_bytes(1536).to_string(),          "1.50 Kb");
+        assert_eq!(Size::from_bytes(536_870_912).to_string(),   "512.00 Mb");
+        assert_eq!(Size::from_bytes(2_147_483_648).to_string(), "2.00 Gb");
     }
 }
