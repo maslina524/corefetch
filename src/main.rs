@@ -58,7 +58,8 @@ use crate::{
     os::fs::{self, ReadError},
     os::https::{Request, Url},
     os::windows::ExitProcess, 
-    preset::{Preset, PresetModule}
+    preset::{Preset, PresetModule},
+    nvidia::NvidiaLib
 };
 
 #[global_allocator]
@@ -270,7 +271,7 @@ fn help(_theme: Option<&str>) -> ! {
     exit(0)
 }
 
-#[cfg(not(test))]
+// #[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
     let args = env::args();
@@ -349,6 +350,7 @@ extern "C" fn main() -> c_int {
     // The handle is created not with GetStdHandle,
     // but with `CreateFile`, which requires manual freeing
     let _ = env::close_terminal_handle();
+    NvidiaLib::drop_nvidia();
 
     0
 }

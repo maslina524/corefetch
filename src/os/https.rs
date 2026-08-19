@@ -161,7 +161,6 @@ impl Request {
         self.send("GET")
     }
 
-    #[cfg(target_os = "windows")]
     fn send(self, method: &str) -> Response {
         // SAFETY: Parameters are fully correct, return value is checked
         let session = unsafe {

@@ -19,7 +19,7 @@ use crate::{
     os::regedit::Regedit,
     os::encoding::{utf16le_to_utf8, Utf16Len},
     formats::Size,
-    nvidia,
+    nvidia::NvidiaLib,
     abort,
     warning
 };
@@ -74,7 +74,7 @@ impl GpuInfo {
 
     pub fn temperature(vendor_id: u32) -> f32 {
         match vendor_id {
-            0x10DE => nvidia::gpu_temperature() as f32,
+            0x10DE => NvidiaLib::get().gpu_temperature() as f32,
             _ => 0.0,
         }
     }
