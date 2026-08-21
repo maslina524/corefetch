@@ -131,4 +131,27 @@ where
 }
 
 #[cfg(test)]
-mod tests {}
+mod tests {
+    use crate::deflate::lz77::decompress;
+
+    #[test]
+    fn literal_single_test() {
+        let compressed = vec![0x00, b'A'];
+        let decompressed = decompress(compressed).unwrap();
+        assert_eq!(decompressed, vec![b'A']);
+    }
+
+    #[test]
+    fn literal_two_test() {
+        let compressed = vec![0x01, b'A', b'B'];
+        let decompressed = decompress(compressed).unwrap();
+        assert_eq!(decompressed, vec![b'A', b'B']);
+    }
+
+    #[test]
+    fn literal_and_dict_test() {
+        let compressed = vec![0x01, b'A', b'B', 0x20, 0x01];
+        let decompressed = decompress(compressed).unwrap();
+        assert_eq!(decompressed, vec![b'A', b'B', b'A', b'B', b'A']);
+    }
+}
