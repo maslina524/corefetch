@@ -33,13 +33,14 @@ mod image;
 mod png;
 mod lz77;
 mod huffman;
+mod zlib;
+mod deflate;
 
 mod os;
 mod modules;
 mod logo;
 mod detect;
 mod json;
-mod zlib;
 
 extern crate alloc;
 
