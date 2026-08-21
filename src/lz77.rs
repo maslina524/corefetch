@@ -132,7 +132,7 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::deflate::lz77::decompress;
+    use crate::lz77::decompress;
 
     #[test]
     fn literal_single_test() {

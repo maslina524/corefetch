@@ -2,7 +2,7 @@ use alloc::boxed::Box;
 use alloc::vec::Vec;
 use alloc::vec;
 
-use crate::zlib::stream::Stream;
+use crate::huffman::stream::Stream;
 
 #[derive(Debug, Clone)]
 pub struct HuffmanNode {
