@@ -25,7 +25,7 @@
 mod sync;
 mod macros;
 mod formats;
-mod xxhash64;
+mod crc32;
 mod preset;
 mod color;
 mod nvidia;
