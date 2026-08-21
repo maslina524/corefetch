@@ -30,6 +30,7 @@ mod preset;
 mod color;
 mod nvidia;
 mod image;
+mod png;
 
 mod os;
 mod modules;
