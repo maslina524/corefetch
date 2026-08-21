@@ -5,8 +5,7 @@ use alloc::{
 
 use crate::{
     abort,
-    zlib::huffman::{HuffmanTree, decode_symb},
-    zlib::stream::Stream
+    huffman::{HuffmanTree, decode_symb, Stream}
 };
 
 const LENGTH_BASE: [u32; 29] = [3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31, 35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258];
@@ -157,7 +156,7 @@ mod tests {
 
     #[test]
     fn decompress_logo() {
-        let compressed = include_bytes!("../../temp/d/debian.txt");
+        let compressed = include_bytes!("../temp/d/debian.txt");
         let mut decompressed = Vec::new();
 
         decompress(compressed.to_vec(), &mut decompressed);

@@ -31,7 +31,8 @@ mod color;
 mod nvidia;
 mod image;
 mod png;
-mod deflate;
+mod lz77;
+mod huffman;
 
 mod os;
 mod modules;
