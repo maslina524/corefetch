@@ -9,7 +9,8 @@ use crate::{
     deflate::{self, DeflateError},
     image::{
         ColorType, ColorTypeError, Image, Rgba, RgbaConvertError
-    }
+    },
+    crc32
 };
 
 const PNG_SIG: &[u8] = b"\x89PNG\x0D\x0A\x1A\x0A";
@@ -26,6 +27,7 @@ pub enum PngError {
     UnsupportedFilter,
     UnsupportedInterlace,
     UnexpectedEof,
+    IncorrectCrc32,
     DeflateError(DeflateError),
     ColorTypeError(ColorTypeError),
     RgbaConvertError(RgbaConvertError)
@@ -43,6 +45,7 @@ impl core::fmt::Display for PngError {
             Self::UnsupportedFilter                      => write!(f, "Png: Unsupported filter method (only 0)"),
             Self::UnsupportedInterlace                   => write!(f, "Png: Unsupported interlace method (only 0)"),
             Self::UnexpectedEof                          => write!(f, "Png: Unexpected end of data"),
+            Self::IncorrectCrc32                         => write!(f, "Png: Chunk has invalid crc32, file is corrupted"),
             Self::DeflateError(e)         => write!(f, "{e}"),
             Self::ColorTypeError(e)     => write!(f, "{e}"),
             Self::RgbaConvertError(e) => write!(f, "{e}"),
@@ -96,14 +99,16 @@ impl Ihdr {
             return Err(PngError::IncorrectIHDRName);
         }
 
-        let width = u32_from_bytes(&safe_take(iter, 4)?) as usize;
-        let height = u32_from_bytes(&safe_take(iter, 4)?) as usize;
-        let depth = iter.next().ok_or(PngError::UnexpectedEof)?;
-        let color_type_u8 = iter.next().ok_or(PngError::UnexpectedEof)?;
+        let raw = safe_take(iter, 13)?;
+
+        let width = u32_from_bytes(&raw[0..4]) as usize;
+        let height = u32_from_bytes(&raw[4..8]) as usize;
+        let depth = raw[8];
+        let color_type_u8 = raw[9];
         let color_type = ColorType::try_from(color_type_u8)?;
-        let compression = iter.next().ok_or(PngError::UnexpectedEof)?;
-        let filter = iter.next().ok_or(PngError::UnexpectedEof)?;
-        let interlace = iter.next().ok_or(PngError::UnexpectedEof)?;
+        let compression = raw[10];
+        let filter = raw[11];
+        let interlace = raw[12];
 
         if compression != 0 {
             return Err(PngError::UnsupportedCompression);
@@ -115,7 +120,14 @@ impl Ihdr {
             return Err(PngError::UnsupportedInterlace);
         }
 
-        let _crc = safe_take(iter, 4)?;
+        let crc = u32_from_bytes(&safe_take(iter, 4)?);
+        let mut crc_data = name;
+        crc_data.extend_from_slice(&raw);
+
+        let my_crc = crc32::encrypt_png(&crc_data);
+        if crc != my_crc {
+            return Err(PngError::IncorrectCrc32);
+        }
 
         Ok(Self {
             width,
@@ -146,7 +158,15 @@ impl Chunk {
         name.copy_from_slice(&name_bytes);
 
         let raw = safe_take(iter, len as usize)?;
-        let _crc = safe_take(iter, 4)?; // пропуск CRC
+
+        let crc = u32_from_bytes(&safe_take(iter, 4)?);
+        let mut crc_data = name_bytes;
+        crc_data.extend_from_slice(&raw);
+
+        let my_crc = crc32::encrypt_png(&crc_data);
+        if crc != my_crc {
+            return Err(PngError::IncorrectCrc32);
+        }
 
         Ok(Self { name, data: raw })
     }
@@ -283,7 +303,6 @@ impl Png {
         &self.image
     }
 }
-
 
 #[cfg(test)]
 mod tests {

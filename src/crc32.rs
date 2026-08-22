@@ -2,7 +2,6 @@
 // https://github.com/python/cpython/blob/main/Modules/zlibmodule.c
 
 static TABLE: [u32; 256] = generate_table();
-const INIT: u32 = 0;
 
 const fn generate_table() -> [u32; 256] {
     let mut table = [0u32; 256];
@@ -28,8 +27,8 @@ const fn generate_table() -> [u32; 256] {
     table
 }
 
-const fn encrypt(buf: &[u8]) -> u32 {
-    let mut crc = 0xFF_FF_FF_FF;
+pub const fn encrypt_with_init(buf: &[u8], init: u32) -> u32 {
+    let mut crc = init ^ 0xFF_FF_FF_FF;
     let mut pos = 0usize;
 
     while pos < buf.len() {
@@ -39,6 +38,10 @@ const fn encrypt(buf: &[u8]) -> u32 {
     }
 
     crc ^ 0xFF_FF_FF_FF
+}
+
+pub const fn encrypt_png(buf: &[u8]) -> u32 {
+    encrypt_with_init(buf, 0)
 }
 
 #[cfg(test)]
@@ -53,10 +56,10 @@ mod tests {
     }
 
     #[test]
-    fn encrypt_test() {
+    fn encrypt_png_test() {
         let source = "Hello World";
         let correct_hash = 0x4A_17_B1_56u32;
-        let my_hash = crc32::encrypt(source.as_bytes());
+        let my_hash = crc32::encrypt_png(source.as_bytes());
         assert_eq!(correct_hash, my_hash);
     }
 }
