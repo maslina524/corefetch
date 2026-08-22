@@ -5,9 +5,9 @@ use alloc::{
     vec::Vec
 };
 
-use crate::os::{
+use crate::windows::{
     error::{self, ErrorCode},
-    windows::{WideCharToMultiByte, MultiByteToWideChar}
+    link::{WideCharToMultiByte, MultiByteToWideChar}
 };
 
 const CP_UTF8: u32 = 65001;

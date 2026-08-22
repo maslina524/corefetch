@@ -4,9 +4,9 @@ use alloc::{
 };
 
 use crate::{
-    os::env,
-    os::regedit::RegValue,
-    os::windows::{SYSTEM_INFO, GetSystemInfo},
+    windows::env,
+    windows::regedit::RegValue,
+    windows::link::{SYSTEM_INFO, GetSystemInfo},
     formats::Size,
     format
 };

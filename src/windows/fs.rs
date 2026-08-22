@@ -9,9 +9,9 @@ use alloc::{
 };
 
 use crate::{
-    os::error::{self, ErrorCode},
-    os::path::Path,
-    os::windows::{
+    windows::error::{self, ErrorCode},
+    windows::path::Path,
+    windows::link::{
         CreateFileW, HANDLE, WriteFile, ReadFile,
         GetFileSizeEx, CloseHandle, CreateDirectoryW
     }
@@ -214,7 +214,7 @@ pub fn create_dirs(path: impl Into<Path>) -> error::Result<()> {
 mod tests {
     use alloc::string::String;
 
-    use crate::os::fs::{self, Access, File};
+    use crate::windows::fs::{self, Access, File};
   
     extern crate std;
 

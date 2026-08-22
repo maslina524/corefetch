@@ -3,8 +3,8 @@ use core::ptr;
 use alloc::string::String;
 
 use crate::{
-    os::windows::{GetLocaleInfoEx},
-    os::error::ErrorCode
+    windows::link::{GetLocaleInfoEx},
+    windows::error::ErrorCode
 };
 
 const LOCALE_NAME_MAX_LENGTH  : usize            = 85;

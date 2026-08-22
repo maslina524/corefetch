@@ -4,7 +4,7 @@ use core::{
 };
 
 use crate::{
-    os::windows::{GetProcessHeap, HeapAlloc, HeapFree, HeapReAlloc},
+    windows::link::{GetProcessHeap, HeapAlloc, HeapFree, HeapReAlloc},
     sync::OnceLock
 };
 

@@ -8,7 +8,7 @@ use core::{
 use alloc::string::String;
 
 use crate::{
-    os::{error::ErrorCode, windows::{GetStdHandle, SetConsoleOutputCP, WriteFile}}, sync::OnceLock
+    windows::{error::ErrorCode, link::{GetStdHandle, SetConsoleOutputCP, WriteFile}}, sync::OnceLock
 };
 
 const STDOUT        : u32             = u32::MAX - 10;
@@ -83,7 +83,7 @@ pub fn write(handle: isize, s: &str) {
 macro_rules! format {
     ($($tt:tt)*) => {{
         let mut string = alloc::string::String::new();
-        let mut formatter = $crate::os::io::StringFormatter::new(&mut string);
+        let mut formatter = $crate::windows::io::StringFormatter::new(&mut string);
         let _ = formatter.write_fmt(format_args!($($tt)*));
         string
     }};
@@ -93,7 +93,7 @@ macro_rules! format {
 macro_rules! formatln {
     ($($tt:tt)*) => {{
         let mut string = alloc::string::String::new();
-        let mut formatter = $crate::os::io::StringFormatter::new(&mut string);
+        let mut formatter = $crate::windows::io::StringFormatter::new(&mut string);
         let _ = formatter.write_fmt(format_args!($($tt)*));
         let _ = formatter.write_nl();
         string
@@ -104,22 +104,22 @@ macro_rules! formatln {
 macro_rules! print {
     () => {{}};
     ($($tt:tt)*) => {{
-        let handle = $crate::os::io::stdout();
+        let handle = $crate::windows::io::stdout();
         let s = $crate::format!($($tt)*);
-        $crate::os::io::write(handle, s.as_str());
+        $crate::windows::io::write(handle, s.as_str());
     }}
 }
 
 #[macro_export]
 macro_rules! println {
     () => {{
-        let handle = $crate::os::io::stdout();
-        $crate::os::io::write(handle, "\n");
+        let handle = $crate::windows::io::stdout();
+        $crate::windows::io::write(handle, "\n");
     }};
     ($($tt:tt)*) => {{
-        let handle = $crate::os::io::stdout();
+        let handle = $crate::windows::io::stdout();
         let s = $crate::formatln!($($tt)*);
-        $crate::os::io::write(handle, s.as_str());
+        $crate::windows::io::write(handle, s.as_str());
     }}
 }
 
@@ -127,34 +127,34 @@ macro_rules! println {
 macro_rules! eprint {
     () => {{}};
     ($expr:expr) => {{
-        let handle = $crate::os::io::stderr();
+        let handle = $crate::windows::io::stderr();
         let s = $crate::format!("{}", $expr);
-        $crate::os::io::write(handle, s.as_str());
+        $crate::windows::io::write(handle, s.as_str());
     }};
     ($($tt:tt)*) => {{
-        let handle = $crate::os::io::stderr();
+        let handle = $crate::windows::io::stderr();
         let s = $crate::format!($($tt)*);
-        $crate::os::io::write(handle, s.as_str());
+        $crate::windows::io::write(handle, s.as_str());
     }}
 }
 
 #[macro_export]
 macro_rules! eprintln {
     () => {{
-        let handle = $crate::os::io::stderr();
-        $crate::os::io::write(handle, "\n");
+        let handle = $crate::windows::io::stderr();
+        $crate::windows::io::write(handle, "\n");
     }};
     ($($tt:tt)*) => {{
-        let handle = $crate::os::io::stderr();
+        let handle = $crate::windows::io::stderr();
         let s = $crate::formatln!($($tt)*);
-        $crate::os::io::write(handle, s.as_str());
+        $crate::windows::io::write(handle, s.as_str());
     }}
 }
 
 #[cfg(test)]
 mod tests {
     use crate::{
-        os::io::{stdout, write}
+        windows::io::{stdout, write}
     };
 
     #[test]

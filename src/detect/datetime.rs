@@ -5,8 +5,8 @@ use alloc::{
 
 use crate::{
     format,
-    os::error::ErrorCode,
-    os::windows::{
+    windows::error::ErrorCode,
+    windows::link::{
         DYNAMIC_TIME_ZONE_INFORMATION, GetDynamicTimeZoneInformation, GetLocalTime,
         GetTimeZoneInformation, SYSTEMTIME, TIME_ZONE_INFORMATION
     }

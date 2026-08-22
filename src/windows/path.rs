@@ -10,10 +10,10 @@ use alloc::{
 };
 
 use crate::{
-    os::encoding::wide,
-    os::error,
-    os::windows::{GUID, SHGetKnownFolderPath, PathFileExistsW},
-    os::encoding::{utf16le_to_utf8, Utf16Len}
+    windows::encoding::wide,
+    windows::error,
+    windows::link::{GUID, SHGetKnownFolderPath, PathFileExistsW},
+    windows::encoding::{utf16le_to_utf8, Utf16Len}
 };
 
 const FOLDERID_LOCALAPPDATA: GUID = GUID::from_u128(
@@ -183,7 +183,7 @@ impl core::fmt::Display for Path {
 
 #[cfg(test)]
 mod tests {
-    use crate::os::path::Path;
+    use crate::windows::path::Path;
   
     extern crate std;
 

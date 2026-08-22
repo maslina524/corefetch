@@ -11,13 +11,13 @@ use alloc::{
 };
 
 use crate::{
-    os::windows::{
+    windows::link::{
         CreateDXGIFactory, IID_IDXGIFactory, IDXGIFactory_Vtbl, DXGI_ADAPTER_DESC,
         IDXGIAdapter_Vtbl, DXGI_ERROR_NOT_FOUND, SetupDiEnumDeviceInfo, SetupDiGetClassDevsW,
         DIGCF_PRESENT, GUID_DEVCLASS_DISPLAY, SP_DEVINFO_DATA, SetupDiOpenDevRegKey,
     },
-    os::regedit::Regedit,
-    os::encoding::{utf16le_to_utf8, Utf16Len},
+    windows::regedit::Regedit,
+    windows::encoding::{utf16le_to_utf8, Utf16Len},
     formats::Size,
     nvidia::NvidiaLib,
     abort,

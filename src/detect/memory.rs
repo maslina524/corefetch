@@ -1,7 +1,7 @@
 use core::mem;
 
 use crate::{
-    os::windows::{GlobalMemoryStatusEx, MEMORYSTATUSEX},
+    windows::link::{GlobalMemoryStatusEx, MEMORYSTATUSEX},
     formats::Size
 };
 

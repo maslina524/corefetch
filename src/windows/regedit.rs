@@ -10,9 +10,9 @@ use alloc::{
 };
 
 use crate::{
-    os::windows::{RegQueryValueExW, RegCloseKey, RegCreateKeyExW, RegOpenKeyExW},
-    os::encoding::wide,
-    os::error::{self, ErrorCode}
+    windows::link::{RegQueryValueExW, RegCloseKey, RegCreateKeyExW, RegOpenKeyExW},
+    windows::encoding::wide,
+    windows::error::{self, ErrorCode}
 };
 
 pub type Handle = AtomicPtr<c_void>;
@@ -297,7 +297,7 @@ impl Drop for Regedit {
 mod tests {
     use crate::{
         detect::cpu::CpuInfo,
-        os::regedit::{Access, Hkey, Regedit}
+        windows::regedit::{Access, Hkey, Regedit}
     };
 
     extern crate std;

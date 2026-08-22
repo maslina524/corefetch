@@ -36,7 +36,7 @@ mod huffman;
 mod zlib;
 mod deflate;
 
-mod os;
+mod windows;
 mod modules;
 mod logo;
 mod detect;
@@ -58,11 +58,11 @@ use crate::{
     json::Json,
     logo::LogoInfo, 
     modules::{FormatValue, Module, Os}, 
-    os::allocator::Allocator,
-    os::env,
-    os::fs::{self, ReadError},
-    os::https::{Request, Url},
-    os::windows::ExitProcess, 
+    windows::allocator::Allocator,
+    windows::env,
+    windows::fs::{self, ReadError},
+    windows::https::{Request, Url},
+    windows::link::ExitProcess, 
     preset::{Preset, PresetModule},
     nvidia::NvidiaLib
 };

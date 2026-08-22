@@ -1,8 +1,8 @@
 use core::fmt::Display;
 
 use crate::{
-    os::windows::{FormatMessageW, GetLastError},
-    os::encoding::{utf16le_to_utf8, Utf16Len},
+    windows::link::{FormatMessageW, GetLastError},
+    windows::encoding::{utf16le_to_utf8, Utf16Len},
     abort
 };
 
@@ -74,7 +74,7 @@ impl core::error::Error for ErrorCode {}
 mod tests {
     extern crate std;
 
-    use crate::os::error::ErrorCode;
+    use crate::windows::error::ErrorCode;
 
     #[test]
     fn panic_msg_test() {
