@@ -144,16 +144,27 @@ impl Image {
         (self.w, self.h)
     }
 
-    pub fn set_pixel(&mut self, x: usize, y: usize, v: Rgba) -> Result<(), ()> {
+    pub fn set_pixel(&mut self, x: usize, y: usize, v: Rgba) -> Option<()> {
         if x < self.w && y < self.h {
             self.data[y * self.w + x] = v;
-            Ok(())
+            Some(())
         } else {
-            Err(())
+            None
         }
     }
 
-    pub fn get_pixel(&self, x: usize, y: usize) -> Option<&Rgba> {
-        self.data.get(y * self.w + x)
+    pub fn get_pixel(&self, x: usize, y: usize) -> Option<Rgba> {
+        self.data.get(y * self.w + x).copied()
+    }
+
+    pub fn get_pixel_wrapped(&self, x: isize, y: isize) -> Option<Rgba> {
+        if x < 0 || y < 0 || x >= self.w as isize || y >= self.h as isize {
+            return None;
+        }
+        self.data.get(y as usize * self.w + x as usize).copied()
+    }
+
+    pub fn get_pixel_wrapped_or_default(&self, x: isize, y: isize) -> Rgba {
+        self.get_pixel_wrapped(x, y).unwrap_or_default()
     }
 }
