@@ -2,24 +2,24 @@
 #![cfg_attr(not(test), no_main)]
 #![deny(
     clippy::all,
-    clippy::undocumented_unsafe_blocks,
-    clippy::unnecessary_safety_comment,
-    clippy::unnecessary_safety_doc,
-    clippy::unsafe_removed_from_name, 
-    clippy::unsafe_derive_deserialize,
-    clippy::missing_safety_doc,
-    clippy::as_ptr_cast_mut,
-    clippy::mut_from_ref,
-    clippy::fn_to_numeric_cast_any,
+    clippy::pedantic,
+    clippy::nursery,
+    clippy::cargo
 )]
 #![allow(
-    dead_code,
-    clippy::struct_field_names,
+    dead_code, 
+    reason = "A lot of code is made \"for the future\"; all unused code will be removed by release"
+)]
+#![allow(
     clippy::too_many_lines,
+    reason = "In logo/{a-z}.rs there are functions longer than 100 lines"
+)]
+#![allow(
     clippy::cast_lossless,
     clippy::cast_possible_truncation,
     clippy::cast_possible_wrap,
-    clippy::cast_sign_loss
+    clippy::cast_sign_loss,
+    reason = "There's no point in them, it will make the code cleaner"
 )]
 
 mod sync;
