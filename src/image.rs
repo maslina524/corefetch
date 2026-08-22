@@ -3,7 +3,7 @@ use alloc::{
     vec
 };
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ColorType {
     Rgba,
     Rgb,
@@ -166,5 +166,9 @@ impl Image {
 
     pub fn get_pixel_wrapped_or_default(&self, x: isize, y: isize) -> Rgba {
         self.get_pixel_wrapped(x, y).unwrap_or_default()
+    }
+
+    pub const fn get_size(&self) -> (usize, usize) {
+        (self.w, self.h)
     }
 }

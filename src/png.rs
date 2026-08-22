@@ -232,12 +232,12 @@ impl Png {
         }
     
         let ihdr = Ihdr::new(&mut iter)?;
-        crate::println!("IHDR: {:?}", ihdr);
+        // crate::println!("IHDR: {:?}", ihdr);
 
         let mut idat_data: Vec<u8> = Vec::new();
         loop {
             let chunk = Chunk::new(&mut iter)?;
-            crate::println!("{}: {:?}", str::from_utf8(&chunk.name).unwrap(), chunk.data);
+            // crate::println!("{}: {:?}", str::from_utf8(&chunk.name).unwrap(), chunk.data);
             match &chunk.name {
                 b"IEND" => {
                     break;
@@ -251,7 +251,7 @@ impl Png {
 
         let deflate_raw = &idat_data[2..idat_data.len() - 4];
         let decompressed = deflate::decode(deflate_raw)?;
-        crate::println!("decompressed IDAT: {:?}", decompressed);
+        // crate::println!("decompressed IDAT: {:?}", decompressed);
         let mut iter = decompressed.iter().copied();
 
         let channels = ihdr.color_type.get_bytes_count();
@@ -278,6 +278,10 @@ impl Png {
 
         Ok(Self { image, typ: ihdr.color_type, depth: ihdr.depth })
     }
+
+    pub const fn as_image(&self) -> &Image {
+        &self.image
+    }
 }
 
 
@@ -285,29 +289,41 @@ impl Png {
 mod tests {
     use std::fs;
 
-    use crate::png::Png;
+    use crate::{image::ColorType, png::Png};
 
     #[test]
     fn rgba8_test() {
         let data = fs::read("test/png/rgba8.png").unwrap();
         let png = Png::decode(&data).unwrap();
+        let size = png.as_image().size();
         
         println!("{png:#?}");
+        assert_eq!(size, (3, 3));
+        assert_eq!(png.depth, 8);
+        assert_eq!(png.typ, ColorType::Rgba);
     }
 
     #[test]
     fn graya16_test() {
         let data = fs::read("test/png/graya16.png").unwrap();
         let png = Png::decode(&data).unwrap();
+        let size = png.as_image().size();
         
         println!("{png:#?}");
+        assert_eq!(size, (2, 2));
+        assert_eq!(png.depth, 16);
+        assert_eq!(png.typ, ColorType::GrayscaleAlpha);
     }
 
     #[test]
     fn gray8_test() {
         let data = fs::read("test/png/gray8.png").unwrap();
         let png = Png::decode(&data).unwrap();
+        let size = png.as_image().size();
         
         println!("{png:#?}");
+        assert_eq!(size, (2, 2));
+        assert_eq!(png.depth, 8);
+        assert_eq!(png.typ, ColorType::Grayscale);
     }
 }
