@@ -8,7 +8,7 @@ use crate::{
     format_for_module_wo_key,
     impl_display_for_module,
     modules::Module,
-    os::path::Path,
+    windows::path::Path,
     sync::OnceLock
 };
 

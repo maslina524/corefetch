@@ -11,9 +11,9 @@ use alloc::{
 use crate::{
     format,
     logo::LogoInfo,
-    os::env,
-    os::path::Path,
-    os::windows::{
+    windows::env,
+    windows::path::Path,
+    windows::link::{
         ConvertSidToStringSidW, GetComputerNameW, GetCurrentDirectoryW, GetCurrentProcess,
         GetCurrentProcessId, GetTokenInformation, GetUserNameExW, GetUserNameW, OpenProcessToken,
         LocalFree, CloseHandle, PSID

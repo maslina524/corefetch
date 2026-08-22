@@ -10,12 +10,12 @@ use alloc::{
 };
 
 use crate::{
-    os::error::ErrorCode,
-    os::windows::{
+    windows::error::ErrorCode,
+    windows::link::{
         WinHttpOpen, WinHttpConnect, WinHttpCloseHandle, WinHttpOpenRequest,
         WinHttpSendRequest, WinHttpReceiveResponse, WinHttpQueryHeaders, WinHttpReadData
     },
-    os::encoding::wide,
+    windows::encoding::wide,
     format,
 };
 
@@ -314,7 +314,7 @@ impl Request {
 
 #[cfg(test)]
 mod tests {
-    use crate::os::https::{Request, Url};
+    use crate::windows::https::{Request, Url};
 
     extern crate std;
 

@@ -11,14 +11,14 @@ use alloc::{
 };
 
 use crate::{
-    os::error::{self, ErrorCode},
-    os::fs::{Access, File},
-    os::windows::{
+    windows::error::{self, ErrorCode},
+    windows::fs::{Access, File},
+    windows::link::{
         CONSOLE_SCREEN_BUFFER_INFO, CloseHandle, CommandLineToArgvW,
         FILETIME, GetCommandLineW, GetConsoleScreenBufferInfo, GetSystemTimeAsFileTime,
         OSVERSIONINFOW, EnumProcesses, RtlGetVersion
     },
-    os::regedit::{self, Regedit, RegValue, Hkey},
+    windows::regedit::{self, Regedit, RegValue, Hkey},
     sync::OnceLock
 };
 
@@ -236,7 +236,7 @@ pub fn args() -> Vec<String> {
 
 #[cfg(test)]
 mod tests {
-    use crate::os::env;
+    use crate::windows::env;
   
     extern crate std;
 

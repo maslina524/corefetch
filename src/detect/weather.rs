@@ -6,10 +6,10 @@ use alloc::{
 
 use crate::{
     format,
-    os::env,
-    os::fs::{self, Access, File},
-    os::https::Request,
-    os::path::Path,
+    windows::env,
+    windows::fs::{self, Access, File},
+    windows::https::Request,
+    windows::path::Path,
 };
 
 const WTTR_URL: &str = "https://wttr.in/?lang=en&format=%c;%C;%x;%h;%t;%f;%w;%l;%m;%M;%p;%P;%u;%D;%S;%z;%s;%d;%T;%Z";

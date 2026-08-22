@@ -3,10 +3,10 @@ use alloc::{
 };
 
 use crate::{
-    os::error::{self, ErrorCode},
-    os::path::Path,
-    os::windows::SystemParametersInfoW,
-    os::encoding::{utf16le_to_utf8, Utf16Len}
+    windows::error::{self, ErrorCode},
+    windows::path::Path,
+    windows::link::SystemParametersInfoW,
+    windows::encoding::{utf16le_to_utf8, Utf16Len}
 };
 
 const MAX_PATH: usize = 260 + 1; // `+1` for `\0`

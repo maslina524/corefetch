@@ -12,12 +12,12 @@ use alloc::{
 };
 
 use crate::{
-    os::error::ErrorCode,
-    os::windows::{
+    windows::error::ErrorCode,
+    windows::link::{
         GetActiveProcessorCount, GetLogicalProcessorInformation, GetNumaHighestNodeNumber,
         SYSTEM_LOGICAL_PROCESSOR_INFORMATION
     },
-    os::regedit::{Regedit, Access, Hkey},
+    windows::regedit::{Regedit, Access, Hkey},
     todo_or_default,
     format
 };

@@ -6,7 +6,7 @@ use core::{
 
 use crate::{
     abort,
-    os::windows::{FreeLibrary, GetProcAddress, HMODULE, LoadLibraryA},
+    windows::link::{FreeLibrary, GetProcAddress, HMODULE, LoadLibraryA},
     sync::OnceLock
 };
 
