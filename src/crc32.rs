@@ -1,5 +1,5 @@
 // SOURCE:
-// https://github.com/gcc-mirror/gcc/blob/master/libiberty/crc32.c
+// https://github.com/python/cpython/blob/main/Modules/zlibmodule.c
 
 static TABLE: [u32; 256] = generate_table();
 const INIT: u32 = 0;
@@ -9,16 +9,16 @@ const fn generate_table() -> [u32; 256] {
 
     let mut i = 0u32; 
     while i < 256 {
-        let mut c = i << 24;
-        let mut j = 8u32;
-        while j > 0 {
-            c = if c & 0x8000_0000 != 0 { 
-                c << 1 ^ 0x04c1_1db7  
+        let mut c = i;
+        let mut j = 0;
+        while j < 8 {
+            c = if c & 1 != 0 { 
+                0xED_B8_83_20 ^ (c >> 1)
             } else { 
-                c << 1 
+                c >> 1 
             };
 
-            j -= 1;
+            j += 1;
         }
 
         table[i as usize] = c;
@@ -29,16 +29,16 @@ const fn generate_table() -> [u32; 256] {
 }
 
 const fn encrypt(buf: &[u8]) -> u32 {
-    let mut crc = INIT;
+    let mut crc = 0xFF_FF_FF_FF;
     let mut pos = 0usize;
 
     while pos < buf.len() {
-        let index = ((crc >> 24) ^ buf[pos] as u32) & 255;
-        crc = (crc << 8) ^ TABLE[index as usize];
+        let index = (crc ^ buf[pos] as u32) & 0xFF;
+        crc = TABLE[index as usize] ^ (crc >> 8);
         pos += 1;
     }
 
-    crc
+    crc ^ 0xFF_FF_FF_FF
 }
 
 #[cfg(test)]
