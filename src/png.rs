@@ -1,6 +1,9 @@
 use core::error::Error;
 
-use alloc::vec::Vec;
+use alloc::{
+    vec::Vec,
+    vec
+};
 
 use crate::{
     deflate::{self, DeflateError},
@@ -165,6 +168,54 @@ fn u32_from_bytes(bytes: &[u8]) -> u32 {
     u32::from_be_bytes([bytes[0], bytes[1], bytes[2], bytes[3]])
 }
 
+const fn paeth_predictor(a: u8, b: u8, c: u8) -> u8 {
+    let p = a as i16 + b as i16 - c as i16;
+    let pa = (p - a as i16).abs();
+    let pb = (p - b as i16).abs();
+    let pc = (p - c as i16).abs();
+    if pa <= pb && pa <= pc {
+        a
+    } else if pb <= pc {
+        b
+    } else {
+        c
+    }
+}
+
+fn unfilter_scanline(filter: u8, current: &mut [u8], previous: Option<&[u8]>, bpp: usize) -> Result<(), PngError> {
+    for i in 0..current.len() {
+        let a = if i >= bpp { current[i - bpp] } else { 0 };
+        let b = previous.map_or(0, |p| p[i]);
+        let c = if i >= bpp { previous.map_or(0, |p| p[i - bpp]) } else { 0 };
+
+        current[i] = match filter {
+            0 => current[i],
+            1 => current[i].wrapping_add(a),
+            2 => current[i].wrapping_add(b),
+            3 => current[i].wrapping_add(u16::midpoint(a as u16, b as u16) as u8),
+            4 => current[i].wrapping_add(paeth_predictor(a, b, c)),
+            _ => return Err(PngError::UnsupportedFilter),
+        };
+    }
+    Ok(())
+}
+
+fn extract_pixel_bytes(row: &[u8], x: usize, color_type: ColorType, depth: u8) -> Vec<u8> {
+    let channels = color_type.get_bytes_count();
+    if depth >= 8 {
+        let bytes_per_pixel = channels * (depth as usize / 8);
+        let start = x * bytes_per_pixel;
+        row[start..start + bytes_per_pixel].to_vec()
+    } else {
+        let pixels_per_byte = 8 / depth as usize;
+        let byte_index = x / pixels_per_byte;
+        let bit_index = x % pixels_per_byte;
+        let shift = 8 - depth as usize * (bit_index + 1);
+        let mask = ((1u16 << depth) - 1) as u8;
+        vec![(row[byte_index] >> shift) & mask]
+    }
+}
+
 #[derive(Debug)]
 pub struct Png {
     image: Image,
@@ -202,26 +253,27 @@ impl Png {
         let decompressed = deflate::decode(deflate_raw)?;
         crate::println!("decompressed IDAT: {:?}", decompressed);
         let mut iter = decompressed.iter().copied();
-        
-        let bytes_color_type = ihdr.color_type.get_bytes_count();
+
+        let channels = ihdr.color_type.get_bytes_count();
+        let bpp = core::cmp::max(1, channels * ihdr.depth as usize / 8);
+        let row_bytes = (ihdr.width * channels * ihdr.depth as usize).div_ceil(8);
+
         let mut image = Image::new(ihdr.width, ihdr.height);
+        let mut prev_row: Option<Vec<u8>> = None;
+
         for y in 0..ihdr.height {
-            let filter = iter.next().ok_or(PngError::UnexpectedEof)?; // Filter
+            let filter = iter.next().ok_or(PngError::UnexpectedEof)?;
+            let mut row = safe_take(&mut iter, row_bytes)?;
+
+            unfilter_scanline(filter, &mut row, prev_row.as_deref(), bpp)?;
+
             for x in 0..ihdr.width {
-                let pixel_raw = safe_take(&mut iter, bytes_color_type * ihdr.depth as usize / 8)?;
+                let pixel_raw = extract_pixel_bytes(&row, x, ihdr.color_type, ihdr.depth);
                 let pixel = Rgba::from(&pixel_raw, ihdr.color_type, ihdr.depth)?;
-
-                let pixel_filtered = match filter {
-                    0 => pixel,
-                    1 => todo!("Not impl"),
-                    2 => todo!("Not impl"),
-                    3 => todo!("Not impl"),
-                    4 => todo!("Not impl"),
-                    _ => return Err(PngError::UnsupportedFilter)
-                };
-
-                image.set_pixel(x, y, pixel_filtered).unwrap();
+                image.set_pixel(x, y, pixel).unwrap();
             }
+
+            prev_row = Some(row);
         }
 
         Ok(Self { image, typ: ihdr.color_type, depth: ihdr.depth })
