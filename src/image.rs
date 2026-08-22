@@ -3,33 +3,28 @@ use alloc::{
     vec
 };
 
-#[derive(Clone, Copy, Default, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct Rgba(pub u8, pub u8, pub u8, pub u8);
 
-#[derive(Clone, Copy, Default)]
-pub struct Point {
-    pub x: usize,
-    pub y: usize
-}
-
+#[derive(Debug)]
 pub struct Image {
     w: usize,
     h: usize,
-    data: Vec<Vec<Rgba>>
+    data: Vec<Rgba>
 }
 
 impl Image {
     pub fn new(w: usize, h: usize) -> Self {
-        Self { w, h, data: vec![vec![Rgba::default(); h]; w] }
+        Self { w, h, data: vec![Rgba::default(); w * h] }
     }
 
     pub const fn size(&self) -> (usize, usize) {
         (self.w, self.h)
     }
 
-    pub fn set_pixel(&mut self, p: Point, v: Rgba) -> Result<(), ()> {
-        if p.x < self.w && p.y < self.h {
-            self.data[p.x][p.y] = v;
+    pub fn set_pixel(&mut self, x: usize, y: usize, v: Rgba) -> Result<(), ()> {
+        if x < self.w && y < self.h {
+            self.data[y * self.w + x] = v;
             Ok(())
         } else {
             Err(())
@@ -37,6 +32,6 @@ impl Image {
     }
 
     pub fn get_pixel(&self, x: usize, y: usize) -> Option<&Rgba> {
-        self.data.get(x).and_then(|d| d.get(y))
+        self.data.get(y * self.w + x)
     }
 }
