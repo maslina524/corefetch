@@ -2,6 +2,11 @@ use core::error::Error;
 
 use alloc::vec::Vec;
 
+use crate::{
+    deflate::{self, DeflateError},
+    image::{Image, Rgba}
+};
+
 const PNG_SIG: &[u8] = b"\x89PNG\x0D\x0A\x1A\x0A";
 const IHDR_NAME: &[u8] = b"IHDR";
 
@@ -16,29 +21,37 @@ pub enum PngError {
     UnsupportedFilter,
     UnsupportedInterlace,
     UnexpectedEof,
+    DeflateError(deflate::DeflateError)
 }
 
 impl core::fmt::Display for PngError {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
-            Self::InvalidSignature    => write!(f, "Png: Invalid signature"),
-            Self::IncorrectDataLen    => write!(f, "Png: Incorrect data len"),
-            Self::FirstChunkIsNotIHDR => write!(f, "Png: First chunk is not IHDR"),
-            Self::IncorrectIHDRLen    => write!(f, "Png: Incorrect IHDR len"),
-            Self::IncorrectIHDRName   => write!(f, "Png: Incorrect IHDR name"),
-            Self::UnsupportedCompression => write!(f, "Png: Unsupported compression method (only Deflate)"),
-            Self::UnsupportedFilter   => write!(f, "Png: Unsupported filter method (only 0)"),
-            Self::UnsupportedInterlace => write!(f, "Png: Unsupported interlace method (only 0)"),
-            Self::UnexpectedEof       => write!(f, "Png: Unexpected end of data"),
+            Self::InvalidSignature               => write!(f, "Png: Invalid signature"),
+            Self::IncorrectDataLen               => write!(f, "Png: Incorrect data len"),
+            Self::FirstChunkIsNotIHDR            => write!(f, "Png: First chunk is not IHDR"),
+            Self::IncorrectIHDRLen               => write!(f, "Png: Incorrect IHDR len"),
+            Self::IncorrectIHDRName              => write!(f, "Png: Incorrect IHDR name"),
+            Self::UnsupportedCompression         => write!(f, "Png: Unsupported compression method (only Deflate)"),
+            Self::UnsupportedFilter              => write!(f, "Png: Unsupported filter method (only 0)"),
+            Self::UnsupportedInterlace           => write!(f, "Png: Unsupported interlace method (only 0)"),
+            Self::UnexpectedEof                  => write!(f, "Png: Unexpected end of data"),
+            Self::DeflateError(e) => write!(f, "{e}"),
         }
+    }
+}
+
+impl From<DeflateError> for PngError {
+    fn from(value: DeflateError) -> Self {
+        Self::DeflateError(value)
     }
 }
 
 impl Error for PngError {}
 
 struct Ihdr {
-    pub width: u32,
-    pub height: u32,
+    pub width: usize,
+    pub height: usize,
     pub depth: u8,
     pub color_type: u8,
     pub compression: u8,
@@ -61,8 +74,8 @@ impl Ihdr {
             return Err(PngError::IncorrectIHDRName);
         }
 
-        let width = u32_from_bytes(&safe_take(iter, 4)?);
-        let height = u32_from_bytes(&safe_take(iter, 4)?);
+        let width = u32_from_bytes(&safe_take(iter, 4)?) as usize;
+        let height = u32_from_bytes(&safe_take(iter, 4)?) as usize;
         let depth = iter.next().ok_or(PngError::UnexpectedEof)?;
         let color_type = iter.next().ok_or(PngError::UnexpectedEof)?;
         let compression = iter.next().ok_or(PngError::UnexpectedEof)?;
@@ -132,26 +145,45 @@ fn u32_from_bytes(bytes: &[u8]) -> u32 {
     u32::from_be_bytes([bytes[0], bytes[1], bytes[2], bytes[3]])
 }
 
-pub fn decode(bytes: &[u8]) -> Result<Vec<Chunk>, PngError> {
+pub fn decode(bytes: &[u8]) -> Result<Image, PngError> {
     let mut iter = bytes.iter().copied();
 
     if safe_take(&mut iter, PNG_SIG.len())? != PNG_SIG {
         return Err(PngError::InvalidSignature);
     }
+ 
+    let ihdr = Ihdr::new(&mut iter)?;
 
-    // Чтение IHDR
-    let _ihdr = Ihdr::new(&mut iter)?;
-
-    let mut chunks = Vec::new();
-    while let Ok(chunk) = Chunk::new(&mut iter) {
-        if &chunk.name == b"IEND" {
-            chunks.push(chunk);
-            break;
+    let mut idat_data: Vec<u8> = Vec::new();
+    loop {
+        let chunk = Chunk::new(&mut iter)?;
+        match &chunk.name {
+            b"IEND" => {
+                break;
+            },
+            b"IDAT" => {
+                idat_data.extend_from_slice(&chunk.data);
+            },
+            _ => {}
         }
-        chunks.push(chunk);
     }
 
-    Ok(chunks)
+    let deflate_raw = &idat_data[2..idat_data.len() - 4];
+    let decompressed = deflate::decode(deflate_raw)?;
+    let mut iter = decompressed.iter().copied();
+    
+    let mut image = Image::new(ihdr.width, ihdr.height);
+    for y in 0..ihdr.height {
+        iter.next(); // Filter
+        for x in 0..ihdr.width {
+            // RGBA
+            let pixel_raw = safe_take(&mut iter, 4)?;
+            let pixel = Rgba(pixel_raw[0], pixel_raw[1], pixel_raw[2], pixel_raw[3]);
+            image.set_pixel(x, y, pixel).unwrap();
+        }
+    }
+
+    Ok(image)
 }
 
 #[cfg(test)]
@@ -162,10 +194,8 @@ mod tests {
     #[test]
     fn png_marker_test() {
         let data = fs::read("test/png/marker.png").unwrap();
-        let chunks = png::decode(&data).unwrap();
+        let image = png::decode(&data).unwrap();
         
-        for (i, c) in chunks.iter().enumerate() {
-            println!("[{i}] {} {:#?}", str::from_utf8(&c.name).unwrap(), c.data);
-        }
+        println!("{image:?}");
     }
 }
