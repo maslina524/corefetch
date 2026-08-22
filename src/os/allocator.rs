@@ -4,16 +4,20 @@ use core::{
 };
 
 use crate::{
-    os::windows::{GetProcessHeap, HeapAlloc, HeapFree},
+    os::windows::{GetProcessHeap, HeapAlloc, HeapFree, HeapReAlloc},
     sync::OnceLock
 };
+
+const HEAP_ZERO_MEMORY: u32 = 0x08;
 
 static HEAP_HANDLE: OnceLock<usize> = OnceLock::new();
 
 fn get_heap_handle() -> *mut c_void {
     // SAFETY: The `GetProcessHeap` function takes no arguments and
     // is guaranteed to return a valid handle
-    let ptr = HEAP_HANDLE.get_or_init(|| unsafe { GetProcessHeap() as usize });
+    let ptr = HEAP_HANDLE.get_or_init(|| 
+        unsafe { GetProcessHeap() as usize }
+    );
     *ptr as *mut c_void
 }
 
@@ -53,6 +57,42 @@ unsafe impl GlobalAlloc for Allocator {
                 ptr.cast::<c_void>()
             );
             assert!(ret != 0, "`HeapFree` error!");
+        }
+    }
+
+    unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
+        let handle = get_heap_handle();
+
+        // SAFETY: The `HeapAlloc` function always
+        // receives a valid handle from `GetProcessHeap`;
+        // if the OS fails to allocate memory, it
+        // returns NULL which is checked in the block
+        unsafe {
+            let ptr = HeapAlloc(
+                handle, 
+                HEAP_ZERO_MEMORY, 
+                layout.size()
+            );
+            assert!(!ptr.is_null(), "`HeapAlloc` error!");
+            ptr.cast::<u8>()
+        }
+    }
+
+    unsafe fn realloc(&self, ptr: *mut u8, _layout: Layout, new_size: usize) -> *mut u8 {
+        let handle = get_heap_handle();
+
+        // SAFETY: When passing a null pointer, 
+        // the function will behave like `HeapAlloc`; 
+        // the returned pointer is checked
+        unsafe {
+            let new_ptr = HeapReAlloc(
+                handle, 
+                0, 
+                ptr.cast(), 
+                new_size
+            );
+            assert!(!new_ptr.is_null(), "`HeapReAlloc` error!");
+            new_ptr.cast::<u8>()
         }
     }
 }

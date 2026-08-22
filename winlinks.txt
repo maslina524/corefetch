@@ -80,3 +80,4 @@ SetupDiOpenDevRegKey
 LoadLibraryA
 GetProcAddress
 FreeLibrary
+HeapReAlloc
