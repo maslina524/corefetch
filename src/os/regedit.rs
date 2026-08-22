@@ -190,10 +190,7 @@ impl Regedit {
         unsafe { buf.set_len(size_usize) };
 
         match typ {
-            // REG_NONE (0)
             0 => Ok(RegValue::None),
-
-            // REG_SZ (1)
             1 => {
                 // SAFETY: Using memory specifically allocated for the string
                 let u16_slice = unsafe {
@@ -204,8 +201,6 @@ impl Regedit {
                 let s = String::from_utf16_lossy(&chars);
                 Ok(RegValue::Sz(s))
             }
-
-            // REG_EXPAND_SZ (2)
             2 => {
                 // SAFETY: Using memory specifically allocated for the string
                 let u16_slice = unsafe {
@@ -216,8 +211,6 @@ impl Regedit {
                 let s = String::from_utf16_lossy(&chars);
                 Ok(RegValue::ExpandSz(s))
             }
-
-            // REG_DWORD (4) – little‑endian
             4 => {
                 if buf.len() != 4 {
                     return Err(ErrorCode::new(13)); // ERROR_INVALID_DATA
@@ -225,8 +218,6 @@ impl Regedit {
                 let val = u32::from_le_bytes([buf[0], buf[1], buf[2], buf[3]]);
                 Ok(RegValue::Dword(val))
             }
-
-            // REG_DWORD_BIG_ENDIAN (5)
             5 => {
                 if buf.len() != 4 {
                     return Err(ErrorCode::new(13));
@@ -234,8 +225,6 @@ impl Regedit {
                 let val = u32::from_be_bytes([buf[0], buf[1], buf[2], buf[3]]);
                 Ok(RegValue::DwordBE(val))
             }
-
-            // REG_LINK (6)
             6 => {
                 // SAFETY: Using memory specifically allocated for the string
                 let u16_slice = unsafe {
@@ -246,8 +235,6 @@ impl Regedit {
                 let s = String::from_utf16_lossy(&chars);
                 Ok(RegValue::Link(s))
             }
-
-            // REG_MULTI_SZ (7)
             7 => {
                 // SAFETY: Using memory specifically allocated for the string
                 let u16_slice = unsafe {
@@ -273,7 +260,6 @@ impl Regedit {
                 }
                 Ok(RegValue::MultiSz(strings))
             }
-
             11 => {
                 if buf.len() != 8 {
                     return Err(ErrorCode::new(13));
@@ -284,8 +270,6 @@ impl Regedit {
                 ]);
                 Ok(RegValue::Qword(val))
             }
-
-            // REG_BINARY (3) & Unknown types
             _ => Ok(RegValue::Binary(buf))
         }
     }

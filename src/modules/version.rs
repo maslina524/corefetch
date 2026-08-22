@@ -10,7 +10,9 @@ static VERSION: OnceLock<Version> = OnceLock::new();
 #[derive(Debug)]
 pub struct Version<'a> {
     pub project_name: &'a str,
+    #[allow(clippy::struct_field_names)]
     pub version: &'a str,
+    #[allow(clippy::struct_field_names)]
     pub version_tweak: &'a str,
     pub build_type: &'a str,
     pub sysname: &'a str,
