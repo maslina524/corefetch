@@ -9,9 +9,45 @@ pub enum ColorType {
     Rgb,
     GrayscaleAlpha,
     Grayscale,
-    Indexed,
-    IndexedScaled
 }
+
+impl ColorType {
+    pub const fn get_bytes_count(self) -> usize {
+        match self {
+            Self::Rgba => 4,
+            Self::Rgb => 3,
+            Self::GrayscaleAlpha => 2,
+            Self::Grayscale => 1,
+        }
+    }
+}
+
+impl TryFrom<u8> for ColorType {
+    type Error = ColorTypeError;
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            0 => Ok(Self::Grayscale),
+            2 => Ok(Self::Rgb),
+            4 => Ok(Self::GrayscaleAlpha),
+            6 => Ok(Self::Rgba),
+            _ => Err(ColorTypeError(value))
+        }
+    }
+}
+
+#[derive(Debug)]
+pub struct ColorTypeError(u8);
+
+impl core::fmt::Display for ColorTypeError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(
+            f, "ColorTypeError: Failed to get ColorType from index ({}); file is corrupted or nofetch does not support the type, try converting the file to another type",
+            self.0
+        )
+    }
+}
+
+impl core::error::Error for ColorTypeError {}
 
 #[derive(Debug)]
 pub struct RgbaConvertError {
