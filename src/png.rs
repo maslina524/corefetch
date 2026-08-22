@@ -67,6 +67,7 @@ impl From<RgbaConvertError> for PngError {
 
 impl Error for PngError {}
 
+#[derive(Debug)]
 struct Ihdr {
     pub width: usize,
     pub height: usize,
@@ -164,58 +165,97 @@ fn u32_from_bytes(bytes: &[u8]) -> u32 {
     u32::from_be_bytes([bytes[0], bytes[1], bytes[2], bytes[3]])
 }
 
-pub fn decode(bytes: &[u8]) -> Result<Image, PngError> {
-    let mut iter = bytes.iter().copied();
-
-    if safe_take(&mut iter, PNG_SIG.len())? != PNG_SIG {
-        return Err(PngError::InvalidSignature);
-    }
- 
-    let ihdr = Ihdr::new(&mut iter)?;
-
-    let mut idat_data: Vec<u8> = Vec::new();
-    loop {
-        let chunk = Chunk::new(&mut iter)?;
-        crate::println!("{}: {:?}", str::from_utf8(&chunk.name).unwrap(), chunk.data);
-        match &chunk.name {
-            b"IEND" => {
-                break;
-            },
-            b"IDAT" => {
-                idat_data.extend_from_slice(&chunk.data);
-            },
-            _ => {}
-        }
-    }
-
-    let deflate_raw = &idat_data[2..idat_data.len() - 4];
-    let decompressed = deflate::decode(deflate_raw)?;
-    let mut iter = decompressed.iter().copied();
-    
-    let mut image = Image::new(ihdr.width, ihdr.height);
-    for y in 0..ihdr.height {
-        iter.next(); // Filter
-        for x in 0..ihdr.width {
-            // RGBA
-            let pixel_raw = safe_take(&mut iter, 4)?;
-            let pixel = Rgba(pixel_raw[0], pixel_raw[1], pixel_raw[2], pixel_raw[3]);
-            image.set_pixel(x, y, pixel).unwrap();
-        }
-    }
-
-    Ok(image)
+#[derive(Debug)]
+pub struct Png {
+    image: Image,
+    typ: ColorType,
+    depth: u8
 }
+
+impl Png {
+    pub fn decode(bytes: &[u8]) -> Result<Self, PngError> {
+        let mut iter = bytes.iter().copied();
+
+        if safe_take(&mut iter, PNG_SIG.len())? != PNG_SIG {
+            return Err(PngError::InvalidSignature);
+        }
+    
+        let ihdr = Ihdr::new(&mut iter)?;
+        crate::println!("IHDR: {:?}", ihdr);
+
+        let mut idat_data: Vec<u8> = Vec::new();
+        loop {
+            let chunk = Chunk::new(&mut iter)?;
+            crate::println!("{}: {:?}", str::from_utf8(&chunk.name).unwrap(), chunk.data);
+            match &chunk.name {
+                b"IEND" => {
+                    break;
+                },
+                b"IDAT" => {
+                    idat_data.extend_from_slice(&chunk.data);
+                },
+                _ => {}
+            }
+        }
+
+        let deflate_raw = &idat_data[2..idat_data.len() - 4];
+        let decompressed = deflate::decode(deflate_raw)?;
+        crate::println!("decompressed IDAT: {:?}", decompressed);
+        let mut iter = decompressed.iter().copied();
+        
+        let bytes_color_type = ihdr.color_type.get_bytes_count();
+        let mut image = Image::new(ihdr.width, ihdr.height);
+        for y in 0..ihdr.height {
+            let filter = iter.next().ok_or(PngError::UnexpectedEof)?; // Filter
+            for x in 0..ihdr.width {
+                let pixel_raw = safe_take(&mut iter, bytes_color_type * ihdr.depth as usize / 8)?;
+                let pixel = Rgba::from(&pixel_raw, ihdr.color_type, ihdr.depth)?;
+
+                let pixel_filtered = match filter {
+                    0 => pixel,
+                    1 => todo!("Not impl"),
+                    2 => todo!("Not impl"),
+                    3 => todo!("Not impl"),
+                    4 => todo!("Not impl"),
+                    _ => return Err(PngError::UnsupportedFilter)
+                };
+
+                image.set_pixel(x, y, pixel_filtered).unwrap();
+            }
+        }
+
+        Ok(Self { image, typ: ihdr.color_type, depth: ihdr.depth })
+    }
+}
+
 
 #[cfg(test)]
 mod tests {
     use std::fs;
-    use crate::png;
+
+    use crate::png::Png;
 
     #[test]
-    fn png_marker_test() {
-        let data = fs::read("test/png/marker.png").unwrap();
-        let image = png::decode(&data).unwrap();
+    fn rgba8_test() {
+        let data = fs::read("test/png/rgba8.png").unwrap();
+        let png = Png::decode(&data).unwrap();
         
-        println!("{image:?}");
+        println!("{png:#?}");
+    }
+
+    #[test]
+    fn graya16_test() {
+        let data = fs::read("test/png/graya16.png").unwrap();
+        let png = Png::decode(&data).unwrap();
+        
+        println!("{png:#?}");
+    }
+
+    #[test]
+    fn gray8_test() {
+        let data = fs::read("test/png/gray8.png").unwrap();
+        let png = Png::decode(&data).unwrap();
+        
+        println!("{png:#?}");
     }
 }
