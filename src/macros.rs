@@ -11,7 +11,7 @@ macro_rules! todo_or_default {
 #[macro_export]
 macro_rules! warning {
     ($($args:tt)*) => {{
-        $crate::eprintln!("\x1b[1;{}mwarning\x1b[0m: ", $crate::color::FG_YELLOW);
+        $crate::eprint!("\x1b[1;{}mwarning\x1b[0m: ", $crate::color::FG_YELLOW);
         $crate::eprintln!($($args)*);
     }};
 }
