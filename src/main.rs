@@ -6,6 +6,10 @@
     clippy::nursery,
     clippy::cargo
 )]
+#![warn(
+    clippy::missing_safety_doc,
+    clippy::undocumented_unsafe_blocks
+)]
 #![allow(
     dead_code, 
     reason = "A lot of code is made \"for the future\"; all unused code will be removed by release"
