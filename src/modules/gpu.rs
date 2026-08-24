@@ -52,7 +52,7 @@ impl Module for Gpu {
             shared_total: String::new(),
             shared_used: String::new(),
             platform_api: String::new(),
-            frequency: String::new(),
+            frequency: format!("{:.2} GHz", info.frequency),
             index: info.device_id,
             dedicated_percentage_num: String::new(),
             dedicated_percentage_bar: String::new(),

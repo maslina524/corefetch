@@ -33,7 +33,8 @@ pub struct GpuInfo {
     pub driver: String,
     pub temperature: f32,
     pub typ: &'static str,
-    pub memory_total: Size
+    pub memory_total: Size,
+    pub frequency: f32
 }
 
 impl GpuInfo {
@@ -60,7 +61,8 @@ impl GpuInfo {
             driver,
             temperature: Self::temperature(desc.VendorId),
             typ: Self::typ(desc.VendorId, &memory_total),
-            memory_total
+            memory_total,
+            frequency: Self::frequency(desc.VendorId)
         }
     }
 
@@ -75,6 +77,13 @@ impl GpuInfo {
     pub fn temperature(vendor_id: u32) -> f32 {
         match vendor_id {
             0x10DE => NvidiaLib::get().gpu_temperature() as f32,
+            _ => 0.0,
+        }
+    }
+
+    pub fn frequency(vendor_id: u32) -> f32 {
+        match vendor_id {
+            0x10DE => NvidiaLib::get().get_frequency_ghz() as f32,
             _ => 0.0,
         }
     }

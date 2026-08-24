@@ -4,29 +4,38 @@ use core::{
     sync::atomic::{AtomicPtr, Ordering},
 };
 
+use alloc::boxed::Box;
+
 use crate::{
-    abort,
-    windows::link::{FreeLibrary, GetProcAddress, HMODULE, LoadLibraryA},
-    sync::OnceLock
+    abort, 
+    sync::OnceLock, 
+    warning, 
+    windows::link::{FreeLibrary, GetProcAddress, HMODULE, LoadLibraryA}
 };
 
 pub type WinapiFn = unsafe extern "system" fn() -> isize;
+
 #[allow(non_camel_case_types)]
-pub type nvmlReturn_t = i32;
+pub type nvmlReturn = i32;
 #[allow(non_camel_case_types)]
-pub type nvmlTemperatureSensors_t = i32;
+pub type nvmlTemperatureSensors = i32;
 #[allow(non_camel_case_types)]
-pub type nvmlDevice_t = *mut c_void;
+pub type nvmlDevice = *mut c_void;
 #[allow(non_camel_case_types)]
-pub type nvmlInit = unsafe extern "C" fn() -> nvmlReturn_t;
+pub type nvmlClockType = u32;
+
 #[allow(non_camel_case_types)]
-pub type nvmlShutdown = unsafe extern "C" fn() -> nvmlReturn_t;
+pub type nvmlInit = unsafe extern "C" fn() -> nvmlReturn;
 #[allow(non_camel_case_types)]
-pub type nvmlDeviceGetHandleByIndex = unsafe extern "C" fn(index: c_uint, device: *mut nvmlDevice_t) -> nvmlReturn_t;
+pub type nvmlShutdown = unsafe extern "C" fn() -> nvmlReturn;
 #[allow(non_camel_case_types)]
-pub type nvmlDeviceGetTemperature = unsafe extern "C" fn(device: nvmlDevice_t, sensor: nvmlTemperatureSensors_t, temp: *mut c_uint) -> nvmlReturn_t;
+pub type nvmlDeviceGetHandleByIndex = unsafe extern "C" fn(index: c_uint, device: *mut nvmlDevice) -> nvmlReturn;
 #[allow(non_camel_case_types)]
-pub type nvmlErrorString = unsafe extern "C" fn(result: nvmlReturn_t) -> *const c_char;
+pub type nvmlDeviceGetTemperature = unsafe extern "C" fn(device: nvmlDevice, sensor: nvmlTemperatureSensors, temp: *mut c_uint) -> nvmlReturn;
+#[allow(non_camel_case_types)]
+pub type nvmlDeviceGetClockInfo = unsafe extern "C" fn(device: nvmlDevice, typ: nvmlClockType, clock: *mut u32 ) -> nvmlReturn;
+#[allow(non_camel_case_types)]
+pub type nvmlErrorString = unsafe extern "C" fn(result: nvmlReturn) -> *const c_char;
 
 macro_rules! get_fn {
     ($handle:tt, $name:expr, $typ:ident) => {{
@@ -43,12 +52,16 @@ macro_rules! get_fn {
 
 static NVIDIA: OnceLock<NvidiaLib> = OnceLock::new();
 
+const NVML_CLOCK_GRAPHICS: u32 = 0;
+
 pub struct NvidiaLib {
     handle: AtomicPtr<HMODULE>,
-    nvml_init: nvmlInit,
-    nvml_shutdown: nvmlShutdown,
-    nvml_device_get_handle_by_index: nvmlDeviceGetHandleByIndex,
-    nvml_device_get_temperature: nvmlDeviceGetTemperature,
+    device: AtomicPtr<nvmlDevice>,
+    init: nvmlInit,
+    shutdown: nvmlShutdown,
+    device_get_handle_by_index: nvmlDeviceGetHandleByIndex,
+    device_get_temperature: nvmlDeviceGetTemperature,
+    get_clock_info: nvmlDeviceGetClockInfo
 }
 
 impl NvidiaLib {
@@ -56,28 +69,43 @@ impl NvidiaLib {
         NVIDIA.get_or_init(|| {
             // Load library
             let mut lib = load();
-            let atomic_ptr = AtomicPtr::new(&raw mut lib);
+            let lib_atomic = AtomicPtr::new(&raw mut lib);
 
             // Load fns
             // SAFETY: `transmute` fully complies with the documentation
-            let nvml_init = unsafe { get_fn!(lib, c"nvmlInit", nvmlInit) };
+            let init = unsafe { get_fn!(lib, c"nvmlInit", nvmlInit) };
             // SAFETY: `transmute` fully complies with the documentation
-            let nvml_shutdown = unsafe { get_fn!(lib, c"nvmlShutdown", nvmlShutdown) };
+            let shutdown = unsafe { get_fn!(lib, c"nvmlShutdown", nvmlShutdown) };
             // SAFETY: `transmute` fully complies with the documentation
-            let nvml_device_get_handle_by_index = unsafe { get_fn!(lib, c"nvmlDeviceGetHandleByIndex", nvmlDeviceGetHandleByIndex) };
+            let device_get_handle_by_index = unsafe { get_fn!(lib, c"nvmlDeviceGetHandleByIndex", nvmlDeviceGetHandleByIndex) };
             // SAFETY: `transmute` fully complies with the documentation
-            let nvml_device_get_temperature = unsafe { get_fn!(lib, c"nvmlDeviceGetTemperature", nvmlDeviceGetTemperature) };
+            let device_get_temperature = unsafe { get_fn!(lib, c"nvmlDeviceGetTemperature", nvmlDeviceGetTemperature) };
+            // SAFETY: `transmute` fully complies with the documentation
+            let get_clock_info = unsafe { get_fn!(lib, c"nvmlDeviceGetClockInfo", nvmlDeviceGetClockInfo) };
 
             // SAFETY: Completely safe
-            let ret = unsafe { nvml_init() };
+            let ret = unsafe { init() };
             if ret != 0 {
                 abort!("Failed to initialize nvml");
             }
 
+            let mut device = nvmlDevice::default();
+            // SAFETY: Completely safe
+            let ret = unsafe { (device_get_handle_by_index)(0, &raw mut device) };
+            if ret != 0 {
+                // SAFETY: Completely safe
+                unsafe { (shutdown)() };
+                abort!("Failed to get handle by index (nvml)");
+            }
+
+            let device_atomic = AtomicPtr::new(&raw mut device);
+
             Self {
-                handle: atomic_ptr, 
-                nvml_init, nvml_shutdown, 
-                nvml_device_get_handle_by_index, nvml_device_get_temperature 
+                handle: lib_atomic,
+                device: device_atomic,
+                init, shutdown, 
+                device_get_handle_by_index, device_get_temperature,
+                get_clock_info
             }
         })
     }
@@ -85,7 +113,7 @@ impl NvidiaLib {
     pub fn drop_nvidia() {
         if let Some(lib) = NVIDIA.get() {
             // SAFETY: Completely safe
-            unsafe { (lib.nvml_shutdown)() };
+            unsafe { (lib.shutdown)() };
             // SAFETY: A guaranteed non-null pointer is loaded once and
             // is not changed until that moment
             unload(unsafe { *lib.handle.load(Ordering::Acquire) });
@@ -93,25 +121,33 @@ impl NvidiaLib {
     }
 
     pub fn gpu_temperature(&self) -> u16 {
-        let mut dev = nvmlDevice_t::default();
         let mut temp = 0u32;
+        let dev = unsafe { *self.device.load(Ordering::Relaxed) };
 
         // SAFETY: Completely safe
-        let ret = unsafe { (self.nvml_device_get_handle_by_index)(0, &raw mut dev) };
-        if ret != 0 {
-            // SAFETY: Completely safe
-            unsafe { (self.nvml_shutdown)() };
-            abort!("Failed to get handle by index (nvml)");
-        }
-
-        // SAFETY: Completely safe
-        let ret = unsafe { (self.nvml_device_get_temperature)(dev, 0, &raw mut temp) };
-
+        let ret = unsafe { (self.device_get_temperature)(dev, 0, &raw mut temp) };
         if ret != 0 {
             return 0;
         }
 
         temp as u16
+    }
+
+    pub fn get_frequency_ghz(&self) -> f64 {
+        let mut clock_mhz = 0;
+        // SAFETY: Device is always valid
+        let dev = unsafe { *self.device.load(Ordering::Relaxed) };
+
+        // SAFETY: Completely safe
+        let ret = unsafe {
+            (self.get_clock_info)(dev, NVML_CLOCK_GRAPHICS, &raw mut clock_mhz)
+        };
+        if ret == 0 {
+            clock_mhz as f64 / 1000.0
+        } else {
+            warning!("Failed to get GPU frequency (nvml)");
+            0.0
+        }
     }
 }
 
