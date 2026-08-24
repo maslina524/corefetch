@@ -5,15 +5,12 @@ use alloc::{
 };
 
 use crate::{
-    format,
-    windows::env,
-    windows::fs::{self, Access, File},
-    windows::https::Request,
-    windows::path::Path,
+    format, warning, windows::{env, fs::{self, Access, File}, https::Request, path::Path}
 };
 
 const WTTR_URL: &str = "https://wttr.in/?lang=en&format=%c;%C;%x;%h;%t;%f;%w;%l;%m;%M;%p;%P;%u;%D;%S;%z;%s;%d;%T;%Z";
 
+#[derive(Default)]
 pub struct WeatherInfo {
     pub result: String,
     pub condition_emoji: String,
@@ -45,15 +42,22 @@ impl WeatherInfo {
             if cur_hour == hours {
                 data
             } else {
-                let data = Self::request();
-                Self::set_cache(cur_hour, &data);
-                data
+                Self::request().map_or_else(String::new, |data| {
+                    Self::set_cache(cur_hour, &data);
+                    data
+                })
             }
         } else {
-            let data = Self::request();
-            Self::set_cache(cur_hour, &data);
-            data
+            Self::request().map_or_else(String::new, |data| {
+                Self::set_cache(cur_hour, &data);
+                data
+            })
         };
+
+        crate::println!("{raw}");
+        if raw.is_empty() {
+            return Self::default();
+        }
 
         let parts: Vec<&str> = raw.split(';').collect();
         let condition_emoji = parts[0].trim();
@@ -106,12 +110,13 @@ impl WeatherInfo {
         }
     }
 
-    fn request() -> String {
+    fn request() -> Option<String> {
         let response = Request::new(WTTR_URL).unwrap().get();
         if response.is_success() {
-            response.as_text().unwrap()
+            Some(response.as_text().unwrap())
         } else {
-            format!("Response code: {}", response.code())
+            warning!("Wttr.in (weather) response code: {}", response.code());
+            None
         }
     }
 
