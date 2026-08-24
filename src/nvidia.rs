@@ -61,6 +61,9 @@ pub struct NvidiaLib {
     get_clock_info: nvmlDeviceGetClockInfo
 }
 
+// SAFETY: THE STRUCTURE IS NOT THREAD-SAFE;
+// We are not going to modify non-thread-safe fields,
+// using the structure from different threads will not cause problems.
 unsafe impl Sync for NvidiaLib {}
 
 impl NvidiaLib {
@@ -134,11 +137,13 @@ impl NvidiaLib {
 
         // Warm-up
         for _ in 0..5 {
+            // SAFETY: Completely safe
             unsafe {
                 (self.get_clock_info)(dev, NVML_CLOCK_SM, &raw mut clock);
             }
         }
         
+        // SAFETY: Completely safe
         let ret = unsafe {
             (self.get_clock_info)(dev, NVML_CLOCK_SM, &raw mut clock)
         };
