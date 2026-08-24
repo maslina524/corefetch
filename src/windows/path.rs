@@ -64,7 +64,7 @@ impl Path {
     }
 
     pub fn cache() -> Self {
-        Self::local().join("nofetch").join("cache")
+        Self::nofetch().join("cache")
     }
 
     pub fn with_capacity(cap: usize) -> Self {
