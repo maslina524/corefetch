@@ -1,4 +1,4 @@
-pub mod breakk;    // 7)  Break         : Print an empty line
+pub mod break_;    // 7)  Break         : Print an empty line
 pub mod colors;    // 14) Colors        : Display the terminal's 16-color palette
 pub mod cpu;       // 15) CPU           : Print CPU name, frequency, etc.
 pub mod custom;    // 19) Custom        : Print a custom string, with or without key
@@ -10,13 +10,14 @@ pub mod memory;    // 41) Memory        : Print system memory usage information
 pub mod os;        // 47) OS            : Print the OS or Linux distribution name and version
 pub mod processes; // 53) Processes     : Print number of running processes
 pub mod separator; // 55) Separator     : Print a separator line
-// pub mod swap;      // 58) Swap          : Print swap (paging file) space usage
+// pub mod swap;   // 58) Swap          : Print swap (paging file) space usage
 pub mod title;     // 63) Title         : Print the title, including your username and hostname
+pub mod uptime;    // 66) Uptime        : Print how long the system has been running
 pub mod version;   // 68) Version       : Print the Fastfetch version and build information
 pub mod wallpaper; // 70) Wallpaper     : Print the file path of the current wallpaper
 pub mod weather;   // 71) Weather       : Print weather information
 
-pub use breakk::Break;
+pub use break_::Break;
 pub use colors::Colors;
 pub use cpu::Cpu;
 pub use custom::Custom;
@@ -29,6 +30,7 @@ pub use os::Os;
 pub use processes::Processes;
 pub use separator::Separator;
 pub use title::Title;
+pub use uptime::Uptime;
 pub use version::Version;
 pub use wallpaper::Wallpaper;
 pub use weather::Weather;
@@ -74,6 +76,7 @@ pub fn from_preset_module(module: &PresetModule) -> Option<Box<dyn Module>> {
         "processes" => Some(Box::new( Processes::new() )),
         "separator" => Some(Box::new( Separator::new() )),
         "title"     => Some(Box::new( Title::new()     )),
+        "uptime"    => Some(Box::new( Uptime::new()    )),
         "version"   => Some(Box::new( Version::new()   )),
         "wallpaper" => Some(Box::new( Wallpaper::new() )),
         "weather"   => Some(Box::new( Weather::new()   )),
