@@ -1,6 +1,6 @@
 [package]
 name = "nofetch"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2024"
 description = "fastfetch-based program written in rust with #![no_std]"
 license = "MIT"
