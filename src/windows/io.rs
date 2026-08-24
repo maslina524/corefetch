@@ -1,14 +1,13 @@
 use core::{
     ptr,
     ffi::c_void,
-    fmt::Write,
     sync::atomic::{AtomicBool, Ordering}
 };
 
-use alloc::string::String;
-
 use crate::{
-    windows::{error::ErrorCode, link::{GetStdHandle, SetConsoleOutputCP, WriteFile}}, sync::OnceLock
+    windows::error::ErrorCode,
+    windows::link::{GetStdHandle, SetConsoleOutputCP, WriteFile},
+    sync::OnceLock
 };
 
 const STDOUT        : u32             = u32::MAX - 10;
@@ -18,28 +17,6 @@ const CP_UTF8       : u32             = 65001;
 static STDOUT_HANDLE: OnceLock<isize> = OnceLock::new();
 static STDERR_HANDLE: OnceLock<isize> = OnceLock::new();
 static IS_UTF8      : AtomicBool      = AtomicBool::new(false);
-
-pub struct StringFormatter<'a>(&'a mut String);
-
-impl Write for StringFormatter<'_> {
-    fn write_str(&mut self, s: &str) -> core::fmt::Result {
-        self.0.write_str(s)
-    }
-}
-
-impl<'a> StringFormatter<'a> {
-    pub const fn new(ptr: &'a mut String) -> Self {
-        Self(ptr)
-    }
-    
-    pub fn write_fmt(&mut self, args: core::fmt::Arguments) -> core::fmt::Result {
-        core::fmt::Write::write_fmt(self, args)
-    }
-
-    pub fn write_nl(&mut self) -> core::fmt::Result {
-        self.0.write_str("\n")
-    }
-}
 
 pub fn stdout() -> isize {
     *STDOUT_HANDLE.get_or_init(|| {
@@ -77,27 +54,6 @@ pub fn write(handle: isize, s: &str) {
         )
     };
     if ret == 0 || written != len { ErrorCode::last().panic(); }
-}
-
-#[macro_export]
-macro_rules! format {
-    ($($tt:tt)*) => {{
-        let mut string = alloc::string::String::new();
-        let mut formatter = $crate::windows::io::StringFormatter::new(&mut string);
-        let _ = formatter.write_fmt(format_args!($($tt)*));
-        string
-    }};
-}
-
-#[macro_export]
-macro_rules! formatln {
-    ($($tt:tt)*) => {{
-        let mut string = alloc::string::String::new();
-        let mut formatter = $crate::windows::io::StringFormatter::new(&mut string);
-        let _ = formatter.write_fmt(format_args!($($tt)*));
-        let _ = formatter.write_nl();
-        string
-    }};
 }
 
 #[macro_export]
