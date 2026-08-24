@@ -54,10 +54,10 @@ def main():
     finally:
         os.chdir(original_dir)
 
-    add_line_to_file("src/os/windows.rs", 10, "#![allow(clippy::unreadable_literal)]")
-    add_line_to_file("src/os/windows.rs", 10, MACRO_STRING)
+    add_line_to_file("src/windows/link.rs", 10, "#![allow(clippy::unreadable_literal)]")
+    add_line_to_file("src/windows/link.rs", 10, MACRO_STRING)
 
-    file_path = Path("src/os/windows.rs")
+    file_path = Path("src/windows/link.rs")
     with open(file_path, 'r', encoding='utf-8') as f:
         content = f.read()
 

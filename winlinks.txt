@@ -81,3 +81,6 @@ LoadLibraryA
 GetProcAddress
 FreeLibrary
 HeapReAlloc
+FileTimeToSystemTime
+GetTickCount64
+FileTimeToLocalFileTime

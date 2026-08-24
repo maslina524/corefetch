@@ -15,16 +15,16 @@ const SEC_MS: u64 = 1000;
 
 #[derive(Debug)]
 pub struct UptimeInfo {
-    years: u16,
-    days: u32,
-    hours: u8,
-    mins: u8,
-    secs: u8,
-    ms: u16,
-    boot_time: String,
-    days_of_year: u32,
-    years_fraction: f32,
-    formatted: String
+    pub years: u16,
+    pub days: u32,
+    pub hours: u8,
+    pub mins: u8,
+    pub secs: u8,
+    pub ms: u16,
+    pub boot_time: String,
+    pub days_of_year: u32,
+    pub years_fraction: f32,
+    pub formatted: String
 }
 
 impl UptimeInfo {

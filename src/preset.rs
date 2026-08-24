@@ -160,6 +160,7 @@ impl Default for Preset {
                 PresetModule::from_str("separator"),
                 PresetModule::from_str("os"),
                 PresetModule::from_str("kernel"),
+                PresetModule::from_str("uptime"),
                 PresetModule::from_str("datetime"),
                 PresetModule::from_str("processes"),
                 PresetModule::from_str("cpu"),

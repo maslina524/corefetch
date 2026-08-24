@@ -2,7 +2,7 @@ use std::fs;
 
 fn main() {
     let mut args = vec![
-        "--out", "../src/os/windows.rs",
+        "--out", "../src/windows/link.rs",
         "--flat",
         "--sys",
         "--flat",

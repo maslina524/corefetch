@@ -8,22 +8,22 @@ use crate::{
 static VERSION: OnceLock<Version> = OnceLock::new();
 
 #[derive(Debug)]
-pub struct Version<'a> {
-    pub project_name: &'a str,
+pub struct Version {
+    pub project_name: &'static str,
     #[allow(clippy::struct_field_names)]
-    pub version: &'a str,
+    pub version: &'static str,
     #[allow(clippy::struct_field_names)]
-    pub version_tweak: &'a str,
-    pub build_type: &'a str,
-    pub sysname: &'a str,
-    pub arch: &'a str,
-    pub cmake_built_type: &'a str,
-    pub compile_time: &'a str,
-    pub compiler: &'a str,
-    pub libc: &'a str
+    pub version_tweak: &'static str,
+    pub build_type: &'static str,
+    pub sysname: &'static str,
+    pub arch: &'static str,
+    pub cmake_built_type: &'static str,
+    pub compile_time: &'static str,
+    pub compiler: &'static str,
+    pub libc: &'static str
 }
 
-impl Module for Version<'_> {
+impl Module for Version {
     fn new() -> Self {
         let build_type = if cfg!(debug_assertions) {
             "debug"
@@ -70,4 +70,4 @@ impl Module for Version<'_> {
     );
 }
 
-impl_display_for_module!(Version, '_);
+impl_display_for_module!(Version);
