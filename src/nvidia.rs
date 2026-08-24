@@ -1,10 +1,7 @@
 use core::{
     mem,
     ffi::{c_void, c_uint, c_char},
-    sync::atomic::{AtomicPtr, Ordering},
 };
-
-use alloc::boxed::Box;
 
 use crate::{
     abort, 
@@ -52,11 +49,11 @@ macro_rules! get_fn {
 
 static NVIDIA: OnceLock<NvidiaLib> = OnceLock::new();
 
-const NVML_CLOCK_GRAPHICS: u32 = 0;
+const NVML_CLOCK_SM: u32 = 1;
 
 pub struct NvidiaLib {
-    handle: AtomicPtr<HMODULE>,
-    device: AtomicPtr<nvmlDevice>,
+    handle: HMODULE,
+    device: nvmlDevice,
     init: nvmlInit,
     shutdown: nvmlShutdown,
     device_get_handle_by_index: nvmlDeviceGetHandleByIndex,
@@ -64,12 +61,13 @@ pub struct NvidiaLib {
     get_clock_info: nvmlDeviceGetClockInfo
 }
 
+unsafe impl Sync for NvidiaLib {}
+
 impl NvidiaLib {
     pub fn get() -> &'static Self {
         NVIDIA.get_or_init(|| {
             // Load library
-            let mut lib = load();
-            let lib_atomic = AtomicPtr::new(&raw mut lib);
+            let lib = load();
 
             // Load fns
             // SAFETY: `transmute` fully complies with the documentation
@@ -98,11 +96,9 @@ impl NvidiaLib {
                 abort!("Failed to get handle by index (nvml)");
             }
 
-            let device_atomic = AtomicPtr::new(&raw mut device);
-
             Self {
-                handle: lib_atomic,
-                device: device_atomic,
+                handle: lib,
+                device,
                 init, shutdown, 
                 device_get_handle_by_index, device_get_temperature,
                 get_clock_info
@@ -116,16 +112,15 @@ impl NvidiaLib {
             unsafe { (lib.shutdown)() };
             // SAFETY: A guaranteed non-null pointer is loaded once and
             // is not changed until that moment
-            unload(unsafe { *lib.handle.load(Ordering::Acquire) });
+            unload(lib.handle);
         }
     }
 
     pub fn gpu_temperature(&self) -> u16 {
         let mut temp = 0u32;
-        let dev = unsafe { *self.device.load(Ordering::Relaxed) };
 
         // SAFETY: Completely safe
-        let ret = unsafe { (self.device_get_temperature)(dev, 0, &raw mut temp) };
+        let ret = unsafe { (self.device_get_temperature)(self.device, 0, &raw mut temp) };
         if ret != 0 {
             return 0;
         }
@@ -134,16 +129,22 @@ impl NvidiaLib {
     }
 
     pub fn get_frequency_ghz(&self) -> f64 {
-        let mut clock_mhz = 0;
-        // SAFETY: Device is always valid
-        let dev = unsafe { *self.device.load(Ordering::Relaxed) };
+        let mut clock = 0;
+        let dev = self.device;
 
-        // SAFETY: Completely safe
+        // Warm-up
+        for _ in 0..5 {
+            unsafe {
+                (self.get_clock_info)(dev, NVML_CLOCK_SM, &raw mut clock);
+            }
+        }
+        
         let ret = unsafe {
-            (self.get_clock_info)(dev, NVML_CLOCK_GRAPHICS, &raw mut clock_mhz)
+            (self.get_clock_info)(dev, NVML_CLOCK_SM, &raw mut clock)
         };
+        
         if ret == 0 {
-            clock_mhz as f64 / 1000.0
+            clock as f64 / 100.0
         } else {
             warning!("Failed to get GPU frequency (nvml)");
             0.0
