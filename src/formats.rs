@@ -1,4 +1,7 @@
-use core::cmp::Ordering;
+use core::{
+    cmp::Ordering,
+    fmt::Write
+};
 
 use alloc::{
     string::String,
@@ -76,6 +79,28 @@ impl PartialOrd for Size {
     }
 }
 
+pub struct StringFormatter<'a>(&'a mut String);
+
+impl Write for StringFormatter<'_> {
+    fn write_str(&mut self, s: &str) -> core::fmt::Result {
+        self.0.write_str(s)
+    }
+}
+
+impl<'a> StringFormatter<'a> {
+    pub const fn new(ptr: &'a mut String) -> Self {
+        Self(ptr)
+    }
+    
+    pub fn write_fmt(&mut self, args: core::fmt::Arguments) -> core::fmt::Result {
+        core::fmt::Write::write_fmt(self, args)
+    }
+
+    pub fn write_nl(&mut self) -> core::fmt::Result {
+        self.0.write_str("\n")
+    }
+}
+
 pub fn visible_len(s: &str) -> usize {
     let mut count = 0;
     let mut skip = false;
@@ -118,6 +143,27 @@ pub fn expand_unicode(s: &str) -> String {
         pos += 1;
     }
     ret
+}
+
+#[macro_export]
+macro_rules! format {
+    ($($tt:tt)*) => {{
+        let mut string = alloc::string::String::new();
+        let mut formatter = $crate::formats::StringFormatter::new(&mut string);
+        let _ = formatter.write_fmt(format_args!($($tt)*));
+        string
+    }};
+}
+
+#[macro_export]
+macro_rules! formatln {
+    ($($tt:tt)*) => {{
+        let mut string = alloc::string::String::new();
+        let mut formatter = $crate::formats::StringFormatter::new(&mut string);
+        let _ = formatter.write_fmt(format_args!($($tt)*));
+        let _ = formatter.write_nl();
+        string
+    }};
 }
 
 #[cfg(test)]

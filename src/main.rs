@@ -35,6 +35,7 @@ mod lz77;
 mod huffman;
 mod zlib;
 mod deflate;
+mod sixel;
 
 mod windows;
 mod modules;
@@ -276,7 +277,7 @@ fn help(_theme: Option<&str>) -> ! {
     exit(0)
 }
 
-#[cfg(not(test))]
+// #[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
     let args = env::args();
