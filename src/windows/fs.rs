@@ -5,7 +5,8 @@ use core::{
 
 use alloc::{
     string::{String, FromUtf8Error},
-    vec::Vec
+    vec::Vec,
+    vec
 };
 
 use crate::{
@@ -139,8 +140,8 @@ impl File {
         if ret == 0 {
             return Err(ErrorCode::last());
         }
-        let size_usize = size as usize;
-        let mut buf = Vec::with_capacity(size_usize);
+
+        let mut buf = vec![0u8; size as usize];
         let mut readed = 0;
 
         // SAFETY: The handle is always correct, 
@@ -155,8 +156,6 @@ impl File {
             )
         };
 
-        // SAFETY: WinAPI modifies data in `Vec<_>`, you must update the len
-        unsafe { buf.set_len(size_usize) };
         Ok(buf)
     }
 }

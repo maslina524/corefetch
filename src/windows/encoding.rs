@@ -2,7 +2,8 @@ use core::ptr;
 
 use alloc::{
     string::String,
-    vec::Vec
+    vec::Vec,
+    vec
 };
 
 use crate::windows::{
@@ -48,7 +49,7 @@ pub fn utf16le_to_utf8(
     }
 
     let size_usize = size as usize;
-    let mut buf = Vec::with_capacity(size_usize);
+    let mut buf = vec![0u8; size_usize];
 
     // SAFETY: Just a WinAPI function, the return value is checked
     let ret = unsafe {
@@ -67,10 +68,6 @@ pub fn utf16le_to_utf8(
         return Err(ErrorCode::last()) 
     }
     
-    let ret_usize = ret as usize;
-
-    // SAFETY: WinAPI modifies data in `Vec<_>`, you must update the len
-    unsafe { buf.set_len(ret_usize) };
     let string = String::from_utf8(buf).unwrap();
     Ok(string)
 }
@@ -96,8 +93,7 @@ pub fn utf8_to_utf16le(src: impl Into<String>) -> error::Result<Vec<u16>> {
         return Err(ErrorCode::last()) 
     }
 
-    let size_usize = size as usize;
-    let mut buf = Vec::with_capacity(size_usize);
+    let mut buf = vec![0u16; size as usize];
 
     // SAFETY: Just a WinAPI function, the return value is checked
     let ret = unsafe {
@@ -114,9 +110,6 @@ pub fn utf8_to_utf16le(src: impl Into<String>) -> error::Result<Vec<u16>> {
         return Err(ErrorCode::last()) 
     }
     
-    let ret_usize = ret as usize;
-    // SAFETY: WinAPI modifies data in `Vec<_>`, you must update the len
-    unsafe { buf.set_len(ret_usize) };
     Ok(buf)
 }
 
