@@ -13,15 +13,15 @@ use crate::{
     formats::{ColorPlan, format_color}
 };
 
-static PRESET: OnceLock<Preset> = OnceLock::new();
+static PRESET: OnceLock<Config> = OnceLock::new();
 
-pub struct Preset {
-    modules: Vec<PresetModule>,
-    display: PresetDisplay,
-    logo: PresetLogo,
+pub struct Config {
+    modules: Vec<ConfigModule>,
+    display: ConfigDisplay,
+    logo: ConfigLogo,
 }
 
-impl Preset {
+impl Config {
     pub fn get_or_init(config: Self) -> &'static Self {
         PRESET.get_or_init(|| {
             config
@@ -51,10 +51,10 @@ impl Preset {
                     map.insert("paddingLeft".to_owned(), padding_left);
                 }
 
-                let preset_mod = PresetModule::new(typ, format, key, key_color, map);
+                let preset_mod = ConfigModule::new(typ, format, key, key_color, map);
                 ret_modules.push(preset_mod);
             } else if let Some(typ) = m.as_string() {
-                let preset_mod = PresetModule::from_str(typ);
+                let preset_mod = ConfigModule::from_str(typ);
                 ret_modules.push(preset_mod);
             }
         }
@@ -69,8 +69,8 @@ impl Preset {
         let logo = json
             .get_object("logo")
             .and_then(|logo_obj| logo_obj.get_object("padding"))
-            .map_or_else(PresetLogo::default, |padding| PresetLogo {
-                padding: PresetPadding {
+            .map_or_else(ConfigLogo::default, |padding| ConfigLogo {
+                padding: ConfigPadding {
                     top: padding.get_number("top").unwrap_or(0.0) as usize,
                     bottom: padding.get_number("bottom").unwrap_or(2.0) as usize,
                     right: padding.get_number("right").unwrap_or(3.0) as usize,
@@ -81,7 +81,7 @@ impl Preset {
 
         Self {
             modules: ret_modules,
-            display: PresetDisplay { separator },
+            display: ConfigDisplay { separator },
             logo
         }
     }
@@ -92,7 +92,7 @@ impl Preset {
             .expect("Preset was not initialized at the start of the program")
     }
 
-    pub fn module_by_typ(&self, string: &str) -> Option<&PresetModule> {
+    pub fn module_by_typ(&self, string: &str) -> Option<&ConfigModule> {
         for m in &self.modules {
             if m.typ == string {
                 return Some(m)
@@ -101,7 +101,7 @@ impl Preset {
         None
     }
 
-    pub const fn modules(&self) -> &Vec<PresetModule> {
+    pub const fn modules(&self) -> &Vec<ConfigModule> {
         &self.modules
     }
 
@@ -125,41 +125,41 @@ impl Preset {
         &self.display.separator
     }
 
-    pub const fn get_logo_padding(&self) -> &PresetPadding {
+    pub const fn get_logo_padding(&self) -> &ConfigPadding {
         &self.logo.padding
     }
 }
 
-impl Default for Preset {
+impl Default for Config {
     fn default() -> Self {
         Self {
             modules: vec![
-                PresetModule::from_str("title"),
-                PresetModule::from_str("separator"),
-                PresetModule::from_str("os"),
-                PresetModule::from_str("initsystem"),
-                PresetModule::from_str("kernel"),
-                PresetModule::from_str("uptime"),
-                PresetModule::from_str("datetime"),
-                PresetModule::from_str("processes"),
-                PresetModule::from_str("cpu"),
-                PresetModule::from_str("gpu"),
-                PresetModule::from_str("memory"),
-                PresetModule::from_str("weather"),
-                PresetModule::from_str("locale"),
-                PresetModule::from_str("wallpaper"),
-                PresetModule::from_str("break"),
-                PresetModule::from_str("colors")
+                ConfigModule::from_str("title"),
+                ConfigModule::from_str("separator"),
+                ConfigModule::from_str("os"),
+                ConfigModule::from_str("initsystem"),
+                ConfigModule::from_str("kernel"),
+                ConfigModule::from_str("uptime"),
+                ConfigModule::from_str("datetime"),
+                ConfigModule::from_str("processes"),
+                ConfigModule::from_str("cpu"),
+                ConfigModule::from_str("gpu"),
+                ConfigModule::from_str("memory"),
+                ConfigModule::from_str("weather"),
+                ConfigModule::from_str("locale"),
+                ConfigModule::from_str("wallpaper"),
+                ConfigModule::from_str("break"),
+                ConfigModule::from_str("colors")
             ],
-            display: PresetDisplay {
+            display: ConfigDisplay {
                 separator: ": ".to_owned()
             },
-            logo: PresetLogo::default()
+            logo: ConfigLogo::default()
         }
     }
 }
 
-pub struct PresetModule {
+pub struct ConfigModule {
     pub typ: String,
     pub format: Option<String>,
     pub key: Option<String>,
@@ -167,7 +167,7 @@ pub struct PresetModule {
     pub map: BTreeMap<String, Value>
 }
 
-impl PresetModule {
+impl ConfigModule {
     pub fn from_str(typ: &str) -> Self {
         Self { typ: typ.to_owned(), format: None, key: None, key_color: None, map: BTreeMap::new() }
     }
@@ -178,30 +178,30 @@ impl PresetModule {
     }
 }
 
-pub struct PresetDisplay {
+pub struct ConfigDisplay {
     pub separator: String
 }
 
-impl Default for PresetDisplay {
+impl Default for ConfigDisplay {
     fn default() -> Self {
         Self { separator: String::from(": ") }
     }
 }
 
-pub struct PresetPadding {
+pub struct ConfigPadding {
     pub top: usize,
     pub bottom: usize,
     pub right: usize,
     pub left: usize,
 }
 
-impl Default for PresetPadding {
+impl Default for ConfigPadding {
     fn default() -> Self {
         Self { top: 0, bottom: 2, right: 3, left: 0 }
     }
 }
 
 #[derive(Default)]
-pub struct PresetLogo {
-    pub padding: PresetPadding
+pub struct ConfigLogo {
+    pub padding: ConfigPadding
 }
