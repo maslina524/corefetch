@@ -40,6 +40,8 @@ link!("kernel32" "system" fn GetCurrentProcess() -> HANDLE);
 link!("kernel32" "system" fn GetCurrentProcessId() -> u32);
 link!("kernel32" "system" fn GetDynamicTimeZoneInformation(ptimezoneinformation : *mut DYNAMIC_TIME_ZONE_INFORMATION) -> u32);
 link!("kernel32" "system" fn GetFileSizeEx(hfile : HANDLE, lpfilesize : *mut i64) -> BOOL);
+link!("version" "system" fn GetFileVersionInfoSizeW(lptstrfilename : PCWSTR, lpdwhandle : *mut u32) -> u32);
+link!("version" "system" fn GetFileVersionInfoW(lptstrfilename : PCWSTR, dwhandle : u32, dwlen : u32, lpdata : *mut core::ffi::c_void) -> BOOL);
 link!("kernel32" "system" fn GetLastError() -> WIN32_ERROR);
 link!("kernel32" "system" fn GetLocalTime(lpsystemtime : *mut SYSTEMTIME));
 link!("kernel32" "system" fn GetLocaleInfoEx(lplocalename : PCWSTR, lctype : u32, lplcdata : PWSTR, cchdata : i32) -> i32);
@@ -78,6 +80,7 @@ link!("setupapi" "system" fn SetupDiEnumDeviceInfo(deviceinfoset : HDEVINFO, mem
 link!("setupapi" "system" fn SetupDiGetClassDevsW(classguid : *const GUID, enumerator : PCWSTR, hwndparent : HWND, flags : SETUP_DI_GET_CLASS_DEVS_FLAGS) -> HDEVINFO);
 link!("setupapi" "system" fn SetupDiOpenDevRegKey(deviceinfoset : HDEVINFO, deviceinfodata : *const SP_DEVINFO_DATA, scope : u32, hwprofile : u32, keytype : u32, samdesired : u32) -> HKEY);
 link!("user32" "system" fn SystemParametersInfoW(uiaction : SYSTEM_PARAMETERS_INFO_ACTION, uiparam : u32, pvparam : *mut core::ffi::c_void, fwinini : SYSTEM_PARAMETERS_INFO_UPDATE_FLAGS) -> BOOL);
+link!("version" "system" fn VerQueryValueW(pblock : *const core::ffi::c_void, lpsubblock : PCWSTR, lplpbuffer : *mut *mut core::ffi::c_void, pulen : *mut u32) -> BOOL);
 link!("kernel32" "system" fn WideCharToMultiByte(codepage : u32, dwflags : u32, lpwidecharstr : PCWSTR, cchwidechar : i32, lpmultibytestr : PSTR, cbmultibyte : i32, lpdefaultchar : PCSTR, lpuseddefaultchar : *mut BOOL) -> i32);
 link!("winhttp" "system" fn WinHttpCloseHandle(hinternet : *mut core::ffi::c_void) -> BOOL);
 link!("winhttp" "system" fn WinHttpConnect(hsession : *mut core::ffi::c_void, pswzservername : PCWSTR, nserverport : u16, dwreserved : u32) -> *mut core::ffi::c_void);

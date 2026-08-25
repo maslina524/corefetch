@@ -1,5 +1,6 @@
 use core::{
     ffi::{c_void, CStr},
+    ptr,
     mem,
     slice
 };
@@ -7,13 +8,23 @@ use core::{
 use alloc::{
     string::String,
     borrow::ToOwned,
-    vec::Vec
+    vec::Vec,
+    vec
 };
 
 use crate::{
-    sync::OnceLock, windows::{error::{self, ErrorCode}, fs::{Access, File}, link::{
-        CONSOLE_SCREEN_BUFFER_INFO, CloseHandle, CommandLineToArgvW, CreateToolhelp32Snapshot, EnumProcesses, FILETIME, GetCommandLineW, GetConsoleScreenBufferInfo, GetSystemTimeAsFileTime, OSVERSIONINFOW, PROCESSENTRY32, Process32First, Process32Next, RtlGetVersion
-    }, regedit::{self, Hkey, RegValue, Regedit}}
+    sync::OnceLock,
+    windows::error::{self, ErrorCode},
+    windows::fs::{Access, File},
+    windows::path::Path,
+    windows::encoding::wide,
+    windows::link::{
+        CONSOLE_SCREEN_BUFFER_INFO, CloseHandle, CommandLineToArgvW, CreateToolhelp32Snapshot, 
+        EnumProcesses, FILETIME, GetCommandLineW, GetConsoleScreenBufferInfo, 
+        GetSystemTimeAsFileTime, OSVERSIONINFOW, PROCESSENTRY32, Process32First, 
+        Process32Next, RtlGetVersion, VerQueryValueW, GetFileVersionInfoW, GetFileVersionInfoSizeW
+    }, 
+    windows::regedit::{self, Hkey, RegValue, Regedit}
 };
 
 const EPOCH_DIFF           : u64               = 116_444_736_000_000_000;
@@ -28,6 +39,26 @@ pub struct OsVersion {
     pub version: String,
     pub codename: String,
     pub variant: String
+}
+
+#[repr(C)]
+#[derive(Default, Debug)]
+#[allow(non_snake_case, reason = "Copied from the Windows docs")]
+// https://learn.microsoft.com/en-us/windows/win32/api/verrsrc/ns-verrsrc-vs_fixedfileinfo
+struct VS_FIXEDFILEINFO {
+  pub dwSignature: u32,
+  pub dwStrucVersion: u32,
+  pub dwFileVersionMS: u32,
+  pub dwFileVersionLS: u32,
+  pub dwProductVersionMS: u32,
+  pub dwProductVersionLS: u32,
+  pub dwFileFlagsMask: u32,
+  pub dwFileFlags: u32,
+  pub dwFileOS: u32,
+  pub dwFileType: u32,
+  pub dwFileSubtype: u32,
+  pub dwFileDateMS: u32,
+  pub dwFileDateLS: u32
 }
 
 pub fn current_version() -> &'static Regedit {
@@ -263,6 +294,59 @@ pub fn find_pid_by_name(name: &str) -> u32 {
     pid
 }
 
+pub fn get_file_product_version(path: impl Into<Path>) -> error::Result<(u32, u32, u32, u32)> {
+    let path_str = path.into().into_inner();
+    let path_wide = wide(path_str)?;
+
+    let buf_size = unsafe { 
+        GetFileVersionInfoSizeW(
+            path_wide.as_ptr(), 
+            ptr::null_mut()
+        ) 
+    };
+    if buf_size == 0 {
+        return Err(ErrorCode::last());
+    }
+
+    let mut buf = vec![0u8; buf_size as usize];
+    let ret = unsafe {
+        GetFileVersionInfoW(
+            path_wide.as_ptr(),
+            0,
+            buf_size,
+            buf.as_mut_ptr().cast(),
+        )
+    };
+    if ret == 0 {
+        return Err(ErrorCode::last());
+    }
+
+    let mut info_ptr: *mut c_void = ptr::null_mut();
+    let mut len = 0;
+    let wide_subblock = wide("\\")?;
+
+    let ret = unsafe {
+        VerQueryValueW(
+            buf.as_ptr().cast(),
+            wide_subblock.as_ptr(),
+            &raw mut info_ptr,
+            &raw mut len,
+        )
+    };
+    if ret == 0 {
+        return Err(ErrorCode::last());
+    }
+
+    let info = unsafe { &*(info_ptr as *const VS_FIXEDFILEINFO) };
+
+    let major = (info.dwProductVersionMS >> 16) & 0xFFFF;
+    let minor = info.dwProductVersionMS & 0xFFFF;
+    let build = (info.dwProductVersionLS >> 16) & 0xFFFF;
+    let rev = info.dwProductVersionLS & 0xFFFF;
+
+    Ok((major, minor, build, rev))
+}
+
 #[cfg(test)]
 mod tests {
     use crate::windows::env;
@@ -297,5 +381,12 @@ mod tests {
         let name = "System";
         let pid = env::find_pid_by_name(name);
         assert_eq!(pid, 4);
+    }
+
+    #[test]
+    fn file_version_test() {
+        let path = "C:/Windows/System32/smss.exe";
+        let version = env::get_file_product_version(path);
+        println!("{version:#?}");
     }
 }
