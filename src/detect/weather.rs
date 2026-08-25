@@ -54,7 +54,6 @@ impl WeatherInfo {
             })
         };
 
-        crate::println!("{raw}");
         if raw.is_empty() {
             return Self::default();
         }
