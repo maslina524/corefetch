@@ -8,6 +8,20 @@ use alloc::{
     vec::Vec
 };
 
+// Why does clippy think this variant is better than `colors::*`?
+use crate::color::{
+    MODE_RESET, MODE_DIM, MODE_ITALIC, MODE_UNDERLINE, MODE_BLINK, MODE_INVERSE,
+    MODE_HIDDEN, MODE_STRIKETHROUGH, FG_BLACK, FG_LIGHT_BLACK, BG_BLACK, BG_LIGHT_BLACK,
+    FG_RED, FG_LIGHT_RED, BG_RED, BG_LIGHT_RED, FG_GREEN, FG_LIGHT_GREEN, BG_GREEN,
+    BG_LIGHT_GREEN, FG_YELLOW, FG_LIGHT_YELLOW, BG_YELLOW, BG_LIGHT_YELLOW, FG_BLUE,
+    FG_LIGHT_BLUE, BG_BLUE, BG_LIGHT_BLUE, FG_MAGENTA, FG_LIGHT_MAGENTA, BG_MAGENTA,
+    BG_LIGHT_MAGENTA, FG_CYAN, FG_LIGHT_CYAN, BG_CYAN, BG_LIGHT_CYAN, FG_WHITE,
+    FG_LIGHT_WHITE, BG_WHITE, BG_LIGHT_WHITE, BG_DEFAULT, FG_DEFAULT
+};
+
+#[derive(Copy, Clone, PartialEq, Eq)]
+pub enum ColorPlan { FG, BG }
+
 #[derive(Clone, PartialEq)]
 pub enum Size {
     Byte(u16),
@@ -143,6 +157,88 @@ pub fn expand_unicode(s: &str) -> String {
         pos += 1;
     }
     ret
+}
+
+macro_rules! add_prefix {
+    ($prefixes:expr, $ret:expr, $lit:literal, $constant:expr) => {{
+        if $prefixes.contains(&$lit) {
+            $ret.push($constant);
+        }
+    }};
+}
+
+pub fn format_color(s: &str, plan: ColorPlan) -> String {
+    let count = s.matches('_').count();
+    let mut ret = Vec::with_capacity(count + 1);
+
+    let (color, prefixes) = if count == 0 {
+        (s, Vec::new())
+    } else {
+        let mut parts: Vec<&str> = s.split('_').collect();
+        let color = parts.pop().unwrap();
+        (color, parts)
+    };
+
+    // Supported named prefixes:
+    // reset_, bright_, dim_, italic_, underline_,
+    // blink_, inverse_, hidden_, strike_, light_
+    add_prefix!(prefixes, ret, "reset",     MODE_RESET);
+    add_prefix!(prefixes, ret, "dim",       MODE_DIM);
+    add_prefix!(prefixes, ret, "italic",    MODE_ITALIC);
+    add_prefix!(prefixes, ret, "underline", MODE_UNDERLINE);
+    add_prefix!(prefixes, ret, "blink",     MODE_BLINK);
+    add_prefix!(prefixes, ret, "inverse",   MODE_INVERSE);
+    add_prefix!(prefixes, ret, "hidden",    MODE_HIDDEN);
+    add_prefix!(prefixes, ret, "strike",    MODE_STRIKETHROUGH);
+
+    let is_light = prefixes.contains(&"light");
+    let color_str = match (color, is_light, plan) {
+        // Black
+        ("black", false, ColorPlan::FG) => FG_BLACK,
+        ("black", true,  ColorPlan::FG) => FG_LIGHT_BLACK,
+        ("black", false, ColorPlan::BG) => BG_BLACK,
+        ("black", true,  ColorPlan::BG) => BG_LIGHT_BLACK,
+        // Red
+        ("red", false, ColorPlan::FG) => FG_RED,
+        ("red", true,  ColorPlan::FG) => FG_LIGHT_RED,
+        ("red", false, ColorPlan::BG) => BG_RED,
+        ("red", true,  ColorPlan::BG) => BG_LIGHT_RED,
+        // Green
+        ("green", false, ColorPlan::FG) => FG_GREEN,
+        ("green", true,  ColorPlan::FG) => FG_LIGHT_GREEN,
+        ("green", false, ColorPlan::BG) => BG_GREEN,
+        ("green", true,  ColorPlan::BG) => BG_LIGHT_GREEN,
+        // Yellow
+        ("yellow", false, ColorPlan::FG) => FG_YELLOW,
+        ("yellow", true,  ColorPlan::FG) => FG_LIGHT_YELLOW,
+        ("yellow", false, ColorPlan::BG) => BG_YELLOW,
+        ("yellow", true,  ColorPlan::BG) => BG_LIGHT_YELLOW,
+        // Blue
+        ("blue", false, ColorPlan::FG) => FG_BLUE,
+        ("blue", true,  ColorPlan::FG) => FG_LIGHT_BLUE,
+        ("blue", false, ColorPlan::BG) => BG_BLUE,
+        ("blue", true,  ColorPlan::BG) => BG_LIGHT_BLUE,
+        // Magenta
+        ("magenta", false, ColorPlan::FG) => FG_MAGENTA,
+        ("magenta", true,  ColorPlan::FG) => FG_LIGHT_MAGENTA,
+        ("magenta", false, ColorPlan::BG) => BG_MAGENTA,
+        ("magenta", true,  ColorPlan::BG) => BG_LIGHT_MAGENTA,
+        // Cyan
+        ("cyan", false, ColorPlan::FG) => FG_CYAN,
+        ("cyan", true,  ColorPlan::FG) => FG_LIGHT_CYAN,
+        ("cyan", false, ColorPlan::BG) => BG_CYAN,
+        ("cyan", true,  ColorPlan::BG) => BG_LIGHT_CYAN,
+        // White
+        ("white", false, ColorPlan::FG) => FG_WHITE,
+        ("white", true,  ColorPlan::FG) => FG_LIGHT_WHITE,
+        ("white", false, ColorPlan::BG) => BG_WHITE,
+        ("white", true,  ColorPlan::BG) => BG_LIGHT_WHITE,
+        // Unknown color → default
+        _ => if plan == ColorPlan::BG { BG_DEFAULT } else { FG_DEFAULT },
+    };
+    ret.push(color_str);
+
+    ret.join(";")
 }
 
 #[macro_export]
