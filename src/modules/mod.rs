@@ -1,21 +1,22 @@
-pub mod break_;    // 7)  Break         : Print an empty line
-pub mod colors;    // 14) Colors        : Display the terminal's 16-color palette
-pub mod cpu;       // 15) CPU           : Print CPU name, frequency, etc.
-pub mod custom;    // 19) Custom        : Print a custom string, with or without key
-pub mod datetime;  // 20) DateTime      : Print the current date and time
-pub mod gpu;       // 29) GPU           : Print GPU names, memory sizes, types, etc
-pub mod kernel;    // 33) Kernel        : Print system kernel version
-pub mod locale;    // 37) Locale        : Print system locale name
-pub mod memory;    // 41) Memory        : Print system memory usage information
-pub mod os;        // 47) OS            : Print the OS or Linux distribution name and version
-pub mod processes; // 53) Processes     : Print number of running processes
-pub mod separator; // 55) Separator     : Print a separator line
-// pub mod swap;   // 58) Swap          : Print swap (paging file) space usage
-pub mod title;     // 63) Title         : Print the title, including your username and hostname
-pub mod uptime;    // 66) Uptime        : Print how long the system has been running
-pub mod version;   // 68) Version       : Print the Fastfetch version and build information
-pub mod wallpaper; // 70) Wallpaper     : Print the file path of the current wallpaper
-pub mod weather;   // 71) Weather       : Print weather information
+pub mod break_;     // 7)  Break         : Print an empty line
+pub mod colors;     // 14) Colors        : Display the terminal's 16-color palette
+pub mod cpu;        // 15) CPU           : Print CPU name, frequency, etc.
+pub mod custom;     // 19) Custom        : Print a custom string, with or without key
+pub mod datetime;   // 20) DateTime      : Print the current date and time
+pub mod gpu;        // 29) GPU           : Print GPU names, memory sizes, types, etc
+pub mod initsystem; // 32) InitSystem    : Print init system (pid 1) name and version
+pub mod kernel;     // 33) Kernel        : Print system kernel version
+pub mod locale;     // 37) Locale        : Print system locale name
+pub mod memory;     // 41) Memory        : Print system memory usage information
+pub mod os;         // 47) OS            : Print the OS or Linux distribution name and version
+pub mod processes;  // 53) Processes     : Print number of running processes
+pub mod separator;  // 55) Separator     : Print a separator line
+// pub mod swap;    // 58) Swap          : Print swap (paging file) space usage
+pub mod title;      // 63) Title         : Print the title, including your username and hostname
+pub mod uptime;     // 66) Uptime        : Print how long the system has been running
+pub mod version;    // 68) Version       : Print the Fastfetch version and build information
+pub mod wallpaper;  // 70) Wallpaper     : Print the file path of the current wallpaper
+pub mod weather;    // 71) Weather       : Print weather information
 
 pub use break_::Break;
 pub use colors::Colors;
@@ -23,6 +24,7 @@ pub use cpu::Cpu;
 pub use custom::Custom;
 pub use datetime::Datetime;
 pub use gpu::Gpu;
+pub use initsystem::InitSystem;
 pub use kernel::Kernel;
 pub use locale::Locale;
 pub use memory::Memory;
@@ -63,23 +65,24 @@ pub trait Module {
 
 pub fn from_preset_module(module: &PresetModule) -> Option<Box<dyn Module>> {
     match module.typ.to_lowercase().as_str() {
-        "break"     => Some(Box::new( Break::new()     )),
-        "colors"    => Some(Box::new( Colors::new()    )),
-        "cpu"       => Some(Box::new( Cpu::new()       )),
-        "custom"    => Some(Box::new( Custom::new()    )),
-        "datetime"  => Some(Box::new( Datetime::new()  )),
-        "gpu"       => Some(Box::new( Gpu::new()       )),
-        "kernel"    => Some(Box::new( Kernel::new()    )),
-        "locale"    => Some(Box::new( Locale::new()    )),
-        "memory"    => Some(Box::new( Memory::new()    )),
-        "os"        => Some(Box::new( Os::new()        )),
-        "processes" => Some(Box::new( Processes::new() )),
-        "separator" => Some(Box::new( Separator::new() )),
-        "title"     => Some(Box::new( Title::new()     )),
-        "uptime"    => Some(Box::new( Uptime::new()    )),
-        "version"   => Some(Box::new( Version::new()   )),
-        "wallpaper" => Some(Box::new( Wallpaper::new() )),
-        "weather"   => Some(Box::new( Weather::new()   )),
+        "break"      => Some(Box::new( Break::new()      )),
+        "colors"     => Some(Box::new( Colors::new()     )),
+        "cpu"        => Some(Box::new( Cpu::new()        )),
+        "custom"     => Some(Box::new( Custom::new()     )),
+        "datetime"   => Some(Box::new( Datetime::new()   )),
+        "gpu"        => Some(Box::new( Gpu::new()        )),
+        "initsystem" => Some(Box::new( InitSystem::new() )),
+        "kernel"     => Some(Box::new( Kernel::new()     )),
+        "locale"     => Some(Box::new( Locale::new()     )),
+        "memory"     => Some(Box::new( Memory::new()     )),
+        "os"         => Some(Box::new( Os::new()         )),
+        "processes"  => Some(Box::new( Processes::new()  )),
+        "separator"  => Some(Box::new( Separator::new()  )),
+        "title"      => Some(Box::new( Title::new()      )),
+        "uptime"     => Some(Box::new( Uptime::new()     )),
+        "version"    => Some(Box::new( Version::new()    )),
+        "wallpaper"  => Some(Box::new( Wallpaper::new()  )),
+        "weather"    => Some(Box::new( Weather::new()    )),
         _ => None,
     }
 }

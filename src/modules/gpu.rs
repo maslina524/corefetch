@@ -96,4 +96,3 @@ impl Module for Gpu {
 }
 
 impl_display_for_module!(Gpu);
-
