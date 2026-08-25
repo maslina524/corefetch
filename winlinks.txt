@@ -84,3 +84,9 @@ HeapReAlloc
 FileTimeToSystemTime
 GetTickCount64
 FileTimeToLocalFileTime
+Process32Next
+Process32First
+CreateToolhelp32Snapshot
+VerQueryValueW
+GetFileVersionInfoW
+GetFileVersionInfoSizeW
