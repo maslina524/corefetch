@@ -30,7 +30,7 @@ mod sync;
 mod macros;
 mod formats;
 mod crc32;
-mod preset;
+mod config;
 mod color;
 mod nvidia;
 mod image;
@@ -67,7 +67,7 @@ use crate::{
     windows::fs::{self, ReadError},
     windows::https::{Request, Url},
     windows::link::ExitProcess, 
-    preset::{Preset, PresetModule},
+    config::{Config, ConfigModule},
     nvidia::NvidiaLib
 };
 
@@ -106,7 +106,7 @@ fn max_line_len(lines: &Vec<(String, usize)>) -> usize {
 }
 
 fn build_logo_buf(lines: &Vec<(String, usize)>, max_len: usize) -> Vec<String> {
-    let padding = Preset::get().get_logo_padding();
+    let padding = Config::get().get_logo_padding();
     let max_len_padding = max_len + padding.left + padding.right;
     let mut ret = Vec::new();
 
@@ -164,7 +164,7 @@ fn split_by_len(string: &str, len: usize) -> Vec<&str> {
     result
 }
 
-fn get_module_lines(preset_module: &PresetModule, max_len_line: usize) -> Option<Vec<String>> {
+fn get_module_lines(preset_module: &ConfigModule, max_len_line: usize) -> Option<Vec<String>> {
     modules::from_preset_module(preset_module).map(|module| {
         let string = module.format(
             FormatValue {
@@ -188,11 +188,11 @@ fn get_module_lines(preset_module: &PresetModule, max_len_line: usize) -> Option
 }
 
 fn build_info_buf(max_len: usize) -> Vec<String> {
-    let padding = Preset::get().get_logo_padding();
+    let padding = Config::get().get_logo_padding();
     let (w, _) = env::terminal_size();
     let max_len_line = w - max_len - padding.left - padding.right; 
     let mut ret = Vec::new();
-    let preset = Preset::get();
+    let preset = Config::get();
 
     for module in preset.modules() {
         if let Some(m) = get_module_lines(module, max_len_line) {
@@ -208,15 +208,15 @@ pub fn exit(code: u32) -> ! {
     unsafe { ExitProcess(code) }
 }
 
-fn get_config(args: &mut Iter<'_, String>) -> Preset {
-    args.position(|a| a == "--config" || a == "-c").map_or_else(Preset::default, |_| args.next().map_or_else(|| {
+fn get_config(args: &mut Iter<'_, String>) -> Config {
+    args.position(|a| a == "--config" || a == "-c").map_or_else(Config::default, |_| args.next().map_or_else(|| {
             help(None);
         }, |path| Url::new(path).map_or_else(|| { // FS Path
                 match Json::from_file(path) {
-                    Ok(c) => Preset::from_json(&c),
+                    Ok(c) => Config::from_json(&c),
                     Err(e) => {
                         warning!("Failed to parse the json config: {e}");
-                        Preset::default()
+                        Config::default()
                     }
                 }
             }, |url| { // Http Url
@@ -224,20 +224,20 @@ fn get_config(args: &mut Iter<'_, String>) -> Preset {
                 if response.is_success() {
                     match response.as_text() {
                         Ok(t) => match Json::from_str(&t) {
-                            Ok(c) => Preset::from_json(&c),
+                            Ok(c) => Config::from_json(&c),
                             Err(e) => {
                                 warning!("Failed to parse the json config: {e}");
-                                Preset::default()
+                                Config::default()
                             }
                         },
                         Err(e) => {
                             warning!("Failed to parse the response: {e}");
-                            Preset::default()
+                            Config::default()
                         }
                     }
                 } else {
                     warning!("Failed to get preset from URL, Code: {}", response.code());
-                    Preset::default()
+                    Config::default()
                 }
             })))
 }
@@ -302,7 +302,7 @@ extern "C" fn main() -> c_int {
 
     // Config init
     let config = get_config(&mut args.iter());
-    Preset::get_or_init(config);
+    Config::get_or_init(config);
 
     // Logo init
     #[allow(clippy::option_if_let_else)]
@@ -319,7 +319,7 @@ extern "C" fn main() -> c_int {
     let (w, _) = env::terminal_size();
     let logo_lines = LogoInfo::new(&logo_name).get_ready_logo_lines(custom);
     let max_logo_len = max_line_len(&logo_lines);
-    let padding = Preset::get().get_logo_padding();
+    let padding = Config::get().get_logo_padding();
     let max_logo_len_padding = max_logo_len + padding.left + padding.right;
 
     let split_len = if max_logo_len_padding + MIN_OFFSET < w {

@@ -44,7 +44,7 @@ use alloc::{
 };
 
 use crate::{
-    preset::PresetModule,
+    config::ConfigModule,
     json::Value
 };
 
@@ -63,7 +63,7 @@ pub trait Module {
     fn format(&self, key: FormatValue, format: FormatValue, map: &BTreeMap<String, Value>) -> alloc::string::String;
 }
 
-pub fn from_preset_module(module: &PresetModule) -> Option<Box<dyn Module>> {
+pub fn from_preset_module(module: &ConfigModule) -> Option<Box<dyn Module>> {
     match module.typ.to_lowercase().as_str() {
         "break"      => Some(Box::new( Break::new()      )),
         "colors"     => Some(Box::new( Colors::new()     )),
@@ -130,7 +130,7 @@ macro_rules! format_for_module {
             let key_raw = key.format.unwrap_or(self.key());
             let value_raw = format.format.unwrap_or(self.title());
 
-            let separator = $crate::preset::Preset::get().get_display_separator();
+            let separator = $crate::config::Config::get().get_display_separator();
 
             let full_string = if key_raw.len() == 0 {
                 alloc::borrow::ToOwned::to_owned(value_raw)
