@@ -10,32 +10,10 @@ use crate::{
     modules::Module, 
     sync::OnceLock,
     json::{Map, Value},
-    // Why does clippy think this variant is better than `colors::*`?
-    color::{
-        MODE_RESET, MODE_DIM, MODE_ITALIC, MODE_UNDERLINE, MODE_BLINK, MODE_INVERSE,
-        MODE_HIDDEN, MODE_STRIKETHROUGH, FG_BLACK, FG_LIGHT_BLACK, BG_BLACK, BG_LIGHT_BLACK,
-        FG_RED, FG_LIGHT_RED, BG_RED, BG_LIGHT_RED, FG_GREEN, FG_LIGHT_GREEN, BG_GREEN,
-        BG_LIGHT_GREEN, FG_YELLOW, FG_LIGHT_YELLOW, BG_YELLOW, BG_LIGHT_YELLOW, FG_BLUE,
-        FG_LIGHT_BLUE, BG_BLUE, BG_LIGHT_BLUE, FG_MAGENTA, FG_LIGHT_MAGENTA, BG_MAGENTA,
-        BG_LIGHT_MAGENTA, FG_CYAN, FG_LIGHT_CYAN, BG_CYAN, BG_LIGHT_CYAN, FG_WHITE,
-        FG_LIGHT_WHITE, BG_WHITE, BG_LIGHT_WHITE, BG_DEFAULT, FG_DEFAULT
-    }
+    formats::{ColorPlan, format_color}
 };
 
 static PRESET: OnceLock<Preset> = OnceLock::new();
-
-macro_rules! add_prefix {
-    ($prefixes:expr, $ret:expr, $lit:literal, $constant:expr) => {{
-        if $prefixes.contains(&$lit) {
-            $ret.push($constant);
-        }
-    }};
-}
-
-#[derive(Copy, Clone, PartialEq, Eq)]
-enum Plan {
-    FG, BG
-}
 
 pub struct Preset {
     modules: Vec<PresetModule>,
@@ -195,82 +173,8 @@ impl PresetModule {
     }
 
     pub fn new(typ: &str, format: Option<String>, key: Option<String>, key_color: Option<String>, map: BTreeMap<String, Value>) -> Self {
-        let key_color = key_color.map(|s| Self::format_color(&s, Plan::FG));
+        let key_color = key_color.map(|s| format_color(&s, ColorPlan::FG));
         Self { typ: typ.to_owned(), format, key, key_color, map }
-    }
-
-    fn format_color(s: &str, plan: Plan) -> String {
-        let count = s.matches('_').count();
-        let mut ret = Vec::with_capacity(count + 1);
-
-        let (color, prefixes) = if count == 0 {
-            (s, Vec::new())
-        } else {
-            let mut parts: Vec<&str> = s.split('_').collect();
-            let color = parts.pop().unwrap();
-            (color, parts)
-        };
-
-        // Supported named prefixes:
-        // reset_, bright_, dim_, italic_, underline_,
-        // blink_, inverse_, hidden_, strike_, light_
-        add_prefix!(prefixes, ret, "reset",     MODE_RESET);
-        add_prefix!(prefixes, ret, "dim",       MODE_DIM);
-        add_prefix!(prefixes, ret, "italic",    MODE_ITALIC);
-        add_prefix!(prefixes, ret, "underline", MODE_UNDERLINE);
-        add_prefix!(prefixes, ret, "blink",     MODE_BLINK);
-        add_prefix!(prefixes, ret, "inverse",   MODE_INVERSE);
-        add_prefix!(prefixes, ret, "hidden",    MODE_HIDDEN);
-        add_prefix!(prefixes, ret, "strike",    MODE_STRIKETHROUGH);
-
-        let is_light = prefixes.contains(&"light");
-        let color_str = match (color, is_light, plan) {
-            // Black
-            ("black", false, Plan::FG) => FG_BLACK,
-            ("black", true,  Plan::FG) => FG_LIGHT_BLACK,
-            ("black", false, Plan::BG) => BG_BLACK,
-            ("black", true,  Plan::BG) => BG_LIGHT_BLACK,
-            // Red
-            ("red", false, Plan::FG) => FG_RED,
-            ("red", true,  Plan::FG) => FG_LIGHT_RED,
-            ("red", false, Plan::BG) => BG_RED,
-            ("red", true,  Plan::BG) => BG_LIGHT_RED,
-            // Green
-            ("green", false, Plan::FG) => FG_GREEN,
-            ("green", true,  Plan::FG) => FG_LIGHT_GREEN,
-            ("green", false, Plan::BG) => BG_GREEN,
-            ("green", true,  Plan::BG) => BG_LIGHT_GREEN,
-            // Yellow
-            ("yellow", false, Plan::FG) => FG_YELLOW,
-            ("yellow", true,  Plan::FG) => FG_LIGHT_YELLOW,
-            ("yellow", false, Plan::BG) => BG_YELLOW,
-            ("yellow", true,  Plan::BG) => BG_LIGHT_YELLOW,
-            // Blue
-            ("blue", false, Plan::FG) => FG_BLUE,
-            ("blue", true,  Plan::FG) => FG_LIGHT_BLUE,
-            ("blue", false, Plan::BG) => BG_BLUE,
-            ("blue", true,  Plan::BG) => BG_LIGHT_BLUE,
-            // Magenta
-            ("magenta", false, Plan::FG) => FG_MAGENTA,
-            ("magenta", true,  Plan::FG) => FG_LIGHT_MAGENTA,
-            ("magenta", false, Plan::BG) => BG_MAGENTA,
-            ("magenta", true,  Plan::BG) => BG_LIGHT_MAGENTA,
-            // Cyan
-            ("cyan", false, Plan::FG) => FG_CYAN,
-            ("cyan", true,  Plan::FG) => FG_LIGHT_CYAN,
-            ("cyan", false, Plan::BG) => BG_CYAN,
-            ("cyan", true,  Plan::BG) => BG_LIGHT_CYAN,
-            // White
-            ("white", false, Plan::FG) => FG_WHITE,
-            ("white", true,  Plan::FG) => FG_LIGHT_WHITE,
-            ("white", false, Plan::BG) => BG_WHITE,
-            ("white", true,  Plan::BG) => BG_LIGHT_WHITE,
-            // Unknown color → default
-            _ => if plan == Plan::BG { BG_DEFAULT } else { FG_DEFAULT },
-        };
-        ret.push(color_str);
-
-        ret.join(";")
     }
 }
 
