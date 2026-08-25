@@ -1,5 +1,5 @@
 use core::{
-    ffi::c_void,
+    ffi::{c_void, CStr},
     mem,
     slice
 };
@@ -11,18 +11,13 @@ use alloc::{
 };
 
 use crate::{
-    windows::error::{self, ErrorCode},
-    windows::fs::{Access, File},
-    windows::link::{
-        CONSOLE_SCREEN_BUFFER_INFO, CloseHandle, CommandLineToArgvW,
-        FILETIME, GetCommandLineW, GetConsoleScreenBufferInfo, GetSystemTimeAsFileTime,
-        OSVERSIONINFOW, EnumProcesses, RtlGetVersion
-    },
-    windows::regedit::{self, Regedit, RegValue, Hkey},
-    sync::OnceLock
+    sync::OnceLock, windows::{error::{self, ErrorCode}, fs::{Access, File}, link::{
+        CONSOLE_SCREEN_BUFFER_INFO, CloseHandle, CommandLineToArgvW, CreateToolhelp32Snapshot, EnumProcesses, FILETIME, GetCommandLineW, GetConsoleScreenBufferInfo, GetSystemTimeAsFileTime, OSVERSIONINFOW, PROCESSENTRY32, Process32First, Process32Next, RtlGetVersion
+    }, regedit::{self, Hkey, RegValue, Regedit}}
 };
 
-const EPOCH_DIFF           : u64         = 116_444_736_000_000_000;
+const EPOCH_DIFF           : u64               = 116_444_736_000_000_000;
+const INVALID_HANDLE       : *mut c_void       = (-1isize).cast_unsigned() as *mut c_void;
 
 static TERMINAL_HANDLE     : OnceLock<isize>   = OnceLock::new();
 static CURRENT_VERSION     : OnceLock<Regedit> = OnceLock::new();
@@ -234,6 +229,40 @@ pub fn args() -> Vec<String> {
     ret
 }
 
+pub fn find_pid_by_name(name: &str) -> u32 {
+    let mut pid = 0;
+    // SAFETY: Completely safe
+    let snapshot = unsafe { CreateToolhelp32Snapshot(2, 0) };
+    if snapshot == INVALID_HANDLE { return 0; }
+
+    let mut pe = PROCESSENTRY32 {
+        dwSize: size_of::<PROCESSENTRY32>() as u32,
+        .. PROCESSENTRY32::default()
+    };
+
+    // SAFETY: Completely safe
+    let first = unsafe { Process32First(snapshot, &raw mut pe) };
+    if first != 0 {
+        loop {
+            // SAFETY: 
+            let proc_name = unsafe { CStr::from_ptr(pe.szExeFile.as_ptr()) };
+            if proc_name.to_bytes() == name.as_bytes() {
+                pid = pe.th32ProcessID;
+                break;
+            }
+            // SAFETY: Completely safe
+            let ret = unsafe { Process32Next(snapshot, &raw mut pe) };
+            if ret == 0 {
+                break;
+            }
+        }
+    }
+
+    // SAFETY: Completely safe
+    unsafe { CloseHandle(snapshot) };
+    pid
+}
+
 #[cfg(test)]
 mod tests {
     use crate::windows::env;
@@ -261,5 +290,12 @@ mod tests {
     fn terminal_size_test() {
         let size = env::terminal_size();
         println!("{size:?}");
+    }
+
+    #[test]
+    fn find_pid_test() {
+        let name = "System";
+        let pid = env::find_pid_by_name(name);
+        assert_eq!(pid, 4);
     }
 }

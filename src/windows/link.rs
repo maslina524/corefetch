@@ -24,6 +24,7 @@ link!("advapi32" "system" fn ConvertSidToStringSidW(sid : PSID, stringsid : *mut
 link!("dxgi" "system" fn CreateDXGIFactory(riid : *const GUID, ppfactory : *mut *mut core::ffi::c_void) -> HRESULT);
 link!("kernel32" "system" fn CreateDirectoryW(lppathname : PCWSTR, lpsecurityattributes : *const SECURITY_ATTRIBUTES) -> BOOL);
 link!("kernel32" "system" fn CreateFileW(lpfilename : PCWSTR, dwdesiredaccess : u32, dwsharemode : FILE_SHARE_MODE, lpsecurityattributes : *const SECURITY_ATTRIBUTES, dwcreationdisposition : FILE_CREATION_DISPOSITION, dwflagsandattributes : FILE_FLAGS_AND_ATTRIBUTES, htemplatefile : HANDLE) -> HANDLE);
+link!("kernel32" "system" fn CreateToolhelp32Snapshot(dwflags : CREATE_TOOLHELP_SNAPSHOT_FLAGS, th32processid : u32) -> HANDLE);
 link!("psapi" "system" fn EnumProcesses(lpidprocess : *mut u32, cb : u32, lpcbneeded : *mut u32) -> BOOL);
 link!("kernel32" "system" fn ExitProcess(uexitcode : u32) -> !);
 link!("kernel32" "system" fn FileTimeToLocalFileTime(lpfiletime : *const FILETIME, lplocalfiletime : *mut FILETIME) -> BOOL);
@@ -63,6 +64,8 @@ link!("kernel32" "system" fn LocalFree(hmem : HLOCAL) -> HLOCAL);
 link!("kernel32" "system" fn MultiByteToWideChar(codepage : u32, dwflags : MULTI_BYTE_TO_WIDE_CHAR_FLAGS, lpmultibytestr : PCSTR, cbmultibyte : i32, lpwidecharstr : PWSTR, cchwidechar : i32) -> i32);
 link!("advapi32" "system" fn OpenProcessToken(processhandle : HANDLE, desiredaccess : TOKEN_ACCESS_MASK, tokenhandle : *mut HANDLE) -> BOOL);
 link!("shlwapi" "system" fn PathFileExistsW(pszpath : PCWSTR) -> BOOL);
+link!("kernel32" "system" fn Process32First(hsnapshot : HANDLE, lppe : *mut PROCESSENTRY32) -> BOOL);
+link!("kernel32" "system" fn Process32Next(hsnapshot : HANDLE, lppe : *mut PROCESSENTRY32) -> BOOL);
 link!("kernel32" "system" fn ReadFile(hfile : HANDLE, lpbuffer : *mut u8, nnumberofbytestoread : u32, lpnumberofbytesread : *mut u32, lpoverlapped : *mut OVERLAPPED) -> BOOL);
 link!("advapi32" "system" fn RegCloseKey(hkey : HKEY) -> WIN32_ERROR);
 link!("advapi32" "system" fn RegCreateKeyExW(hkey : HKEY, lpsubkey : PCWSTR, reserved : u32, lpclass : PCWSTR, dwoptions : REG_OPEN_CREATE_OPTIONS, samdesired : REG_SAM_FLAGS, lpsecurityattributes : *const SECURITY_ATTRIBUTES, phkresult : *mut HKEY, lpdwdisposition : *mut REG_CREATE_KEY_DISPOSITION) -> WIN32_ERROR);
@@ -112,6 +115,7 @@ pub struct COORD {
     pub X: i16,
     pub Y: i16,
 }
+pub type CREATE_TOOLHELP_SNAPSHOT_FLAGS = u32;
 pub const DIGCF_PRESENT: SETUP_DI_GET_CLASS_DEVS_FLAGS = 2u32;
 #[repr(C)]
 #[derive(Clone, Copy)]
@@ -332,6 +336,26 @@ pub struct OVERLAPPED_0_0 {
 }
 pub type PCSTR = *const u8;
 pub type PCWSTR = *const u16;
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct PROCESSENTRY32 {
+    pub dwSize: u32,
+    pub cntUsage: u32,
+    pub th32ProcessID: u32,
+    pub th32DefaultHeapID: usize,
+    pub th32ModuleID: u32,
+    pub cntThreads: u32,
+    pub th32ParentProcessID: u32,
+    pub pcPriClassBase: i32,
+    pub dwFlags: u32,
+    pub szExeFile: [i8; 260],
+}
+impl Default for PROCESSENTRY32 {
+    fn default() -> Self {
+        // SAFETY: All types are guaranteed to be zeroable
+		unsafe { core::mem::zeroed() }
+    }
+}
 pub type PROCESSOR_ARCHITECTURE = u16;
 pub type PROCESSOR_CACHE_TYPE = i32;
 pub type PSID = *mut core::ffi::c_void;
