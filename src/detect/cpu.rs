@@ -84,7 +84,7 @@ impl CpuInfo {
 
         let struct_size = mem::size_of::<SYSTEM_LOGICAL_PROCESSOR_INFORMATION>();
         let buf_size = size as usize / struct_size;
-        let mut buf = Vec::with_capacity(buf_size);
+        let mut buf = vec![SYSTEM_LOGICAL_PROCESSOR_INFORMATION::default(); buf_size];
 
         // SAFETY: Completely safe
         unsafe {
@@ -95,8 +95,6 @@ impl CpuInfo {
         };
         assert!(ErrorCode::last().code() != 0, "`GetLogicalProcessorInformation` (info) failed");
 
-        // SAFETY: WinAPI modifies data in `Vec<_>`, you must update the len
-        unsafe { buf.set_len(buf_size) };
         buf
     }
 

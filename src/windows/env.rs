@@ -298,6 +298,7 @@ pub fn get_file_product_version(path: impl Into<Path>) -> error::Result<(u32, u3
     let path_str = path.into().into_inner();
     let path_wide = wide(path_str)?;
 
+    // SAFETY: Completely safe
     let buf_size = unsafe { 
         GetFileVersionInfoSizeW(
             path_wide.as_ptr(), 
@@ -309,6 +310,7 @@ pub fn get_file_product_version(path: impl Into<Path>) -> error::Result<(u32, u3
     }
 
     let mut buf = vec![0u8; buf_size as usize];
+    // SAFETY: Completely safe
     let ret = unsafe {
         GetFileVersionInfoW(
             path_wide.as_ptr(),
@@ -325,6 +327,7 @@ pub fn get_file_product_version(path: impl Into<Path>) -> error::Result<(u32, u3
     let mut len = 0;
     let wide_subblock = wide("\\")?;
 
+    // SAFETY: Completely safe
     let ret = unsafe {
         VerQueryValueW(
             buf.as_ptr().cast(),
@@ -337,6 +340,7 @@ pub fn get_file_product_version(path: impl Into<Path>) -> error::Result<(u32, u3
         return Err(ErrorCode::last());
     }
 
+    // SAFETY: A guaranteed non-null pointer
     let info = unsafe { &*(info_ptr as *const VS_FIXEDFILEINFO) };
 
     let major = (info.dwProductVersionMS >> 16) & 0xFFFF;

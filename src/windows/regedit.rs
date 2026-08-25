@@ -6,7 +6,8 @@ use core::{
 
 use alloc::{
     string::String,
-    vec::Vec
+    vec::Vec,
+    vec
 };
 
 use crate::{
@@ -174,7 +175,8 @@ impl Regedit {
         }
         
         let size_usize = size as usize;
-        let mut buf = Vec::with_capacity(size_usize);
+        let mut buf = vec![0u8; size_usize];
+
         // SAFETY: Completely safe
         unsafe {
             RegQueryValueExW(
@@ -186,8 +188,6 @@ impl Regedit {
                 &raw mut size
             )
         };
-        // SAFETY: WinAPI modifies data in `Vec<_>`, you must update the len
-        unsafe { buf.set_len(size_usize) };
 
         match typ {
             0 => Ok(RegValue::None),
