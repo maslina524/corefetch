@@ -74,13 +74,13 @@ impl Config {
                 .map_or_else(ConfigPercent::default, |color_obj|
             {
                 let red = color_obj
-                    .get_string("red").map_or_else(|| "31".to_owned(), ToOwned::to_owned);
+                    .get_string("red").map_or_else(|| "red".to_owned(), ToOwned::to_owned);
 
                 let yellow = color_obj
-                    .get_string("yellow").map_or_else(|| "33".to_owned(), ToOwned::to_owned);
+                    .get_string("yellow").map_or_else(|| "yellow".to_owned(), ToOwned::to_owned);
 
                 let green = color_obj
-                    .get_string("green").map_or_else(|| "32".to_owned(), ToOwned::to_owned);
+                    .get_string("green").map_or_else(|| "green".to_owned(), ToOwned::to_owned);
 
                 ConfigPercent { 
                     green: format_color(&green, ColorPlan::FG), 

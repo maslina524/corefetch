@@ -302,6 +302,7 @@ extern "C" fn main() -> c_int {
 
     // Config init
     let config = get_config(&mut args.iter());
+    println!("{config:#?}");
     Config::get_or_init(config);
 
     // Logo init

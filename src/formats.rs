@@ -5,6 +5,7 @@ use core::{
 
 use alloc::{
     string::String,
+    borrow::ToOwned,
     vec::Vec
 };
 
@@ -167,7 +168,15 @@ macro_rules! add_prefix {
     }};
 }
 
+fn is_ansi_color(s: &str) -> bool {
+    s.chars().all(|c| c.is_ascii_digit() || c == ';')
+}
+
 pub fn format_color(s: &str, plan: ColorPlan) -> String {
+    if is_ansi_color(s) {
+        return s.to_owned();
+    }
+
     let count = s.matches('_').count();
     let mut ret = Vec::with_capacity(count + 1);
 
