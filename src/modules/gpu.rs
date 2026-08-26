@@ -6,6 +6,7 @@ use crate::{
     detect::gpu::GpuInfo,
     modules::Module, 
     sync::OnceLock,
+    config::Config,
     format
 };
 
@@ -44,7 +45,7 @@ impl Module for Gpu {
             vendor: info.vendor,
             name: info.name,
             driver: info.driver,
-            temperature: format!("{:.2} °C", info.temperature),
+            temperature: Config::get().format_celsius(info.temperature),
             core_count: 0,
             r#type: info.typ,
             dedicated_total: info.memory_total.to_string(),

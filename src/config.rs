@@ -89,7 +89,28 @@ impl Config {
                 }
             });
 
-            ConfigDisplay { separator, percent }
+            let temperature = dspl_obj
+                .get_object("temperature")
+                .and_then(|o| o.get_object("color"))
+                .map_or_else(ConfigTemperature::default, |color_obj|
+            {
+                let red = color_obj
+                    .get_string("red").map_or_else(|| "red".to_owned(), ToOwned::to_owned);
+
+                let yellow = color_obj
+                    .get_string("yellow").map_or_else(|| "yellow".to_owned(), ToOwned::to_owned);
+
+                let green = color_obj
+                    .get_string("green").map_or_else(|| "green".to_owned(), ToOwned::to_owned);
+
+                ConfigTemperature { 
+                    green: format_color(&green, ColorPlan::FG), 
+                    yellow: format_color(&yellow, ColorPlan::FG), 
+                    red: format_color(&red, ColorPlan::FG)
+                }
+            });
+
+            ConfigDisplay { separator, percent, temperature }
 
         });
 
@@ -166,8 +187,31 @@ impl Config {
         } else {
             self.display.percent.red.as_str()
         };
-        crate::println!("FORMAT COLOR: {color}");
+
         format!("\x1b[{color}m{val}%\x1b[0m")
+    }
+
+    pub fn format_celsius(&self, mut val: f32) -> String {
+        let as_fahrenheit = false;
+        val = if as_fahrenheit {
+            (val * 9.0 / 5.0) + 32.0
+        } else {
+            val
+        };
+
+        let color = if val <= 50.0 {
+            self.display.temperature.green.as_str()
+        } else if val <= 75.0 {
+            self.display.temperature.yellow.as_str()
+        } else {
+            self.display.temperature.red.as_str()
+        };
+
+        if as_fahrenheit {
+            format!("\x1b[{color}m{val:.01} °F\x1b[0m")
+        } else {
+            format!("\x1b[{color}m{val:.01} °C\x1b[0m")
+        }
     }
 }
 
@@ -234,12 +278,17 @@ impl ConfigModule {
 #[derive(Debug)]
 pub struct ConfigDisplay {
     pub separator: String,
-    pub percent: ConfigPercent
+    pub percent: ConfigPercent,
+    pub temperature: ConfigTemperature
 }
 
 impl Default for ConfigDisplay {
     fn default() -> Self {
-        Self { separator: String::from(": "), percent: ConfigPercent::default() }
+        Self { 
+            separator: String::from(": "),
+            percent: ConfigPercent::default(),
+            temperature: ConfigTemperature::default()
+        }
     }
 }
 
@@ -265,6 +314,19 @@ pub struct ConfigPercent {
 }
 
 impl Default for ConfigPercent {
+    fn default() -> Self {
+        Self { green: "32".to_owned(), yellow: "33".to_owned(), red: "31".to_owned() }
+    }
+}
+
+#[derive(Debug)]
+pub struct ConfigTemperature {
+    pub green: String,
+    pub yellow: String,
+    pub red: String,
+}
+
+impl Default for ConfigTemperature {
     fn default() -> Self {
         Self { green: "32".to_owned(), yellow: "33".to_owned(), red: "31".to_owned() }
     }
