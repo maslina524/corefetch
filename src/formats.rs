@@ -10,7 +10,7 @@ use alloc::{
 
 // Why does clippy think this variant is better than `colors::*`?
 use crate::color::{
-    MODE_RESET, MODE_DIM, MODE_ITALIC, MODE_UNDERLINE, MODE_BLINK, MODE_INVERSE,
+    MODE_RESET, MODE_BOLD, MODE_DIM, MODE_ITALIC, MODE_UNDERLINE, MODE_BLINK, MODE_INVERSE,
     MODE_HIDDEN, MODE_STRIKETHROUGH, FG_BLACK, FG_LIGHT_BLACK, BG_BLACK, BG_LIGHT_BLACK,
     FG_RED, FG_LIGHT_RED, BG_RED, BG_LIGHT_RED, FG_GREEN, FG_LIGHT_GREEN, BG_GREEN,
     BG_LIGHT_GREEN, FG_YELLOW, FG_LIGHT_YELLOW, BG_YELLOW, BG_LIGHT_YELLOW, FG_BLUE,
@@ -183,6 +183,7 @@ pub fn format_color(s: &str, plan: ColorPlan) -> String {
     // reset_, bright_, dim_, italic_, underline_,
     // blink_, inverse_, hidden_, strike_, light_
     add_prefix!(prefixes, ret, "reset",     MODE_RESET);
+    add_prefix!(prefixes, ret, "bold",      MODE_BOLD);
     add_prefix!(prefixes, ret, "dim",       MODE_DIM);
     add_prefix!(prefixes, ret, "italic",    MODE_ITALIC);
     add_prefix!(prefixes, ret, "underline", MODE_UNDERLINE);

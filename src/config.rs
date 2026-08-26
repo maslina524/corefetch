@@ -82,7 +82,11 @@ impl Config {
                 let green = color_obj
                     .get_string("green").map_or_else(|| "32".to_owned(), ToOwned::to_owned);
 
-                ConfigPercent { green, yellow, red }
+                ConfigPercent { 
+                    green: format_color(&green, ColorPlan::FG), 
+                    yellow: format_color(&yellow, ColorPlan::FG), 
+                    red: format_color(&red, ColorPlan::FG)
+                }
             });
 
             ConfigDisplay { separator, percent }
@@ -154,8 +158,16 @@ impl Config {
     }
 
     /// val -> 0..=100
-    pub fn format_percent(val: u8) -> String {
-        format!("{val}%")
+    pub fn format_percent(&self, val: u8) -> String {
+        let color = if val <= 50 {
+            self.display.percent.green.as_str()
+        } else if val <= 75 {
+            self.display.percent.yellow.as_str()
+        } else {
+            self.display.percent.red.as_str()
+        };
+        crate::println!("FORMAT COLOR: {color}");
+        format!("\x1b[{color}m{val}%\x1b[0m")
     }
 }
 
