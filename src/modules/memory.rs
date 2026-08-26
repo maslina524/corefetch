@@ -6,7 +6,8 @@ use crate::{
     format_for_module,
     detect::memory::MemoryInfo,
     modules::Module, 
-    sync::OnceLock
+    sync::OnceLock,
+    config::Config
 };
 
 static MEMORY: OnceLock<Memory> = OnceLock::new();
@@ -24,12 +25,12 @@ impl Module for Memory {
         let mem = MemoryInfo::new();
         let total = mem.total;
         let used = mem.in_use;
-        let percentage = (used.as_kilobytes() / total.as_kilobytes() * 100.0) as u8;
+        let percent = (used.as_kilobytes() / total.as_kilobytes() * 100.0) as u8;
 
         Self {
             used: format!("{used:.02}"),
             total: format!("{total:.02}"),
-            percentage: format!("{percentage}%"),
+            percentage: Config::get().format_percent(percent),
             percentage_bar: String::new(),
         }
     }
