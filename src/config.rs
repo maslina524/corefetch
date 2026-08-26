@@ -11,7 +11,8 @@ use crate::{
     sync::OnceLock,
     json::{Map, Value},
     formats::{ColorPlan, format_color},
-    format
+    format,
+    warning
 };
 
 static PRESET: OnceLock<Config> = OnceLock::new();
@@ -89,24 +90,28 @@ impl Config {
                 }
             });
 
-            let temperature = dspl_obj
-                .get_object("temperature")
-                .and_then(|o| o.get_object("color"))
-                .map_or_else(ConfigTemperature::default, |color_obj|
-            {
-                let red = color_obj
-                    .get_string("red").map_or_else(|| "red".to_owned(), ToOwned::to_owned);
+            let temperature = dspl_obj.get_object("temperature").map_or_else(ConfigTemperature::default, |o| {
+                // Color
+                let (red, yellow, green) = o.get_object("color").map_or(("red", "yellow", "green"), |color_obj| {
+                    let red = color_obj
+                        .get_string("red").map_or_else(|| "red", String::as_str);
 
-                let yellow = color_obj
-                    .get_string("yellow").map_or_else(|| "yellow".to_owned(), ToOwned::to_owned);
+                    let yellow = color_obj
+                        .get_string("yellow").map_or_else(|| "yellow", String::as_str);
 
-                let green = color_obj
-                    .get_string("green").map_or_else(|| "green".to_owned(), ToOwned::to_owned);
+                    let green = color_obj
+                        .get_string("green").map_or_else(|| "green", String::as_str);
+
+                    (red, yellow, green)
+                });
+
+                let typ = o.get_string("type").map_or_else(|| "celsius", String::as_str);
 
                 ConfigTemperature { 
-                    green: format_color(&green, ColorPlan::FG), 
-                    yellow: format_color(&yellow, ColorPlan::FG), 
-                    red: format_color(&red, ColorPlan::FG)
+                    green: format_color(green, ColorPlan::FG), 
+                    yellow: format_color(yellow, ColorPlan::FG), 
+                    red: format_color(red, ColorPlan::FG),
+                    typ: TemperatureType::from_str(typ)
                 }
             });
 
@@ -192,12 +197,8 @@ impl Config {
     }
 
     pub fn format_celsius(&self, mut val: f32) -> String {
-        let as_fahrenheit = false;
-        val = if as_fahrenheit {
-            (val * 9.0 / 5.0) + 32.0
-        } else {
-            val
-        };
+        let typ = &self.display.temperature.typ;
+        val = typ.convert_to_celsius(val);
 
         let color = if val <= 50.0 {
             self.display.temperature.green.as_str()
@@ -207,11 +208,7 @@ impl Config {
             self.display.temperature.red.as_str()
         };
 
-        if as_fahrenheit {
-            format!("\x1b[{color}m{val:.01} °F\x1b[0m")
-        } else {
-            format!("\x1b[{color}m{val:.01} °C\x1b[0m")
-        }
+        format!("\x1b[{color}m{val:.01} °{}\x1b[0m", typ.symb())
     }
 }
 
@@ -319,16 +316,59 @@ impl Default for ConfigPercent {
     }
 }
 
+#[derive(Debug, Default)]
+pub enum TemperatureType { 
+    #[default]
+    Celsius,
+    Fahrenheit,
+    Kelvin
+}
+
+impl TemperatureType {
+    pub fn from_str(s: &str) -> Self {
+        match s {
+            "celsius" => Self::Celsius,
+            "fahrenheit" => Self::Fahrenheit,
+            "kelvin" => Self::Kelvin,
+            _ => {
+                warning!("Unknown temperature type ({s})");
+                Self::Celsius
+            }
+        }
+    }
+    pub const fn symb(&self) -> char {
+        match self {
+            Self::Celsius    => 'C',
+            Self::Fahrenheit => 'F',
+            Self::Kelvin     => 'K'
+        }
+    }
+
+    pub const fn convert_to_celsius(&self, val: f32) -> f32 {
+        match self {
+            Self::Celsius    => val,
+            Self::Fahrenheit => (val * 9.0 / 5.0) + 32.0,
+            Self::Kelvin     => val + 273.15
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct ConfigTemperature {
     pub green: String,
     pub yellow: String,
     pub red: String,
+    pub typ: TemperatureType,
 }
 
 impl Default for ConfigTemperature {
     fn default() -> Self {
-        Self { green: "32".to_owned(), yellow: "33".to_owned(), red: "31".to_owned() }
+        Self {
+            green: "32".to_owned(),
+            yellow: "33".to_owned(),
+            red: "31".to_owned(),
+            typ: TemperatureType::default()
+        }
     }
 }
 
