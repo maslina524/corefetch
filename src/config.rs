@@ -10,13 +10,15 @@ use crate::{
     modules::Module, 
     sync::OnceLock,
     json::{Map, Value},
-    formats::{ColorPlan, format_color}
+    formats::{ColorPlan, format_color},
+    format
 };
 
 static PRESET: OnceLock<Config> = OnceLock::new();
 
+#[derive(Debug, Default)]
 pub struct Config {
-    modules: Vec<ConfigModule>,
+    modules: ConfigModuleArray,
     display: ConfigDisplay,
     logo: ConfigLogo,
 }
@@ -30,40 +32,62 @@ impl Config {
 
     pub fn from_json(json: &Map) -> Self {
         // Build modules
-        let map_modules = json.get_array("modules").expect("msg");
-        let mut ret_modules = Vec::with_capacity(map_modules.len());
+        let modules = json.get_array("modules").map_or_else(ConfigModuleArray::default, |map_modules| {
+            let mut inner = Vec::with_capacity(map_modules.len());
 
-        for m in map_modules {
-            if let Some(obj) = m.as_object() {
-                let Some(typ) = obj.get_string("type") else {
-                    continue;
-                };
-                let format = obj.get_string("format").map(String::to_owned);
-                let key = obj.get_string("key").map(String::to_owned);
-                let key_color = obj.get_string("keyColor").map(String::to_owned);
+            for m in map_modules {
+                if let Some(obj) = m.as_object() {
+                    let Some(typ) = obj.get_string("type") else {
+                        continue;
+                    };
+                    let format = obj.get_string("format").map(String::to_owned);
+                    let key = obj.get_string("key").map(String::to_owned);
+                    let key_color = obj.get_string("keyColor").map(String::to_owned);
 
-                let mut map = BTreeMap::new();
-                if typ.as_str() == "colors" {
-                    let symbol = obj.get("symbol").unwrap_or(&Value::Null).clone();
-                    map.insert("symbol".to_owned(), symbol);
+                    let mut map = BTreeMap::new();
+                    if typ.as_str() == "colors" {
+                        let symbol = obj.get("symbol").unwrap_or(&Value::Null).clone();
+                        map.insert("symbol".to_owned(), symbol);
 
-                    let padding_left = obj.get("paddingLeft").unwrap_or(&Value::Null).clone();
-                    map.insert("paddingLeft".to_owned(), padding_left);
+                        let padding_left = obj.get("paddingLeft").unwrap_or(&Value::Null).clone();
+                        map.insert("paddingLeft".to_owned(), padding_left);
+                    }
+
+                    let preset_mod = ConfigModule::new(typ, format, key, key_color, map);
+                    inner.push(preset_mod);
+                } else if let Some(typ) = m.as_string() {
+                    let preset_mod = ConfigModule::from_str(typ);
+                    inner.push(preset_mod);
                 }
-
-                let preset_mod = ConfigModule::new(typ, format, key, key_color, map);
-                ret_modules.push(preset_mod);
-            } else if let Some(typ) = m.as_string() {
-                let preset_mod = ConfigModule::from_str(typ);
-                ret_modules.push(preset_mod);
             }
-        }
+            ConfigModuleArray { inner }
+        });
 
         // Display
-        let separator = json
-            .get_object("display")
-            .and_then(|m| m.get_string("separator").map(ToOwned::to_owned))
-            .unwrap_or_else(|| ": ".to_owned());
+        let display = json.get_object("display").map_or_else(ConfigDisplay::default, |dspl_obj| {
+            let separator = dspl_obj
+                .get_string("separator").map_or_else(|| ": ".to_owned(), ToOwned::to_owned);
+
+            let percent = dspl_obj
+                .get_object("percent")
+                .and_then(|o| o.get_object("color"))
+                .map_or_else(ConfigPercent::default, |color_obj|
+            {
+                let red = color_obj
+                    .get_string("red").map_or_else(|| "31".to_owned(), ToOwned::to_owned);
+
+                let yellow = color_obj
+                    .get_string("yellow").map_or_else(|| "33".to_owned(), ToOwned::to_owned);
+
+                let green = color_obj
+                    .get_string("green").map_or_else(|| "32".to_owned(), ToOwned::to_owned);
+
+                ConfigPercent { green, yellow, red }
+            });
+
+            ConfigDisplay { separator, percent }
+
+        });
 
         // Logo
         let logo = json
@@ -80,8 +104,8 @@ impl Config {
         );
 
         Self {
-            modules: ret_modules,
-            display: ConfigDisplay { separator },
+            modules,
+            display,
             logo
         }
     }
@@ -93,7 +117,7 @@ impl Config {
     }
 
     pub fn module_by_typ(&self, string: &str) -> Option<&ConfigModule> {
-        for m in &self.modules {
+        for m in self.modules.as_inner() {
             if m.typ == string {
                 return Some(m)
             }
@@ -102,7 +126,7 @@ impl Config {
     }
 
     pub const fn modules(&self) -> &Vec<ConfigModule> {
-        &self.modules
+        self.modules.as_inner()
     }
 
     pub fn get_module_format(&self, module: &dyn Module) -> &str {
@@ -128,37 +152,54 @@ impl Config {
     pub const fn get_logo_padding(&self) -> &ConfigPadding {
         &self.logo.padding
     }
-}
 
-impl Default for Config {
-    fn default() -> Self {
-        Self {
-            modules: vec![
-                ConfigModule::from_str("title"),
-                ConfigModule::from_str("separator"),
-                ConfigModule::from_str("os"),
-                ConfigModule::from_str("initsystem"),
-                ConfigModule::from_str("kernel"),
-                ConfigModule::from_str("uptime"),
-                ConfigModule::from_str("datetime"),
-                ConfigModule::from_str("processes"),
-                ConfigModule::from_str("cpu"),
-                ConfigModule::from_str("gpu"),
-                ConfigModule::from_str("memory"),
-                ConfigModule::from_str("weather"),
-                ConfigModule::from_str("locale"),
-                ConfigModule::from_str("wallpaper"),
-                ConfigModule::from_str("break"),
-                ConfigModule::from_str("colors")
-            ],
-            display: ConfigDisplay {
-                separator: ": ".to_owned()
-            },
-            logo: ConfigLogo::default()
-        }
+    /// val -> 0..=100
+    pub fn format_percent(val: u8) -> String {
+        format!("{val}%")
     }
 }
 
+#[repr(transparent)]
+#[derive(Debug)]
+pub struct ConfigModuleArray {
+    pub inner: Vec<ConfigModule>
+}
+
+impl ConfigModuleArray {
+    pub fn into_inner(self) -> Vec<ConfigModule> {
+        self.inner
+    }
+
+    pub const fn as_inner(&self) -> &Vec<ConfigModule> {
+        &self.inner
+    }
+}
+
+impl Default for ConfigModuleArray {
+    fn default() -> Self {
+        let inner = vec![
+            ConfigModule::from_str("title"),
+            ConfigModule::from_str("separator"),
+            ConfigModule::from_str("os"),
+            ConfigModule::from_str("initsystem"),
+            ConfigModule::from_str("kernel"),
+            ConfigModule::from_str("uptime"),
+            ConfigModule::from_str("datetime"),
+            ConfigModule::from_str("processes"),
+            ConfigModule::from_str("cpu"),
+            ConfigModule::from_str("gpu"),
+            ConfigModule::from_str("memory"),
+            ConfigModule::from_str("weather"),
+            ConfigModule::from_str("locale"),
+            ConfigModule::from_str("wallpaper"),
+            ConfigModule::from_str("break"),
+            ConfigModule::from_str("colors")
+        ];
+        Self { inner }
+    }
+}
+
+#[derive(Debug)]
 pub struct ConfigModule {
     pub typ: String,
     pub format: Option<String>,
@@ -178,16 +219,19 @@ impl ConfigModule {
     }
 }
 
+#[derive(Debug)]
 pub struct ConfigDisplay {
-    pub separator: String
+    pub separator: String,
+    pub percent: ConfigPercent
 }
 
 impl Default for ConfigDisplay {
     fn default() -> Self {
-        Self { separator: String::from(": ") }
+        Self { separator: String::from(": "), percent: ConfigPercent::default() }
     }
 }
 
+#[derive(Debug)]
 pub struct ConfigPadding {
     pub top: usize,
     pub bottom: usize,
@@ -201,7 +245,20 @@ impl Default for ConfigPadding {
     }
 }
 
-#[derive(Default)]
+#[derive(Debug)]
+pub struct ConfigPercent {
+    pub green: String,
+    pub yellow: String,
+    pub red: String,
+}
+
+impl Default for ConfigPercent {
+    fn default() -> Self {
+        Self { green: "32".to_owned(), yellow: "33".to_owned(), red: "31".to_owned() }
+    }
+}
+
+#[derive(Default, Debug)]
 pub struct ConfigLogo {
     pub padding: ConfigPadding
 }
