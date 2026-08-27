@@ -8,3 +8,4 @@ pub mod https;
 pub mod path;
 pub mod fs;
 pub mod regedit;
+pub mod device;

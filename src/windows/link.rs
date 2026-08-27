@@ -49,6 +49,8 @@ link!("kernel32" "system" fn GetLogicalProcessorInformation(buffer : *mut SYSTEM
 link!("kernel32" "system" fn GetNumaHighestNodeNumber(highestnodenumber : *mut u32) -> BOOL);
 link!("kernel32" "system" fn GetProcAddress(hmodule : HMODULE, lpprocname : PCSTR) -> FARPROC);
 link!("kernel32" "system" fn GetProcessHeap() -> HANDLE);
+link!("user32" "system" fn GetRawInputDeviceInfoW(hdevice : HANDLE, uicommand : RAW_INPUT_DEVICE_INFO_COMMAND, pdata : *mut core::ffi::c_void, pcbsize : *mut u32) -> u32);
+link!("user32" "system" fn GetRawInputDeviceList(prawinputdevicelist : *mut RAWINPUTDEVICELIST, puinumdevices : *mut u32, cbsize : u32) -> u32);
 link!("kernel32" "system" fn GetStdHandle(nstdhandle : STD_HANDLE) -> HANDLE);
 link!("kernel32" "system" fn GetSystemInfo(lpsysteminfo : *mut SYSTEM_INFO));
 link!("kernel32" "system" fn GetSystemTimeAsFileTime(lpsystemtimeasfiletime : *mut FILETIME));
@@ -364,10 +366,24 @@ pub type PROCESSOR_CACHE_TYPE = i32;
 pub type PSID = *mut core::ffi::c_void;
 pub type PSTR = *mut u8;
 pub type PWSTR = *mut u16;
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct RAWINPUTDEVICELIST {
+    pub hDevice: HANDLE,
+    pub dwType: RID_DEVICE_INFO_TYPE,
+}
+impl Default for RAWINPUTDEVICELIST {
+    fn default() -> Self {
+        // SAFETY: All types are guaranteed to be zeroable
+		unsafe { core::mem::zeroed() }
+    }
+}
+pub type RAW_INPUT_DEVICE_INFO_COMMAND = u32;
 pub type REG_CREATE_KEY_DISPOSITION = u32;
 pub type REG_OPEN_CREATE_OPTIONS = u32;
 pub type REG_SAM_FLAGS = u32;
 pub type REG_VALUE_TYPE = u32;
+pub type RID_DEVICE_INFO_TYPE = u32;
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct SECURITY_ATTRIBUTES {

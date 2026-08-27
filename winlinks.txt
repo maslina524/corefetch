@@ -90,3 +90,5 @@ CreateToolhelp32Snapshot
 VerQueryValueW
 GetFileVersionInfoW
 GetFileVersionInfoSizeW
+GetRawInputDeviceInfoW
+GetRawInputDeviceList
