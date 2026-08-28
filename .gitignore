@@ -6,6 +6,7 @@
 /.VSCodeCounter
 Cargo.lock
 sum.ps1
+flamegraph.svg
 
 # WIP
 # src/detect/uptime.rs
