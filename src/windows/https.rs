@@ -49,6 +49,10 @@ impl Response {
         &self.content
     }
 
+    pub fn into_content(self) -> Vec<u8> {
+        self.content
+    }
+
     pub fn as_text(&self) -> Result<String, alloc::string::FromUtf8Error> {
         String::from_utf8(self.content.clone())
     }

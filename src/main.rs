@@ -39,6 +39,7 @@ mod lz77;
 mod huffman;
 mod zlib;
 mod deflate;
+mod lua;
 
 mod windows;
 mod modules;
@@ -276,7 +277,7 @@ fn print_version(method: Option<&str>) -> ! {
     exit(0)
 }
 
-// #[cfg(not(test))]
+#[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
     let args = env::args();
