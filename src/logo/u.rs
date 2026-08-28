@@ -15,7 +15,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
         vec![
             LogoInfo {
                 names: &["ublinux"],
-                lines: include_bytes!("../../temp/u/ublinux.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/u/ublinux.txt")),
                 colors: &[
                     color::FG_DEFAULT,
                     color::FG_WHITE,
@@ -26,7 +26,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["ublinux small"],
-                lines: include_bytes!("../../temp/u/ublinux_small.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/u/ublinux_small.txt")),
                 colors: &[
                     color::FG_DEFAULT,
                     color::FG_WHITE,
@@ -37,7 +37,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["ubuntu"],
-                lines: include_bytes!("../../temp/u/ubuntu.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/u/ubuntu.txt")),
                 colors: &[
                     color::FG_RED,
                     color::FG_RED,
@@ -47,7 +47,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["ubuntu small"],
-                lines: include_bytes!("../../temp/u/ubuntu_small.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/u/ubuntu_small.txt")),
                 colors: &[
                     color::FG_RED,
                     color::FG_RED,
@@ -57,7 +57,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["ubuntu old"],
-                lines: include_bytes!("../../temp/u/ubuntu_old.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/u/ubuntu_old.txt")),
                 colors: &[
                     color::FG_RED,
                     color::FG_WHITE,
@@ -67,7 +67,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["ubuntu old2"],
-                lines: include_bytes!("../../temp/u/ubuntu_old2.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/u/ubuntu_old2.txt")),
                 colors: &[
                     color::FG_RED,
                     color::FG_WHITE,
@@ -78,7 +78,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["ubuntu old2 small"],
-                lines: include_bytes!("../../temp/u/ubuntu_old2_small.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/u/ubuntu_old2_small.txt")),
                 colors: &[
                     color::FG_RED,
                 ],
@@ -87,7 +87,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["ubuntu budgie", "ubuntu-budgie"],
-                lines: include_bytes!("../../temp/u/ubuntu_budgie.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/u/ubuntu_budgie.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_WHITE,
@@ -98,7 +98,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["ubuntu cinnamon", "ubuntu-cinnamon"],
-                lines: include_bytes!("../../temp/u/ubuntu_cinnamon.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/u/ubuntu_cinnamon.txt")),
                 colors: &[
                     color::FG_RED,
                     color::FG_WHITE,
@@ -108,7 +108,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["ubuntu gnome", "ubuntu-gnome"],
-                lines: include_bytes!("../../temp/u/ubuntu_gnome.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/u/ubuntu_gnome.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_MAGENTA,
@@ -120,7 +120,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["ubuntu kylin", "ubuntu-kylin"],
-                lines: include_bytes!("../../temp/u/ubuntu_kylin.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/u/ubuntu_kylin.txt")),
                 colors: &[
                     color::FG_RED,
                     color::FG_WHITE,
@@ -131,7 +131,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["ubuntu mate", "ubuntu-mate"],
-                lines: include_bytes!("../../temp/u/ubuntu_mate.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/u/ubuntu_mate.txt")),
                 colors: &[
                     color::FG_GREEN,
                     color::FG_WHITE,
@@ -141,7 +141,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["ubuntu studio", "ubuntu-studio"],
-                lines: include_bytes!("../../temp/u/ubuntu_studio.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/u/ubuntu_studio.txt")),
                 colors: &[
                     color::FG_CYAN,
                     color::FG_WHITE,
@@ -151,7 +151,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["ubuntu sway", "ubuntu-sway"],
-                lines: include_bytes!("../../temp/u/ubuntu_sway.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/u/ubuntu_sway.txt")),
                 colors: &[
                     color::FG_CYAN,
                     color::FG_WHITE,
@@ -161,7 +161,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["ubuntu touch", "ubuntu-touch"],
-                lines: include_bytes!("../../temp/u/ubuntu_touch.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/u/ubuntu_touch.txt")),
                 colors: &[
                     color::FG_YELLOW,
                     color::FG_WHITE,
@@ -171,7 +171,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["ubuntu unity", "ubuntu-unity"],
-                lines: include_bytes!("../../temp/u/ubuntu_unity.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/u/ubuntu_unity.txt")),
                 colors: &[
                     color::FG_MAGENTA,
                     color::FG_WHITE,
@@ -181,7 +181,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["ultramarine"],
-                lines: include_bytes!("../../temp/u/ultramarine.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/u/ultramarine.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_WHITE,
@@ -191,7 +191,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["ultramarine small"],
-                lines: include_bytes!("../../temp/u/ultramarine_small.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/u/ultramarine_small.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_WHITE,
@@ -201,7 +201,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["unifi"],
-                lines: include_bytes!("../../temp/u/unifi.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/u/unifi.txt")),
                 colors: &[
                     color::FG_WHITE,
                     color::FG_WHITE,
@@ -211,7 +211,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["univalent"],
-                lines: include_bytes!("../../temp/u/univalent.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/u/univalent.txt")),
                 colors: &[
                     color::FG_CYAN,
                     color::FG_CYAN,
@@ -221,7 +221,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["univention"],
-                lines: include_bytes!("../../temp/u/univention.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/u/univention.txt")),
                 colors: &[
                     color::FG_RED,
                     color::FG_WHITE,
@@ -231,7 +231,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["uos"],
-                lines: include_bytes!("../../temp/u/uos.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/u/uos.txt")),
                 colors: &[
                     color::FG_BLUE,
                 ],
@@ -240,7 +240,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["urukos"],
-                lines: include_bytes!("../../temp/u/urukos.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/u/urukos.txt")),
                 colors: &[
                     color::FG_LIGHT_BLUE,
                     color::FG_LIGHT_BLUE,
@@ -253,7 +253,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["uwuntu"],
-                lines: include_bytes!("../../temp/u/uwuntu.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/u/uwuntu.txt")),
                 colors: &[
                     color::FG_DEFAULT,
                     color::FG_DEFAULT,
@@ -264,7 +264,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["uzbek"],
-                lines: include_bytes!("../../temp/u/uzbek.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/u/uzbek.txt")),
                 colors: &[
                     color::FG_GREEN,
                 ],

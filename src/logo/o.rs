@@ -15,7 +15,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
         vec![
             LogoInfo {
                 names: &["obarun"],
-                lines: include_bytes!("../../temp/o/obarun.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/obarun.txt")),
                 colors: &[
                     color::FG_CYAN,
                     color::FG_WHITE,
@@ -25,7 +25,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["obrevenge"],
-                lines: include_bytes!("../../temp/o/obrevenge.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/obrevenge.txt")),
                 colors: &[
                     color::FG_RED,
                     color::FG_WHITE,
@@ -35,7 +35,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["obsidianos"],
-                lines: include_bytes!("../../temp/o/obsidianos.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/obsidianos.txt")),
                 colors: &[
                     color::FG_MAGENTA,
                     color::FG_CYAN,
@@ -46,7 +46,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["omnios"],
-                lines: include_bytes!("../../temp/o/omnios.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/omnios.txt")),
                 colors: &[
                     color::FG_WHITE,
                     color::FG_YELLOW,
@@ -57,7 +57,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["openkylin"],
-                lines: include_bytes!("../../temp/o/openkylin.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/openkylin.txt")),
                 colors: &[
                     color::FG_GREEN,
                     color::FG_WHITE,
@@ -67,7 +67,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["openbsd"],
-                lines: include_bytes!("../../temp/o/openbsd.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/openbsd.txt")),
                 colors: &[
                     color::FG_YELLOW,
                     color::FG_WHITE,
@@ -80,7 +80,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["openbsd small"],
-                lines: include_bytes!("../../temp/o/openbsd_small.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/openbsd_small.txt")),
                 colors: &[
                     color::FG_YELLOW,
                     color::FG_WHITE,
@@ -90,7 +90,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["openeuler"],
-                lines: include_bytes!("../../temp/o/openeuler.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/openeuler.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_WHITE,
@@ -100,7 +100,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["openindiana"],
-                lines: include_bytes!("../../temp/o/openindiana.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/openindiana.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_DEFAULT,
@@ -110,7 +110,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["openmamba"],
-                lines: include_bytes!("../../temp/o/openmamba.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/openmamba.txt")),
                 colors: &[
                     color::FG_WHITE,
                     color::FG_GREEN,
@@ -120,7 +120,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["openruyi"],
-                lines: include_bytes!("../../temp/o/openruyi.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/openruyi.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_YELLOW,
@@ -131,7 +131,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["openstage"],
-                lines: include_bytes!("../../temp/o/openstage.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/openstage.txt")),
                 colors: &[
                     color::FG_GREEN,
                     color::FG_WHITE,
@@ -141,7 +141,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["opensuse"],
-                lines: include_bytes!("../../temp/o/opensuse.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/opensuse.txt")),
                 colors: &[
                     color::FG_GREEN,
                     color::FG_WHITE,
@@ -151,7 +151,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["opensuse small"],
-                lines: include_bytes!("../../temp/o/opensuse_small.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/opensuse_small.txt")),
                 colors: &[
                     color::FG_GREEN,
                 ],
@@ -160,7 +160,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["opensuse-microos"],
-                lines: include_bytes!("../../temp/o/opensuse_microos.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/opensuse_microos.txt")),
                 colors: &[
                     color::FG_GREEN,
                 ],
@@ -169,7 +169,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["opensuse-leap"],
-                lines: include_bytes!("../../temp/o/opensuse_leap.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/opensuse_leap.txt")),
                 colors: &[
                     color::FG_DEFAULT,
                 ],
@@ -178,7 +178,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["opensuse-leap old"],
-                lines: include_bytes!("../../temp/o/opensuse_leap_old.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/opensuse_leap_old.txt")),
                 colors: &[
                     color::FG_DEFAULT,
                 ],
@@ -187,7 +187,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["opensuse-tumbleweed"],
-                lines: include_bytes!("../../temp/o/opensuse_tumbleweed.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/opensuse_tumbleweed.txt")),
                 colors: &[
                     color::FG_DEFAULT,
                 ],
@@ -196,7 +196,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["opensuse-tumbleweed small"],
-                lines: include_bytes!("../../temp/o/opensuse_tumbleweed_small.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/opensuse_tumbleweed_small.txt")),
                 colors: &[
                     color::FG_DEFAULT,
                 ],
@@ -205,7 +205,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["opensuse-tumbleweed old"],
-                lines: include_bytes!("../../temp/o/opensuse_tumbleweed_old.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/opensuse_tumbleweed_old.txt")),
                 colors: &[
                     color::FG_DEFAULT,
                 ],
@@ -214,7 +214,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["opensuse-tumbleweed2"],
-                lines: include_bytes!("../../temp/o/opensuse_tumbleweed2.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/opensuse_tumbleweed2.txt")),
                 colors: &[
                     color::FG_DEFAULT,
                 ],
@@ -223,7 +223,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["opensuse-slowroll", "opensuse-tumbleweed-slowroll"],
-                lines: include_bytes!("../../temp/o/opensuse_slowroll.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/opensuse_slowroll.txt")),
                 colors: &[
                     color::FG_DEFAULT,
                 ],
@@ -232,7 +232,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["openmandriva"],
-                lines: include_bytes!("../../temp/o/openmandriva.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/openmandriva.txt")),
                 colors: &[
                     color::FG_BLUE,
                 ],
@@ -241,7 +241,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["openwrt"],
-                lines: include_bytes!("../../temp/o/openwrt.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/openwrt.txt")),
                 colors: &[
                     color::FG_DEFAULT,
                     color::FG_BLUE,
@@ -251,7 +251,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["openwrt small"],
-                lines: include_bytes!("../../temp/o/openwrt_small.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/openwrt_small.txt")),
                 colors: &[
                     color::FG_DEFAULT,
                     color::FG_BLUE,
@@ -261,7 +261,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["openwrt old"],
-                lines: include_bytes!("../../temp/o/openwrt_old.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/openwrt_old.txt")),
                 colors: &[
                     color::FG_BLUE,
                 ],
@@ -270,7 +270,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["opnsense"],
-                lines: include_bytes!("../../temp/o/opnsense.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/opnsense.txt")),
                 colors: &[
                     color::FG_WHITE,
                     color::FG_DEFAULT,
@@ -280,7 +280,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["ol", "oracle"],
-                lines: include_bytes!("../../temp/o/oracle.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/oracle.txt")),
                 colors: &[
                     color::FG_RED,
                 ],
@@ -289,7 +289,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["orchid"],
-                lines: include_bytes!("../../temp/o/orchid.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/orchid.txt")),
                 colors: &[
                     color::FG_WHITE,
                     color::FG_MAGENTA,
@@ -300,7 +300,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["orchid small"],
-                lines: include_bytes!("../../temp/o/orchid_small.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/orchid_small.txt")),
                 colors: &[
                     color::FG_WHITE,
                     color::FG_MAGENTA,
@@ -311,7 +311,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["oreon"],
-                lines: include_bytes!("../../temp/o/oreon.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/oreon.txt")),
                 colors: &[
                     color::FG_DEFAULT,
                     color::FG_DEFAULT,
@@ -321,7 +321,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["origami"],
-                lines: include_bytes!("../../temp/o/origami.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/origami.txt")),
                 colors: &[
                     color::FG_DEFAULT,
                     color::FG_DEFAULT,
@@ -331,7 +331,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["origami small"],
-                lines: include_bytes!("../../temp/o/origami_small.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/origami_small.txt")),
                 colors: &[
                     color::FG_DEFAULT,
                     color::FG_DEFAULT,
@@ -341,7 +341,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["os2warp"],
-                lines: include_bytes!("../../temp/o/os2warp.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/os2warp.txt")),
                 colors: &[
                     color::FG_LIGHT_WHITE,
                     color::FG_LIGHT_BLUE,
@@ -351,7 +351,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["os elbrus"],
-                lines: include_bytes!("../../temp/o/os_elbrus.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/os_elbrus.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_WHITE,
@@ -361,7 +361,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["osmc", "open source media center"],
-                lines: include_bytes!("../../temp/o/osmc.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/o/osmc.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_WHITE,
@@ -371,7 +371,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["osx"],
-                lines: include_bytes!("../../temp/m/macos.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/m/macos.txt")),
                 colors: &[
                     color::FG_GREEN,
                     color::FG_YELLOW,
@@ -385,7 +385,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["osx small"],
-                lines: include_bytes!("../../temp/m/macos_small.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/m/macos_small.txt")),
                 colors: &[
                     color::FG_GREEN,
                     color::FG_YELLOW,

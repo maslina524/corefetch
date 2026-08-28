@@ -156,7 +156,7 @@ mod tests {
 
     #[test]
     fn decompress_logo_test() {
-        let compressed = include_bytes!("../temp/d/debian.txt");
+        let compressed = include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/d/debian.txt"));
         let mut decompressed = Vec::new();
 
         decompress(compressed.to_vec(), &mut decompressed);

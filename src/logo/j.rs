@@ -15,7 +15,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
         vec![
             LogoInfo {
                 names: &["januslinux"],
-                lines: include_bytes!("../../temp/j/januslinux.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/j/januslinux.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_MAGENTA,

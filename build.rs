@@ -1,20 +1,19 @@
 use std::{
     fs,
     env,
-    path::PathBuf, 
-    process::Command, 
-    str::FromStr, 
-    sync::atomic::{AtomicUsize, Ordering}
+    path::PathBuf,
+    process::Command,
+    str::FromStr,
+    sync::atomic::{AtomicUsize, Ordering},
 };
 
 use chrono::{DateTime, FixedOffset};
 use zlib_rs::{
     ReturnCode,
-    DeflateConfig, 
-    compress_bound, 
+    DeflateConfig,
+    compress_bound,
     compress_slice,
 };
-
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use reqwest::{Client, Method, Request, Url};
 use serde_json::{Value, Map};
@@ -36,7 +35,7 @@ struct Commit {
     pub files: u64,
     pub added: u64,
     pub deleted: u64,
-    pub total: u64
+    pub total: u64,
 }
 
 impl Commit {
@@ -45,18 +44,17 @@ impl Commit {
             .args([
                 "log",
                 "--format=%an%n%ae%n%ad%n%H%n%h%n%s",
-                "--date=format:%b %d %Y, %H:%M:%S", 
-                "-1"
+                "--date=format:%b %d %Y, %H:%M:%S",
+                "-1",
             ])
             .output()
             .ok()
             .and_then(|output| String::from_utf8(output.stdout).ok())
             .expect("Failed to call Git log");
-        
+
         let log_parts: Vec<&str> = log.split('\n').collect();
-        
         assert!(log_parts.len() >= 6, "Failed to call Git log: {log_parts:?}");
-        
+
         let author = log_parts[0].to_owned();
         let email = log_parts[1].to_owned();
         let date = log_parts[2].to_owned();
@@ -66,17 +64,12 @@ impl Commit {
         let message = log_parts[5].to_owned();
 
         let numstat = Command::new("git")
-            .args([
-                "log",
-                "--format=",
-                "--shortstat",
-                "-1"
-            ])
+            .args(["log", "--format=", "--shortstat", "-1"])
             .output()
             .ok()
             .and_then(|output| String::from_utf8(output.stdout).ok())
             .expect("Failed to call Git shortstat");
-        
+
         let re = Regex::new(r"(\d+)").unwrap();
         let nums: Vec<u64> = re
             .find_iter(&numstat)
@@ -91,9 +84,17 @@ impl Commit {
         let total = added + deleted;
 
         Self {
-            author, email, date, date_small,
-            sha, sha_small, message,
-            files, added, deleted, total
+            author,
+            email,
+            date,
+            date_small,
+            sha,
+            sha_small,
+            message,
+            files,
+            added,
+            deleted,
+            total,
         }
     }
 
@@ -101,15 +102,12 @@ impl Commit {
         let response = Self::request().await;
         let root = response.as_object().expect("Incorrect response data");
 
-        // ROOT
         let sha = get_string(root, "sha");
         let sha_small = sha[..7].to_owned();
 
-        // COMMIT
         let commit_obj = get_object(root, "commit");
         let message = get_string(&commit_obj, "message");
 
-        // COMMIT -> AUTHOR
         let author_obj = get_object(&commit_obj, "author");
         let author = get_string(&author_obj, "name");
         let email = get_string(&author_obj, "email");
@@ -121,27 +119,33 @@ impl Commit {
         let date = dt.format("%b %d %Y, %H:%M:%S").to_string();
         let date_small = dt.format("%b %d %Y").to_string();
 
-        // STATS
         let stats_obj = get_object(root, "stats");
         let added = get_u64(&stats_obj, "additions");
         let deleted = get_u64(&stats_obj, "deletions");
         let total = get_u64(&stats_obj, "total");
 
-        // FILES
         let files_array = get_array(root, "files");
         let files = files_array.len() as u64;
 
         Self {
-            author, email, date, date_small,
-            sha, sha_small, message,
-            files, added, deleted, total
+            author,
+            email,
+            date,
+            date_small,
+            sha,
+            sha_small,
+            message,
+            files,
+            added,
+            deleted,
+            total,
         }
     }
 
     async fn request() -> Value {
         let req = Request::new(
-            Method::GET, 
-            Url::from_str("https://api.github.com/repos/maslina524/corefetch/commits/main?per_page=1").unwrap()
+            Method::GET,
+            Url::from_str("https://api.github.com/repos/maslina524/corefetch/commits/main?per_page=1").unwrap(),
         );
 
         let client = Client::builder()
@@ -155,35 +159,44 @@ impl Commit {
             .expect("Failed to call Github Api");
 
         println!("{resp:#?}");
-        resp
-            .json()
-            .await
-            .expect("Failed to parse json response from GitHub")
+        resp.json().await.expect("Failed to parse json response from GitHub")
     }
 }
 
 fn get_object(obj: &Map<String, Value>, key: &str) -> Map<String, Value> {
-    obj.get(key).unwrap_or_else(|| panic!("Key `{key}` not found")).as_object().expect("Incorrect response data").clone()
+    obj.get(key)
+        .unwrap_or_else(|| panic!("Key `{key}` not found"))
+        .as_object()
+        .expect("Incorrect response data")
+        .clone()
 }
 
 fn get_array(obj: &Map<String, Value>, key: &str) -> Vec<Value> {
-    obj.get(key).unwrap_or_else(|| panic!("Key `{key}` not found")).as_array().expect("Incorrect response data").clone()
+    obj.get(key)
+        .unwrap_or_else(|| panic!("Key `{key}` not found"))
+        .as_array()
+        .expect("Incorrect response data")
+        .clone()
 }
 
 fn get_string(obj: &Map<String, Value>, key: &str) -> String {
-    obj.get(key).unwrap_or_else(|| panic!("Key `{key}` not found")).as_str().expect("Incorrect response data").to_owned()
+    obj.get(key)
+        .unwrap_or_else(|| panic!("Key `{key}` not found"))
+        .as_str()
+        .expect("Incorrect response data")
+        .to_owned()
 }
 
 fn get_u64(obj: &Map<String, Value>, key: &str) -> u64 {
-    obj.get(key).unwrap_or_else(|| panic!("Key `{key}` not found")).as_u64().expect("Incorrect response data")
+    obj.get(key)
+        .unwrap_or_else(|| panic!("Key `{key}` not found"))
+        .as_u64()
+        .expect("Incorrect response data")
 }
 
 fn git_initialized() -> bool {
     Command::new("git")
-        .args([
-            "rev-parse",
-            "--is-inside-work-tree"
-        ])
+        .args(["rev-parse", "--is-inside-work-tree"])
         .output()
         .ok()
         .and_then(|o| String::from_utf8(o.stdout).ok())
@@ -203,16 +216,17 @@ async fn main() {
         .unwrap()
         .as_millis()
         .to_string();
-    
-    let out_dir = std::env::var("OUT_DIR").unwrap();
-    let trigger_file = format!("{out_dir}/build_trigger_{timestamp}");
+
+    let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
+    println!("cargo:rustc-env=LOGO_OUT_DIR={}", out_dir.display());
+    let trigger_file = out_dir.join(format!("build_trigger_{timestamp}"));
     fs::write(&trigger_file, &timestamp).unwrap();
-    
-    println!("cargo:rerun-if-changed={trigger_file}");
+
+    println!("cargo:rerun-if-changed={}", trigger_file.display());
     println!("cargo:rerun-if-env-changed=BUILD_TIMESTAMP_{timestamp}");
-    
+
     // ENV: TARGET_ARCH
-    let target_arch = std::env::var("CARGO_CFG_TARGET_ARCH").unwrap();
+    let target_arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap();
     println!("cargo:rustc-env=TARGET_ARCH={target_arch}");
 
     // ENV: BUILD_TIME
@@ -220,7 +234,7 @@ async fn main() {
     println!("cargo:rustc-env=COMPILE_TIME={build_time}");
 
     // ENV: TARGET_OS
-    let target_os = std::env::var("CARGO_CFG_TARGET_OS").unwrap();
+    let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
     println!("cargo:rustc-env=TARGET_OS={target_os}");
 
     // ENV: RUSTC_VERSION
@@ -230,7 +244,7 @@ async fn main() {
         .ok()
         .and_then(|output| String::from_utf8(output.stdout).ok())
         .unwrap_or_else(|| "unknown".to_string());
-    
+
     if let Some(idx) = rustc_version.find('(') {
         rustc_version = rustc_version[..idx - 1].trim().to_string();
     }
@@ -243,7 +257,7 @@ async fn main() {
         .ok()
         .and_then(|output| String::from_utf8(output.stdout).ok())
         .unwrap_or_else(|| "unknown".to_string());
-    
+
     if let Some(idx) = cargo_version.find('(') {
         cargo_version = cargo_version[..idx - 1].trim().to_string();
     }
@@ -255,19 +269,18 @@ async fn main() {
     } else {
         Commit::new_git()
     };
-    println!("cargo:rustc-env=COMMIT_AUTHOR={}",     commit.author);
-    println!("cargo:rustc-env=COMMIT_EMAIL={}",      commit.email);
-    println!("cargo:rustc-env=COMMIT_DATE={}",       commit.date);
+    println!("cargo:rustc-env=COMMIT_AUTHOR={}", commit.author);
+    println!("cargo:rustc-env=COMMIT_EMAIL={}", commit.email);
+    println!("cargo:rustc-env=COMMIT_DATE={}", commit.date);
     println!("cargo:rustc-env=COMMIT_DATE_SMALL={}", commit.date_small);
-    println!("cargo:rustc-env=COMMIT_SHA={}",        commit.sha);
-    println!("cargo:rustc-env=COMMIT_SHA_SMALL={}",  commit.sha_small);
-    println!("cargo:rustc-env=COMMIT_MESSAGE={}",    commit.message);
-    println!("cargo:rustc-env=COMMIT_FILES={}",      commit.files);
-    println!("cargo:rustc-env=COMMIT_ADDED={}",      commit.added);
-    println!("cargo:rustc-env=COMMIT_DELETED={}",    commit.deleted);
-    println!("cargo:rustc-env=COMMIT_TOTAL={}",      commit.total);
+    println!("cargo:rustc-env=COMMIT_SHA={}", commit.sha);
+    println!("cargo:rustc-env=COMMIT_SHA_SMALL={}", commit.sha_small);
+    println!("cargo:rustc-env=COMMIT_MESSAGE={}", commit.message);
+    println!("cargo:rustc-env=COMMIT_FILES={}", commit.files);
+    println!("cargo:rustc-env=COMMIT_ADDED={}", commit.added);
+    println!("cargo:rustc-env=COMMIT_DELETED={}", commit.deleted);
+    println!("cargo:rustc-env=COMMIT_TOTAL={}", commit.total);
 
-    // Compress logos
     let base_path = PathBuf::from("src/logo");
     let mut all_paths = Vec::new();
     for letter in VALID_CHARS {
@@ -290,32 +303,22 @@ async fn main() {
         let (compressed, rc) = compress_slice(&mut compressed_buf, &content, DeflateConfig::default());
         encoded_bytes_len.fetch_add(compressed.len(), Ordering::Relaxed);
         assert_eq!(rc, ReturnCode::Ok);
-        
+
         let letter = path.parent().and_then(|p| p.file_name()).unwrap().to_str().unwrap();
-        let dest_dir = format!("temp/{letter}");
+        let dest_dir = out_dir.join("temp").join(letter);
         fs::create_dir_all(&dest_dir).ok();
-        let dest_path = PathBuf::from(dest_dir).join(path.file_name().unwrap());
+        let dest_path = dest_dir.join(path.file_name().unwrap());
         fs::write(dest_path, &*compressed).ok();
-        
-        // #[allow(clippy::cast_precision_loss)]
-        // {
-        //     println!(
-        //         "cargo:warning={}: {}b -> {}b = {:.02}%",
-        //         path.display(),
-        //         content.len(), 
-        //         compressed.len(),
-        //         (compressed.len() as f64 / content.len() as f64).mul_add(-100.0, 100.0)
-        //     );
-        // }
     });
 
     let raw = raw_bytes_len.load(Ordering::Relaxed);
     let encoded = encoded_bytes_len.load(Ordering::Relaxed);
-    
+
     #[allow(clippy::cast_precision_loss)]
     {
-        println!("cargo:warning={}b -> {}b = {:.02}%",
-            raw, 
+        println!(
+            "cargo:warning={}b -> {}b = {:.02}%",
+            raw,
             encoded,
             (encoded as f64 / raw as f64).mul_add(-100.0, 100.0)
         );

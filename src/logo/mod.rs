@@ -39,7 +39,7 @@ mod x;
 mod y;
 mod z;
 
-const UNKNOWN: &[u8] = include_bytes!("../../temp/_/unknown.txt");
+const UNKNOWN: &[u8] = include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/_/unknown.txt"));
 static UNKNOWN_PTR: &LogoInfo = &LogoInfo {
     names: &[], 
     lines: UNKNOWN, 

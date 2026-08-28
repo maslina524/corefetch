@@ -15,7 +15,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
         vec![
             LogoInfo {
                 names: &["namib"],
-                lines: include_bytes!("../../temp/n/namib.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/n/namib.txt")),
                 colors: &[
                     color::FG_RED,
                     color::FG_WHITE,
@@ -25,7 +25,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["nebios"],
-                lines: include_bytes!("../../temp/n/nebios.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/n/nebios.txt")),
                 colors: &[
                     color::FG_DEFAULT,
                     color::FG_DEFAULT,
@@ -36,7 +36,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["nekos"],
-                lines: include_bytes!("../../temp/n/nekos.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/n/nekos.txt")),
                 colors: &[
                     color::FG_YELLOW,
                     color::FG_WHITE,
@@ -47,7 +47,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["neptune"],
-                lines: include_bytes!("../../temp/n/neptune.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/n/neptune.txt")),
                 colors: &[
                     color::FG_WHITE,
                     color::FG_WHITE,
@@ -57,7 +57,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["netrunner"],
-                lines: include_bytes!("../../temp/n/netrunner.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/n/netrunner.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_WHITE,
@@ -67,7 +67,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["nexalinux"],
-                lines: include_bytes!("../../temp/n/nexalinux.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/n/nexalinux.txt")),
                 colors: &[
                     color::FG_LIGHT_BLUE,
                     color::FG_LIGHT_BLUE,
@@ -77,7 +77,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["nitrux"],
-                lines: include_bytes!("../../temp/n/nitrux.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/n/nitrux.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_WHITE,
@@ -87,7 +87,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["nixos"],
-                lines: include_bytes!("../../temp/n/nixos.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/n/nixos.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_CYAN,
@@ -101,7 +101,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["nixos small"],
-                lines: include_bytes!("../../temp/n/nixos_small.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/n/nixos_small.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_CYAN,
@@ -115,7 +115,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["nixos old"],
-                lines: include_bytes!("../../temp/n/nixos_old.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/n/nixos_old.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_CYAN,
@@ -125,7 +125,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["nixos old small"],
-                lines: include_bytes!("../../temp/n/nixos_old_small.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/n/nixos_old_small.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_CYAN,
@@ -135,7 +135,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["nixos2"],
-                lines: include_bytes!("../../temp/n/nixos2.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/n/nixos2.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_CYAN,
@@ -145,7 +145,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["netbsd"],
-                lines: include_bytes!("../../temp/n/netbsd.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/n/netbsd.txt")),
                 colors: &[
                     color::FG_RED,
                     color::FG_WHITE,
@@ -155,7 +155,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["netbsd2"],
-                lines: include_bytes!("../../temp/n/netbsd2.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/n/netbsd2.txt")),
                 colors: &[
                     color::FG_RED,
                     color::FG_WHITE,
@@ -165,7 +165,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["netbsd small"],
-                lines: include_bytes!("../../temp/n/netbsd_small.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/n/netbsd_small.txt")),
                 colors: &[
                     color::FG_RED,
                     color::FG_WHITE,
@@ -175,7 +175,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["nobara"],
-                lines: include_bytes!("../../temp/n/nobara.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/n/nobara.txt")),
                 colors: &[
                     color::FG_DEFAULT,
                 ],
@@ -184,7 +184,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["nomadbsd"],
-                lines: include_bytes!("../../temp/n/nomadbsd.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/n/nomadbsd.txt")),
                 colors: &[
                     color::FG_BLUE,
                 ],
@@ -193,7 +193,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["nuros"],
-                lines: include_bytes!("../../temp/n/nuros.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/n/nuros.txt")),
                 colors: &[
                     color::FG_DEFAULT,
                     color::FG_DEFAULT,
@@ -205,7 +205,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["nurunner"],
-                lines: include_bytes!("../../temp/n/nurunner.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/n/nurunner.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_WHITE,
@@ -215,7 +215,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["nutyx"],
-                lines: include_bytes!("../../temp/n/nutyx.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/n/nutyx.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_RED,
@@ -225,7 +225,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["nethydra"],
-                lines: include_bytes!("../../temp/n/nethydra.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/n/nethydra.txt")),
                 colors: &[
                     color::FG_RED,
                     color::FG_DEFAULT,
