@@ -250,7 +250,7 @@ async fn main() {
     println!("cargo:rustc-env=CARGO_VERSION={}", cargo_version.trim());
 
     // ENV: Commit
-    let commit = if git_initialized() || github_actions() {
+    let commit = if !git_initialized() || github_actions() {
         Commit::new_github().await
     } else {
         Commit::new_git()

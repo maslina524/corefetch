@@ -54,7 +54,7 @@ use core::{
 };
 
 use alloc::{
-    string::{String, ToString},
+    string::String,
     vec::Vec
 };
 
@@ -68,6 +68,7 @@ use crate::{
     windows::https::{Request, Url},
     windows::link::ExitProcess, 
     config::{Config, ConfigModule},
+    formats::split_by_len_ansi,
     nvidia::NvidiaLib
 };
 
@@ -134,36 +135,6 @@ fn build_logo_buf(lines: &Vec<(String, usize)>, max_len: usize) -> Vec<String> {
     ret
 }
 
-fn split_by_len(string: &str, len: usize) -> Vec<&str> {
-    let mut result = Vec::new();
-    let mut chars = string.chars().peekable();
-    let mut byte_pos = 0;
-
-    while chars.peek().is_some() {
-        let mut count = 0;
-        let mut end_byte = byte_pos;
-        
-        while count < len && chars.peek().is_some() {
-            let ch = chars.next().unwrap();
-            count += 1;
-            end_byte += ch.len_utf8();
-        }
-        
-        let slice = &string[byte_pos..end_byte];
-        if let Some(newline_pos) = slice.rfind('\n') {
-            let split_at = byte_pos + newline_pos + 1;
-            result.push(&string[byte_pos..split_at - 1]);
-            byte_pos = split_at;
-            chars = string[byte_pos..].chars().peekable();
-        } else {
-            result.push(slice);
-            byte_pos = end_byte;
-        }
-    }
-
-    result
-}
-
 fn get_module_lines(preset_module: &ConfigModule, max_len_line: usize) -> Option<Vec<String>> {
     modules::from_preset_module(preset_module).map(|module| {
         let string = module.format(
@@ -177,13 +148,7 @@ fn get_module_lines(preset_module: &ConfigModule, max_len_line: usize) -> Option
             },
             &preset_module.map
         );
-        let splitted = if preset_module.typ == "colors" {
-            string.split('\n').collect()
-        } else {
-            split_by_len(&string, max_len_line)
-        };
-
-        splitted.iter().map(ToString::to_string).collect()
+        split_by_len_ansi(&string, max_len_line)
     })
 }
 

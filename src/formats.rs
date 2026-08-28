@@ -251,6 +251,70 @@ pub fn format_color(s: &str, plan: ColorPlan) -> String {
     ret.join(";")
 }
 
+pub fn split_by_len_ansi(s: &str, len: usize) -> Vec<String> {
+    let chars: Vec<char> = s.chars().collect();
+    let mut ret = Vec::new();
+    let mut build_string_len = 0;
+    let mut build_string = String::new();
+    let mut currect_ansi = String::from("\x1b[0m");
+    let mut pos = 0;
+
+    while pos < chars.len() {
+        if chars[pos] == '\x1b' {
+            currect_ansi = String::new();
+            while pos < chars.len() && chars[pos] != 'm' {
+                currect_ansi.push(chars[pos]);
+                pos += 1;
+            }
+            currect_ansi.push('m');
+            pos += 1;
+
+            build_string.push_str(&currect_ansi);
+            
+            continue;
+        }
+
+        if chars[pos] == '\n' {
+            if currect_ansi != "\x1b[0m" {
+                build_string.push_str("\x1b[0m");
+            }
+            
+            ret.push(build_string);
+            build_string_len = 0;
+            build_string = if currect_ansi == "\x1b[0m" {
+                String::new()
+            } else {
+                currect_ansi.clone()
+            };
+            pos += 1;
+            continue;
+        }
+
+        build_string.push(chars[pos]);
+        pos += 1;
+        build_string_len += 1;
+
+        if build_string_len >= len {
+            if currect_ansi != "\x1b[0m" {
+                build_string.push_str("\x1b[0m");
+            }
+            
+            ret.push(build_string);
+            build_string_len = 0;
+            build_string = if currect_ansi == "\x1b[0m" {
+                String::new()
+            } else {
+                currect_ansi.clone()
+            };
+        }
+    }
+    if !build_string.is_empty() {
+        ret.push(build_string);
+    }
+    
+    ret
+}
+
 #[macro_export]
 macro_rules! format {
     ($($tt:tt)*) => {{
@@ -274,7 +338,7 @@ macro_rules! formatln {
 
 #[cfg(test)]
 mod tests {
-    use crate::formats::{Size, expand_unicode};
+    use crate::formats::{Size, expand_unicode, split_by_len_ansi};
 
     #[test]
     fn test_conversion() {
@@ -288,5 +352,27 @@ mod tests {
         assert_eq!(Size::from_bytes(1536).to_string(),          "1.50 Kb");
         assert_eq!(Size::from_bytes(536_870_912).to_string(),   "512.00 Mb");
         assert_eq!(Size::from_bytes(2_147_483_648).to_string(), "2.00 Gb");
+    }
+
+    #[test]
+    fn split_by_len_test() {
+        let s = "HelloHelloHello";
+        let lines = split_by_len_ansi(s, 5);
+        assert_eq!(lines, vec![
+            "Hello",
+            "Hello",
+            "Hello"
+        ]);
+    }
+
+    #[test]
+    fn split_by_len_ansi_test() {
+        let s = "\x1b[31mHelloHelloHello\x1b[0m";
+        let lines = split_by_len_ansi(s, 5);
+        assert_eq!(lines, vec![
+            "\x1b[31mHello\x1b[0m",
+            "\x1b[31mHello\x1b[0m",
+            "\x1b[31mHello\x1b[0m"
+        ]);
     }
 }
