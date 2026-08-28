@@ -5,34 +5,90 @@ use core::{
 };
 
 use alloc::{
+    string::String,
     vec::Vec,
     vec
 };
 
 use crate::{
     windows::link::{
-        GetRawInputDeviceList, RAWINPUTDEVICELIST
+        GetRawInputDeviceInfoW, GetRawInputDeviceList, RAWINPUTDEVICELIST
     },
     windows::error::ErrorCode,
+    windows::encoding::{utf16le_to_utf8, Utf16Len},
+    sync::OnceLock,
     warning
 };
 
-const RIM_TYPEMOUSE: u32 = 0; 
+type DeviceHandle = *mut c_void;
+
+const RIM_TYPEMOUSE   : u32 = 0; 
 const RIM_TYPEKEYBOARD: u32 = 1; 
-const RIM_TYPEHID: u32 = 2; 
+const RIM_TYPEHID     : u32 = 2;
+
+const RIDI_DEVICENAME : u32 = 0x2000_0007;
+
+#[derive(Debug)]
+pub struct Keyboard {
+    handle: DeviceHandle,
+    data: OnceLock<KeyboardData>
+}
+
+impl Keyboard {
+    pub const fn from_handle(handle: DeviceHandle) -> Self {
+        Self { handle, data: OnceLock::new() }
+    }
+
+    pub fn get_data(&'_ self) -> &'_ KeyboardData {
+        self.data.get_or_init(|| {
+            KeyboardData::new(self.handle)
+        })
+    }
+}
+
+#[derive(Debug)]
+pub struct KeyboardData {
+    pub name: String
+}
+
+impl KeyboardData {
+    pub fn new(handle: DeviceHandle) -> Self {
+        let mut buf = [0u16; 256];
+        let mut buf_size = 255;
+        
+        // SAFETY: Completely safe
+        let ret = unsafe {
+            GetRawInputDeviceInfoW(
+                handle,
+                RIDI_DEVICENAME, 
+                buf.as_mut_ptr().cast(), 
+                &raw mut buf_size
+            )
+        };
+        if ret == u32::MAX {
+            warning!("GetRawInputDeviceInfoW failed: {} (name)", ErrorCode::last());
+            return Self { name: String::from("Unknown") };
+        }
+
+        let name = utf16le_to_utf8(&buf, Utf16Len::NullTerminated)
+            .unwrap_or_else(|e| { warning!("Non Utf8 device name: {e}"); String::from("Unknown") });
+
+        Self { name }
+    }
+}
 
 #[derive(Debug)]
 pub enum Device {
     Mouse,
-    Keyboard,
+    Keyboard(Keyboard),
     Hid
 }
 
 impl Device {
-    pub const fn from_type(typ: u32) -> Option<Self> {
+    pub const fn from_type(typ: u32, handle: DeviceHandle) -> Option<Self> {
         match typ {
             RIM_TYPEMOUSE    => Some(Self::Mouse),
-            RIM_TYPEKEYBOARD => Some(Self::Keyboard),
+            RIM_TYPEKEYBOARD => Some(Self::Keyboard(Keyboard::from_handle(handle))),
             RIM_TYPEHID      => Some(Self::Hid),
             _ => None
         }
@@ -80,7 +136,7 @@ impl DeviceManager {
 
         let mut devices = Vec::with_capacity(count as usize);
         for d in raw_devices {
-            if let Some(device) = Device::from_type(d.dwType) {
+            if let Some(device) = Device::from_type(d.dwType, d.hDevice) {
                 devices.push(device);
             }
         }
@@ -95,11 +151,16 @@ impl DeviceManager {
 
 #[cfg(test)]
 mod tests {
-    use crate::windows::device::DeviceManager;
+    use crate::windows::device::{Device, DeviceManager};
 
     #[test]
-    fn get_hid_test() {
-        let hid = DeviceManager::new();
-        println!("{hid:#?}");
+    fn get_keyboards_test() {
+        let manager = DeviceManager::new();
+        for d in manager.as_devices() {
+            if let Device::Keyboard(k) = d {
+                let data = k.get_data();
+                println!("{data:#?}");
+            }
+        }
     }
 }

@@ -61,7 +61,7 @@ use alloc::{
 use crate::{
     json::Json,
     logo::LogoInfo, 
-    modules::{FormatValue, Module, Os}, 
+    modules::{FormatValue, Module, Os, Version, Commit}, 
     windows::allocator::Allocator,
     windows::env,
     windows::fs::{self, ReadError},
@@ -210,7 +210,7 @@ pub fn exit(code: u32) -> ! {
 
 fn get_config(args: &mut Iter<'_, String>) -> Config {
     args.position(|a| a == "--config" || a == "-c").map_or_else(Config::default, |_| args.next().map_or_else(|| {
-            help(None);
+            print_help(None);
         }, |path| Url::new(path).map_or_else(|| { // FS Path
                 match Json::from_file(path) {
                     Ok(c) => Config::from_json(&c),
@@ -265,7 +265,7 @@ fn get_logo_name_and_custom(val: &str) -> (String, Option<String>) {
     }
 }
 
-fn help(_theme: Option<&str>) -> ! {
+fn print_help(_theme: Option<&str>) -> ! {
     let multi = multi_string!(
         "Nofetch is a neofetch-like tool for beautiful system information display with flexible output customization",
         "",
@@ -280,24 +280,49 @@ fn help(_theme: Option<&str>) -> ! {
     exit(0)
 }
 
-#[cfg(not(test))]
+fn print_version(method: Option<&str>) -> ! {
+    let ver = Version::new();
+    match method {
+        None             => println!("{} {} ({})", ver.project_name, ver.version, ver.arch),
+        Some("raw")      => println!("{}", ver.version),
+        Some("dbg")      => println!("{ver:#?}"),
+        Some("extended") => {
+            let typ = match ver.build_type {
+                "release" => "\x1b[32mrelease\x1b[0m",
+                "debug" => "\x1b[33mdebug\x1b[0m",
+                _ => unreachable!()
+            };
+            let com = Commit::new();
+            println!(
+                "\x1b[1m{} {} ({}) {typ}", 
+                ver.project_name, ver.version, ver.arch
+            );
+            println!(
+                "    {}, {}", 
+                ver.compiler, ver.package_manager
+            );
+            println!(
+                "    {} @ \x1b[32m+{} \x1b[31m-{}\x1b[0m", 
+                com.message, com.added, com.deleted
+            );
+        },
+        _ => eprintln!("Unknown method for version, supported: raw, dbg, extended")
+    }
+    exit(0)
+}
+
+// #[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
     let args = env::args();
 
     // Commands
     if let Some(pos) = args.iter().position(|a| a == "--help" || a == "-h") {
-        help(args.get(pos + 1).map(String::as_str))
+        print_help(args.get(pos + 1).map(String::as_str))
     }
 
-    if args.iter().any(|a| a == "--version" || a == "-v") {
-        println!("{} {} ({})", env!("CARGO_BIN_NAME"), env!("CARGO_PKG_VERSION"), env!("TARGET_ARCH"));
-        return 0;
-    }
-
-    if args.iter().any(|a| a == "--version-raw") {
-        println!("{}", env!("CARGO_PKG_VERSION"));
-        return 0;
+    if let Some(pos) = args.iter().position(|a| a == "--version" || a == "-v") {
+        print_version(args.get(pos + 1).map(String::as_str))
     }
 
     // Config init
@@ -308,7 +333,7 @@ extern "C" fn main() -> c_int {
     #[allow(clippy::option_if_let_else)]
     // ^^ Clippy suggests a variant that would require an extra heap allocation
     let (logo_name, custom) = if let Some(pos) = args.iter().position(|a| a == "--logo" || a == "-l") {
-        args.get(pos + 1).map_or_else(|| help(None), |val| {
+        args.get(pos + 1).map_or_else(|| print_help(None), |val| {
             get_logo_name_and_custom(val)
         })
     } else {
