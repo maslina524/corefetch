@@ -129,14 +129,21 @@ macro_rules! format_for_module {
             format: super::FormatValue, 
             _map: &alloc::collections::BTreeMap<alloc::string::String, $crate::json::Value>
         ) -> alloc::string::String {
+            let title_raw = format.format.unwrap_or(self.title());
+            let value_raw = if let Some(code) = title_raw.strip_prefix("lua:") {
+                $crate::lua::LuaLib::get().execute(code)
+            } else {
+                alloc::borrow::ToOwned::to_owned(title_raw)
+            };
+
             let key_color = key.color.unwrap_or($crate::logo::LogoInfo::get().unwrap().color_keys);
             let key_raw = key.format.unwrap_or(self.key());
-            let value_raw = format.format.unwrap_or(self.title());
+            
 
             let separator = $crate::config::Config::get().get_display_separator();
 
             let full_string = if key_raw.len() == 0 {
-                alloc::borrow::ToOwned::to_owned(value_raw)
+                value_raw
             } else {
                 $crate::format!("\x1b[{key_color}m{key_raw}\x1b[0m{separator}{value_raw}")
             };
@@ -144,23 +151,6 @@ macro_rules! format_for_module {
         }
     };
 }
-
-#[macro_export]
-macro_rules! format_for_module_wo_key {
-    ($name:ident, $($field:ident),*) => {
-        fn format(
-            &self, 
-            _key: super::FormatValue, 
-            format: super::FormatValue,
-            _map: &alloc::collections::BTreeMap<alloc::string::String, $crate::json::Value>
-        ) -> alloc::string::String {
-            // let value_color = format.color.unwrap_or($crate::logo::LogoInfo::get().unwrap().color_title);
-            let value_format = format.format.unwrap_or(self.title());
-            $crate::format_module!(value_format, self, $($field),*)
-        }
-    };
-}
-
 
 #[macro_export]
 macro_rules! format_module {
