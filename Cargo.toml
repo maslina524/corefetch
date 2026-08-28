@@ -14,15 +14,14 @@ keywords = [
 ]
 
 [profile.release]
-opt-level = 3
+opt-level = "z"
 lto = true
 codegen-units = 1
 panic = "abort"
 strip = true
-debug = true
 
 [profile.dev]
-opt-level = 1
+opt-level = 0
 lto = true
 codegen-units = 1
 panic = "abort"

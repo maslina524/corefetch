@@ -155,7 +155,7 @@ mod tests {
     use crate::zlib::decompress;
 
     #[test]
-    fn decompress_logo() {
+    fn decompress_logo_test() {
         let compressed = include_bytes!("../temp/d/debian.txt");
         let mut decompressed = Vec::new();
 

@@ -1,7 +1,8 @@
 use std::{
     fs, 
     path::PathBuf, 
-    process::Command
+    process::Command,
+    sync::atomic::{AtomicUsize, Ordering}
 };
 
 use zlib_rs::{
@@ -171,10 +172,16 @@ fn main() {
         }
     }
 
+    let raw_bytes_len = AtomicUsize::new(0);
+    let encoded_bytes_len = AtomicUsize::new(0);
+
     all_paths.par_iter().for_each(|path| {
         let content = fs::read(path).unwrap();
+        raw_bytes_len.fetch_add(content.len(), Ordering::Relaxed);
+
         let mut compressed_buf = vec![0u8; compress_bound(content.len())];
         let (compressed, rc) = compress_slice(&mut compressed_buf, &content, DeflateConfig::default());
+        encoded_bytes_len.fetch_add(compressed.len(), Ordering::Relaxed);
         assert_eq!(rc, ReturnCode::Ok);
         
         let letter = path.parent().and_then(|p| p.file_name()).unwrap().to_str().unwrap();
@@ -194,4 +201,16 @@ fn main() {
         //     );
         // }
     });
+
+    let raw = raw_bytes_len.load(Ordering::Relaxed);
+    let encoded = encoded_bytes_len.load(Ordering::Relaxed);
+    
+    #[allow(clippy::cast_precision_loss)]
+    {
+        println!("cargo:warning={}b -> {}b = {:.02}%",
+            raw, 
+            encoded,
+            (encoded as f64 / raw as f64).mul_add(-100.0, 100.0)
+        );
+    }
 }
