@@ -3,10 +3,34 @@ use crate::{
     abort,
     windows::https::Request,
     windows::fs::{self, File, Access},
-    windows::path::Path
+    windows::path::Path,
+    windows::link::{HMODULE, LoadLibraryW, FreeLibrary},
+    sync::OnceLock
 };
 
+static LUA: OnceLock<LuaLib> = OnceLock::new();
+
 const LUA_DOWNLOAD_URL: &str = "https://raw.githubusercontent.com/maslina524/corefetch/refs/heads/main/src/bin/lua55.dll";
+
+pub struct LuaLib {
+    handle: HMODULE
+}
+
+// SAFETY: THE STRUCTURE IS NOT THREAD-SAFE;
+// We are not going to modify non-thread-safe fields,
+// using the structure from different threads will not cause problems.
+unsafe impl Sync for LuaLib {}
+
+impl LuaLib {
+    pub fn get() -> &'static Self {
+        LUA.get_or_init(|| {
+            // Load library
+            let lib = load();
+
+            Self { handle: lib }
+        })
+    }
+}
 
 pub fn get_lua_path() -> Path {
     let dir = Path::corefetch().join("bin");
@@ -35,6 +59,25 @@ pub fn get_lua_path() -> Path {
     }
 
     path
+}
+
+fn load() -> HMODULE {
+    // SAFETY: An ASCII string is always passed, everything is safe
+    let lib = unsafe {
+        let path = get_lua_path().as_wide_str().unwrap();
+        LoadLibraryW(path.as_ptr())
+    };
+    if lib.is_null() {
+        abort!("Failed to load nvml.dll");
+    }
+    lib
+}
+
+fn unload(lib: HMODULE) {
+    // SAFETY: Completely safe
+    unsafe {
+        FreeLibrary(lib)
+    };
 }
 
 #[cfg(test)]
