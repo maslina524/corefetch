@@ -21,7 +21,8 @@ pub struct Version {
     pub compile_time: &'static str,
     pub compiler: &'static str,
     pub libc: &'static str,
-    pub package_manager: &'static str
+    pub package_manager: &'static str,
+    pub release_link: &'static str
 }
 
 impl Module for Version {
@@ -42,7 +43,8 @@ impl Module for Version {
             compile_time: env!("COMPILE_TIME"), 
             compiler: env!("RUSTC_VERSION"), 
             libc: "",
-            package_manager: env!("CARGO_VERSION")
+            package_manager: env!("CARGO_VERSION"),
+            release_link: concat!("https://github.com/maslina524/nofetch/releases/tag/v", env!("CARGO_PKG_VERSION"))
         }
     }
 

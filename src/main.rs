@@ -294,16 +294,16 @@ fn print_version(method: Option<&str>) -> ! {
             };
             let com = Commit::new();
             println!(
-                "\x1b[1m{} {} ({}) {typ}", 
-                ver.project_name, ver.version, ver.arch
+                "\x1b[1m{} {} ({}) {typ} [\x1b]8;;{}\x1b\\link\x1b]8;;\x1b\\]", 
+                ver.project_name, ver.version, ver.arch, ver.release_link
             );
             println!(
                 "    {}, {}", 
                 ver.compiler, ver.package_manager
             );
             println!(
-                "    {} @ \x1b[32m+{} \x1b[31m-{}\x1b[0m", 
-                com.message, com.added, com.deleted
+                "    {} <{}> @ \x1b[32m+{} \x1b[31m-{}\x1b[0m", 
+                com.message, com.date_small, com.added, com.deleted
             );
         },
         _ => eprintln!("Unknown method for version, supported: raw, dbg, extended")
