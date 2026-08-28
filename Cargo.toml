@@ -13,6 +13,10 @@ keywords = [
     "embedded", "windows", "terminal", "fetch", "no-dependencies"
 ]
 
+[[bin]]
+name = "corefetch"
+path = "src/main.rs"
+
 [profile.release]
 opt-level = "z"
 lto = true
