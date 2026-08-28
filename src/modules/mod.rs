@@ -1,5 +1,6 @@
 pub mod break_;     // 7)  Break         : Print an empty line
 pub mod colors;     // 14) Colors        : Display the terminal's 16-color palette
+pub mod commit;     // NF) Commit        : Display last commit
 pub mod cpu;        // 15) CPU           : Print CPU name, frequency, etc.
 pub mod custom;     // 19) Custom        : Print a custom string, with or without key
 pub mod datetime;   // 20) DateTime      : Print the current date and time
@@ -20,6 +21,7 @@ pub mod weather;    // 71) Weather       : Print weather information
 
 pub use break_::Break;
 pub use colors::Colors;
+pub use commit::Commit;
 pub use cpu::Cpu;
 pub use custom::Custom;
 pub use datetime::Datetime;
@@ -67,6 +69,7 @@ pub fn from_preset_module(module: &ConfigModule) -> Option<Box<dyn Module>> {
     match module.typ.to_lowercase().as_str() {
         "break"      => Some(Box::new( Break::new()      )),
         "colors"     => Some(Box::new( Colors::new()     )),
+        "commit"     => Some(Box::new( Commit::new()     )),
         "cpu"        => Some(Box::new( Cpu::new()        )),
         "custom"     => Some(Box::new( Custom::new()     )),
         "datetime"   => Some(Box::new( Datetime::new()   )),

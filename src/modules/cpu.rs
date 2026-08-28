@@ -13,20 +13,20 @@ static CPU: OnceLock<Cpu> = OnceLock::new();
 
 #[derive(Debug)]
 pub struct Cpu {
-    name: String,
-    vendor: String,
-    cores_physical: usize,
-    cores_logical: usize,
-    cores_online: usize,
-    freq_base: String,
-    freq_max: String,
-    temperature: String,
-    core_types: String,
-    packages: usize,
-    march: String,
-    numa_nodes: usize,
-    code_name: String,
-    technology: String
+    pub name: String,
+    pub vendor: String,
+    pub cores_physical: usize,
+    pub cores_logical: usize,
+    pub cores_online: usize,
+    pub freq_base: String,
+    pub freq_max: String,
+    pub temperature: String,
+    pub core_types: String,
+    pub packages: usize,
+    pub march: String,
+    pub numa_nodes: usize,
+    pub code_name: String,
+    pub technology: String
 }
 
 impl Module for Cpu {

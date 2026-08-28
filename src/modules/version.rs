@@ -20,7 +20,8 @@ pub struct Version {
     pub cmake_built_type: &'static str,
     pub compile_time: &'static str,
     pub compiler: &'static str,
-    pub libc: &'static str
+    pub libc: &'static str,
+    pub package_manager: &'static str
 }
 
 impl Module for Version {
@@ -40,7 +41,8 @@ impl Module for Version {
             cmake_built_type: "", 
             compile_time: env!("COMPILE_TIME"), 
             compiler: env!("RUSTC_VERSION"), 
-            libc: ""
+            libc: "",
+            package_manager: env!("CARGO_VERSION")
         }
     }
 
