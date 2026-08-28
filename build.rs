@@ -38,7 +38,7 @@ impl Commit {
             .args([
                 "log",
                 "--format=%an%n%ae%n%ad%n%H%n%h%n%s",
-                "--date=\"format:%b %d %Y, %H:%M:%S\"", 
+                "--date=format:%b %d %Y, %H:%M:%S", 
                 "-1"
             ])
             .output()
@@ -47,7 +47,8 @@ impl Commit {
             .expect("Failed to call Git log");
         
         let log_parts: Vec<&str> = log.split('\n').collect();
-        assert!(log_parts.len() >= 6, "Failed to call Git log");
+        
+        assert!(log_parts.len() >= 6, "Failed to call Git log: {log_parts:?}");
         
         let author = log_parts[0].to_owned();
         let email = log_parts[1].to_owned();
@@ -59,7 +60,7 @@ impl Commit {
         let numstat = Command::new("git")
             .args([
                 "log",
-                "--format=\"\"",
+                "--format=",
                 "--shortstat",
                 "-1"
             ])
@@ -88,7 +89,6 @@ impl Commit {
         }
     }
 }
-
 
 fn main() {
     // Bypasses caching, runs every time during compilation
