@@ -3,12 +3,10 @@ use core::str::FromStr;
 use alloc::{
     string::String,
     vec::Vec,
-    borrow::ToOwned,
 };
 
 use crate::{
     json::lexer::{Token, TokenStream},
-    formats::expand_unicode,
     format
 };
 
@@ -168,10 +166,12 @@ impl Parser {
                 Ok(Value::Array(self.parse_array()?))
             }
             Some(Token::String(s)) => {
+                // The lexer already strips the surrounding quotes and
+                // resolves escape sequences (including \uXXXX), so the
+                // token's content is the final string value as-is.
                 let s = s.clone();
                 self.next();
-                let content = expand_unicode(&s[1..s.len() - 1]);
-                Ok(Value::String(content))
+                Ok(Value::String(s))
             }
             Some(Token::Number(s)) => {
                 let s = s.clone();
@@ -206,9 +206,8 @@ impl Parser {
 
         loop {
             let key_token = self.next().expect("Expected object key");
-            let key = match key_token {
-                Token::String(s) => s[1..s.len() - 1].to_owned(),
-                _ => return Err("Object key must be a string".into()),
+            let Token::String(key) = key_token else { 
+                return Err("Object key must be a string".into()) 
             };
 
             self.consume(&Token::Colon)?;

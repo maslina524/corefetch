@@ -56,16 +56,50 @@ impl TokenStream {
     }
 
     fn read_string(&mut self) -> Token {
+        // skip opening quote
         self.pos += 1;
-        let mut ret = String::from('\"');
-
+        let mut ret = String::new();
+ 
         while self.pos < self.chars.len() && self.chars[self.pos] != '"' {
-            ret.push(self.chars[self.pos]);
+            let ch = self.chars[self.pos];
+ 
+            if ch == '\\' && self.pos + 1 < self.chars.len() {
+                self.pos += 1;
+                match self.chars[self.pos] {
+                    '"' => ret.push('"'),
+                    '\\' => ret.push('\\'),
+                    '/' => ret.push('/'),
+                    'n' => ret.push('\n'),
+                    't' => ret.push('\t'),
+                    'r' => ret.push('\r'),
+                    'b' => ret.push('\u{0008}'),
+                    'f' => ret.push('\u{000C}'),
+                    'u' => {
+                        if self.pos + 4 < self.chars.len() {
+                            let hex: String = self.chars[self.pos + 1..self.pos + 5]
+                                .iter()
+                                .collect();
+ 
+                            if let Ok(code) = u32::from_str_radix(&hex, 16)
+                                && let Some(c) = char::from_u32(code)
+                            {
+                                ret.push(c);
+                            }
+                            self.pos += 4;
+                        }
+                    }
+                    other => ret.push(other),
+                }
+            } else {
+                ret.push(ch);
+            }
             self.pos += 1;
         }
-        ret.push('"');
-        self.pos += 1;
 
+        if self.pos < self.chars.len() {
+            self.pos += 1;
+        }
+ 
         Token::String(ret)
     }
 
@@ -244,5 +278,15 @@ mod tests {
         assert_eq!(stream.next(), Some(Token::Colon));
         assert_eq!(stream.next(), Some(Token::String("\"value\"".to_owned())));
         assert_eq!(stream.next(), Some(Token::RCurly));
+    }
+
+    #[test]
+    fn string_extra_test() {
+        let source = r#"
+        "Cow says: \"Hello World!\""
+        "#;
+        let mut stream = TokenStream::new(source);
+
+        assert_eq!(stream.next(), Some(Token::String("Cow says: \"Hello World!\"".to_owned())));
     }
 }

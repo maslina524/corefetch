@@ -131,7 +131,6 @@ impl LuaLib {
 
     pub fn execute(&self, mut code: &str) -> String {
         code = code.trim();
-        crate::println!("LUA CODE: {code}");
         
         // SAFETY: `luaL_newstate` returns a valid state or NULL
         let state = unsafe { (self.new_state)() };
