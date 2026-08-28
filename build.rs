@@ -23,6 +23,7 @@ struct Commit {
     pub author: String,
     pub email: String,
     pub date: String,
+    pub date_small: String,
     pub sha: String,
     pub sha_short: String,
     pub message: String,
@@ -53,6 +54,7 @@ impl Commit {
         let author = log_parts[0].to_owned();
         let email = log_parts[1].to_owned();
         let date = log_parts[2].to_owned();
+        let date_small = date[..date.find(',').unwrap()].to_owned();
         let sha = log_parts[3].to_owned();
         let sha_short = log_parts[4].to_owned();
         let message = log_parts[5].to_owned();
@@ -83,7 +85,7 @@ impl Commit {
         let total = added + deleted;
 
         Self {
-            author, email, date,
+            author, email, date, date_small,
             sha, sha_short, message,
             files, added, deleted, total
         }
@@ -145,16 +147,17 @@ fn main() {
 
     // ENV: Commit
     let commit = Commit::new();
-    println!("cargo:rustc-env=COMMIT_AUTHOR={}",    commit.author);
-    println!("cargo:rustc-env=COMMIT_EMAIL={}",     commit.email);
-    println!("cargo:rustc-env=COMMIT_DATE={}",      commit.date);
-    println!("cargo:rustc-env=COMMIT_SHA={}",       commit.sha);
-    println!("cargo:rustc-env=COMMIT_SHA_SHORT={}", commit.sha_short);
-    println!("cargo:rustc-env=COMMIT_MESSAGE={}",   commit.message);
-    println!("cargo:rustc-env=COMMIT_FILES={}",     commit.files);
-    println!("cargo:rustc-env=COMMIT_ADDED={}",     commit.added);
-    println!("cargo:rustc-env=COMMIT_DELETED={}",   commit.deleted);
-    println!("cargo:rustc-env=COMMIT_TOTAL={}",     commit.total);
+    println!("cargo:rustc-env=COMMIT_AUTHOR={}",     commit.author);
+    println!("cargo:rustc-env=COMMIT_EMAIL={}",      commit.email);
+    println!("cargo:rustc-env=COMMIT_DATE={}",       commit.date);
+    println!("cargo:rustc-env=COMMIT_DATE_SMALL={}", commit.date_small);
+    println!("cargo:rustc-env=COMMIT_SHA={}",        commit.sha);
+    println!("cargo:rustc-env=COMMIT_SHA_SHORT={}",  commit.sha_short);
+    println!("cargo:rustc-env=COMMIT_MESSAGE={}",    commit.message);
+    println!("cargo:rustc-env=COMMIT_FILES={}",      commit.files);
+    println!("cargo:rustc-env=COMMIT_ADDED={}",      commit.added);
+    println!("cargo:rustc-env=COMMIT_DELETED={}",    commit.deleted);
+    println!("cargo:rustc-env=COMMIT_TOTAL={}",      commit.total);
 
     // Compress logos
     let base_path = PathBuf::from("src/logo");
