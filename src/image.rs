@@ -41,7 +41,7 @@ pub struct ColorTypeError(u8);
 impl core::fmt::Display for ColorTypeError {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(
-            f, "ColorTypeError: Failed to get ColorType from index ({}); file is corrupted or nofetch does not support the type, try converting the file to another type",
+            f, "ColorTypeError: Failed to get ColorType from index ({}); file is corrupted or corefetch does not support the type, try converting the file to another type",
             self.0
         )
     }
@@ -58,7 +58,7 @@ pub struct RgbaConvertError {
 impl core::fmt::Display for RgbaConvertError {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(
-            f, "RgbaConvertError: nofetch does not support {:?} with {}-bit color depth, try converting the image to another format",
+            f, "RgbaConvertError: corefetch does not support {:?} with {}-bit color depth, try converting the image to another format",
             self.typ, self.bits
         )
     }

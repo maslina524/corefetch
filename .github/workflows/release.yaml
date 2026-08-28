@@ -30,13 +30,13 @@ jobs:
         shell: bash
         run: |
           cd target/x86_64-pc-windows-msvc/release/
-          mv nofetch.exe nofetch-windows.exe
+          mv corefetch.exe corefetch-windows.exe
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: nofetch-windows
-          path: target/x86_64-pc-windows-msvc/release/nofetch-windows*
+          name: corefetch-windows
+          path: target/x86_64-pc-windows-msvc/release/corefetch-windows*
 
   release:
     needs: [build]

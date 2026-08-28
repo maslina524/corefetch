@@ -261,7 +261,7 @@ mod tests {
     fn exe_path_test() {
         let path = title::exe_path();
         println!("{path}");
-        assert!(path.contains("nofetch"));
+        assert!(path.contains("corefetch"));
     }
 
     #[test]

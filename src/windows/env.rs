@@ -371,7 +371,7 @@ mod tests {
         println!("{args:?}");
 
         assert!(!args.is_empty());
-        assert!(args[0].contains("nofetch"));
+        assert!(args[0].contains("corefetch"));
     }
 
     #[test]

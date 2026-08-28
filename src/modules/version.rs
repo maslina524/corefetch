@@ -44,7 +44,7 @@ impl Module for Version {
             compiler: env!("RUSTC_VERSION"), 
             libc: "",
             package_manager: env!("CARGO_VERSION"),
-            release_link: concat!("https://github.com/maslina524/nofetch/releases/tag/v", env!("CARGO_PKG_VERSION"))
+            release_link: concat!("https://github.com/maslina524/corefetch/releases/tag/v", env!("CARGO_PKG_VERSION"))
         }
     }
 
