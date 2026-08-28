@@ -321,6 +321,15 @@ pub fn split_by_len_ansi(s: &str, len: usize) -> Vec<String> {
     ret
 }
 
+pub fn capitalize(s: &str) -> String {
+    let mut chars = s.chars();
+    chars.next().map_or_else(
+        String::new, 
+        |first| 
+        first.to_uppercase().collect::<String>() + chars.as_str()
+    )
+}
+
 #[macro_export]
 macro_rules! format {
     ($($tt:tt)*) => {{

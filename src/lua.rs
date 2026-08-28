@@ -1,18 +1,23 @@
 use core::ffi::{c_void, c_char, c_int, CStr};
 use core::ptr;
 
-use alloc::string::String;
-use alloc::ffi::CString;
+use alloc::{
+    string::String,
+    ffi::CString,
+    collections::BTreeMap
+};
 
 use crate::{
     info,
     abort,
     get_fn,
+    format,
     windows::https::Request,
     windows::fs::{self, File, Access},
     windows::path::Path,
     windows::link::{HMODULE, LoadLibraryW, FreeLibrary},
-    sync::OnceLock
+    sync::OnceLock,
+    formats::capitalize
 };
 
 pub type WinapiFn = unsafe extern "system" fn() -> isize;
@@ -45,6 +50,27 @@ pub type lua_settop = unsafe extern "C" fn(state: *mut lua_State, idx: c_int);
 static LUA: OnceLock<LuaLib> = OnceLock::new();
 
 const LUA_DOWNLOAD_URL: &str = "https://github.com/maslina524/corefetch/raw/refs/heads/main/bin/lua55.dll";
+const MODULE_GENERATOR: &str = r#"
+setmetatable(Module, {
+    __newindex = function(t, key, value)
+        error("Attempt to modify constant", 2)
+    end
+})
+"#;
+
+pub enum Variable {
+    String(String),
+    Number(i64)
+}
+
+impl core::fmt::Debug for Variable {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        match self {
+            Self::String(s) => write!(f, "{s:?}"),
+            Self::Number(i)    => write!(f, "{i}")
+        }
+    }
+}
 
 pub struct LuaLib {
     handle: HMODULE,
@@ -91,7 +117,22 @@ impl LuaLib {
         })
     }
 
-    pub fn execute(&self, code: &str) -> String {
+    pub fn execute_with_vars(&self, mut code: &str, vars: BTreeMap<String, Variable>) -> String {
+        code = code.trim();
+        let mut ret = String::from("local Module = {{}}\n");
+        for (k, v) in vars {
+            ret.push_str(&format!("Module.{} = {:?}\n", capitalize(&k), v));
+        }
+        ret.push_str(MODULE_GENERATOR);
+        ret.push_str(code);
+
+        self.execute(&ret)
+    }
+
+    pub fn execute(&self, mut code: &str) -> String {
+        code = code.trim();
+        crate::println!("LUA CODE: {code}");
+        
         // SAFETY: `luaL_newstate` returns a valid state or NULL
         let state = unsafe { (self.new_state)() };
         if state.is_null() {
