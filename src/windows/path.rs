@@ -59,12 +59,12 @@ impl Path {
         Self::from(inner)
     }
 
-    pub fn nofetch() -> Self {
-        Self::local().join("nofetch")
+    pub fn corefetch() -> Self {
+        Self::local().join("corefetch")
     }
 
     pub fn cache() -> Self {
-        Self::nofetch().join("cache")
+        Self::corefetch().join("cache")
     }
 
     pub fn with_capacity(cap: usize) -> Self {

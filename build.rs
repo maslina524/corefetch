@@ -141,11 +141,11 @@ impl Commit {
     async fn request() -> Value {
         let req = Request::new(
             Method::GET, 
-            Url::from_str("https://api.github.com/repos/maslina524/nofetch/commits/main?per_page=1").unwrap()
+            Url::from_str("https://api.github.com/repos/maslina524/corefetch/commits/main?per_page=1").unwrap()
         );
 
         let client = Client::builder()
-            .user_agent("nofetch-build/1.0")
+            .user_agent("corefetch-build/1.0")
             .build()
             .expect("Failed to build http client");
 

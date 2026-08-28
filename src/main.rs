@@ -232,14 +232,14 @@ fn get_logo_name_and_custom(val: &str) -> (String, Option<String>) {
 
 fn print_help(_theme: Option<&str>) -> ! {
     let multi = multi_string!(
-        "Nofetch is a neofetch-like tool for beautiful system information display with flexible output customization",
+        "corefetch is a neofetch-like tool for beautiful system information display with flexible output customization",
         "",
-        "<underline><bold>Usage:<reset><bold> nofetch<reset><italic> <?options><reset>",
+        "<underline><bold>Usage:<reset><bold> corefetch<reset><italic> <?options><reset>",
         "",
         "<underline><bold>Commands:<reset>",
         "  -h, --help <?options> \tPrint this message",
-        "  -v, --version         \tPrint nofetch version",
-        "      --version-raw     \tPrint raw nofetch version (major.minor.patch)",
+        "  -v, --version         \tPrint corefetch version",
+        "      --version-raw     \tPrint raw corefetch version (major.minor.patch)",
     );
     println!("{}", colored!(multi));
     exit(0)
