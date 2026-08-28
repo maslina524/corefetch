@@ -13,10 +13,10 @@ static INITSYSTEM: OnceLock<InitSystem> = OnceLock::new();
 
 #[derive(Debug)]
 pub struct InitSystem {
-    name: String,
-    exe: String,
-    version: String,
-    pid: u32
+    pub name: String,
+    pub exe: String,
+    pub version: String,
+    pub pid: u32
 }
 
 impl Module for InitSystem {

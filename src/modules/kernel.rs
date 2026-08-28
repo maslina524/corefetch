@@ -13,12 +13,12 @@ static KERNEL: OnceLock<Kernel> = OnceLock::new();
 
 #[derive(Debug)]
 pub struct Kernel {
-    sysname: &'static str,
-    release: String,
-    version: String,
-    arch: &'static str,
-    display_version: String, // Exists in fastfetch, but not supported (?)
-    page_size: String
+    pub sysname: &'static str,
+    pub release: String,
+    pub version: String,
+    pub arch: &'static str,
+    pub display_version: String, // Exists in fastfetch, but not supported (?)
+    pub page_size: String
 }
 
 impl Module for Kernel {

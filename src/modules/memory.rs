@@ -14,10 +14,10 @@ static MEMORY: OnceLock<Memory> = OnceLock::new();
 
 #[derive(Debug)]
 pub struct Memory {
-    used: String,
-    total: String,
-    percentage: String,
-    percentage_bar: String,
+    pub used: String,
+    pub total: String,
+    pub percentage: String,
+    pub percentage_bar: String,
 }
 
 impl Module for Memory {
