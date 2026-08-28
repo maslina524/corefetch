@@ -132,6 +132,19 @@ macro_rules! format_for_module {
             let title_raw = format.format.unwrap_or(self.title());
             let value_raw = if let Some(code) = title_raw.strip_prefix("lua:") {
                 $crate::lua::LuaLib::get().execute(code)
+
+            } else if let Some(code) = title_raw.strip_prefix("luap:") {
+                #[allow(unused_mut)]
+                let mut vars = alloc::collections::BTreeMap::new();
+
+                $(
+                    let key_str = stringify!($field).trim_start_matches("r#");
+                    let value_str = $crate::alloc::string::ToString::to_string(&self.$field);
+                    vars.insert(alloc::borrow::ToOwned::to_owned(key_str), $crate::lua::Variable::String(value_str));
+                )*
+
+                $crate::lua::LuaLib::get().execute_with_vars(code, vars)
+
             } else {
                 alloc::borrow::ToOwned::to_owned(title_raw)
             };
