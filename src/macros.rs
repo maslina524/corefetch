@@ -9,6 +9,14 @@ macro_rules! todo_or_default {
 }
 
 #[macro_export]
+macro_rules! info {
+    ($($args:tt)*) => {{
+        $crate::print!("\x1b[1;{}minfo\x1b[0m: ", $crate::color::FG_BLUE);
+        $crate::println!($($args)*);
+    }};
+}
+
+#[macro_export]
 macro_rules! warning {
     ($($args:tt)*) => {{
         $crate::eprint!("\x1b[1;{}mwarning\x1b[0m: ", $crate::color::FG_YELLOW);
