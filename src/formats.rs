@@ -6,7 +6,8 @@ use core::{
 use alloc::{
     string::String,
     borrow::ToOwned,
-    vec::Vec
+    vec::Vec,
+    vec
 };
 
 // Why does clippy think this variant is better than `colors::*`?
@@ -252,6 +253,9 @@ pub fn format_color(s: &str, plan: ColorPlan) -> String {
 }
 
 pub fn split_by_len_ansi(s: &str, len: usize) -> Vec<String> {
+    if s.trim().is_empty() {
+        return vec![String::new()];
+    }
     let chars: Vec<char> = s.chars().collect();
     let mut ret = Vec::new();
     let mut build_string_len = 0;
@@ -270,7 +274,6 @@ pub fn split_by_len_ansi(s: &str, len: usize) -> Vec<String> {
             pos += 1;
 
             build_string.push_str(&currect_ansi);
-            
             continue;
         }
 
@@ -278,8 +281,11 @@ pub fn split_by_len_ansi(s: &str, len: usize) -> Vec<String> {
             if currect_ansi != "\x1b[0m" {
                 build_string.push_str("\x1b[0m");
             }
-            
-            ret.push(build_string);
+
+            if visible_len(&build_string) > 0 {
+                ret.push(build_string);
+            }
+
             build_string_len = 0;
             build_string = if currect_ansi == "\x1b[0m" {
                 String::new()
@@ -298,7 +304,6 @@ pub fn split_by_len_ansi(s: &str, len: usize) -> Vec<String> {
             if currect_ansi != "\x1b[0m" {
                 build_string.push_str("\x1b[0m");
             }
-            
             ret.push(build_string);
             build_string_len = 0;
             build_string = if currect_ansi == "\x1b[0m" {
@@ -308,10 +313,11 @@ pub fn split_by_len_ansi(s: &str, len: usize) -> Vec<String> {
             };
         }
     }
-    if !build_string.is_empty() {
+
+    if visible_len(&build_string) > 0 {
         ret.push(build_string);
     }
-    
+
     ret
 }
 

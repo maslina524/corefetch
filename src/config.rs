@@ -246,6 +246,7 @@ impl Default for ConfigModuleArray {
             ConfigModule::from_str("locale"),
             ConfigModule::from_str("wallpaper"),
             ConfigModule::from_str("commit"),
+            ConfigModule::from_str("version"),
             ConfigModule::from_str("break"),
             ConfigModule::from_str("colors")
         ];
