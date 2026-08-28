@@ -1,7 +1,12 @@
 use std::{
-    fs, path::PathBuf, process::Command, str::FromStr, sync::atomic::{AtomicUsize, Ordering}
+    fs, 
+    path::PathBuf, 
+    process::Command, 
+    str::FromStr, 
+    sync::atomic::{AtomicUsize, Ordering}
 };
 
+use chrono::{DateTime, FixedOffset};
 use zlib_rs::{
     ReturnCode,
     DeflateConfig, 
@@ -11,7 +16,8 @@ use zlib_rs::{
 
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use reqwest::{Client, Method, Request, Url};
-use serde_json::Value;
+use serde_json::{Value, Map};
+use regex::Regex;
 
 const VALID_CHARS: &[char] = &[
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
@@ -24,22 +30,109 @@ struct Commit {
     pub date: String,
     pub date_small: String,
     pub sha: String,
-    pub sha_short: String,
+    pub sha_small: String,
     pub message: String,
-    pub files: usize,
-    pub added: usize,
-    pub deleted: usize,
-    pub total: usize
+    pub files: u64,
+    pub added: u64,
+    pub deleted: u64,
+    pub total: u64
 }
 
 impl Commit {
-    pub async fn new() -> Self {
-        let response = Self::request().await;
-        let root = response.as_object().expect("Incorrect response data");
+    pub fn new_git() -> Self {
+        let log = Command::new("git")
+            .args([
+                "log",
+                "--format=%an%n%ae%n%ad%n%H%n%h%n%s",
+                "--date=format:%b %d %Y, %H:%M:%S", 
+                "-1"
+            ])
+            .output()
+            .ok()
+            .and_then(|output| String::from_utf8(output.stdout).ok())
+            .expect("Failed to call Git log");
+        
+        let log_parts: Vec<&str> = log.split('\n').collect();
+        
+        assert!(log_parts.len() >= 6, "Failed to call Git log: {log_parts:?}");
+        
+        let author = log_parts[0].to_owned();
+        let email = log_parts[1].to_owned();
+        let date = log_parts[2].to_owned();
+        let date_small = date[..date.find(',').unwrap()].to_owned();
+        let sha = log_parts[3].to_owned();
+        let sha_small = log_parts[4].to_owned();
+        let message = log_parts[5].to_owned();
+
+        let numstat = Command::new("git")
+            .args([
+                "log",
+                "--format=",
+                "--shortstat",
+                "-1"
+            ])
+            .output()
+            .ok()
+            .and_then(|output| String::from_utf8(output.stdout).ok())
+            .expect("Failed to call Git shortstat");
+        
+        let re = Regex::new(r"(\d+)").unwrap();
+        let nums: Vec<u64> = re
+            .find_iter(&numstat)
+            .filter_map(|m| m.as_str().parse().ok())
+            .collect();
+
+        assert!(nums.len() >= 3, "Failed to call Git shortstat");
+
+        let files = nums[0];
+        let added = nums[1];
+        let deleted = nums[2];
+        let total = added + deleted;
 
         Self {
             author, email, date, date_small,
-            sha, sha_short, message,
+            sha, sha_small, message,
+            files, added, deleted, total
+        }
+    }
+
+    pub async fn new_github() -> Self {
+        let response = Self::request().await;
+        let root = response.as_object().expect("Incorrect response data");
+
+        // ROOT
+        let sha = get_string(root, "sha");
+        let sha_small = sha[..7].to_owned();
+
+        // COMMIT
+        let commit_obj = get_object(root, "commit");
+        let message = get_string(&commit_obj, "message");
+
+        // COMMIT -> AUTHOR
+        let author_obj = get_object(&commit_obj, "author");
+        let author = get_string(&author_obj, "name");
+        let email = get_string(&author_obj, "enail");
+
+        let date_raw = get_string(&author_obj, "date");
+        let dt: DateTime<FixedOffset> = DateTime::parse_from_rfc3339(&date_raw)
+            .expect("Incorrect date format");
+
+        let date = dt.format("%b %d %Y, %H:%M:%S").to_string();
+        let date_small = dt.format("%b %d %Y").to_string();
+
+        // STATS
+        let stats_obj = get_object(root, "stats");
+        let added = get_u64(&stats_obj, "added");
+        let deleted = get_u64(&stats_obj, "deleted");
+        let total = get_u64(&stats_obj, "total");
+
+        // FILES
+        let files_array = get_array(&commit_obj, "files");
+        let files = files_array.len() as u64;
+
+        Self {
+            author, email, date, date_small,
+            sha, sha_small, message,
             files, added, deleted, total
         }
     }
@@ -47,7 +140,7 @@ impl Commit {
     async fn request() -> Value {
         let req = Request::new(
             Method::GET, 
-            Url::from_str("https://api.github.com/repos/maslina524/nofetch/commits/main").unwrap()
+            Url::from_str("https://api.github.com/repos/maslina524/nofetch/commits/main?per_page=1").unwrap()
         );
 
         let client = Client::new();
@@ -56,11 +149,41 @@ impl Commit {
             .await
             .expect("Failed to call Github Api");
 
+        println!("{resp:#?}");
         resp
             .json()
             .await
             .expect("Failed to parse json response from GitHub")
     }
+}
+
+fn get_object(obj: &Map<String, Value>, key: &str) -> Map<String, Value> {
+    obj[key].as_object().expect("Incorrect response data").clone()
+}
+
+fn get_array(obj: &Map<String, Value>, key: &str) -> Vec<Value> {
+    obj[key].as_array().expect("Incorrect response data").clone()
+}
+
+fn get_string(obj: &Map<String, Value>, key: &str) -> String {
+    obj[key].as_str().expect("Incorrect response data").to_owned()
+}
+
+fn get_u64(obj: &Map<String, Value>, key: &str) -> u64 {
+    obj[key].as_u64().expect("Incorrect response data")
+}
+
+fn git_initialized() -> bool {
+    Command::new("git")
+        .args([
+            "rev-parse",
+            "--is-inside-work-tree"
+        ])
+        .output()
+        .ok()
+        .and_then(|o| String::from_utf8(o.stdout).ok())
+        .and_then(|s| s.trim().parse::<bool>().ok())
+        .unwrap_or(false)
 }
 
 #[tokio::main]
@@ -118,13 +241,17 @@ async fn main() {
     println!("cargo:rustc-env=CARGO_VERSION={}", cargo_version.trim());
 
     // ENV: Commit
-    let commit = Commit::new().await;
+    let commit = if git_initialized() {
+        Commit::new_git()
+    } else {
+        Commit::new_github().await
+    };
     println!("cargo:rustc-env=COMMIT_AUTHOR={}",     commit.author);
     println!("cargo:rustc-env=COMMIT_EMAIL={}",      commit.email);
     println!("cargo:rustc-env=COMMIT_DATE={}",       commit.date);
     println!("cargo:rustc-env=COMMIT_DATE_SMALL={}", commit.date_small);
     println!("cargo:rustc-env=COMMIT_SHA={}",        commit.sha);
-    println!("cargo:rustc-env=COMMIT_SHA_SHORT={}",  commit.sha_short);
+    println!("cargo:rustc-env=COMMIT_SHA_SMALL={}",  commit.sha_small);
     println!("cargo:rustc-env=COMMIT_MESSAGE={}",    commit.message);
     println!("cargo:rustc-env=COMMIT_FILES={}",      commit.files);
     println!("cargo:rustc-env=COMMIT_ADDED={}",      commit.added);

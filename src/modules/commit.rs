@@ -30,7 +30,7 @@ impl Module for Commit {
             date: env!("COMMIT_DATE"),
             date_small: env!("COMMIT_DATE_SMALL"),
             sha: env!("COMMIT_SHA"),
-            sha_short: env!("COMMIT_SHA_SHORT"),
+            sha_short: env!("COMMIT_SHA_SMALL"),
             message: env!("COMMIT_MESSAGE"),
             files: env!("COMMIT_FILES"),
             added: env!("COMMIT_ADDED"),
