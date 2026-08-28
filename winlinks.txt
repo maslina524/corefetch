@@ -92,3 +92,4 @@ GetFileVersionInfoW
 GetFileVersionInfoSizeW
 GetRawInputDeviceInfoW
 GetRawInputDeviceList
+LoadLibraryW

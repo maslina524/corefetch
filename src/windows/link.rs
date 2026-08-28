@@ -64,6 +64,7 @@ link!("kernel32" "system" fn HeapAlloc(hheap : HANDLE, dwflags : HEAP_FLAGS, dwb
 link!("kernel32" "system" fn HeapFree(hheap : HANDLE, dwflags : HEAP_FLAGS, lpmem : *const core::ffi::c_void) -> BOOL);
 link!("kernel32" "system" fn HeapReAlloc(hheap : HANDLE, dwflags : HEAP_FLAGS, lpmem : *const core::ffi::c_void, dwbytes : usize) -> *mut core::ffi::c_void);
 link!("kernel32" "system" fn LoadLibraryA(lplibfilename : PCSTR) -> HMODULE);
+link!("kernel32" "system" fn LoadLibraryW(lplibfilename : PCWSTR) -> HMODULE);
 link!("kernel32" "system" fn LocalFree(hmem : HLOCAL) -> HLOCAL);
 link!("kernel32" "system" fn MultiByteToWideChar(codepage : u32, dwflags : MULTI_BYTE_TO_WIDE_CHAR_FLAGS, lpmultibytestr : PCSTR, cbmultibyte : i32, lpwidecharstr : PWSTR, cchwidechar : i32) -> i32);
 link!("advapi32" "system" fn OpenProcessToken(processhandle : HANDLE, desiredaccess : TOKEN_ACCESS_MASK, tokenhandle : *mut HANDLE) -> BOOL);
@@ -367,7 +368,7 @@ pub type PSID = *mut core::ffi::c_void;
 pub type PSTR = *mut u8;
 pub type PWSTR = *mut u16;
 #[repr(C)]
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy)]
 pub struct RAWINPUTDEVICELIST {
     pub hDevice: HANDLE,
     pub dwType: RID_DEVICE_INFO_TYPE,
