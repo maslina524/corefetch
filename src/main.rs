@@ -302,8 +302,8 @@ fn print_version(method: Option<&str>) -> ! {
                 ver.compiler, ver.package_manager
             );
             println!(
-                "    {} <{}> @ \x1b[32m+{} \x1b[31m-{}\x1b[0m", 
-                com.message, com.date_small, com.added, com.deleted
+                "    {} <{}> ({})", 
+                com.message, com.date_small, com.sha_short
             );
         },
         _ => eprintln!("Unknown method for version, supported: raw, dbg, extended")

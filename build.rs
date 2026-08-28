@@ -112,7 +112,7 @@ impl Commit {
         // COMMIT -> AUTHOR
         let author_obj = get_object(&commit_obj, "author");
         let author = get_string(&author_obj, "name");
-        let email = get_string(&author_obj, "enail");
+        let email = get_string(&author_obj, "email");
 
         let date_raw = get_string(&author_obj, "date");
         let dt: DateTime<FixedOffset> = DateTime::parse_from_rfc3339(&date_raw)
@@ -123,12 +123,12 @@ impl Commit {
 
         // STATS
         let stats_obj = get_object(root, "stats");
-        let added = get_u64(&stats_obj, "added");
-        let deleted = get_u64(&stats_obj, "deleted");
+        let added = get_u64(&stats_obj, "additions");
+        let deleted = get_u64(&stats_obj, "deletions");
         let total = get_u64(&stats_obj, "total");
 
         // FILES
-        let files_array = get_array(&commit_obj, "files");
+        let files_array = get_array(root, "files");
         let files = files_array.len() as u64;
 
         Self {
@@ -144,7 +144,11 @@ impl Commit {
             Url::from_str("https://api.github.com/repos/maslina524/nofetch/commits/main?per_page=1").unwrap()
         );
 
-        let client = Client::new();
+        let client = Client::builder()
+            .user_agent("nofetch-build/1.0")
+            .build()
+            .expect("Failed to build http client");
+
         let resp = client
             .execute(req)
             .await
@@ -159,19 +163,19 @@ impl Commit {
 }
 
 fn get_object(obj: &Map<String, Value>, key: &str) -> Map<String, Value> {
-    obj[key].as_object().expect("Incorrect response data").clone()
+    obj.get(key).unwrap_or_else(|| panic!("Key `{key}` not found")).as_object().expect("Incorrect response data").clone()
 }
 
 fn get_array(obj: &Map<String, Value>, key: &str) -> Vec<Value> {
-    obj[key].as_array().expect("Incorrect response data").clone()
+    obj.get(key).unwrap_or_else(|| panic!("Key `{key}` not found")).as_array().expect("Incorrect response data").clone()
 }
 
 fn get_string(obj: &Map<String, Value>, key: &str) -> String {
-    obj[key].as_str().expect("Incorrect response data").to_owned()
+    obj.get(key).unwrap_or_else(|| panic!("Key `{key}` not found")).as_str().expect("Incorrect response data").to_owned()
 }
 
 fn get_u64(obj: &Map<String, Value>, key: &str) -> u64 {
-    obj[key].as_u64().expect("Incorrect response data")
+    obj.get(key).unwrap_or_else(|| panic!("Key `{key}` not found")).as_u64().expect("Incorrect response data")
 }
 
 fn git_initialized() -> bool {
@@ -246,7 +250,7 @@ async fn main() {
     println!("cargo:rustc-env=CARGO_VERSION={}", cargo_version.trim());
 
     // ENV: Commit
-    let commit = if !git_initialized() || github_actions() {
+    let commit = if git_initialized() || github_actions() {
         Commit::new_github().await
     } else {
         Commit::new_git()
