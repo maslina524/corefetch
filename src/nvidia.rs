@@ -1,13 +1,11 @@
-use core::{
-    mem,
-    ffi::{c_void, c_uint, c_char},
-};
+use core::ffi::{c_void, c_uint, c_char};
 
 use crate::{
     abort, 
     sync::OnceLock, 
     warning, 
-    windows::link::{FreeLibrary, GetProcAddress, HMODULE, LoadLibraryA}
+    get_fn,
+    windows::link::{FreeLibrary, HMODULE, LoadLibraryA}
 };
 
 pub type WinapiFn = unsafe extern "system" fn() -> isize;
@@ -33,19 +31,6 @@ pub type nvmlDeviceGetTemperature = unsafe extern "C" fn(device: nvmlDevice, sen
 pub type nvmlDeviceGetClockInfo = unsafe extern "C" fn(device: nvmlDevice, typ: nvmlClockType, clock: *mut u32 ) -> nvmlReturn;
 #[allow(non_camel_case_types)]
 pub type nvmlErrorString = unsafe extern "C" fn(result: nvmlReturn) -> *const c_char;
-
-macro_rules! get_fn {
-    ($handle:tt, $name:expr, $typ:ident) => {{
-        // SAFETY: Completely safe
-        let addr = GetProcAddress($handle, $name.as_ptr().cast()).unwrap_or_else(
-            || {
-                unload($handle);
-                $crate::abort!(concat!(stringify!($name), " not found in nvml.dll"));
-            }
-        );
-        mem::transmute::<WinapiFn, $typ>(addr)
-    }};
-}
 
 static NVIDIA: OnceLock<NvidiaLib> = OnceLock::new();
 
