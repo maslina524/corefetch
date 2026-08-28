@@ -57,6 +57,20 @@ macro_rules! multi_string {
     (@count $s:literal) => { 1 };
 }
 
+#[macro_export]
+macro_rules! get_fn {
+    ($handle:tt, $name:expr, $typ:ident) => {{
+        // SAFETY: Completely safe
+        let addr = $crate::windows::link::GetProcAddress($handle, $name.as_ptr().cast()).unwrap_or_else(
+            || {
+                unload($handle);
+                $crate::abort!(concat!(stringify!($name), " not found in dll"));
+            }
+        );
+        core::mem::transmute::<WinapiFn, $typ>(addr)
+    }};
+}
+
 #[cfg(test)]
 mod tests {
     #[test]
