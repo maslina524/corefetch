@@ -5,7 +5,7 @@ use alloc::{
 
 use crate::{
     detect::title,
-    format_for_module_wo_key,
+    format_for_module,
     impl_display_for_module,
     modules::Module,
     windows::path::Path,
@@ -55,7 +55,7 @@ impl Module for Title {
     }
 
     fn key(&self) -> &'static str {
-        "Title"
+        ""
     }
 
     fn title(&self) -> &'static str {
@@ -66,7 +66,7 @@ impl Module for Title {
         "title"
     }
 
-    format_for_module_wo_key!(
+    format_for_module!(
         Title,
         user_name, host_name, home_dir, exe_path, 
         user_shell, user_name_colored, at_symbol_colored, host_name_colored, 
