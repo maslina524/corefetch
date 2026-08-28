@@ -15,7 +15,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
         vec![
             LogoInfo {
                 names: &["iglunix", "iglu"],
-                lines: include_bytes!("../../temp/i/iglunix.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/i/iglunix.txt")),
                 colors: &[
                     color::FG_LIGHT_BLACK,
                 ],
@@ -24,7 +24,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["instantos"],
-                lines: include_bytes!("../../temp/i/instantos.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/i/instantos.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_CYAN,
@@ -34,7 +34,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["interix"],
-                lines: include_bytes!("../../temp/i/interix.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/i/interix.txt")),
                 colors: &[
                     color::FG_RED,
                     color::FG_WHITE,
@@ -47,7 +47,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["irix"],
-                lines: include_bytes!("../../temp/i/irix.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/i/irix.txt")),
                 colors: &[
                     color::FG_BLUE,
                 ],
@@ -56,7 +56,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["ironclad"],
-                lines: include_bytes!("../../temp/i/ironclad.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/i/ironclad.txt")),
                 colors: &[
                     color::FG_BLACK,
                 ],
@@ -65,7 +65,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["itc"],
-                lines: include_bytes!("../../temp/i/itc.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/i/itc.txt")),
                 colors: &[
                     color::FG_RED,
                 ],

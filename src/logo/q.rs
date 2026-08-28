@@ -15,7 +15,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
         vec![
             LogoInfo {
                 names: &["qts"],
-                lines: include_bytes!("../../temp/q/qts.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/q/qts.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_RED,
@@ -25,7 +25,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["quasar"],
-                lines: include_bytes!("../../temp/q/quasar.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/q/quasar.txt")),
                 colors: &[
                     color::FG_DEFAULT,
                 ],
@@ -34,7 +34,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["q4os"],
-                lines: include_bytes!("../../temp/q/q4os.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/q/q4os.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_RED,
@@ -44,7 +44,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["qubes"],
-                lines: include_bytes!("../../temp/q/qubes.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/q/qubes.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_MAGENTA,
@@ -54,7 +54,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["qubes small"],
-                lines: include_bytes!("../../temp/q/qubes_small.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/q/qubes_small.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_MAGENTA,
@@ -64,7 +64,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["qubyt"],
-                lines: include_bytes!("../../temp/q/qubyt.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/q/qubyt.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_MAGENTA,
@@ -75,7 +75,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["quibian"],
-                lines: include_bytes!("../../temp/q/quibian.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/q/quibian.txt")),
                 colors: &[
                     color::FG_YELLOW,
                     color::FG_WHITE,
@@ -85,7 +85,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["quirinux"],
-                lines: include_bytes!("../../temp/q/quirinux.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/q/quirinux.txt")),
                 colors: &[
                     color::FG_WHITE,
                     color::FG_MAGENTA,

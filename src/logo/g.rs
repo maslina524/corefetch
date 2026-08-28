@@ -15,7 +15,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
         vec![
             LogoInfo {
                 names: &["galliumos"],
-                lines: include_bytes!("../../temp/g/galliumos.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/g/galliumos.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_WHITE,
@@ -25,7 +25,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["garuda"],
-                lines: include_bytes!("../../temp/g/garuda.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/g/garuda.txt")),
                 colors: &[
                     color::FG_RED,
                 ],
@@ -34,7 +34,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["garudadragon", "garuda-dragon"],
-                lines: include_bytes!("../../temp/g/garuda_dragon.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/g/garuda_dragon.txt")),
                 colors: &[
                     color::FG_RED,
                 ],
@@ -43,7 +43,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["garuda small", "garuda-linux small"],
-                lines: include_bytes!("../../temp/g/garuda_small.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/g/garuda_small.txt")),
                 colors: &[
                     color::FG_RED,
                 ],
@@ -52,7 +52,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["gentoo"],
-                lines: include_bytes!("../../temp/g/gentoo.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/g/gentoo.txt")),
                 colors: &[
                     color::FG_MAGENTA,
                     color::FG_WHITE,
@@ -62,7 +62,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["gentoo small"],
-                lines: include_bytes!("../../temp/g/gentoo_small.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/g/gentoo_small.txt")),
                 colors: &[
                     color::FG_MAGENTA,
                     color::FG_WHITE,
@@ -72,7 +72,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["ghostbsd"],
-                lines: include_bytes!("../../temp/g/ghostbsd.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/g/ghostbsd.txt")),
                 colors: &[
                     color::FG_BLUE,
                 ],
@@ -81,7 +81,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["ghostfreak"],
-                lines: include_bytes!("../../temp/g/ghostfreak.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/g/ghostfreak.txt")),
                 colors: &[
                     color::FG_DEFAULT,
                 ],
@@ -90,7 +90,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["glaucus"],
-                lines: include_bytes!("../../temp/g/glaucus.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/g/glaucus.txt")),
                 colors: &[
                     color::FG_MAGENTA,
                 ],
@@ -99,7 +99,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["gnewsense"],
-                lines: include_bytes!("../../temp/g/gnewsense.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/g/gnewsense.txt")),
                 colors: &[
                     color::FG_BLUE,
                 ],
@@ -108,7 +108,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["gnome os"],
-                lines: include_bytes!("../../temp/g/gnome.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/g/gnome.txt")),
                 colors: &[
                     color::FG_BLUE,
                 ],
@@ -117,7 +117,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["gnu"],
-                lines: include_bytes!("../../temp/g/gnu.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/g/gnu.txt")),
                 colors: &[
                     color::FG_DEFAULT,
                 ],
@@ -126,7 +126,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["gobolinux", "gobo"],
-                lines: include_bytes!("../../temp/g/gobolinux.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/g/gobolinux.txt")),
                 colors: &[
                     color::FG_MAGENTA,
                 ],
@@ -135,7 +135,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["goldendoglinux"],
-                lines: include_bytes!("../../temp/g/goldendoglinux.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/g/goldendoglinux.txt")),
                 colors: &[
                     color::FG_YELLOW,
                 ],
@@ -144,7 +144,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["grapheneos"],
-                lines: include_bytes!("../../temp/g/grapheneos.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/g/grapheneos.txt")),
                 colors: &[
                     color::FG_DEFAULT,
                 ],
@@ -153,7 +153,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["grombyang"],
-                lines: include_bytes!("../../temp/g/grombyang.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/g/grombyang.txt")),
                 colors: &[
                     color::FG_BLUE,
                     color::FG_GREEN,
@@ -164,7 +164,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["guix"],
-                lines: include_bytes!("../../temp/g/guix.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/g/guix.txt")),
                 colors: &[
                     color::FG_YELLOW,
                 ],
@@ -173,7 +173,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["guix small"],
-                lines: include_bytes!("../../temp/g/guix_small.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/g/guix_small.txt")),
                 colors: &[
                     color::FG_YELLOW,
                 ],
@@ -182,7 +182,7 @@ pub fn get() -> &'static Vec<LogoInfo> {
             },
             LogoInfo {
                 names: &["gxde"],
-                lines: include_bytes!("../../temp/g/gxde.txt"),
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/g/gxde.txt")),
                 colors: &[
                     color::FG_RED,
                 ],
