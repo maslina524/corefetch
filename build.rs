@@ -1,5 +1,6 @@
 use std::{
-    fs, 
+    fs,
+    env,
     path::PathBuf, 
     process::Command, 
     str::FromStr, 
@@ -182,8 +183,12 @@ fn git_initialized() -> bool {
         .output()
         .ok()
         .and_then(|o| String::from_utf8(o.stdout).ok())
-        .and_then(|s| s.trim().parse::<bool>().ok())
-        .unwrap_or(false)
+        .is_some_and(|s| s.trim() == "true")
+}
+
+fn github_actions() -> bool {
+    env::var("GITHUB_ACTIONS")
+        .is_ok_and(|s| s.trim() == "true")
 }
 
 #[tokio::main]
@@ -241,10 +246,10 @@ async fn main() {
     println!("cargo:rustc-env=CARGO_VERSION={}", cargo_version.trim());
 
     // ENV: Commit
-    let commit = if git_initialized() {
-        Commit::new_git()
-    } else {
+    let commit = if !git_initialized() || github_actions() {
         Commit::new_github().await
+    } else {
+        Commit::new_git()
     };
     println!("cargo:rustc-env=COMMIT_AUTHOR={}",     commit.author);
     println!("cargo:rustc-env=COMMIT_EMAIL={}",      commit.email);
