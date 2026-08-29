@@ -10,7 +10,7 @@ unsafe impl GlobalAlloc for Allocator {
         // SAFETY: if the OS fails to allocate memory, it
         // returns NULL which is checked in the block
         unsafe {
-            let ptr = malloc(layout.size() as isize);
+            let ptr = malloc(layout.size());
             assert!(!ptr.is_null(), "`malloc` error!");
             ptr.cast::<u8>()
         }
@@ -29,7 +29,7 @@ unsafe impl GlobalAlloc for Allocator {
         // returns NULL which is checked in the block
         unsafe {
             let ptr = calloc(
-                layout.size() as isize, 
+                layout.size(), 
                 1
             );
             assert!(!ptr.is_null(), "`calloc` error!");
@@ -44,7 +44,7 @@ unsafe impl GlobalAlloc for Allocator {
         unsafe {
             let new_ptr = realloc(
                 ptr.cast(),
-                new_size as isize
+                new_size
             );
             assert!(!new_ptr.is_null(), "`realloc` error!");
             new_ptr.cast::<u8>()
