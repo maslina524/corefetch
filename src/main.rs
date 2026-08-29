@@ -61,7 +61,7 @@ cfg_if! {
 extern crate alloc;
 
 use core::{
-    ffi::c_int,
+    ffi::{c_int, c_char},
     slice::Iter
 };
 
@@ -289,10 +289,24 @@ fn print_version(method: Option<&str>) -> ! {
 }
 
 // #[cfg(not(test))]
-#[unsafe(no_mangle)]
-extern "C" fn main() -> c_int {
-    let args = env::args();
+cfg_if! {
+    if #[cfg(target_os = "linux")] {
+        #[unsafe(no_mangle)]
+        #[allow(clippy::similar_names, reason = "that's what they're called in C, i don't give a fuck about clippy")]
+        extern "C" fn main(argc: c_int, argv: *const *const c_char) -> c_int {
+            let args = imp::env::args(argc as usize, argv.cast());
+            corefetch_main(args) as c_int
+        }
+    } else if #[cfg(target_os = "windows")] {
+        #[unsafe(no_mangle)]
+        extern "C" fn main() -> c_int {
+            let args = imp::env::args();
+            corefetch_main(args) as c_int
+        }
+    }
+}
 
+fn corefetch_main(args: Vec<String>) -> i32 {
     // Commands
     if let Some(pos) = args.iter().position(|a| a == "--help" || a == "-h") {
         print_help(args.get(pos + 1).map(String::as_str))
