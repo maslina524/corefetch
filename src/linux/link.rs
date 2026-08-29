@@ -7,5 +7,6 @@ pub mod libc {
         pub unsafe fn free(ptr: *mut c_void);
         pub unsafe fn calloc(nmemb: usize, size: usize) -> *mut c_void;
         pub unsafe fn realloc(ptr: *mut c_void, size: usize) -> *mut c_void;
+        pub unsafe fn exit(status: c_int) -> !;
     }
 }

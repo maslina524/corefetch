@@ -40,6 +40,7 @@ mod huffman;
 mod zlib;
 mod deflate;
 mod lua;
+mod url;
 
 mod modules;
 mod logo;
@@ -77,9 +78,9 @@ use crate::{
     imp::allocator::Allocator,
     windows::env,
     windows::fs::{self, ReadError},
-    windows::https::{Request, Url},
-    windows::link::ExitProcess, 
+    windows::https::Request, 
     config::{Config, ConfigModule},
+    url::Url,
     formats::split_by_len_ansi,
     nvidia::NvidiaLib
 };
@@ -93,10 +94,7 @@ const MIN_OFFSET: usize = 24;
 mod panic_impl {
     use core::panic::PanicInfo;
 
-    use crate::{
-        exit,
-        eprintln
-    };
+    use crate::exit;
 
     #[panic_handler]
     fn panic(info: &PanicInfo) -> ! {
@@ -182,7 +180,13 @@ fn build_info_buf(max_len: usize) -> Vec<String> {
 
 pub fn exit(code: u32) -> ! {
     // SAFETY: The function is used in the binary, everything is safe
-    unsafe { ExitProcess(code) }
+    cfg_if! {
+        if #[cfg(target_os = "linux")] {
+            unsafe { crate::linux::link::libc::exit(code as ) }
+        } else if #[cfg(target_os = "windows")] {
+            unsafe { crate::windows::link::ExitProcess(code) }
+        }
+    }
 }
 
 fn get_config(args: &mut Iter<'_, String>) -> Config {
