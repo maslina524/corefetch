@@ -42,6 +42,7 @@ mod deflate;
 mod lua;
 
 mod windows;
+mod linux;
 mod modules;
 mod logo;
 mod detect;
@@ -277,7 +278,7 @@ fn print_version(method: Option<&str>) -> ! {
     exit(0)
 }
 
-#[cfg(not(test))]
+// #[cfg(not(test))]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
     let args = env::args();

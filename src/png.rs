@@ -184,7 +184,7 @@ where
     }
 }
 
-fn u32_from_bytes(bytes: &[u8]) -> u32 {
+const fn u32_from_bytes(bytes: &[u8]) -> u32 {
     u32::from_be_bytes([bytes[0], bytes[1], bytes[2], bytes[3]])
 }
 
