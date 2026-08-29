@@ -158,7 +158,7 @@ impl CpuInfo {
         logical
     }
 
-    fn package_count(buf: &[LogicalInfo]) -> usize {
+    const fn package_count(buf: &[LogicalInfo]) -> usize {
         let mut package = 0;
         let mut idx = 0;
         while idx < buf.len() {
