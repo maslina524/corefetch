@@ -46,8 +46,17 @@ mod logo;
 mod detect;
 mod json;
 
-mod windows;
-mod linux;
+cfg_if! {
+    if #[cfg(target_os = "windows")] {
+        mod windows;
+        use windows as imp;
+    } else if #[cfg(target_os = "linux")] {
+        mod linux;
+        use linux as imp;
+    } else {
+        compile_error!("Unsupported OS");
+    }
+}
 
 extern crate alloc;
 
@@ -65,7 +74,7 @@ use crate::{
     json::Json,
     logo::LogoInfo, 
     modules::{FormatValue, Module, Os, Version, Commit}, 
-    windows::allocator::Allocator,
+    imp::allocator::Allocator,
     windows::env,
     windows::fs::{self, ReadError},
     windows::https::{Request, Url},
