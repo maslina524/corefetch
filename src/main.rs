@@ -41,12 +41,13 @@ mod zlib;
 mod deflate;
 mod lua;
 
-mod windows;
-mod linux;
 mod modules;
 mod logo;
 mod detect;
 mod json;
+
+mod windows;
+mod linux;
 
 extern crate alloc;
 
