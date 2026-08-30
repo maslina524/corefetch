@@ -1,6 +1,8 @@
-use core::ffi::{c_char, c_int, c_long, c_uint, c_ulong, c_ushort, c_void};
+use core::ffi::{c_char, c_int, c_long, c_uchar, c_uint, c_ulong, c_ushort, c_void};
 
 pub type FILE = *mut c_void;
+pub type DIR = *mut c_void;
+
 #[allow(non_camel_case_types, reason = "C type")]
 pub type c_size = usize;
 #[allow(non_camel_case_types, reason = "C type")]
@@ -9,6 +11,10 @@ pub type c_mode = c_uint;
 pub type c_time = c_long; // i64
 #[allow(non_camel_case_types, reason = "C type")]
 pub type c_clockid = c_int; // WORK ONLY IN LINUX
+#[allow(non_camel_case_types, reason = "C type")]
+pub type c_ino = usize;
+#[allow(non_camel_case_types, reason = "C type")]
+pub type c_off = isize;
 
 unsafe extern "C" {
     pub safe fn write(fd: c_int, buf: *const c_char, len: c_size);
@@ -31,6 +37,8 @@ unsafe extern "C" {
     pub safe fn mkdir(pathname: *const c_char, mode: c_mode) -> c_int;
     pub safe fn clock_gettime(clockid: c_clockid, tp: *mut Timespec) -> c_int;
     pub safe fn sysinfo(info: *mut Sysinfo) -> c_int;
+    pub safe fn opendir(path: *const c_char) -> DIR;
+    pub safe fn readdir(dirp: *mut DIR) -> *mut Dirent;
 }
 
 #[repr(C)]
@@ -56,6 +64,27 @@ pub struct Sysinfo {
     pub freehigh: c_ulong,
     pub mem_unit: c_uint,
     _f: [c_char; 20 - 2 * size_of::<c_long>() - size_of::<c_int>()],
+}
+
+#[repr(C)]
+pub struct Dirent {
+    pub d_ino: c_ino,
+    pub d_off: c_off,
+    pub d_reclen: c_ushort,
+    pub d_type: c_uchar,
+    pub d_name: [c_char; 256],
+}
+
+impl Default for Dirent {
+    fn default() -> Self {
+        Self { 
+            d_ino: Default::default(), 
+            d_off: Default::default(), 
+            d_reclen: Default::default(), 
+            d_type: Default::default(), 
+            d_name: [0; 256]
+        }
+    }
 }
 
 pub fn errno() -> i32 {
