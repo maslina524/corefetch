@@ -1,6 +1,6 @@
 use core::ffi::c_int;
 
-use crate::linux::link::libc;
+use crate::linux::libc;
 
 pub const fn stdout() -> isize {
     1

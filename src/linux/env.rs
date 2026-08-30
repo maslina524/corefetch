@@ -5,6 +5,20 @@ use alloc::{
     vec::Vec
 };
 
+// pub struct OsVersion {
+//     pub sysname: &'static str,
+//     pub name: &'static str,
+//     pub version: &'static str,
+//     pub codename: &'static str,
+//     pub variant: String
+// }
+
+// pub fn os_version() -> OsVersion {
+//     let sysname = "Linux";
+
+//     OsVersion { sysname, name, version, codename, variant }
+// }
+
 #[allow(clippy::similar_names, reason = "that's what they're called in C, i don't give a fuck about clippy")]
 pub fn args(argc: usize, argv: *const *const u8) -> Vec<String> {
     let mut ret = Vec::new();
