@@ -1,6 +1,6 @@
 use core::alloc::{GlobalAlloc, Layout};
 
-use crate::imp::link::libc::{malloc, calloc, free, realloc};
+use crate::imp::libc::{malloc, calloc, free, realloc};
 
 pub struct Allocator;
 
