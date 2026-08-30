@@ -62,6 +62,8 @@ impl core::fmt::Display for ReadError {
     }
 }
 
+impl core::error::Error for ReadError {}
+
 pub struct File(FileHandle);
 
 impl File {
