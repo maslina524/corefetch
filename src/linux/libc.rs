@@ -1,4 +1,4 @@
-use core::ffi::{c_char, c_int, c_long, c_uint, c_void};
+use core::ffi::{c_char, c_int, c_long, c_uint, c_ulong, c_ushort, c_void};
 
 pub type FILE = *mut c_void;
 #[allow(non_camel_case_types, reason = "C type")]
@@ -30,6 +30,7 @@ unsafe extern "C" {
     pub safe fn rewind(stream: FILE);
     pub safe fn mkdir(pathname: *const c_char, mode: c_mode) -> c_int;
     pub safe fn clock_gettime(clockid: c_clockid, tp: *mut Timespec) -> c_int;
+    pub safe fn sysinfo(info: *mut Sysinfo) -> c_int;
 }
 
 #[repr(C)]
@@ -37,6 +38,24 @@ unsafe extern "C" {
 pub struct Timespec {
     pub tv_sec: c_time,
     pub tv_nsec: c_long,
+}
+
+#[repr(C)]
+#[derive(Default)]
+pub struct Sysinfo {
+    pub uptime: c_long,
+    pub loads: [c_ulong; 3],
+    pub totalram: c_ulong,
+    pub freeram: c_ulong,
+    pub sharedram: c_ulong,
+    pub bufferram: c_ulong,
+    pub totalswap: c_ulong,
+    pub freeswap: c_ulong,
+    pub procs: c_ushort,
+    pub totalhigh: c_ulong,
+    pub freehigh: c_ulong,
+    pub mem_unit: c_uint,
+    _f: [c_char; 20 - 2 * size_of::<c_long>() - size_of::<c_int>()],
 }
 
 pub fn errno() -> i32 {
