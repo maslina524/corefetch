@@ -17,6 +17,7 @@ unsafe extern "C" {
     pub safe fn fclose(stream: FILE) -> c_int;
     pub safe fn errno_location() -> *mut c_int;
     pub safe fn strerror(errnum: c_int) -> *mut c_char;
+    pub safe fn fwrite(ptr: *const c_void, size: c_size, nmemb: c_size, stream: FILE) -> c_size;
 }
 
 pub fn errno() -> i32 {

@@ -182,7 +182,7 @@ pub fn exit(code: u32) -> ! {
     // SAFETY: The function is used in the binary, everything is safe
     cfg_if! {
         if #[cfg(target_os = "linux")] {
-            unsafe { crate::linux::link::libc::exit(code as ) }
+            unsafe { crate::linux::libc::exit(code as i32) }
         } else if #[cfg(target_os = "windows")] {
             unsafe { crate::windows::link::ExitProcess(code) }
         }
