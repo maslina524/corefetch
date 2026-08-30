@@ -1,11 +1,16 @@
-use core::slice;
+use core::{ffi::CStr, slice};
 
 use alloc::{
     string::{String, ToString}, 
     vec::Vec
 };
 
-use crate::linux::libc::{Timespec, clock_gettime, Sysinfo, sysinfo};
+use crate::{
+    linux::libc::{Timespec, clock_gettime, Sysinfo, sysinfo, getenv},
+    linux::fs,
+    format,
+    warning
+};
 
 #[allow(clippy::similar_names, reason = "that's what they're called in C, i don't give a fuck about clippy")]
 pub fn args(argc: usize, argv: *const *const u8) -> Vec<String> {
@@ -47,4 +52,55 @@ pub fn processes_count() -> usize {
     let mut info = Sysinfo::default();
     sysinfo(&raw mut info);
     info.procs as usize
+}
+
+pub fn find_pid_by_name(name: &str) -> u32 {
+    for entry in fs::read_dir("/proc").unwrap() {
+        let entry_name = entry.name();
+        let pid = if let Ok(n) = entry_name.parse::<u32>() {
+            n
+        } else {
+            continue;
+        };
+
+        let path = format!("/proc/{pid}/stat");
+        let content = fs::read_to_string(path).unwrap();
+
+        let lparen_index = content.find('(').unwrap_or(0);
+        let rparen_index = content.find(')').unwrap_or(0);
+
+        let process_name = &content[lparen_index + 1..rparen_index];
+        if process_name == name {
+            return pid;
+        }
+    }
+    return 0;
+}
+
+pub fn terminal_size() -> (usize, usize) {
+    fn parse_env_var(name: &[u8]) -> Option<usize> {
+        let name_cstr = CStr::from_bytes_with_nul(name).ok()?;
+        let ptr = getenv(name_cstr.as_ptr());
+        if ptr.is_null() {
+            return None;
+        }
+        let cstr = unsafe { CStr::from_ptr(ptr) };
+        let bytes = cstr.to_bytes();
+        if bytes.is_empty() {
+            return None;
+        }
+        let mut value = 0usize;
+        for &b in bytes {
+            if b < b'0' || b > b'9' {
+                warning!("Failed to get {} (terminal_size)", str::from_utf8(name).unwrap());
+                return None;
+            }
+            value = value * 10 + (b - b'0') as usize;
+        }
+        Some(value)
+    }
+
+    let lines = parse_env_var(b"LINES\0").unwrap_or(0);
+    let cols = parse_env_var(b"COLUMNS\0").unwrap_or(0);
+    (lines, cols)
 }
