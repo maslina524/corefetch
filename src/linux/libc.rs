@@ -1,8 +1,10 @@
-use core::ffi::{c_void, c_char, c_int};
+use core::ffi::{c_char, c_int, c_long, c_uint, c_void};
 
 pub type FILE = *mut c_void;
 #[allow(non_camel_case_types, reason = "C type")]
 pub type c_size = usize;
+#[allow(non_camel_case_types, reason = "C type")]
+pub type c_mode = c_uint;
 
 unsafe extern "C" {
     pub safe fn write(fd: c_int, buf: *const c_char, len: c_size);
@@ -18,6 +20,11 @@ unsafe extern "C" {
     pub safe fn errno_location() -> *mut c_int;
     pub safe fn strerror(errnum: c_int) -> *mut c_char;
     pub safe fn fwrite(ptr: *const c_void, size: c_size, nmemb: c_size, stream: FILE) -> c_size;
+    pub safe fn fread(ptr: *mut c_void, size: c_size, nmemb: c_size, stream: FILE) -> c_size;
+    pub safe fn fseek(stream: FILE, offset: c_long, whence: c_int) -> c_int;
+    pub safe fn ftell(stream: FILE) -> c_long;
+    pub safe fn rewind(stream: FILE);
+    pub safe fn mkdir(pathname: *const c_char, mode: c_mode) -> c_int;
 }
 
 pub fn errno() -> i32 {
