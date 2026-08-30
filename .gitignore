@@ -10,4 +10,4 @@ sum.ps1
 flamegraph.svg
 
 # WIP
-# src/detect/uptime.rs
+src/detect/os.rs

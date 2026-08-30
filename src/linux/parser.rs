@@ -46,4 +46,8 @@ impl LinuxInfo {
 
         Self { inner: ret }
     }
+
+    pub const fn as_inner(&self) -> &BTreeMap<String, String> {
+        &self.inner
+    }
 }

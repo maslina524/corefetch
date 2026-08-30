@@ -5,6 +5,10 @@ pub type FILE = *mut c_void;
 pub type c_size = usize;
 #[allow(non_camel_case_types, reason = "C type")]
 pub type c_mode = c_uint;
+#[allow(non_camel_case_types, reason = "C type")]
+pub type c_time = c_long; // i64
+#[allow(non_camel_case_types, reason = "C type")]
+pub type c_clockid = c_int; // WORK ONLY IN LINUX
 
 unsafe extern "C" {
     pub safe fn write(fd: c_int, buf: *const c_char, len: c_size);
@@ -25,6 +29,14 @@ unsafe extern "C" {
     pub safe fn ftell(stream: FILE) -> c_long;
     pub safe fn rewind(stream: FILE);
     pub safe fn mkdir(pathname: *const c_char, mode: c_mode) -> c_int;
+    pub safe fn clock_gettime(clockid: c_clockid, tp: *mut Timespec) -> c_int;
+}
+
+#[repr(C)]
+#[derive(Default)]
+pub struct Timespec {
+    pub tv_sec: c_time,
+    pub tv_nsec: c_long,
 }
 
 pub fn errno() -> i32 {

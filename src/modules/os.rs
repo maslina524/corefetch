@@ -5,7 +5,7 @@ use crate::{
     format_for_module,
     impl_display_for_module,
     modules::Module,
-    windows::env, 
+    imp::env::OsVersion, 
     sync::OnceLock
 };
 
@@ -30,7 +30,7 @@ pub struct Os<'a> {
 
 impl Module for Os<'_> {
     fn new() -> Self {
-        let ver = env::os_version();
+        let ver = OsVersion::new();
         let id = format!("{} {}", ver.name, ver.version);
         let pretty_name = format!("{id} {} ({})", ver.variant, ver.codename);
         let nerd_emoji = match (ver.name, ver.version) {

@@ -1,23 +1,11 @@
 use core::slice;
 
 use alloc::{
-    string::{String, ToString},
+    string::{String, ToString}, 
     vec::Vec
 };
 
-// pub struct OsVersion {
-//     pub sysname: &'static str,
-//     pub name: &'static str,
-//     pub version: &'static str,
-//     pub codename: &'static str,
-//     pub variant: String
-// }
-
-// pub fn os_version() -> OsVersion {
-//     let sysname = "Linux";
-
-//     OsVersion { sysname, name, version, codename, variant }
-// }
+use crate::linux::libc::{Timespec, clock_gettime};
 
 #[allow(clippy::similar_names, reason = "that's what they're called in C, i don't give a fuck about clippy")]
 pub fn args(argc: usize, argv: *const *const u8) -> Vec<String> {
@@ -39,4 +27,18 @@ pub fn args(argc: usize, argv: *const *const u8) -> Vec<String> {
     }
 
     ret
+}
+
+pub fn timestamp_mils() -> u64 {
+    let mut ts = Timespec::default();
+    clock_gettime(0, &raw mut ts);
+    ts.tv_sec as u64 * 1000 + ts.tv_nsec as u64 / 1_000_000
+}
+
+pub fn timestamp_secs() -> u64 {
+    timestamp_mils() / 1_000
+}
+
+pub fn timestamp_hours() -> u64 {
+    timestamp_secs() / 3600
 }
