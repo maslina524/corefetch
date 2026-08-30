@@ -5,7 +5,7 @@ use alloc::{
     vec::Vec
 };
 
-use crate::linux::libc::{Timespec, clock_gettime};
+use crate::linux::libc::{Timespec, clock_gettime, Sysinfo, sysinfo};
 
 #[allow(clippy::similar_names, reason = "that's what they're called in C, i don't give a fuck about clippy")]
 pub fn args(argc: usize, argv: *const *const u8) -> Vec<String> {
@@ -41,4 +41,10 @@ pub fn timestamp_secs() -> u64 {
 
 pub fn timestamp_hours() -> u64 {
     timestamp_secs() / 3600
+}
+
+pub fn processes_count() -> usize {
+    let mut info = Sysinfo::default();
+    sysinfo(&raw mut info);
+    info.procs as usize
 }
