@@ -20,9 +20,9 @@ pub struct Os<'a> {
     pub id_like: &'static str,
     pub variant: String,
     pub variant_id: String,
-    pub version: String,
+    pub version: &'static str,
     pub version_id: String,
-    pub codename: String,
+    pub codename: &'static str,
     pub build_id: String,
     pub arch: &'a str,
     pub nerd_emoji: char
@@ -33,7 +33,7 @@ impl Module for Os<'_> {
         let ver = env::os_version();
         let id = format!("{} {}", ver.name, ver.version);
         let pretty_name = format!("{id} {} ({})", ver.variant, ver.codename);
-        let nerd_emoji = match (ver.name, ver.version.as_str()) {
+        let nerd_emoji = match (ver.name, ver.version) {
             ("Windows", "11") => '\u{e62a}',
             ("Windows", _)    => '\u{e70f}',
             _ => ' '

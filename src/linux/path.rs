@@ -1,11 +1,9 @@
-use core::{
-    ffi::{CStr, c_char}, slice, str::FromStr
-};
+use core::ffi::CStr;
 
 use alloc::{
     borrow::ToOwned, 
     ffi::CString, 
-    string::{String, ToString}, 
+    string::String, 
     vec::Vec
 };
 

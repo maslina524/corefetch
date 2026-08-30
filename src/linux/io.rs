@@ -11,8 +11,7 @@ pub const fn stderr() -> isize {
 }
 
 pub fn write(handle: isize, s: &str) {
-    // SAFETY: Completley safe
-    unsafe { libc::write(handle as c_int, s.as_ptr().cast(), s.len()) };
+    libc::write(handle as c_int, s.as_ptr().cast(), s.len());
 }
 
 #[macro_export]
