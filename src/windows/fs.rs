@@ -25,7 +25,7 @@ const CREATE_NEW           : u32         = 0x0001;
 const CREATE_ALWAYS        : u32         = 0x0002;
 const OPEN_EXISTING        : u32         = 0x0003;
 
-pub type FileHandle = HANDLE;
+type FileHandle = HANDLE;
 
 #[repr(u32)]
 pub enum Access {

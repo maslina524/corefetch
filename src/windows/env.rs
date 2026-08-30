@@ -36,8 +36,8 @@ static CURRENT_VERSION     : OnceLock<Regedit> = OnceLock::new();
 pub struct OsVersion {
     pub sysname: &'static str,
     pub name: &'static str,
-    pub version: String,
-    pub codename: String,
+    pub version: &'static str,
+    pub codename: &'static str,
     pub variant: String
 }
 
@@ -97,7 +97,7 @@ pub fn os_version() -> OsVersion {
         _ if (10240..22000).contains(&build) => "10",
         _ if (22000..=28000).contains(&build) => "11",
         _ => "Unknown"
-    }.to_owned();
+    };
 
     let codename = match build {
         950 => "4.00",
@@ -130,7 +130,7 @@ pub fn os_version() -> OsVersion {
         26200 => "25H2",
         28000 => "26H1",
         _ => ""
-    }.to_owned();
+    };
 
     let value = current_version().read("ProductName").unwrap_or(RegValue::None);
 
