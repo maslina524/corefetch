@@ -7,12 +7,17 @@ use alloc::{
 };
 
 use crate::{
-    linux::libc::{FILE, fopen, fread, fclose, fwrite, fseek, ftell, rewind, mkdir},
+    linux::libc::{
+        FILE, fopen, fread, fclose, fwrite, fseek, ftell, rewind, mkdir, DIR, opendir, readdir
+    },
     linux::error::{self, ErrorCode},
     linux::path::Path
 };
 
-const SEEK_END: c_int = 2;
+const SEEK_END  : c_int = 2;
+const DT_REG    : u8    = 8;
+const DT_DIR    : u8    = 4;
+const DT_LNK    : u8    = 10;
 
 #[repr(u32)]
 pub enum Access {
@@ -132,6 +137,80 @@ impl Drop for File {
     fn drop(&mut self) {
         fclose(self.0);
     }
+}
+
+#[derive(Clone)]
+pub enum ItemType {
+    File, Dir, Link, Unknown
+}
+
+impl From<u8> for ItemType {
+    fn from(value: u8) -> Self {
+        match value {
+            DT_REG => ItemType::File,
+            DT_DIR => ItemType::Dir,
+            DT_LNK => ItemType::Link,
+            _ => ItemType::Unknown,
+        }
+    }
+}
+
+#[derive(Clone)]
+pub struct Item {
+    typ: ItemType,
+    name: String
+}
+
+impl Item {
+    pub fn typ(&self) -> ItemType {
+        self.typ.clone()
+    }
+
+    pub fn name(&self) -> &String {
+        &self.name
+    }
+}
+
+pub struct ReadDirIter {
+    dir: DIR
+}
+
+impl Iterator for ReadDirIter {
+    type Item = Item;
+    fn next(&mut self) -> Option<Self::Item> {
+        loop {
+            let raw_item = readdir(&raw mut self.dir);
+            if raw_item.is_null() {
+                return None
+            }
+
+            // SAFETY: We check if the pointer is null, safe
+            let item = unsafe { raw_item.read() };
+
+            // SAFETY: Libc is guaranteed to return a valid string
+            let c_str_name = unsafe { CStr::from_ptr(item.d_name.as_ptr()) };
+            if c_str_name == c"." || c_str_name == c".." {
+                continue;
+            }
+
+            let name = c_str_name.to_string_lossy().into_owned();
+            let typ = ItemType::from(item.d_type);
+
+            return Some(Item { name, typ });
+        }
+    }
+}
+
+pub fn read_dir(path: impl Into<Path>) -> error::Result<ReadDirIter> {
+    let path = path.into();
+    let c_path = path.as_c_str();
+
+    let dir = opendir(c_path.as_ptr());
+    if dir.is_null() {
+        return Err(ErrorCode::last());
+    }
+
+    Ok(ReadDirIter { dir })
 }
 
 pub fn read(path: impl Into<Path>) -> error::Result<Vec<u8>> {
