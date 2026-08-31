@@ -5,8 +5,8 @@ use alloc::{
 
 use crate::{
     detect::os::OsInfo,
-    windows::env,
-    windows::regedit::RegValue,
+    imp::env,
+    imp::regedit::RegValue,
     format
 };
 

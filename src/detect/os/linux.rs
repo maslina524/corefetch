@@ -4,8 +4,8 @@ use alloc::{
 };
 
 use crate::{
-    linux::parser::LinuxInfo,
-    linux::fs,
+    imp::parser::LinuxInfo,
+    imp::fs,
     detect::os::OsInfo
 };
 
