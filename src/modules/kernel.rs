@@ -1,10 +1,10 @@
-use alloc::string::{String, ToString};
+use alloc::string::String;
 
 use crate::{
     format,
     impl_display_for_module,
     format_for_module,
-    detect::kernel,
+    detect::kernel::KernelInfo,
     modules::Module, 
     sync::OnceLock
 };
@@ -23,18 +23,15 @@ pub struct Kernel {
 
 impl Module for Kernel {
     fn new() -> Self {
-        let sysname = kernel::sysname();
-        let release = kernel::release();
-        let page_size = kernel::page_size();
-        let display_version = format!("{sysname} {release}");
+        let info = KernelInfo::new();
 
         Self {
-            sysname,
-            release,
-            version: kernel::version(),
+            sysname: info.sysname,
+            release: info.release,
+            version: info.version,
             arch: env!("TARGET_ARCH"),
-            display_version,
-            page_size: page_size.to_string()
+            display_version: info.display_version,
+            page_size: format!("{}", info.page_size)
         }
     }
 
