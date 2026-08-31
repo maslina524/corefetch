@@ -6,7 +6,7 @@ use alloc::{
 };
 
 use crate::{
-    linux::libc::{Timespec, clock_gettime, Sysinfo, get_sysinfo, getenv},
+    linux::libc::{Timespec, clock_gettime, get_sysinfo, getenv},
     linux::fs,
     ARGS,
     format,
