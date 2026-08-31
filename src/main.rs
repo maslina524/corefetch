@@ -314,7 +314,7 @@ cfg_if! {
 }
 
 fn corefetch_main() -> i32 {
-    let mut args = env::args_owned();
+    let args = env::args();
     
     // Commands
     if let Some(pos) = args.iter().position(|a| a == "--help" || a == "-h") {
@@ -383,6 +383,7 @@ fn corefetch_main() -> i32 {
 
     // The handle is created not with GetStdHandle,
     // but with `CreateFile`, which requires manual freeing
+    #[cfg(target_os = "windows")]
     let _ = env::close_terminal_handle();
     NvidiaLib::drop_nvidia();
 

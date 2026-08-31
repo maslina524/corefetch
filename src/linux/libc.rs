@@ -49,6 +49,10 @@ unsafe extern "C" {
     pub safe fn readlink(pathname: *const c_char, buf: *mut c_char, bufsiz: c_size) -> c_ssize;
     pub safe fn getpid() -> c_pid;
     pub safe fn getcwd(buf: *mut c_char, size: c_size) -> *mut c_char;
+    pub safe fn dlopen(filename: *const c_char, flags: c_int) -> *mut c_void;
+    pub safe fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void;
+    pub safe fn dlclose(handle: *mut c_void) -> c_int;
+    pub safe fn dlerror() -> *mut c_char;
 }
 
 #[repr(C)]

@@ -3,12 +3,26 @@ use core::ffi::{c_void, c_uint, c_char};
 use crate::{
     abort, 
     sync::OnceLock, 
-    warning, 
+    warning,
     get_fn,
-    windows::link::{FreeLibrary, HMODULE, LoadLibraryA}
+    cfg_if
 };
 
-pub type WinapiFn = unsafe extern "system" fn() -> isize;
+cfg_if! {
+    if #[cfg(target_os = "windows")] {
+        use crate::windows::link::{FreeLibrary, HMODULE, LoadLibraryA, HMODULE};
+
+        type ApiBaseFn = unsafe extern "system" fn() -> isize;
+        type LibHandle = HMODULE;
+    } else if #[cfg(target_os = "linux")] {
+        use crate::linux::libc::{dlopen, dlclose};
+
+        type ApiBaseFn = *mut c_void;
+        type LibHandle = *mut c_void;
+    }
+}
+
+
 
 #[allow(non_camel_case_types)]
 pub type nvmlReturn = i32;
@@ -37,7 +51,7 @@ static NVIDIA: OnceLock<NvidiaLib> = OnceLock::new();
 const NVML_CLOCK_SM: u32 = 1;
 
 pub struct NvidiaLib {
-    handle: HMODULE,
+    handle: LibHandle,
     device: nvmlDevice,
     init: nvmlInit,
     shutdown: nvmlShutdown,
@@ -142,22 +156,43 @@ impl NvidiaLib {
     }
 }
 
-fn load() -> HMODULE {
-    // SAFETY: An ASCII string is always passed, everything is safe
-    let lib = unsafe {
-        LoadLibraryA(c"nvml.dll".as_ptr().cast())
-    };
-    if lib.is_null() {
-        abort!("Failed to load nvml.dll");
-    }
-    lib
-}
+cfg_if! {
+    if #[cfg(target_os = "windows")] {
+        fn load() -> HMODULE {
+            // SAFETY: An ASCII string is always passed, everything is safe
+            let lib = unsafe {
+                LoadLibraryA(c"nvml.dll".as_ptr().cast())
+            };
+            if lib.is_null() {
+                abort!("Failed to load nvml.dll");
+            }
+            lib
+        }
 
-fn unload(lib: HMODULE) {
-    // SAFETY: Completely safe
-    unsafe {
-        FreeLibrary(lib)
-    };
+        fn unload(lib: HMODULE) {
+            // SAFETY: Completely safe
+            unsafe {
+                FreeLibrary(lib)
+            };
+        }
+    } else if #[cfg(target_os = "linux")] {
+        fn load() -> LibHandle {
+            let lib_names = [c"libnvidia-ml.so.1", c"libnvidia-ml.so"];
+
+            for name in &lib_names {
+                // SAFETY: An ASCII string is always passed, everything is safe
+                let lib = dlopen(name.as_ptr().cast(), 0);
+                if !lib.is_null() {
+                    return lib;
+                }
+            }
+            abort!("Failed to load nvml library")
+        }
+
+        fn unload(lib: LibHandle) {
+            dlclose(lib);
+        }
+    }
 }
 
 #[cfg(test)]
