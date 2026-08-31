@@ -53,6 +53,7 @@ unsafe extern "C" {
     pub safe fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void;
     pub safe fn dlclose(handle: *mut c_void) -> c_int;
     pub safe fn dlerror() -> *mut c_char;
+    pub safe fn sysconf(name: c_int) -> c_long;
 }
 
 #[repr(C)]
