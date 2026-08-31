@@ -5,7 +5,7 @@ use crate::{
     format_for_module, 
     modules::Module, 
     sync::OnceLock,
-    detect::locale
+    detect::locale::LocaleInfo
 };
 
 static LOCALE: OnceLock<Locale> = OnceLock::new();
@@ -18,7 +18,7 @@ pub struct Locale {
 impl Module for Locale {
     fn new() -> Self {
         Self {
-            result: locale::locale()
+            result: LocaleInfo::new().locale
         }
     }
 
