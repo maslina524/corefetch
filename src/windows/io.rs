@@ -56,57 +56,6 @@ pub fn write(handle: isize, s: &str) {
     if ret == 0 || written != len { ErrorCode::last().panic(); }
 }
 
-#[macro_export]
-macro_rules! print {
-    () => {{}};
-    ($($tt:tt)*) => {{
-        let handle = $crate::windows::io::stdout();
-        let s = $crate::format!($($tt)*);
-        $crate::windows::io::write(handle, s.as_str());
-    }}
-}
-
-#[macro_export]
-macro_rules! println {
-    () => {{
-        let handle = $crate::windows::io::stdout();
-        $crate::windows::io::write(handle, "\n");
-    }};
-    ($($tt:tt)*) => {{
-        let handle = $crate::windows::io::stdout();
-        let s = $crate::formatln!($($tt)*);
-        $crate::windows::io::write(handle, s.as_str());
-    }}
-}
-
-#[macro_export]
-macro_rules! eprint {
-    () => {{}};
-    ($expr:expr) => {{
-        let handle = $crate::windows::io::stderr();
-        let s = $crate::format!("{}", $expr);
-        $crate::windows::io::write(handle, s.as_str());
-    }};
-    ($($tt:tt)*) => {{
-        let handle = $crate::windows::io::stderr();
-        let s = $crate::format!($($tt)*);
-        $crate::windows::io::write(handle, s.as_str());
-    }}
-}
-
-#[macro_export]
-macro_rules! eprintln {
-    () => {{
-        let handle = $crate::windows::io::stderr();
-        $crate::windows::io::write(handle, "\n");
-    }};
-    ($($tt:tt)*) => {{
-        let handle = $crate::windows::io::stderr();
-        let s = $crate::formatln!($($tt)*);
-        $crate::windows::io::write(handle, s.as_str());
-    }}
-}
-
 #[cfg(test)]
 mod tests {
     use crate::{

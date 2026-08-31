@@ -1,7 +1,4 @@
-use alloc::{
-    string::String,
-    borrow::ToOwned
-};
+use alloc::string::String;
 
 use crate::{
     detect::title::TitleInfo,

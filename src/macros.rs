@@ -1,5 +1,3 @@
-use crate::cfg_if;
-
 #[macro_export]
 macro_rules! todo_or_default {
     ($msg:literal, $default:expr) => {{
@@ -137,6 +135,117 @@ macro_rules! cfg_if {
     (@__temp_group $( $tokens:tt )* ) => {
         $( $tokens )*
     };
+}
+
+// ------------- PRINTS -------------
+#[cfg(target_os = "windows")]
+#[macro_export]
+macro_rules! print {
+    () => {{}};
+    ($($tt:tt)*) => {{
+        let handle = $crate::windows::io::stdout();
+        let s = $crate::format!($($tt)*);
+        $crate::windows::io::write(handle, s.as_str());
+    }}
+}
+
+#[cfg(target_os = "linux")]
+#[macro_export]
+macro_rules! print {
+    () => {{}};
+    ($($tt:tt)*) => {{
+        let handle = $crate::linux::io::stdout();
+        let s = $crate::format!($($tt)*);
+        $crate::linux::io::write(handle, s.as_str());
+    }}
+}
+
+#[cfg(target_os = "windows")]
+#[macro_export]
+macro_rules! println {
+    () => {{
+        let handle = $crate::windows::io::stdout();
+        $crate::windows::io::write(handle, "\n");
+    }};
+    ($($tt:tt)*) => {{
+        let handle = $crate::windows::io::stdout();
+        let s = $crate::formatln!($($tt)*);
+        $crate::windows::io::write(handle, s.as_str());
+    }}
+}
+
+#[cfg(target_os = "linux")]
+#[macro_export]
+macro_rules! println {
+    () => {{
+        let handle = $crate::linux::io::stdout();
+        $crate::linux::io::write(handle, "\n");
+    }};
+    ($($tt:tt)*) => {{
+        let handle = $crate::linux::io::stdout();
+        let s = $crate::formatln!($($tt)*);
+        $crate::linux::io::write(handle, s.as_str());
+    }}
+}
+
+#[cfg(target_os = "windows")]
+#[macro_export]
+macro_rules! eprint {
+    () => {{}};
+    ($expr:expr) => {{
+        let handle = $crate::windows::io::stderr();
+        let s = $crate::format!("{}", $expr);
+        $crate::windows::io::write(handle, s.as_str());
+    }};
+    ($($tt:tt)*) => {{
+        let handle = $crate::windows::io::stderr();
+        let s = $crate::format!($($tt)*);
+        $crate::windows::io::write(handle, s.as_str());
+    }}
+}
+
+#[cfg(target_os = "linux")]
+#[macro_export]
+macro_rules! eprint {
+    () => {{}};
+    ($expr:expr) => {{
+        let handle = $crate::linux::io::stderr();
+        let s = $crate::format!("{}", $expr);
+        $crate::linux::io::write(handle, s.as_str());
+    }};
+    ($($tt:tt)*) => {{
+        let handle = $crate::linux::io::stderr();
+        let s = $crate::format!($($tt)*);
+        $crate::linux::io::write(handle, s.as_str());
+    }}
+}
+
+#[cfg(target_os = "windows")]
+#[macro_export]
+macro_rules! eprintln {
+    () => {{
+        let handle = $crate::windows::io::stderr();
+        $crate::windows::io::write(handle, "\n");
+    }};
+    ($($tt:tt)*) => {{
+        let handle = $crate::windows::io::stderr();
+        let s = $crate::formatln!($($tt)*);
+        $crate::windows::io::write(handle, s.as_str());
+    }}
+}
+
+#[cfg(target_os = "linux")]
+#[macro_export]
+macro_rules! eprintln {
+    () => {{
+        let handle = $crate::linux::io::stderr();
+        $crate::linux::io::write(handle, "\n");
+    }};
+    ($($tt:tt)*) => {{
+        let handle = $crate::linux::io::stderr();
+        let s = $crate::formatln!($($tt)*);
+        $crate::linux::io::write(handle, s.as_str());
+    }}
 }
 
 #[cfg(test)]
