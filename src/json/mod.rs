@@ -10,8 +10,8 @@ use alloc::{
 };
 
 use crate::{
-    windows::path::Path,
-    windows::fs,
+    imp::path::Path,
+    imp::fs,
 };
 
 #[derive(Debug)]

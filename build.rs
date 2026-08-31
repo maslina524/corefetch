@@ -208,6 +208,36 @@ fn github_actions() -> bool {
         .is_ok_and(|s| s.trim() == "true")
 }
 
+fn get_libc_version() -> String {
+    let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
+    let c_file = out_dir.join("version.c");
+    let exe = out_dir.join("version");
+
+    fs::write(&c_file, r#"
+        #include <stdio.h>
+
+        int main() {
+            printf("%d.%d\n", __GLIBC__, __GLIBC_MINOR__);
+            return 0;
+        }
+    "#).unwrap();
+
+    let status = Command::new("gcc")
+        .arg(&c_file)
+        .arg("-o")
+        .arg(&exe)
+        .status()
+        .expect("failed to compile C program");
+
+    assert!(status.success(), "Compilation failed");
+    
+    let output = Command::new(&exe)
+        .output()
+        .expect("failed to run program");
+
+    String::from_utf8(output.stdout).unwrap().trim().to_string()
+}
+
 #[tokio::main]
 async fn main() {
     // Bypasses caching, runs every time during compilation
@@ -292,6 +322,15 @@ async fn main() {
         }
     }
 
+    // ENV: LIBC_VERSION
+    #[cfg(target_os = "windows")]
+    let ver = String::new();
+    #[cfg(target_os = "linux")]
+    let ver = get_libc_version();
+    println!("cargo:rustc-env=LIBC_VERSION={ver}");
+
+
+    // COMPRESS LOGOS
     let raw_bytes_len = AtomicUsize::new(0);
     let encoded_bytes_len = AtomicUsize::new(0);
 

@@ -42,7 +42,7 @@ impl Module for Version {
             cmake_built_type: "", 
             compile_time: env!("COMPILE_TIME"), 
             compiler: env!("RUSTC_VERSION"), 
-            libc: "",
+            libc: env!("LIBC_VERSION"),
             package_manager: env!("CARGO_VERSION"),
             release_link: concat!("https://github.com/maslina524/corefetch/releases/tag/v", env!("CARGO_PKG_VERSION"))
         }

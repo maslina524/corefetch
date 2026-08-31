@@ -38,6 +38,10 @@ impl ErrorCode {
     pub fn panic_code(&self) -> ! {
         abort!("LibC: Code {}", self.0)
     }
+
+    pub const fn is_file_not_found(&self) -> bool {
+        self.0 == 0x2
+    }
 }
 
 impl Display for ErrorCode {

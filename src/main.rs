@@ -77,7 +77,7 @@ use crate::{
     modules::{FormatValue, Module, Os, Version, Commit}, 
     imp::allocator::Allocator,
     imp::env,
-    windows::fs::{self, ReadError},
+    imp::fs::{self, ReadError},
     windows::https::Request, 
     config::{Config, ConfigModule},
     url::Url,
@@ -206,7 +206,7 @@ fn get_config(args: &mut Iter<'_, String>) -> Config {
                 let response = Request::from_url(url).get();
                 if response.is_success() {
                     match response.as_text() {
-                        Ok(t) => match Json::from_str(&t) {
+                        Ok(t) => match Json::from_str(t) {
                             Ok(c) => Config::from_json(&c),
                             Err(e) => {
                                 warning!("Failed to parse the json config: {e}");
@@ -299,6 +299,8 @@ static ARGS: OnceLock<Vec<String>> = OnceLock::new();
 // #[cfg(not(test))]
 cfg_if! {
     if #[cfg(target_os = "linux")] {
+        use core::ffi::c_char;
+        
         #[unsafe(no_mangle)]
         #[allow(clippy::similar_names, reason = "that's what they're called in C, i don't give a fuck about clippy")]
         extern "C" fn main(argc: c_int, argv: *const *const c_char) -> c_int {
