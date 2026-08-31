@@ -1,20 +1,23 @@
+#![allow(
+    non_camel_case_types, 
+    reason = "C type"
+)]
+
 use core::ffi::{c_char, c_int, c_long, c_uchar, c_uint, c_ulong, c_ushort, c_void};
 
 pub type FILE = *mut c_void;
 pub type DIR = *mut c_void;
 
-#[allow(non_camel_case_types, reason = "C type")]
 pub type c_size = usize;
-#[allow(non_camel_case_types, reason = "C type")]
+pub type c_ssize = isize;
 pub type c_mode = c_uint;
-#[allow(non_camel_case_types, reason = "C type")]
 pub type c_time = c_long; // i64
-#[allow(non_camel_case_types, reason = "C type")]
 pub type c_clockid = c_int; // WORK ONLY IN LINUX
-#[allow(non_camel_case_types, reason = "C type")]
 pub type c_ino = usize;
-#[allow(non_camel_case_types, reason = "C type")]
 pub type c_off = isize;
+pub type c_uid = u32;
+pub type c_gid = u32;
+pub type c_pid = i32;
 
 unsafe extern "C" {
     pub safe fn write(fd: c_int, buf: *const c_char, len: c_size);
@@ -40,6 +43,24 @@ unsafe extern "C" {
     pub safe fn opendir(path: *const c_char) -> DIR;
     pub safe fn readdir(dirp: *mut DIR) -> *mut Dirent;
     pub safe fn setlocale(category: c_int, locale: *const c_char) -> *mut c_char;
+    pub safe fn getuid() -> c_uid;
+    pub safe fn getpwuid(uid: c_uid) -> *const Passwd;
+    pub safe fn gethostname(name: *mut c_char, len: c_size) -> c_int;
+    pub safe fn readlink(pathname: *const c_char, buf: *mut c_char, bufsiz: c_size) -> c_ssize;
+    pub safe fn getpid() -> c_pid;
+    pub safe fn getcwd(buf: *mut c_char, size: c_size) -> *mut c_char;
+}
+
+#[repr(C)]
+#[derive(Default)]
+pub struct Passwd {
+    pub pw_name: *mut c_char,
+    pub pw_passwd: *mut c_char,
+    pub pw_uid: c_uid,
+    pub pw_gid: c_gid,
+    pub pw_gecos: *mut c_char,
+    pub pw_dir: *mut c_char,
+    pub pw_shell: *mut c_char,
 }
 
 #[repr(C)]

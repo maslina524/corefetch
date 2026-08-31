@@ -26,7 +26,7 @@ impl Path {
     // ONLY FOR LINUX
     fn home() -> Self {
         let raw_name = c"HOME";
-        let ptr = unsafe { getenv(raw_name.as_ptr()) };
+        let ptr = getenv(raw_name.as_ptr());
         if ptr.is_null() {
             abort!("Failed to get HOME");
         }

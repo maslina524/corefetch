@@ -1,4 +1,4 @@
-use core::ffi::{CStr, c_void, c_int};
+use core::ffi::{CStr, c_void, c_int, c_char};
 
 use alloc::{
     string::{FromUtf8Error, String}, 
@@ -8,7 +8,8 @@ use alloc::{
 
 use crate::{
     linux::libc::{
-        FILE, fopen, fread, fclose, fwrite, fseek, ftell, rewind, mkdir, DIR, opendir, readdir
+        FILE, fopen, fread, fclose, fwrite, fseek, ftell, rewind, mkdir, DIR, opendir, readdir, 
+        readlink
     },
     linux::error::{self, ErrorCode},
     linux::path::Path
@@ -247,6 +248,21 @@ pub fn create_dirs(path: impl Into<Path>) -> error::Result<()> {
         create_dir(path)?;
     }
     Ok(())
+}
+
+pub fn read_link(path: impl Into<Path>, len: usize) -> Option<String> {
+    let path = path.into();
+    let c_path = path.as_c_str();
+    let mut buf = vec![c_char::default(); len];
+
+    let len = readlink(c_path.as_ptr(), buf.as_mut_ptr(), len - 1);
+    if len != -1 {
+        buf[len as usize] = 0;
+        let c_str = unsafe { CStr::from_ptr(buf.as_ptr()) };
+        Some(c_str.to_string_lossy().into_owned())
+    } else {
+        None
+    }
 }
 
 #[cfg(test)]
