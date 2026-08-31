@@ -9,3 +9,4 @@ pub mod wallpaper;
 pub mod gpu;
 pub mod uptime;
 pub mod initsystem;
+pub mod os;

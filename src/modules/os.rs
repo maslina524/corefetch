@@ -5,54 +5,48 @@ use crate::{
     format_for_module,
     impl_display_for_module,
     modules::Module,
-    imp::env::OsVersion, 
+    detect::os::OsInfo, 
     sync::OnceLock
 };
 
 static OS: OnceLock<Os> = OnceLock::new();
 
 #[derive(Debug)]
-pub struct Os<'a> {
+pub struct Os {
     pub sysname: &'static str,
-    pub name: &'static str,
+    pub name: String,
     pub pretty_name: String,
     pub id: String,
-    pub id_like: &'static str,
+    pub id_like: String,
     pub variant: String,
     pub variant_id: String,
-    pub version: &'static str,
+    pub version: String,
     pub version_id: String,
-    pub codename: &'static str,
+    pub codename: String,
     pub build_id: String,
-    pub arch: &'a str,
+    pub arch: &'static str,
     pub nerd_emoji: char
 }
 
-impl Module for Os<'_> {
+impl Module for Os {
     fn new() -> Self {
-        let ver = OsVersion::new();
-        let id = format!("{} {}", ver.name, ver.version);
-        let pretty_name = format!("{id} {} ({})", ver.variant, ver.codename);
-        let nerd_emoji = match (ver.name, ver.version) {
-            ("Windows", "11") => '\u{e62a}',
-            ("Windows", _)    => '\u{e70f}',
-            _ => ' '
-        };
+        let info = OsInfo::new();
+        let pretty_name = format!("{} {} ({})", info.id, info.variant, info.codename);
 
         Self { 
-            sysname: ver.sysname, 
-            name: ver.name, 
+            sysname: info.sysname, 
+            name: info.name, 
             pretty_name, 
-            id, 
-            id_like: ver.sysname, 
-            variant: ver.variant, 
-            variant_id: String::new(), 
-            version: ver.version, 
-            version_id: String::new(), 
-            codename: ver.codename, 
+            id: info.id, 
+            id_like: info.id_like, 
+            variant: info.variant, 
+            variant_id: info.variant_id, 
+            version: info.version, 
+            version_id: info.version_id, 
+            codename: info.codename, 
             build_id: String::new(), 
             arch: env!("TARGET_ARCH"),
-            nerd_emoji
+            nerd_emoji: info.nerd
         }
     }
 
@@ -83,4 +77,4 @@ impl Module for Os<'_> {
     );
 }
 
-impl_display_for_module!(Os, '_);
+impl_display_for_module!(Os);
