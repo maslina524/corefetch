@@ -1,5 +1,4 @@
 use core::{
-    arch::x86_64::{__cpuid, __cpuid_count, _xgetbv},
     mem,
     ptr
 };
@@ -18,9 +17,7 @@ use crate::{
         GetActiveProcessorCount, GetLogicalProcessorInformation, GetNumaHighestNodeNumber,
         SYSTEM_LOGICAL_PROCESSOR_INFORMATION
     },
-    imp::regedit::{Regedit, Access, Hkey},
-    todo_or_default,
-    format
+    imp::regedit::{Regedit, Access, Hkey}
 };
 
 type LogicalInfo = SYSTEM_LOGICAL_PROCESSOR_INFORMATION;

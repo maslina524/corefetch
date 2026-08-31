@@ -6,7 +6,6 @@ use core::{
 use alloc::{
     string::String,
     vec::Vec,
-    borrow::ToOwned
 };
 
 use crate::{
@@ -16,8 +15,7 @@ use crate::{
         WinHttpSendRequest, WinHttpReceiveResponse, WinHttpQueryHeaders, WinHttpReadData
     },
     windows::encoding::wide,
-    url::Url,
-    format,
+    url::Url
 };
 
 const WINHTTP_ACCESS_TYPE_DEFAULT_PROXY: u32               = 0;

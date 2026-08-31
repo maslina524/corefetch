@@ -72,6 +72,7 @@ impl<T> OnceLock<T> {
         {   
             let value = f();
 
+            // SAFETY: Completely safe
             unsafe {
                 (*self.value.get()).write(value);
             }

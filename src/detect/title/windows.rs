@@ -134,14 +134,15 @@ impl TitleInfo {
     }
 
     pub fn exe_path() -> Path {
-        Path::from(env::args()[0])
+        let args = env::args();
+        Path::from(args[0].clone())
     }
 
     pub const fn user_shell() -> Path {
         Path::new() // No impl in windows
     }
 
-    pub fn cwd() -> String {
+    pub fn cwd() -> Path {
         let mut buf = [0u16; 1024];
         let size = 1024;
         
@@ -153,10 +154,10 @@ impl TitleInfo {
             )
         };
         if ret == 0 {
-            return String::new();
+            return Path::new();
         }
 
-        let string = String::from_utf16_lossy(&buf).rsplit('\0').collect();
+        let string: String = String::from_utf16_lossy(&buf).rsplit('\0').collect();
         Path::from(string)
     }
 

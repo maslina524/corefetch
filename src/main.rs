@@ -62,7 +62,7 @@ cfg_if! {
 extern crate alloc;
 
 use core::{
-    ffi::{c_int, c_char},
+    ffi::c_int,
     slice::Iter
 };
 
@@ -185,6 +185,7 @@ pub fn exit(code: u32) -> ! {
         if #[cfg(target_os = "linux")] {
             crate::linux::libc::exit(code as i32)
         } else if #[cfg(target_os = "windows")] {
+            // SAFETY: Run in binary, safe
             unsafe { crate::windows::link::ExitProcess(code) }
         }
     }
@@ -307,7 +308,7 @@ cfg_if! {
     } else if #[cfg(target_os = "windows")] {
         #[unsafe(no_mangle)]
         extern "C" fn main() -> c_int {
-            ARGS.set(|| imp::env::args_init());
+            ARGS.set(imp::env::args_init);
             corefetch_main() as c_int
         }
     }
