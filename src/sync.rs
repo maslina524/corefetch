@@ -59,6 +59,31 @@ impl<T> OnceLock<T> {
             None
         }
     }
+
+    pub fn set(&self, f: impl FnOnce() -> T) -> Option<&T> {
+        if self.state.load(Ordering::Acquire) == READY {
+            return None;
+        }
+
+        if self
+            .state
+            .compare_exchange(INCOMPLETE, INITIALIZING, Ordering::AcqRel, Ordering::Acquire)
+            .is_ok()
+        {   
+            let value = f();
+
+            unsafe {
+                (*self.value.get()).write(value);
+            }
+            self.state.store(READY, Ordering::Release);
+            self.get()
+        } else {
+            while self.state.load(Ordering::Acquire) != READY {
+                core::hint::spin_loop();
+            }
+            None
+        }
+    }
 }
 
 // SAFETY: trait is empty

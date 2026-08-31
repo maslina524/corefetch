@@ -76,13 +76,14 @@ use crate::{
     logo::LogoInfo, 
     modules::{FormatValue, Module, Os, Version, Commit}, 
     imp::allocator::Allocator,
-    windows::env,
+    imp::env,
     windows::fs::{self, ReadError},
     windows::https::Request, 
     config::{Config, ConfigModule},
     url::Url,
     formats::split_by_len_ansi,
-    nvidia::NvidiaLib
+    nvidia::NvidiaLib,
+    sync::OnceLock
 };
 
 #[global_allocator]
@@ -292,25 +293,29 @@ fn print_version(method: Option<&str>) -> ! {
     exit(0)
 }
 
+static ARGS: OnceLock<Vec<String>> = OnceLock::new();
+
 // #[cfg(not(test))]
 cfg_if! {
     if #[cfg(target_os = "linux")] {
         #[unsafe(no_mangle)]
         #[allow(clippy::similar_names, reason = "that's what they're called in C, i don't give a fuck about clippy")]
         extern "C" fn main(argc: c_int, argv: *const *const c_char) -> c_int {
-            let args = imp::env::args(argc as usize, argv.cast());
-            corefetch_main(args) as c_int
+            ARGS.set(|| imp::env::args_init(argc as usize, argv.cast()));
+            corefetch_main() as c_int
         }
     } else if #[cfg(target_os = "windows")] {
         #[unsafe(no_mangle)]
         extern "C" fn main() -> c_int {
-            let args = imp::env::args();
-            corefetch_main(args) as c_int
+            ARGS.set(|| imp::env::args_init());
+            corefetch_main() as c_int
         }
     }
 }
 
-fn corefetch_main(args: Vec<String>) -> i32 {
+fn corefetch_main() -> i32 {
+    let mut args = env::args_owned();
+    
     // Commands
     if let Some(pos) = args.iter().position(|a| a == "--help" || a == "-h") {
         print_help(args.get(pos + 1).map(String::as_str))
