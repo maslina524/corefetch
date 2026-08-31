@@ -2,14 +2,9 @@ use core::mem;
 
 use crate::{
     windows::link::{GlobalMemoryStatusEx, MEMORYSTATUSEX},
+    detect::memory::MemoryInfo,
     formats::Size
 };
-
-#[derive(Default)]
-pub struct MemoryInfo {
-    pub total: Size,
-    pub in_use: Size
-}
 
 impl MemoryInfo {
     pub fn new() -> Self {
