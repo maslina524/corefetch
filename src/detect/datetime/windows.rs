@@ -9,49 +9,11 @@ use crate::{
     windows::link::{
         DYNAMIC_TIME_ZONE_INFORMATION, GetDynamicTimeZoneInformation, GetLocalTime,
         GetTimeZoneInformation, SYSTEMTIME, TIME_ZONE_INFORMATION
-    }
+    },
+    detect::datetime::{DatetimeInfo, AmPm}
 };
 
-#[derive(Debug)]
-pub enum AmPm {
-    Am, Pm
-}
-
-impl core::fmt::Display for AmPm {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        let string = match self {
-            Self::Am => "am",
-            Self::Pm => "pm"
-        }.to_owned();
-
-        write!(f, "{string}")
-    }
-}
-
-#[derive(Debug)]
-pub struct Date {
-    pub year: u16,
-    pub month: u16,
-    pub month_name: String,
-    pub month_name_short: String,
-
-    pub hour: u16,
-    pub minute: u16,
-    pub second: u16,
-
-    pub week: u16,
-    pub weekday: String,
-    pub weekday_short: String,
-    pub day_in_year: u16,
-    pub day_in_month: u16,
-    pub day_in_week: u16,
-
-    pub offset_utc: String,
-    pub timezone_name: String, 
-    pub am_pm: AmPm
-}
-
-impl Date {
+impl DatetimeInfo {
     pub fn new() -> Self {
         let mut time = SYSTEMTIME::default();
         // SAFETY: Completely safe
@@ -60,7 +22,7 @@ impl Date {
         let year = time.wYear;
         let month = time.wMonth;
         let month_name = Self::month_name(time.wMonth);
-        let month_name_short = Self::month_name_short(time.wMonth);
+        let month_name_short = month_name[..3].to_owned();
 
         let hour = time.wHour;
         let minute = time.wMinute;
@@ -69,18 +31,14 @@ impl Date {
         let day_in_year = Self::day_in_year(&time);
         let week = day_in_year / 7 + 1;
         let weekday = Self::day_of_week(time.wDayOfWeek);
-        let weekday_short = Self::day_of_week_short(time.wDayOfWeek);
+        let weekday_short = weekday[..3].to_owned();
 
         let day_in_month = time.wDay;
         let day_in_week = time.wDayOfWeek;
 
         let offset_utc = Self::offset_utc_string();
         let timezone_name = Self::time_zone_string();
-        let am_pm = if hour < 12 {
-            AmPm::Am
-        } else {
-            AmPm::Pm
-        };
+        let am_pm = AmPm::from_hour(hour as u8);
 
         Self {
             year, month, month_name, month_name_short,
@@ -108,24 +66,6 @@ impl Date {
         }.to_owned()
     }
 
-    fn month_name_short(num: u16) -> String {
-        match num {
-            1  => "Jan",
-            2  => "Feb",
-            3  => "Mar",
-            4  => "Apr",
-            5  => "May",
-            6  => "Jun",
-            7  => "Jul",
-            8  => "Aug",
-            9  => "Sep",
-            10 => "Oct",
-            11 => "Nov",
-            12 => "Dec",
-            _ => unreachable!()
-        }.to_owned()
-    }
-
     fn day_of_week(num: u16) -> String {
         match num {
             0 => "Sunday",
@@ -135,19 +75,6 @@ impl Date {
             4 => "Thursday",
             5 => "Friday",
             6 => "Saturday",
-            _ => unreachable!()
-        }.to_owned()
-    }
-
-    fn day_of_week_short(num: u16) -> String {
-        match num {
-            0 => "Sun",
-            1 => "Mon",
-            2 => "Tue",
-            3 => "Wed",
-            4 => "Thu",
-            5 => "Fri",
-            6 => "Sat",
             _ => unreachable!()
         }.to_owned()
     }

@@ -27,7 +27,7 @@
 
 The project is created based on and with full compatibility with [fastfetch](https://github.com/fastfetch-cli/fastfetch) for experimentation and improving the original project.
 
-Fully written in pure Rust with the `!#[no_std]` attribute and no third-party dependencies. Created in accordance with [clippy](https://github.com/rust-lang/rust-clippy) lints.
+Fully written in pure Rust with the `#![no_std]` attribute and no third-party dependencies. Created in accordance with [clippy](https://github.com/rust-lang/rust-clippy) lints.
 
 Currently being developed only for Windows, with Linux support planned for the future.
 

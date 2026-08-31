@@ -5,7 +5,7 @@ use crate::{
     impl_display_for_module,
     format,
     modules::Module,
-    detect::datetime,
+    detect::datetime::DatetimeInfo,
     sync::OnceLock
 };
 
@@ -41,7 +41,7 @@ pub struct Datetime {
 
 impl Module for Datetime {
     fn new() -> Self {
-        let time = datetime::Date::new();
+        let time = DatetimeInfo::new();
         Self {
             year: time.year,
             year_short: time.year - (time.year / 100 * 100),

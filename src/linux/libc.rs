@@ -56,6 +56,8 @@ unsafe extern "C" {
     pub safe fn dlclose(handle: *mut c_void) -> c_int;
     pub safe fn dlerror() -> *mut c_char;
     pub safe fn sysconf(name: c_int) -> c_long;
+    pub safe fn localtime(timep: *const c_time) -> *mut Tm;
+    pub safe fn time(tloc: *mut c_time) -> c_time;
 }
 
 static SYSINFO: OnceLock<Sysinfo> = OnceLock::new();
@@ -70,6 +72,22 @@ pub fn get_sysinfo() -> &'static Sysinfo {
 
 pub fn errno() -> i32 {
     (unsafe { *errno_location() }) as i32
+}
+
+#[repr(C)]
+#[derive(Default)]
+pub struct Tm {
+    pub tm_sec: c_int,
+    pub tm_min: c_int,
+    pub tm_hour: c_int,
+    pub tm_mday: c_int,
+    pub tm_mon: c_int,
+    pub tm_year: c_int,
+    pub tm_wday: c_int,
+    pub tm_yday: c_int,
+    pub tm_isdst: c_int,
+    pub tm_gmtoff: c_long,
+    pub tm_zone: *const c_char,
 }
 
 #[repr(C)]
