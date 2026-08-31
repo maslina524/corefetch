@@ -153,7 +153,7 @@ pub fn timestamp_hours() -> u64 {
     timestamp_secs() / 3600
 }
 
-pub fn args() -> Vec<String> {
+pub fn args_init() -> Vec<String> {
     // SAFETY: Completely safe
     let ptr = unsafe { GetCommandLineW() };
     let mut argv_count = 0;

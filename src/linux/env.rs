@@ -8,12 +8,13 @@ use alloc::{
 use crate::{
     linux::libc::{Timespec, clock_gettime, Sysinfo, sysinfo, getenv},
     linux::fs,
+    ARGS,
     format,
     warning
 };
 
 #[allow(clippy::similar_names, reason = "that's what they're called in C, i don't give a fuck about clippy")]
-pub fn args(argc: usize, argv: *const *const u8) -> Vec<String> {
+pub fn args_init(argc: usize, argv: *const *const u8) -> Vec<String> {
     let mut ret = Vec::new();
     for i in 0..argc {
         // SAFETY: Moving strictly within the allocated memory by Linux
@@ -32,6 +33,14 @@ pub fn args(argc: usize, argv: *const *const u8) -> Vec<String> {
     }
 
     ret
+}
+
+pub fn args() -> &'static Vec<String> {
+    ARGS.get().expect("Unreachable")
+}
+
+pub fn args_owned() -> Vec<String> {
+    ARGS.get().cloned().expect("Unreachable")
 }
 
 pub fn timestamp_mils() -> u64 {
