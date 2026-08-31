@@ -4,7 +4,7 @@ use alloc::{
 };
 
 use crate::{
-    detect::title,
+    detect::title::TitleInfo,
     format_for_module,
     impl_display_for_module,
     modules::Module,
@@ -19,32 +19,33 @@ pub struct Title {
     pub user_name: String,
     pub host_name: String,
     pub home_dir: Path,
-    pub exe_path: String,
-    pub user_shell: String,
+    pub exe_path: Path,
+    pub user_shell: Path,
     pub user_name_colored: String,
     pub at_symbol_colored: &'static str,
     pub host_name_colored: String,
     pub full_user_name: String,
     pub user_id: String,
     pub pid: u32,
-    pub cwd: String
+    pub cwd: Path
 }
 
 impl Module for Title {
     fn new() -> Self {
+        let info = TitleInfo::new();
         Self { 
-            user_name: title::user_name().to_owned(),
-            host_name: title::host_name().to_owned(),
-            home_dir: title::home_dir(),
-            exe_path: title::exe_path(),
-            user_shell: title::user_shell(),
-            user_name_colored: title::colored_user_name(),
+            user_name: info.user_name,
+            host_name: info.host_name,
+            home_dir: info.home_dir,
+            exe_path: info.exe_path,
+            user_shell: info.user_shell,
+            user_name_colored: info.user_name_colored,
             at_symbol_colored: "@",
-            host_name_colored: title::colored_host_name(),
-            full_user_name: title::full_user_name(),
-            user_id: title::user_id(),
-            pid: title::pid(),
-            cwd: title::cwd()
+            host_name_colored: info.host_name_colored,
+            full_user_name: info.full_user_name,
+            user_id: info.user_id,
+            pid: info.pid,
+            cwd: info.cwd
         }
     }
 

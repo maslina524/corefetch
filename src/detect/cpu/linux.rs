@@ -3,10 +3,10 @@ use alloc::vec::Vec;
 use crate::{
     abort, 
     detect::cpu::CpuInfo, 
-    linux::parser::LinuxInfo,
-    linux::fs,
-    linux::path::Path,
-    linux::parser::parse_range_notation,
+    imp::parser::LinuxInfo,
+    imp::fs,
+    imp::path::Path,
+    imp::parser::parse_range_notation,
     format
 };
 
