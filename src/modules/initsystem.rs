@@ -6,7 +6,7 @@ use crate::{
     detect::initsystem::InitSystemInfo,
     modules::Module, 
     sync::OnceLock,
-    format
+    imp::path::Path
 };
 
 static INITSYSTEM: OnceLock<InitSystem> = OnceLock::new();
@@ -14,7 +14,7 @@ static INITSYSTEM: OnceLock<InitSystem> = OnceLock::new();
 #[derive(Debug)]
 pub struct InitSystem {
     pub name: String,
-    pub exe: String,
+    pub exe: Path,
     pub version: String,
     pub pid: u32
 }
@@ -22,11 +22,10 @@ pub struct InitSystem {
 impl Module for InitSystem {
     fn new() -> Self {
         let info = InitSystemInfo::new();
-        let (v0, v1, v2, v3) = info.version;
         Self {
             name: info.name,
-            exe: info.exe.into_inner(),
-            version: format!("{v0}.{v1}.{v2}.{v3}"),
+            exe: info.exe,
+            version: info.version,
             pid: info.pid
         }
     }
