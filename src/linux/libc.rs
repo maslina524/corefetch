@@ -39,6 +39,7 @@ unsafe extern "C" {
     pub safe fn sysinfo(info: *mut Sysinfo) -> c_int;
     pub safe fn opendir(path: *const c_char) -> DIR;
     pub safe fn readdir(dirp: *mut DIR) -> *mut Dirent;
+    pub safe fn setlocale(category: c_int, locale: *const c_char) -> *mut c_char;
 }
 
 #[repr(C)]
