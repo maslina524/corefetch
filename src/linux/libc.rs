@@ -18,10 +18,10 @@ pub type c_off = isize;
 
 unsafe extern "C" {
     pub safe fn write(fd: c_int, buf: *const c_char, len: c_size);
-    pub safe fn malloc(size: c_size) -> *mut c_void;
-    pub safe fn free(ptr: *mut c_void);
-    pub safe fn calloc(nmemb: c_size, size: c_size) -> *mut c_void;
-    pub safe fn realloc(ptr: *mut c_void, size: c_size) -> *mut c_void;
+    pub unsafe fn malloc(size: c_size) -> *mut c_void;
+    pub unsafe fn free(ptr: *mut c_void);
+    pub unsafe fn calloc(nmemb: c_size, size: c_size) -> *mut c_void;
+    pub unsafe fn realloc(ptr: *mut c_void, size: c_size) -> *mut c_void;
     pub safe fn exit(status: c_int) -> !;
     pub safe fn getenv(name: *const c_char) -> *mut c_char;
     pub safe fn access(path: *const c_char, mode: c_int) -> c_int;
