@@ -1,3 +1,5 @@
+use crate::cfg_if;
+
 #[macro_export]
 macro_rules! todo_or_default {
     ($msg:literal, $default:expr) => {{
@@ -57,6 +59,7 @@ macro_rules! multi_string {
     (@count $s:literal) => { 1 };
 }
 
+#[cfg(target_os = "windows")]
 #[macro_export]
 macro_rules! get_fn {
     ($handle:tt, $name:expr, $typ:ident) => {{
@@ -67,9 +70,24 @@ macro_rules! get_fn {
                 $crate::abort!(concat!(stringify!($name), " not found in dll"));
             }
         );
-        core::mem::transmute::<WinapiFn, $typ>(addr)
+        core::mem::transmute::<ApiBaseFn, $typ>(addr)
     }};
 }
+
+#[cfg(target_os = "linux")]
+#[macro_export]
+macro_rules! get_fn {
+    ($handle:tt, $name:expr, $typ:ident) => {{
+        // SAFETY: Completely safe
+        let addr = $crate::linux::libc::dlsym($handle, $name.as_ptr().cast());
+        if addr.is_null() {
+            unload($handle);
+            $crate::abort!(concat!(stringify!($name), " not found in library"));
+        }
+        core::mem::transmute::<ApiBaseFn, $typ>(addr)
+    }};
+}
+
 
 #[macro_export]
 /// Copied from `cfg_if`

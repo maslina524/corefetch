@@ -20,7 +20,7 @@ use crate::{
     formats::capitalize
 };
 
-pub type WinapiFn = unsafe extern "system" fn() -> isize;
+pub type ApiBaseFn = unsafe extern "system" fn() -> isize;
 
 #[allow(non_camel_case_types)]
 pub type lua_State = *mut c_void;
