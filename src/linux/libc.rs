@@ -5,6 +5,8 @@
 
 use core::ffi::{c_char, c_int, c_long, c_uchar, c_uint, c_ulong, c_ushort, c_void};
 
+use crate::sync::OnceLock;
+
 pub type FILE = *mut c_void;
 pub type DIR = *mut c_void;
 
@@ -54,6 +56,20 @@ unsafe extern "C" {
     pub safe fn dlclose(handle: *mut c_void) -> c_int;
     pub safe fn dlerror() -> *mut c_char;
     pub safe fn sysconf(name: c_int) -> c_long;
+}
+
+static SYSINFO: OnceLock<Sysinfo> = OnceLock::new();
+
+pub fn get_sysinfo() -> &'static Sysinfo {
+    SYSINFO.get_or_init(|| {
+        let mut info = Sysinfo::default();
+        sysinfo(&raw mut info);
+        info
+    })
+}
+
+pub fn errno() -> i32 {
+    (unsafe { *errno_location() }) as i32
 }
 
 #[repr(C)]
@@ -112,8 +128,4 @@ impl Default for Dirent {
             d_name: [0; 256]
         }
     }
-}
-
-pub fn errno() -> i32 {
-    (unsafe { *errno_location() }) as i32
 }
