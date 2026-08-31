@@ -101,7 +101,7 @@ impl Path {
     pub fn exists(&self) -> bool {
         let c_str = self.as_c_str();
         // SAFETY: Completely safe
-        (unsafe { access(c_str.as_ptr(), 0) }) == 1
+        access(c_str.as_ptr(), 0) == 1
     }
 
     pub fn parent(&self) -> Option<Self> {

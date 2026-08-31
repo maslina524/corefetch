@@ -95,7 +95,7 @@ const MIN_OFFSET: usize = 24;
 mod panic_impl {
     use core::panic::PanicInfo;
 
-    use crate::exit;
+    use crate::{exit, eprintln};
 
     #[panic_handler]
     fn panic(info: &PanicInfo) -> ! {
