@@ -7,7 +7,6 @@ use core::{
 
 use alloc::{
     string::String,
-    borrow::ToOwned,
     vec::Vec,
     vec
 };
@@ -24,7 +23,8 @@ use crate::{
         GetSystemTimeAsFileTime, OSVERSIONINFOW, PROCESSENTRY32, Process32First, 
         Process32Next, RtlGetVersion, VerQueryValueW, GetFileVersionInfoW, GetFileVersionInfoSizeW
     }, 
-    windows::regedit::{self, Hkey, RegValue, Regedit}
+    windows::regedit::{self, Hkey, Regedit},
+    ARGS
 };
 
 const EPOCH_DIFF           : u64               = 116_444_736_000_000_000;
@@ -185,6 +185,14 @@ pub fn args_init() -> Vec<String> {
     }
 
     ret
+}
+
+pub fn args() -> &'static Vec<String> {
+    ARGS.get().expect("Unreachable")
+}
+
+pub fn args_owned() -> Vec<String> {
+    ARGS.get().cloned().expect("Unreachable")
 }
 
 pub fn find_pid_by_name(name: &str) -> u32 {

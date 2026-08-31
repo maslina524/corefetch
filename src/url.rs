@@ -8,12 +8,12 @@ use crate::format;
 
 #[derive(Debug)]
 pub struct Url {
-    protocol: String,
-    subdomains: Vec<String>,
-    domain: String,
-    tld: String,
-    port: Option<u16>,
-    path: String,
+    pub protocol: String,
+    pub subdomains: Vec<String>,
+    pub domain: String,
+    pub tld: String,
+    pub port: Option<u16>,
+    pub path: String,
     // no query
 }
 

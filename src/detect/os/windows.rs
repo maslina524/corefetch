@@ -1,6 +1,6 @@
 use alloc::{
     borrow::ToOwned,
-    string::String
+    string::{String, ToString}
 };
 
 use crate::{
@@ -16,8 +16,8 @@ impl OsInfo {
         let name = "Windows".to_owned();
 
         let (_, _, build) = env::get_version();
-        let version = Self::version(build).to_owned();
-        let codename = Self::codename(build).to_owned();
+        let version = Self::version(build as i32).to_owned();
+        let codename = Self::codename(build as i32).to_owned();
 
         let value = env::current_version().read("ProductName").unwrap_or(RegValue::None);
 
@@ -30,7 +30,7 @@ impl OsInfo {
             .rfind(' ')
             .unwrap_or(0);
         
-        variant = variant[idx + 1..].to_owned();
+        variant = variant[idx + 1..].to_string();
         let id = format!("{name} {version}");
         let nerd = Self::nerd(&version);
 
@@ -48,14 +48,14 @@ impl OsInfo {
         }
     }
 
-    fn nerd() -> char {
-        match (version) {
+    fn nerd(version: &str) -> char {
+        match version {
             "11" => '\u{e62a}',
             _ => '\u{e70f}',
         }
     }
 
-    fn codename(build: i32) -> &'static str {
+    const fn codename(build: i32) -> &'static str {
         match build {
             950 => "4.00",
             1381 => "NT 4.0",

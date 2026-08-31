@@ -9,8 +9,8 @@
             "keyColor": "reset_yellow"
         },
         {
-            "type": "cpu",
-            "format": "{name} ({core-types}) @ {freq-base}",
+            "type": "gpu",
+            "format": "luap: return \"Temperature: \" .. Module.Temperature;",
             "key": "\uf4bc ",
             "keyColor": "reset_yellow"
         }

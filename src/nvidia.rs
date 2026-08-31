@@ -10,7 +10,7 @@ use crate::{
 
 cfg_if! {
     if #[cfg(target_os = "windows")] {
-        use crate::windows::link::{FreeLibrary, HMODULE, LoadLibraryA, HMODULE};
+        use crate::windows::link::{FreeLibrary, HMODULE, LoadLibraryA};
 
         type ApiBaseFn = unsafe extern "system" fn() -> isize;
         type LibHandle = HMODULE;
