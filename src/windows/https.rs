@@ -15,7 +15,7 @@ use crate::{
         WinHttpSendRequest, WinHttpReceiveResponse, WinHttpQueryHeaders, WinHttpReadData
     },
     windows::encoding::wide,
-    url::Url
+    url::{Url, Response}
 };
 
 const WINHTTP_ACCESS_TYPE_DEFAULT_PROXY: u32               = 0;
@@ -28,34 +28,6 @@ const WINHTTP_NO_ADDITIONAL_HEADERS    : *const u16        = ptr::null();
 const WINHTTP_NO_REQUEST_DATA          : *mut c_void       = ptr::null_mut();
 const WINHTTP_QUERY_STATUS_CODE        : u32               = 19;
 const WINHTTP_QUERY_FLAG_NUMBER        : u32               = 0x2000_0000;
-
-#[derive(Debug)]
-pub struct Response {
-    code: u16,
-    content: Vec<u8>
-}
-
-impl Response {
-    pub const fn code(&self) -> u16 {
-        self.code
-    }
-
-    pub const fn is_success(&self) -> bool {
-        self.code >= 200 && self.code < 300
-    }
-
-    pub const fn content(&self) -> &Vec<u8> {
-        &self.content
-    }
-
-    pub fn into_content(self) -> Vec<u8> {
-        self.content
-    }
-
-    pub fn as_text(&self) -> Result<String, alloc::string::FromUtf8Error> {
-        String::from_utf8(self.content.clone())
-    }
-}
 
 pub struct Request {
     url: Url,
@@ -223,8 +195,7 @@ impl Request {
             WinHttpCloseHandle(session);
         }
 
-        let status_u16 = status_code as u16;
-        Response { code: status_u16, content: buf }
+        Response::new(status as u16, buf)
     }
 }
 

@@ -92,3 +92,35 @@ impl core::fmt::Display for Url {
         write!(f, "{ret}")
     }
 }
+
+#[derive(Debug)]
+pub struct Response {
+    code: u16,
+    content: Vec<u8>
+}
+
+impl Response {
+    pub const fn new(code: u16, content: Vec<u8>) -> Self {
+        Self { code, content }
+    }
+
+    pub const fn code(&self) -> u16 {
+        self.code
+    }
+
+    pub const fn is_success(&self) -> bool {
+        self.code >= 200 && self.code < 300
+    }
+
+    pub const fn content(&self) -> &Vec<u8> {
+        &self.content
+    }
+
+    pub fn into_content(self) -> Vec<u8> {
+        self.content
+    }
+
+    pub fn as_text(&self) -> Result<String, alloc::string::FromUtf8Error> {
+        String::from_utf8(self.content.clone())
+    }
+}

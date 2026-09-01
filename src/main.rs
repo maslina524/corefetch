@@ -78,7 +78,7 @@ use crate::{
     imp::allocator::Allocator,
     imp::env,
     imp::fs::{self, ReadError},
-    windows::https::Request, 
+    imp::https::Request, 
     config::{Config, ConfigModule},
     url::Url,
     formats::split_by_len_ansi,
@@ -206,7 +206,7 @@ fn get_config(args: &mut Iter<'_, String>) -> Config {
                 let response = Request::from_url(url).get();
                 if response.is_success() {
                     match response.as_text() {
-                        Ok(t) => match Json::from_str(t) {
+                        Ok(t) => match Json::from_str(&t) {
                             Ok(c) => Config::from_json(&c),
                             Err(e) => {
                                 warning!("Failed to parse the json config: {e}");
