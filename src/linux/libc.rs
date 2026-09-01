@@ -76,6 +76,31 @@ pub fn errno() -> i32 {
 
 #[repr(C)]
 #[derive(Default)]
+pub struct InAddr {
+    pub s_addr: c_uint,
+}
+
+#[repr(C)]
+#[derive(Default)]
+pub struct SockaddrIn {
+    pub sin_family: c_ushort,
+    pub sin_port: c_ushort,
+    pub sin_addr: InAddr,
+    pub sin_zero: [c_uchar; 8],
+}
+
+#[repr(C)]
+#[derive(Default)]
+pub struct Hostent {
+    pub h_name: *mut c_char,
+    pub h_aliases: *mut *mut c_char,
+    pub h_addrtype: c_int,
+    pub h_length: c_int,
+    pub h_addr_list: *mut *mut c_char,
+}
+
+#[repr(C)]
+#[derive(Default)]
 pub struct Tm {
     pub tm_sec: c_int,
     pub tm_min: c_int,
