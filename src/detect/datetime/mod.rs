@@ -13,16 +13,17 @@ cfg_if! {
     }
 }
 
+#[derive(Debug)]
 pub enum AmPm {
     Am, Pm
 }
 
 impl AmPm {
-    pub fn from_hour(hour: u8) -> Self {
+    pub const fn from_hour(hour: u8) -> Self {
         if hour < 12 {
-            AmPm::Am
+            Self::Am
         } else {
-            AmPm::Pm
+            Self::Pm
         }
     }
 }
@@ -38,6 +39,7 @@ impl core::fmt::Display for AmPm {
     }
 }
 
+#[derive(Debug)]
 pub struct DatetimeInfo {
     pub year: u16,
     pub month: u16,

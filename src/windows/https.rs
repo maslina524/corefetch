@@ -195,7 +195,7 @@ impl Request {
             WinHttpCloseHandle(session);
         }
 
-        Response::new(status as u16, buf)
+        Response::new(status_code as u16, buf)
     }
 }
 
@@ -209,8 +209,9 @@ mod tests {
     fn example_response_test() {
         let url = "https://wttr.in/?format=%c;%C;%x;%h;%t;%f;%H;%L;%w;%l;%m;%M;%p;%P;%e;%u;%D;%S;%z;%s;%d;%T;%Z";
         let response = Request::new(url).unwrap().get();
-        let string = String::from_utf8(response.content).unwrap();
-        println!("Response code: {}", response.code);
+        println!("Response code: {}", response.code());
+
+        let string = String::from_utf8(response.into_content()).unwrap();
         assert!(string.split(';').next().is_some());
     }
 

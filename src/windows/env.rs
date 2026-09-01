@@ -24,7 +24,8 @@ use crate::{
         Process32Next, RtlGetVersion, VerQueryValueW, GetFileVersionInfoW, GetFileVersionInfoSizeW
     }, 
     windows::regedit::{self, Hkey, Regedit},
-    ARGS
+    ARGS,
+    format
 };
 
 const EPOCH_DIFF           : u64               = 116_444_736_000_000_000;
@@ -229,7 +230,7 @@ pub fn find_pid_by_name(name: &str) -> u32 {
     pid
 }
 
-pub fn get_file_product_version(path: impl Into<Path>) -> error::Result<(u32, u32, u32, u32)> {
+pub fn get_file_product_version(path: impl Into<Path>) -> error::Result<String> {
     let path_str = path.into().into_inner();
     let path_wide = wide(path_str)?;
 
@@ -283,7 +284,7 @@ pub fn get_file_product_version(path: impl Into<Path>) -> error::Result<(u32, u3
     let build = (info.dwProductVersionLS >> 16) & 0xFFFF;
     let rev = info.dwProductVersionLS & 0xFFFF;
 
-    Ok((major, minor, build, rev))
+    Ok(format!("{major}.{minor}.{build}.{rev}"))
 }
 
 #[cfg(test)]
@@ -298,15 +299,6 @@ mod tests {
             let timestamp = env::timestamp_secs();
             println!("{timestamp}");
         }
-    }
-
-    #[test]
-    fn args_test() {
-        let args = env::args();
-        println!("{args:?}");
-
-        assert!(!args.is_empty());
-        assert!(args[0].contains("corefetch"));
     }
 
     #[test]

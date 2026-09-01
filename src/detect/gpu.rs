@@ -203,7 +203,7 @@ mod tests {
     fn vendor_test() {
         let info = GpuInfo::new();
         let name = info.vendor;
-        assert!(!name.is_empty());
+        assert_ne!(name, "");
         println!("Vendor: {name}");
     }
 
@@ -211,7 +211,7 @@ mod tests {
     fn name_test() {
         let info = GpuInfo::new();
         let name = info.name;
-        assert!(!name.is_empty());
+        assert_ne!(name, "");
         println!("Name: {name}");
     }
 

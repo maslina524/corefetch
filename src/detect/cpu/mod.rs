@@ -61,6 +61,7 @@ impl CpuInfo {
     }
 
     #[todo::todo("Fn code_name is not implemented")]
+    #[allow(clippy::if_same_then_else, clippy::branches_sharing_code, reason = "Remove after impl")]
     const fn code_name() -> String {
         if cfg!(any(target_arch = "x86_64", target_arch = "x86")) {
             String::new()

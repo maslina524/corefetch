@@ -208,6 +208,7 @@ fn github_actions() -> bool {
         .is_ok_and(|s| s.trim() == "true")
 }
 
+#[cfg(target_os = "linux")]
 fn get_libc_version() -> String {
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
     let c_file = out_dir.join("version.c");

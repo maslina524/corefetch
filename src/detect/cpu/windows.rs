@@ -180,7 +180,7 @@ mod tests {
     #[test]
     fn technology_test() {
         let info = CpuInfo::new();
-        assert!(!info.technology.is_empty());
+        assert_ne!(info.technology, "");
     }
 
     #[test]

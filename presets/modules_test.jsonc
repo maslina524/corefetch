@@ -1,15 +1,9 @@
 {
+    "logo": null,
     "modules": [
-        "title",
-        "separator",
         {
-            "type": "os",
-            "format": "{name} @ {arch}",
-            "key": "| OS"
-        },
-        {
-            "type": "custom",
-            "format": "Custom"
+            "type": "title",
+            "format": "lua: return string.format('Hello %s', (...).userName)"
         }
     ]
 }
