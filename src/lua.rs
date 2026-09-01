@@ -17,7 +17,7 @@ use crate::{
     imp::fs::{self, File, Access},
     imp::path::Path,
     sync::OnceLock,
-    formats::snake_to_camel_ascii
+    formats::{snake_to_camel_ascii, expand_rust_unicode}
 };
 
 cfg_if! {
@@ -140,8 +140,9 @@ impl LuaLib {
         ret.push_str("}\n\nlocal user_code = function(...)\n    ");
         ret.push_str(code);
         ret.push_str("\nend\n\nreturn user_code(module_data)");
+        ret = expand_rust_unicode(&ret);
         
-        crate::dbg!(&ret, lua);
+        crate::println!("{ret}");
         self.exec_without_vars(&ret)
     }
 
