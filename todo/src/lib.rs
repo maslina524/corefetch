@@ -2,11 +2,11 @@
 #![cfg_attr(unstable, feature(proc_macro_value))]
 
 #[cfg(unstable)]
-use proc_macro::{Diagnostic, Level, Span, TokenStream, TokenTree};
+use proc_macro::{Diagnostic, Level, Span, TokenTree};
 
-#[cfg(not(unstable))]
 use proc_macro::TokenStream;
 
+#[cfg(unstable)]
 fn get_message(attr: TokenStream) -> Option<String> {
     attr.into_iter().next().and_then(|t| match t {
         TokenTree::Literal(s) => {

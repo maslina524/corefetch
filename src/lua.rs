@@ -174,44 +174,44 @@ impl LuaLib {
             // SAFETY: Close the state to free resources
             unsafe { (self.close)(state) };
             abort!("Lua compilation error: {}", err_msg);
-        } else {
-            // SAFETY: Call the compiled function with 0 arguments and expect 1 result
-            // The last argument is a continuation function pointer (NULL)
-            let pcall_err = unsafe { (self.pcall)(state, 0, 1, 0, 0, None) };
+        }
+        
+        // SAFETY: Call the compiled function with 0 arguments and expect 1 result
+        // The last argument is a continuation function pointer (NULL)
+        let pcall_err = unsafe { (self.pcall)(state, 0, 1, 0, 0, None) };
 
-            if pcall_err != 0 {
-                // SAFETY: `lua_tolstring` returns a pointer to the error string
-                let err_ptr = unsafe { (self.to_lstring)(state, -1, ptr::null_mut()) };
-                let err_msg = if err_ptr.is_null() {
-                    String::from("unknown error (nil)")
-                } else {
-                    // SAFETY: Lua guarantees a valid null‑terminated string
-                    unsafe { CStr::from_ptr(err_ptr) }
-                        .to_string_lossy()
-                        .into_owned()
-                };
-                // SAFETY: Close the state to free resources
-                unsafe { (self.close)(state) };
-                abort!("Lua runtime error: {}", err_msg);
-            }
-
-            // SAFETY: `lua_tolstring` returns a pointer to the string value
-            let result_ptr = unsafe { (self.to_lstring)(state, -1, ptr::null_mut()) };
-
-            let result_string = if result_ptr.is_null() {
-                String::from("nil")
+        if pcall_err != 0 {
+            // SAFETY: `lua_tolstring` returns a pointer to the error string
+            let err_ptr = unsafe { (self.to_lstring)(state, -1, ptr::null_mut()) };
+            let err_msg = if err_ptr.is_null() {
+                String::from("unknown error (nil)")
             } else {
                 // SAFETY: Lua guarantees a valid null‑terminated string
-                unsafe { CStr::from_ptr(result_ptr) }
+                unsafe { CStr::from_ptr(err_ptr) }
                     .to_string_lossy()
                     .into_owned()
             };
-
             // SAFETY: Close the state to free resources
             unsafe { (self.close)(state) };
-
-            result_string
+            abort!("Lua runtime error: {}", err_msg);
         }
+
+        // SAFETY: `lua_tolstring` returns a pointer to the string value
+        let result_ptr = unsafe { (self.to_lstring)(state, -1, ptr::null_mut()) };
+
+        let result_string = if result_ptr.is_null() {
+            String::from("nil")
+        } else {
+            // SAFETY: Lua guarantees a valid null‑terminated string
+            unsafe { CStr::from_ptr(result_ptr) }
+                .to_string_lossy()
+                .into_owned()
+        };
+
+        // SAFETY: Close the state to free resources
+        unsafe { (self.close)(state) };
+
+        result_string
     }
 
     pub fn drop_lua() {
@@ -242,7 +242,7 @@ pub fn get_lua_path() -> Path {
             Err(e) => abort!("Failed to create file `lua55.dll`: {e}")
         };
         
-        if let Err(e) = file.write(&content) {
+        if let Err(e) = file.write(content) {
             abort!("Failed to write data to `lua55.dll`: {e}");
         }
     }

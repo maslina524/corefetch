@@ -167,11 +167,11 @@ impl DatetimeInfo {
 
 #[cfg(test)]
 mod tests {
-    use crate::detect::datetime::Date;
+    use crate::detect::datetime::DatetimeInfo;
 
     #[test]
     fn date_test() {
-        let date = Date::new();
+        let date = DatetimeInfo::new();
         println!("{date:#?}");
     }
 }

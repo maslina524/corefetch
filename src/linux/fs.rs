@@ -104,7 +104,8 @@ impl File {
         self.0
     }
 
-    pub fn write(&self, buf: &[u8]) -> error::Result<()> {
+    pub fn write(&self, buf: impl Into<Vec<u8>>) -> error::Result<()> {
+        let buf = buf.into();
         let written = fwrite(buf.as_ptr() as *const c_void, 1, buf.len(), self.0);
         if written == buf.len() {
             Ok(())

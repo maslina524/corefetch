@@ -8,6 +8,7 @@ cfg_if! {
     }
 }
 
+#[derive(Default)]
 pub struct MemoryInfo {
     pub total: Size,
     pub in_use: Size

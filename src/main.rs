@@ -25,6 +25,7 @@
     clippy::cast_sign_loss,
     reason = "There's no point in them, it will make the code cleaner"
 )]
+#![allow(clippy::cargo_common_metadata)]
 
 mod sync;
 mod macros;
