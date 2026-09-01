@@ -239,6 +239,7 @@ fn get_libc_version() -> String {
 }
 
 #[tokio::main]
+#[allow(clippy::too_many_lines)]
 async fn main() {
     // Bypasses caching, runs every time during compilation
     let timestamp = std::time::SystemTime::now()
@@ -361,5 +362,18 @@ async fn main() {
             encoded,
             (encoded as f64 / raw as f64).mul_add(-100.0, 100.0)
         );
+    }
+
+    let is_nightly = rustc_version.contains("nightly") || rustc_version.contains("dev");
+    if !is_nightly {
+        println!("cargo:warning=The project is not being built in the nightly version, this will not affect the result");
+        println!("cargo:warning=in any way, but the local `todo` crate will not work; if you are going to work");
+        println!("cargo:warning=on the project (contribute), it is better to \x1b[4minstall the nightly version\x1b[0m:");
+        println!("cargo:warning=");
+        println!("cargo:warning=\x1b[36m$ rustup install nightly\x1b[0m");
+        println!("cargo:warning=\x1b[36m$ rustup override set nightly\x1b[0m");
+        println!("cargo:warning=");
+        println!("cargo:warning=\x1b[36m$ rustup component add rustfmt --toolchain nightly\x1b[0m");
+        println!("cargo:warning=\x1b[36m$ rustup component add clippy --toolchain nightly\x1b[0m");
     }
 }
