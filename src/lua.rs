@@ -12,9 +12,9 @@ use crate::{
     abort,
     get_fn,
     format,
-    windows::https::Request,
-    windows::fs::{self, File, Access},
-    windows::path::Path,
+    imp::https::Request,
+    imp::fs::{self, File, Access},
+    imp::path::Path,
     windows::link::{HMODULE, LoadLibraryW, FreeLibrary},
     sync::OnceLock,
     formats::capitalize
