@@ -17,7 +17,7 @@ use crate::{
     imp::fs::{self, File, Access},
     imp::path::Path,
     sync::OnceLock,
-    formats::capitalize
+    formats::snake_to_camel_ascii
 };
 
 cfg_if! {
@@ -62,13 +62,6 @@ pub type lua_settop = unsafe extern "C" fn(state: *mut lua_State, idx: c_int);
 static LUA: OnceLock<LuaLib> = OnceLock::new();
 
 const LUA_DOWNLOAD_URL: &str = "https://github.com/maslina524/corefetch/raw/refs/heads/main/bin/lua55.dll";
-const MODULE_GENERATOR: &str = r#"
-setmetatable(Module, {
-    __newindex = function(t, key, value)
-        error("Attempt to modify constant", 2)
-    end
-})
-"#;
 
 pub enum Variable {
     String(String),
@@ -129,21 +122,30 @@ impl LuaLib {
         })
     }
 
-    pub fn execute_with_vars(&self, mut code: &str, vars: BTreeMap<String, Variable>) -> String {
-        code = code.trim();
-        let mut ret = String::from("local Module = {{}}\n");
+    pub fn exec(&self, code: &str, vars: BTreeMap<String, Variable>) -> String {
+        let code = code.trim();
+        let mut ret = String::with_capacity(
+            128 + code.len() + vars.len() * 16
+        );
+        
+        ret.push_str("local module_data = {\n");
         for (k, v) in vars {
-            ret.push_str(&format!("Module.{} = {:?}\n", capitalize(&k), v));
+            ret.push_str("    ");
+            ret.push_str(&snake_to_camel_ascii(&k));
+            ret.push_str(" = ");
+            ret.push_str(&format!("{:?}", v));
+            ret.push_str(",\n");
         }
-        ret.push_str(MODULE_GENERATOR);
+        
+        ret.push_str("}\n\nlocal user_code = function(...)\n    ");
         ret.push_str(code);
-
-        self.execute(&ret)
+        ret.push_str("\nend\n\nreturn user_code(module_data)");
+        
+        crate::dbg!(&ret, lua);
+        self.exec_without_vars(&ret)
     }
 
-    pub fn execute(&self, mut code: &str) -> String {
-        code = code.trim();
-        
+    pub fn exec_without_vars(&self, code: &str) -> String {
         // SAFETY: `luaL_newstate` returns a valid state or NULL
         let state = unsafe { (self.new_state)() };
         if state.is_null() {
@@ -300,7 +302,7 @@ mod tests {
     #[test]
     fn exec_lua_code_test() {
         let lib = LuaLib::get();
-        let result = lib.execute("return 2 + 2;");
+        let result = lib.exec_without_vars("return 2 + 2;");
         assert_eq!(result, "4");
     }
 }

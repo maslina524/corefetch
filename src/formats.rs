@@ -321,13 +321,32 @@ pub fn split_by_len_ansi(s: &str, len: usize) -> Vec<String> {
     ret
 }
 
-pub fn capitalize(s: &str) -> String {
-    let mut chars = s.chars();
-    chars.next().map_or_else(
-        String::new, 
-        |first| 
-        first.to_uppercase().collect::<String>() + chars.as_str()
-    )
+pub fn snake_to_camel_ascii(s: &str) -> String {
+    let mut ret = String::with_capacity(s.len());
+    let chars = s.chars();
+    let mut transition = false;
+
+    for ch in chars {
+        if ch == '_' {
+            transition = true;
+            continue;
+        }
+        if transition {
+            if ch.is_ascii_lowercase() {
+                let idx = ch as u32 - 32;
+                ret.push(char::from_u32(idx).unwrap());
+            } else {
+                ret.push(ch);
+            }
+
+            transition = false;
+            continue;
+        }
+        
+        ret.push(ch);
+    }
+
+    ret
 }
 
 #[macro_export]
