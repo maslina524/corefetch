@@ -1,4 +1,9 @@
-use core::ffi::{c_void, c_uint, c_char};
+use core::ffi::{CStr, c_char, c_uint, c_void};
+
+use alloc::{
+    string::String,
+    borrow::ToOwned
+};
 
 use crate::{
     abort, 
@@ -22,33 +27,34 @@ cfg_if! {
     }
 }
 
-
-
 #[allow(non_camel_case_types)]
-pub type nvmlReturn = i32;
+type nvmlReturn = i32;
 #[allow(non_camel_case_types)]
-pub type nvmlTemperatureSensors = i32;
+type nvmlTemperatureSensors = i32;
 #[allow(non_camel_case_types)]
-pub type nvmlDevice = *mut c_void;
+type nvmlDevice = *mut c_void;
 #[allow(non_camel_case_types)]
-pub type nvmlClockType = u32;
+type nvmlClockType = u32;
 
 #[allow(non_camel_case_types)]
-pub type nvmlInit = unsafe extern "C" fn() -> nvmlReturn;
+type nvmlInit = unsafe extern "C" fn() -> nvmlReturn;
 #[allow(non_camel_case_types)]
-pub type nvmlShutdown = unsafe extern "C" fn() -> nvmlReturn;
+type nvmlShutdown = unsafe extern "C" fn() -> nvmlReturn;
 #[allow(non_camel_case_types)]
-pub type nvmlDeviceGetHandleByIndex = unsafe extern "C" fn(index: c_uint, device: *mut nvmlDevice) -> nvmlReturn;
+type nvmlDeviceGetHandleByIndex = unsafe extern "C" fn(index: c_uint, device: *mut nvmlDevice) -> nvmlReturn;
 #[allow(non_camel_case_types)]
-pub type nvmlDeviceGetTemperature = unsafe extern "C" fn(device: nvmlDevice, sensor: nvmlTemperatureSensors, temp: *mut c_uint) -> nvmlReturn;
+type nvmlDeviceGetTemperature = unsafe extern "C" fn(device: nvmlDevice, sensor: nvmlTemperatureSensors, temp: *mut c_uint) -> nvmlReturn;
 #[allow(non_camel_case_types)]
-pub type nvmlDeviceGetClockInfo = unsafe extern "C" fn(device: nvmlDevice, typ: nvmlClockType, clock: *mut u32 ) -> nvmlReturn;
+type nvmlDeviceGetClockInfo = unsafe extern "C" fn(device: nvmlDevice, typ: nvmlClockType, clock: *mut u32) -> nvmlReturn;
 #[allow(non_camel_case_types)]
-pub type nvmlErrorString = unsafe extern "C" fn(result: nvmlReturn) -> *const c_char;
+type nvmlDeviceGetName = unsafe extern "C" fn(device: nvmlDevice, name: *mut c_char, length: c_uint) -> nvmlReturn;
+#[allow(non_camel_case_types)]
+type nvmlErrorString = unsafe extern "C" fn(result: nvmlReturn) -> *const c_char;
 
 static NVIDIA: OnceLock<NvidiaLib> = OnceLock::new();
 
 const NVML_CLOCK_SM: u32 = 1;
+const NAME_BUFFER_SIZE: usize = 64;
 
 pub struct NvidiaLib {
     handle: LibHandle,
@@ -57,7 +63,8 @@ pub struct NvidiaLib {
     shutdown: nvmlShutdown,
     device_get_handle_by_index: nvmlDeviceGetHandleByIndex,
     device_get_temperature: nvmlDeviceGetTemperature,
-    get_clock_info: nvmlDeviceGetClockInfo
+    get_clock_info: nvmlDeviceGetClockInfo,
+    get_name: nvmlDeviceGetName
 }
 
 // SAFETY: THE STRUCTURE IS NOT THREAD-SAFE;
@@ -82,6 +89,8 @@ impl NvidiaLib {
             let device_get_temperature = unsafe { get_fn!(lib, c"nvmlDeviceGetTemperature", nvmlDeviceGetTemperature) };
             // SAFETY: `transmute` fully complies with the documentation
             let get_clock_info = unsafe { get_fn!(lib, c"nvmlDeviceGetClockInfo", nvmlDeviceGetClockInfo) };
+            // SAFETY: `transmute` fully complies with the documentation
+            let get_name = unsafe { get_fn!(lib, c"nvmlDeviceGetName", nvmlDeviceGetName) };
 
             // SAFETY: Completely safe
             let ret = unsafe { init() };
@@ -103,7 +112,8 @@ impl NvidiaLib {
                 device,
                 init, shutdown, 
                 device_get_handle_by_index, device_get_temperature,
-                get_clock_info
+                get_clock_info,
+                get_name
             }
         })
     }
@@ -128,6 +138,20 @@ impl NvidiaLib {
         }
 
         temp as u16
+    }
+
+    pub fn device_name(&self) -> String {
+        let mut buf = [c_char::default(); NAME_BUFFER_SIZE + 1];
+        // SAFETY: Completely safe
+        let ret = unsafe { (self.get_name)(self.device, buf.as_mut_ptr(), NAME_BUFFER_SIZE as u32) };
+        if ret != 0 {
+            warning!("Failed to get gpu name (nvml)");
+            return "Unknown".to_owned();
+        }
+
+        // SAFETY: At the end, 1 byte is guaranteed to remain for the null terminator
+        let c_str = unsafe { CStr::from_ptr(buf.as_ptr()) };
+        c_str.to_string_lossy().into_owned()
     }
 
     pub fn get_frequency_ghz(&self) -> f64 {
