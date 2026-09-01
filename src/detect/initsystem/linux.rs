@@ -2,13 +2,13 @@ use alloc::borrow::ToOwned;
 
 use crate::{
     warning,
-    todo_or_default,
     linux::fs,
     linux::path::Path,
     detect::initsystem::InitSystemInfo
 };
 
 impl InitSystemInfo {
+    #[todo::todo("Too time-consuming to implement for every distribution and system")]
     pub fn new() -> Self {
         let name = fs::read_to_string("/proc/1/comm")
             .unwrap_or("Unknown".to_owned());
@@ -22,10 +22,7 @@ impl InitSystemInfo {
             Path::new()
         };
 
-        let version = todo_or_default!(
-            "Too time-consuming to implement for every distribution and system",
-            "0.0.0.0".to_owned()
-        );
+        let version = "0.0.0.0".to_owned();
 
         Self { 
             exe, 

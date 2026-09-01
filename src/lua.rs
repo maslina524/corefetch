@@ -12,15 +12,27 @@ use crate::{
     abort,
     get_fn,
     format,
+    cfg_if,
     imp::https::Request,
     imp::fs::{self, File, Access},
     imp::path::Path,
-    windows::link::{HMODULE, LoadLibraryW, FreeLibrary},
     sync::OnceLock,
     formats::capitalize
 };
 
-pub type ApiBaseFn = unsafe extern "system" fn() -> isize;
+cfg_if! {
+    if #[cfg(target_os = "windows")] {
+        use crate::windows::link::{FreeLibrary, HMODULE, LoadLibraryW};
+
+        type ApiBaseFn = unsafe extern "system" fn() -> isize;
+        type LibHandle = HMODULE;
+    } else if #[cfg(target_os = "linux")] {
+        use crate::linux::libc::{dlopen, dlclose};
+
+        type ApiBaseFn = *mut c_void;
+        type LibHandle = *mut c_void;
+    }
+}
 
 #[allow(non_camel_case_types)]
 pub type lua_State = *mut c_void;
@@ -73,7 +85,7 @@ impl core::fmt::Debug for Variable {
 }
 
 pub struct LuaLib {
-    handle: HMODULE,
+    handle: LibHandle,
     new_state: luaL_newstate,
     open_selected_libs: luaL_openselectedlibs,
     load_string: luaL_loadstring,
@@ -230,7 +242,7 @@ pub fn get_lua_path() -> Path {
             Err(e) => abort!("Failed to create file `lua55.dll`: {e}")
         };
         
-        if let Err(e) = file.write(content) {
+        if let Err(e) = file.write(&content) {
             abort!("Failed to write data to `lua55.dll`: {e}");
         }
     }
@@ -238,23 +250,40 @@ pub fn get_lua_path() -> Path {
     path
 }
 
-fn load() -> HMODULE {
-    // SAFETY: `as_wide_str` returns a null‑terminated wide string,
-    // which is safe to pass to `LoadLibraryW`
-    let lib = unsafe {
-        let path = get_lua_path().as_wide_str().unwrap();
-        LoadLibraryW(path.as_ptr())
-    };
-    if lib.is_null() {
-        abort!("Failed to load lua55.dll");
-    }
-    lib
-}
+cfg_if! {
+    if #[cfg(target_os = "windows")] {
+        fn load() -> LibHandle {
+            // SAFETY: `as_wide_str` returns a null‑terminated wide string,
+            // which is safe to pass to `LoadLibraryW`
+            let lib = unsafe {
+                let path = get_lua_path().as_wide_str().unwrap();
+                LoadLibraryW(path.as_ptr())
+            };
+            if lib.is_null() {
+                abort!("Failed to load lua55.dll");
+            }
+            lib
+        }
 
-fn unload(lib: HMODULE) {
-    // SAFETY: The handle is guaranteed to be valid because it was
-    // loaded once and never unloaded before this call
-    unsafe { FreeLibrary(lib) };
+        fn unload(lib: LibHandle) {
+            // SAFETY: The handle is guaranteed to be valid because it was
+            // loaded once and never unloaded before this call
+            unsafe { FreeLibrary(lib) };
+        }
+    } else if #[cfg(target_os = "linux")] {
+        fn load() -> LibHandle {
+            let path = get_lua_path().as_c_str();
+            let lib = dlopen(path.as_ptr().cast(), 1);
+            if lib.is_null() {
+                abort!("Failed to load lua55.dll");
+            }
+            lib
+        }
+
+        fn unload(lib: LibHandle) {
+            dlclose(lib);
+        }
+    }
 }
 
 #[cfg(test)]

@@ -181,7 +181,7 @@ cfg_if! {
 
             for name in &lib_names {
                 // SAFETY: An ASCII string is always passed, everything is safe
-                let lib = dlopen(name.as_ptr().cast(), 0);
+                let lib = dlopen(name.as_ptr().cast(), 1);
                 if !lib.is_null() {
                     return lib;
                 }
