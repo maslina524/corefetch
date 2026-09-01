@@ -138,114 +138,110 @@ macro_rules! cfg_if {
 }
 
 // ------------- PRINTS -------------
-#[cfg(target_os = "windows")]
 #[macro_export]
 macro_rules! print {
     () => {{}};
     ($($tt:tt)*) => {{
-        let handle = $crate::windows::io::stdout();
+        let handle = $crate::imp::io::stdout();
         let s = $crate::format!($($tt)*);
-        $crate::windows::io::write(handle, s.as_str());
+        $crate::imp::io::write(handle, s.as_str());
     }}
 }
 
-#[cfg(target_os = "linux")]
-#[macro_export]
-macro_rules! print {
-    () => {{}};
-    ($($tt:tt)*) => {{
-        let handle = $crate::linux::io::stdout();
-        let s = $crate::format!($($tt)*);
-        $crate::linux::io::write(handle, s.as_str());
-    }}
-}
-
-#[cfg(target_os = "windows")]
 #[macro_export]
 macro_rules! println {
     () => {{
-        let handle = $crate::windows::io::stdout();
-        $crate::windows::io::write(handle, "\n");
+        let handle = $crate::imp::io::stdout();
+        $crate::imp::io::write(handle, "\n");
     }};
     ($($tt:tt)*) => {{
-        let handle = $crate::windows::io::stdout();
+        let handle = $crate::imp::io::stdout();
         let s = $crate::formatln!($($tt)*);
-        $crate::windows::io::write(handle, s.as_str());
+        $crate::imp::io::write(handle, s.as_str());
     }}
 }
 
-#[cfg(target_os = "linux")]
-#[macro_export]
-macro_rules! println {
-    () => {{
-        let handle = $crate::linux::io::stdout();
-        $crate::linux::io::write(handle, "\n");
-    }};
-    ($($tt:tt)*) => {{
-        let handle = $crate::linux::io::stdout();
-        let s = $crate::formatln!($($tt)*);
-        $crate::linux::io::write(handle, s.as_str());
-    }}
-}
-
-#[cfg(target_os = "windows")]
 #[macro_export]
 macro_rules! eprint {
     () => {{}};
     ($expr:expr) => {{
-        let handle = $crate::windows::io::stderr();
+        let handle = $crate::imp::io::stderr();
         let s = $crate::format!("{}", $expr);
-        $crate::windows::io::write(handle, s.as_str());
+        $crate::imp::io::write(handle, s.as_str());
     }};
     ($($tt:tt)*) => {{
-        let handle = $crate::windows::io::stderr();
+        let handle = $crate::imp::io::stderr();
         let s = $crate::format!($($tt)*);
-        $crate::windows::io::write(handle, s.as_str());
+        $crate::imp::io::write(handle, s.as_str());
     }}
 }
 
-#[cfg(target_os = "linux")]
-#[macro_export]
-macro_rules! eprint {
-    () => {{}};
-    ($expr:expr) => {{
-        let handle = $crate::linux::io::stderr();
-        let s = $crate::format!("{}", $expr);
-        $crate::linux::io::write(handle, s.as_str());
-    }};
-    ($($tt:tt)*) => {{
-        let handle = $crate::linux::io::stderr();
-        let s = $crate::format!($($tt)*);
-        $crate::linux::io::write(handle, s.as_str());
-    }}
-}
-
-#[cfg(target_os = "windows")]
 #[macro_export]
 macro_rules! eprintln {
     () => {{
-        let handle = $crate::windows::io::stderr();
-        $crate::windows::io::write(handle, "\n");
+        let handle = $crate::imp::io::stderr();
+        $crate::imp::io::write(handle, "\n");
     }};
     ($($tt:tt)*) => {{
-        let handle = $crate::windows::io::stderr();
+        let handle = $crate::imp::io::stderr();
         let s = $crate::formatln!($($tt)*);
-        $crate::windows::io::write(handle, s.as_str());
+        $crate::imp::io::write(handle, s.as_str());
     }}
 }
 
-#[cfg(target_os = "linux")]
 #[macro_export]
-macro_rules! eprintln {
-    () => {{
-        let handle = $crate::linux::io::stderr();
-        $crate::linux::io::write(handle, "\n");
-    }};
-    ($($tt:tt)*) => {{
-        let handle = $crate::linux::io::stderr();
-        let s = $crate::formatln!($($tt)*);
-        $crate::linux::io::write(handle, s.as_str());
-    }}
+#[cfg(debug_assertions)]
+macro_rules! dbg {
+    () => {
+        $crate::eprintln!("[{}:{}:{}]", core::file!(), core::line!(), core::column!())
+    };
+    ($flag:ident) => {
+        if $crate::imp::env::contains_in_dbg_args(stringify!($flag)) {
+            $crate::dbg!();
+        }
+    };
+    ($val:expr $(,)?) => {
+        match $val {
+            tmp => {
+                $crate::eprintln!("[{}:{}:{}] {} = {:#?}",
+                    file!(),
+                    line!(),
+                    column!(),
+                    stringify!($val),
+                    &&tmp as &dyn core::fmt::Debug,
+                );
+                tmp
+            }
+        }
+    };
+    ($val:expr $(,)?, $flag:ident) => {
+        if $crate::imp::env::contains_in_dbg_args(stringify!($flag)) {
+            $crate::dbg!($val)
+        } else {
+            $val
+        }
+    };
+    ($($val:expr),+ $(,)?) => {
+        ($($crate::dbg!($val)),+)
+    };
+    ($($val:expr),+ $(,)?, $flag:ident) => {
+        if $crate::imp::env::contains_in_dbg_args(stringify!($flag)) {
+            ($($crate::dbg!($val)),+)
+        } else {
+            ($($val),+)
+        }
+    };
+}
+
+#[macro_export]
+#[cfg(not(debug_assertions))]
+macro_rules! dbg {
+    () => {};
+    ($flag:ident) => {};
+    ($val:expr $(,)?) => {};
+    ($val:expr $(,)?, $flag:ident) => {};
+    ($($val:expr),+ $(,)?) => {};
+    ($($val:expr),+ $(,)?, $flag:ident) => {};
 }
 
 #[cfg(test)]
