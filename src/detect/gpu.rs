@@ -17,7 +17,6 @@ use crate::{
         DIGCF_PRESENT, GUID_DEVCLASS_DISPLAY, SP_DEVINFO_DATA, SetupDiOpenDevRegKey,
     },
     windows::regedit::Regedit,
-    windows::encoding::{utf16le_to_utf8, Utf16Len},
     formats::Size,
     nvidia::NvidiaLib,
     abort,
@@ -43,10 +42,7 @@ impl GpuInfo {
             |e| abort!("CreateDXGIFactory error: {e}")
         );
 
-        let name = utf16le_to_utf8(
-            &desc.Description, 
-            Utf16Len::NullTerminated
-        ).expect("WinAPI passed an invalid UTF-16LE string");
+        let name = Self::name(desc.VendorId);
 
         let driver = Self::driver_version().unwrap_or_else(
             || { warning!("Failed to get driver version"); String::from("Unknown") }
@@ -77,7 +73,14 @@ impl GpuInfo {
     pub fn temperature(vendor_id: u32) -> f32 {
         match vendor_id {
             0x10DE => NvidiaLib::get().gpu_temperature() as f32,
-            _ => 0.0,
+            _ => 28.0,
+        }
+    }
+
+    pub fn name(vendor_id: u32) -> String {
+        match vendor_id {
+            0x10DE => NvidiaLib::get().device_name(),
+            _ => "Unknown".to_owned(),
         }
     }
 
