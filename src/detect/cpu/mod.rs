@@ -8,7 +8,6 @@ use alloc::{
 
 use crate::{
     cfg_if,
-    todo_or_default,
     format
 };
 
@@ -61,9 +60,10 @@ impl CpuInfo {
         String::from_utf8(vendor).unwrap()
     }
 
+    #[todo::todo("Fn code_name is not implemented")]
     const fn code_name() -> String {
         if cfg!(any(target_arch = "x86_64", target_arch = "x86")) {
-            todo_or_default!("fn code_name is not implemented", String::new())
+            String::new()
         } else {
             String::new()
         }
@@ -150,8 +150,9 @@ impl CpuInfo {
     }
 
     // NOT IMPLEMENTED
+    #[todo::todo("Will be implemented in the future")]
     const fn logical_grouped() -> String {
-        todo_or_default!("Will be implemented in the future", String::new())
+        String::new()
     }
 
     const fn max_freq_formatted() -> f64 {
