@@ -137,7 +137,7 @@ pub fn visible_len(s: &str) -> usize {
 }
 
 pub fn expand_unicode(s: &str) -> String {
-    let mut ret = String::new();
+    let mut ret = String::with_capacity(s.len());
     let chars: Vec<char> = s.chars().collect();
     let mut pos = 0;
 
@@ -154,6 +154,38 @@ pub fn expand_unicode(s: &str) -> String {
                 pos += 6;
                 continue;
             }
+        }
+        ret.push(chars[pos]);
+        pos += 1;
+    }
+    ret
+}
+
+pub fn expand_rust_unicode(s: &str) -> String {
+    let mut ret = String::with_capacity(s.len());
+    let chars: Vec<char> = s.chars().collect();
+    let mut pos = 0;
+
+    while pos < chars.len() {
+        if pos + 3 <= chars.len()
+            && chars[pos] == '\\'
+            && chars[pos + 1] == 'u'
+            && chars[pos + 2] == '{'
+        {   
+            pos += 3;
+            let mut hex = String::new();
+            while pos < chars.len() && chars[pos] != '}' {
+                hex.push(chars[pos]);
+                pos += 1;
+            }
+            pos += 1;
+
+            if let Ok(num) = u32::from_str_radix(&hex, 16)
+                && let Some(ch) = char::from_u32(num)
+            {   
+                ret.push(ch);
+            }
+            continue;
         }
         ret.push(chars[pos]);
         pos += 1;
@@ -372,11 +404,16 @@ macro_rules! formatln {
 
 #[cfg(test)]
 mod tests {
-    use crate::formats::{Size, expand_unicode, split_by_len_ansi};
+    use crate::formats::{Size, expand_rust_unicode, expand_unicode, split_by_len_ansi};
 
     #[test]
     fn test_conversion() {
         println!("{}", expand_unicode(r"\u001b[31m \u001b[32m \u001b[33m \u001b[34m \u001b[0m"));
+    }
+
+    #[test]
+    fn expand_rust_test() {
+        println!("{}", expand_rust_unicode(r"\u{1b}[33mHello\u{1b}[0m"));
     }
 
     #[test]
