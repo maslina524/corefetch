@@ -3,10 +3,7 @@ use alloc::{
     vec::Vec,
 };
 
-use crate::{
-    url::{Url, Response},
-    todo_or_default
-};
+use crate::url::{Url, Response};
 
 const BUF_SIZE: usize = 1024;
 
@@ -30,8 +27,9 @@ impl Request {
         self.send("GET")
     }
 
+    #[todo::todo("Http is not implemented")]
     fn send(self, _method: &str) -> Response {
-        let content = todo_or_default!("Http is not implemented", Vec::from(b"Http is not implemented"));
+        let content = Vec::from(b"Http is not implemented");
         Response::new(400, content)
     }
 }
