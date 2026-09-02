@@ -141,7 +141,7 @@ impl Drop for File {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq)]
 pub enum ItemType {
     File, Dir, Link, Unknown
 }

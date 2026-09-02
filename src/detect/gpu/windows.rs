@@ -6,7 +6,7 @@ use core::{
 };
 
 use alloc::{
-    string::String,
+    string::{String, ToString},
     borrow::ToOwned
 };
 
@@ -17,24 +17,14 @@ use crate::{
         DIGCF_PRESENT, GUID_DEVCLASS_DISPLAY, SP_DEVINFO_DATA, SetupDiOpenDevRegKey,
     },
     windows::regedit::Regedit,
+    windows::encoding::{utf16le_to_utf8, Utf16Len},
     formats::Size,
-    nvidia::NvidiaLib,
+    detect::gpu::{GpuInfo, GpuType},
     abort,
     warning
 };
 
 const INVALID_HANDLE: *mut c_void = (-1isize).cast_unsigned() as *mut c_void;
-
-pub struct GpuInfo {
-    pub vendor: &'static str,
-    pub name: String,
-    pub device_id: u32,
-    pub driver: String,
-    pub temperature: f32,
-    pub typ: &'static str,
-    pub memory_total: Size,
-    pub frequency: f32
-}
 
 impl GpuInfo {
     pub fn new() -> Self {
@@ -53,56 +43,16 @@ impl GpuInfo {
         Self {
             vendor: Self::vendor_name(desc.VendorId),
             name,
-            device_id: desc.DeviceId,
+            device_id: desc.DeviceId.to_string(),
             driver,
             temperature: Self::temperature(desc.VendorId),
-            typ: Self::typ(desc.VendorId, &memory_total),
+            typ: GpuType::get_old(desc.VendorId, &memory_total),
             memory_total,
             frequency: Self::frequency(desc.VendorId)
         }
     }
-
-    pub fn typ(vendor: u32, memory: &Size) -> &'static str {
-        if *memory > Size::Mb(256.0) && [0x10DE, 0x1002, 0x1022].contains(&vendor) {
-            "Discrete"
-        } else {
-            "Built-in"
-        }
-    }
-
-    pub fn temperature(vendor_id: u32) -> f32 {
-        match vendor_id {
-            0x10DE => NvidiaLib::get().gpu_temperature() as f32,
-            _ => 28.0,
-        }
-    }
-
-    pub fn name(vendor_id: u32) -> String {
-        match vendor_id {
-            0x10DE => NvidiaLib::get().device_name(),
-            _ => "Unknown".to_owned(),
-        }
-    }
-
-    pub fn frequency(vendor_id: u32) -> f32 {
-        match vendor_id {
-            0x10DE => NvidiaLib::get().get_frequency_ghz() as f32,
-            _ => 0.0,
-        }
-    }
-
-    pub const fn vendor_name(vendor_id: u32) -> &'static str {
-        match vendor_id {
-            0x10DE => "NVIDIA",
-            0x1002 | 0x1022 => "AMD",
-            0x8086 => "Intel",
-            0x1414 => "Microsoft (Software/WARP)",
-            0x5143 => "Qualcomm",
-            _ => "Unknown",
-        }
-    }
-
-    pub fn dxgi_adapter_desc() -> Result<DXGI_ADAPTER_DESC, i32> {
+    
+    fn dxgi_adapter_desc() -> Result<DXGI_ADAPTER_DESC, i32> {
         let mut factory_void = ptr::null_mut();
         
         // SAFETY: Completely safe
@@ -144,7 +94,7 @@ impl GpuInfo {
         }
     }
 
-    pub fn driver_version() -> Option<String> {
+    fn driver_version() -> Option<String> {
         // SAFETY: Completely safe
         let handle = unsafe {
             SetupDiGetClassDevsW(
@@ -206,7 +156,7 @@ mod tests {
     fn vendor_test() {
         let info = GpuInfo::new();
         let name = info.vendor;
-        assert_ne!(name, "");
+        assert!(!name.is_empty());
         println!("Vendor: {name}");
     }
 
@@ -214,7 +164,7 @@ mod tests {
     fn name_test() {
         let info = GpuInfo::new();
         let name = info.name;
-        assert_ne!(name, "");
+        assert!(!name.is_empty());
         println!("Name: {name}");
     }
 
