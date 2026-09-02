@@ -10,9 +10,9 @@ use crate::{
     modules::Module, 
     sync::OnceLock,
     json::{Map, Value},
-    formats::{ColorPlan, format_color},
-    format,
-    warning
+    formats::{ColorPlan, Percent, Temperature, format_color},
+    warning,
+    format
 };
 
 static PRESET: OnceLock<Config> = OnceLock::new();
@@ -184,31 +184,33 @@ impl Config {
     }
 
     /// val -> 0..=100
-    pub fn format_percent(&self, val: u8) -> String {
-        let color = if val <= 50 {
-            self.display.percent.green.as_str()
-        } else if val <= 75 {
-            self.display.percent.yellow.as_str()
-        } else {
-            self.display.percent.red.as_str()
+    pub fn format_percent(&self, percent: Percent) -> String {
+        let val = percent.get();
+        let color = match val {
+            i if (0..50).contains(&i) => self.display.percent.green.as_str(),
+            i if (50..75).contains(&i) => self.display.percent.yellow.as_str(),
+            i if (75..100).contains(&i) => self.display.percent.red.as_str(),
+            _ => "0"
         };
 
         format!("\x1b[{color}m{val}%\x1b[0m")
     }
 
-    pub fn format_celsius(&self, mut val: f32) -> String {
-        let typ = &self.display.temperature.typ;
-        val = typ.convert_to_celsius(val);
-
-        let color = if val <= 50.0 {
-            self.display.temperature.green.as_str()
-        } else if val <= 75.0 {
-            self.display.temperature.yellow.as_str()
-        } else {
-            self.display.temperature.red.as_str()
+    pub fn format_temperature(&self, temp: Temperature) -> String {
+        let val = match self.display.temperature.typ {
+            TemperatureType::Celsius => temp.as_celsius(),
+            TemperatureType::Fahrenheit => temp.as_fahrenheit(),
+            TemperatureType::Kelvin => temp.as_kelvin(),
         };
 
-        format!("\x1b[{color}m{val:.01} °{}\x1b[0m", typ.symb())
+        let color = match val.get() {
+            i if (0.0..50.0).contains(&i) => self.display.percent.green.as_str(),
+            i if (50.0..75.0).contains(&i) => self.display.percent.yellow.as_str(),
+            i if (75.0..100.0).contains(&i) => self.display.percent.red.as_str(),
+            _ => "0"
+        };
+
+        format!("\x1b[{color}m{}°{}\x1b[0m", val.get(), val.symbol())
     }
 }
 
@@ -336,21 +338,6 @@ impl TemperatureType {
                 warning!("Unknown temperature type ({s})");
                 Self::Celsius
             }
-        }
-    }
-    pub const fn symb(&self) -> char {
-        match self {
-            Self::Celsius    => 'C',
-            Self::Fahrenheit => 'F',
-            Self::Kelvin     => 'K'
-        }
-    }
-
-    pub const fn convert_to_celsius(&self, val: f32) -> f32 {
-        match self {
-            Self::Celsius    => val,
-            Self::Fahrenheit => (val * 9.0 / 5.0) + 32.0,
-            Self::Kelvin     => val + 273.15
         }
     }
 }

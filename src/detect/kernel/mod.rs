@@ -1,7 +1,7 @@
 use alloc::string::String;
 
 use crate::{
-    formats::Size,
+    formats::MemorySize,
     cfg_if
 };
 
@@ -18,5 +18,5 @@ pub struct KernelInfo {
     pub release: String,
     pub version: String,
     pub display_version: String,
-    pub page_size: Size
+    pub page_size: MemorySize
 }

@@ -1,22 +1,21 @@
 use alloc::string::String;
 
 use crate::{
-    format,
-    impl_display_for_module,
-    format_for_module,
     detect::memory::MemoryInfo,
+    format_for_module, 
+    formats::{MemorySize, Percent}, 
+    impl_display_for_module, 
     modules::Module, 
-    sync::OnceLock,
-    config::Config
+    sync::OnceLock
 };
 
 static MEMORY: OnceLock<Memory> = OnceLock::new();
 
 #[derive(Debug)]
 pub struct Memory {
-    pub used: String,
-    pub total: String,
-    pub percentage: String,
+    pub used: MemorySize,
+    pub total: MemorySize,
+    pub percentage: Percent,
     pub percentage_bar: String,
 }
 
@@ -28,9 +27,9 @@ impl Module for Memory {
         let percent = (used.as_kilobytes() / total.as_kilobytes() * 100.0) as u8;
 
         Self {
-            used: format!("{used:.02}"),
-            total: format!("{total:.02}"),
-            percentage: Config::get().format_percent(percent),
+            used,
+            total,
+            percentage: Percent::new(percent),
             percentage_bar: String::new(),
         }
     }
@@ -46,7 +45,7 @@ impl Module for Memory {
     }
 
     fn title(&self) -> &'static str {
-        "{used} GiB / {total} GiB ({percentage})"
+        "{used} / {total} ({percentage})"
     }
 
     fn string_name(&self) -> &'static str {

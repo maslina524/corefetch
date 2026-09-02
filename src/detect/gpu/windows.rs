@@ -17,7 +17,7 @@ use crate::{
         DIGCF_PRESENT, GUID_DEVCLASS_DISPLAY, SP_DEVINFO_DATA, SetupDiOpenDevRegKey,
     },
     windows::regedit::Regedit,
-    formats::Size,
+    formats::MemorySize,
     detect::gpu::{GpuInfo, GpuType},
     abort,
     warning
@@ -37,7 +37,7 @@ impl GpuInfo {
             || { warning!("Failed to get driver version"); String::from("Unknown") }
         );
 
-        let memory_total = Size::from_bytes(desc.DedicatedVideoMemory as u64);
+        let memory_total = MemorySize::from_bytes(desc.DedicatedVideoMemory as u64);
 
         Self {
             vendor: Self::vendor_name(desc.VendorId),

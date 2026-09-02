@@ -32,7 +32,7 @@ pub struct CpuInfo {
     pub technology: String,
     pub base_freq: f64,
     pub max_freq: f64,
-    pub temperature: f64,
+    pub temperature: f32,
     pub logical_grouped: String,
     pub micro_arch: String
 }
@@ -220,7 +220,7 @@ impl CpuInfo {
         0.0
     }
 
-    const fn temperature() -> f64 {
+    const fn temperature() -> f32 {
         28.0
     }
 }
