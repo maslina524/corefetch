@@ -31,16 +31,19 @@ impl CpuInfo {
         ).unwrap();
 
         let logical_info = Self::logical_info();
+        let vendor = Self::vendor();
+        let (family, model) = Self::get_family_and_model();
+        let code_name = Self::code_name(&vendor, family, model);
 
         Self {
             name: Self::name(&cpu_regedit_handle),
-            vendor: Self::vendor(),
+            vendor,
             numa_nodes: Self::numa_nodes_count(),
             physical_cores: Self::physical_cores_count(&logical_info),
             logical_cores: Self::logical_cores_count(&logical_info),
             online_cores: Self::online_cores_count(),
             packages: Self::package_count(&logical_info),
-            code_name: Self::code_name(),
+            code_name,
             technology: Self::technology(),
             base_freq: Self::base_freq_formatted(&cpu_regedit_handle),
             temperature: Self::temperature(),

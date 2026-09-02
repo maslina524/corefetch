@@ -3,7 +3,7 @@ use alloc::string::{String, ToString};
 use crate::{
     impl_display_for_module,
     format_for_module,
-    detect::gpu::GpuInfo,
+    detect::gpu::{GpuInfo, GpuType},
     modules::Module, 
     sync::OnceLock,
     config::Config,
@@ -19,7 +19,7 @@ pub struct Gpu {
     pub driver: String,
     pub temperature: String,
     pub core_count: usize,
-    pub r#type: &'static str,
+    pub r#type: GpuType,
     pub dedicated_total: String,
     pub dedicated_used: String,
     pub shared_total: String,
