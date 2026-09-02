@@ -6,6 +6,7 @@ use crate::{
     detect::cpu::CpuInfo,
     modules::Module, 
     sync::OnceLock,
+    formats::Temperature,
     format
 };
 
@@ -20,7 +21,7 @@ pub struct Cpu {
     pub cores_online: usize,
     pub freq_base: String,
     pub freq_max: String,
-    pub temperature: String,
+    pub temperature: Temperature,
     pub core_types: String,
     pub packages: usize,
     pub march: String,
@@ -40,7 +41,7 @@ impl Module for Cpu {
             cores_online: info.online_cores,
             freq_base: format!("{:.2} GHz", info.base_freq),
             freq_max: format!("{:.2} GHz", info.max_freq),
-            temperature: format!("{:.2} °C", info.temperature),
+            temperature: Temperature::Celsius(info.temperature),
             core_types: info.logical_grouped,
             packages: info.packages,
             march: info.micro_arch,

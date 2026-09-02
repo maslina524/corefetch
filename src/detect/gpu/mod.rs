@@ -5,7 +5,7 @@ use alloc::{
 
 use crate::{
     cfg_if,
-    formats::Size, 
+    formats::MemorySize, 
     nvidia::NvidiaLib,
     format
 };
@@ -49,8 +49,8 @@ impl GpuType {
         }
     }
 
-    pub fn get_old(vendor: u32, memory: &Size) -> Self {
-        if *memory > Size::Mb(256.0) && [0x10DE, 0x1002, 0x1022].contains(&vendor) {
+    pub fn get_old(vendor: u32, memory: &MemorySize) -> Self {
+        if *memory > MemorySize::Mb(256.0) && [0x10DE, 0x1002, 0x1022].contains(&vendor) {
             Self::Discrete
         } else {
             Self::BuiltIn
@@ -76,7 +76,7 @@ pub struct GpuInfo {
     pub driver: String,
     pub temperature: f32,
     pub typ: GpuType,
-    pub memory_total: Size,
+    pub memory_total: MemorySize,
     pub frequency: f32
 }
 

@@ -1,4 +1,4 @@
-use crate::{cfg_if, formats::Size};
+use crate::{cfg_if, formats::MemorySize};
 
 cfg_if! {
     if #[cfg(target_os = "windows")] {
@@ -10,6 +10,6 @@ cfg_if! {
 
 #[derive(Default)]
 pub struct MemoryInfo {
-    pub total: Size,
-    pub in_use: Size
+    pub total: MemorySize,
+    pub in_use: MemorySize
 }

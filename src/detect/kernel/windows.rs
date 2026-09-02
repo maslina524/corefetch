@@ -7,7 +7,7 @@ use crate::{
     windows::env,
     windows::regedit::RegValue,
     windows::link::{SYSTEM_INFO, GetSystemInfo},
-    formats::Size,
+    formats::MemorySize,
     detect::kernel::KernelInfo,
     format
 };
@@ -44,14 +44,14 @@ impl KernelInfo {
         format!("{major}.{minor}.{build}.{ubr}")
     }
 
-    fn page_size() -> Size {
+    fn page_size() -> MemorySize {
         let mut si = SYSTEM_INFO::default();
         // SAFETY: Completely safe
         unsafe {
             GetSystemInfo(&raw mut si);
         }
 
-        Size::from_bytes(si.dwPageSize as u64)
+        MemorySize::from_bytes(si.dwPageSize as u64)
     }
 }
 

@@ -11,28 +11,31 @@ use alloc::{
 };
 
 // Why does clippy think this variant is better than `colors::*`?
-use crate::color::{
-    MODE_RESET, MODE_BOLD, MODE_DIM, MODE_ITALIC, MODE_UNDERLINE, MODE_BLINK, MODE_INVERSE,
-    MODE_HIDDEN, MODE_STRIKETHROUGH, FG_BLACK, FG_LIGHT_BLACK, BG_BLACK, BG_LIGHT_BLACK,
-    FG_RED, FG_LIGHT_RED, BG_RED, BG_LIGHT_RED, FG_GREEN, FG_LIGHT_GREEN, BG_GREEN,
-    BG_LIGHT_GREEN, FG_YELLOW, FG_LIGHT_YELLOW, BG_YELLOW, BG_LIGHT_YELLOW, FG_BLUE,
-    FG_LIGHT_BLUE, BG_BLUE, BG_LIGHT_BLUE, FG_MAGENTA, FG_LIGHT_MAGENTA, BG_MAGENTA,
-    BG_LIGHT_MAGENTA, FG_CYAN, FG_LIGHT_CYAN, BG_CYAN, BG_LIGHT_CYAN, FG_WHITE,
-    FG_LIGHT_WHITE, BG_WHITE, BG_LIGHT_WHITE, BG_DEFAULT, FG_DEFAULT
+use crate::{
+    color::{
+        MODE_RESET, MODE_BOLD, MODE_DIM, MODE_ITALIC, MODE_UNDERLINE, MODE_BLINK, MODE_INVERSE,
+        MODE_HIDDEN, MODE_STRIKETHROUGH, FG_BLACK, FG_LIGHT_BLACK, BG_BLACK, BG_LIGHT_BLACK,
+        FG_RED, FG_LIGHT_RED, BG_RED, BG_LIGHT_RED, FG_GREEN, FG_LIGHT_GREEN, BG_GREEN,
+        BG_LIGHT_GREEN, FG_YELLOW, FG_LIGHT_YELLOW, BG_YELLOW, BG_LIGHT_YELLOW, FG_BLUE,
+        FG_LIGHT_BLUE, BG_BLUE, BG_LIGHT_BLUE, FG_MAGENTA, FG_LIGHT_MAGENTA, BG_MAGENTA,
+        BG_LIGHT_MAGENTA, FG_CYAN, FG_LIGHT_CYAN, BG_CYAN, BG_LIGHT_CYAN, FG_WHITE,
+        FG_LIGHT_WHITE, BG_WHITE, BG_LIGHT_WHITE, BG_DEFAULT, FG_DEFAULT
+    },
+    config::Config
 };
 
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub enum ColorPlan { FG, BG }
 
-#[derive(Clone, PartialEq)]
-pub enum Size {
+#[derive(Debug, Clone, PartialEq)]
+pub enum MemorySize {
     Byte(u16),
     Kb(f32),
     Mb(f32),
     Gb(f32)
 }
 
-impl Size {
+impl MemorySize {
     pub fn from_bytes(bytes: u64) -> Self {
         let mut divisions = 0;
         #[allow(clippy::cast_precision_loss)]
@@ -72,13 +75,13 @@ impl Size {
     }
 }
 
-impl Default for Size {
+impl Default for MemorySize {
     fn default() -> Self {
         Self::Byte(0)
     }
 }
 
-impl core::fmt::Display for Size {
+impl core::fmt::Display for MemorySize {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
             Self::Byte(b) => write!(f, "{b} Bytes"),
@@ -89,9 +92,97 @@ impl core::fmt::Display for Size {
     }
 }
 
-impl PartialOrd for Size {
+impl PartialOrd for MemorySize {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         self.as_bytes().partial_cmp(&other.as_bytes())
+    }
+}
+
+#[derive(Debug, Clone, Copy, Default)]
+pub struct Percent(u8);
+
+impl Percent {
+    pub const fn get(self) -> u8 {
+        self.0
+    }
+
+    pub const fn new(mut percent: u8) -> Self {
+        if percent > 100 {
+            percent = 100;
+        }
+        Self(percent)
+    }
+
+    pub const fn new_check(percent: u8) -> Option<Self> {
+        if percent > 100 {
+            None
+        } else {
+            Some(Self(percent))
+        }
+    }
+}
+
+impl core::fmt::Display for Percent {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        let val = Config::get().format_percent(*self);
+        write!(f, "{val}")
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum Temperature {
+    Celsius(f32),
+    Fahrenheit(f32),
+    Kelvin(f32),
+}
+
+impl Temperature {
+    pub const fn get(self) -> f32 {
+        match self {
+            Self::Celsius(t) | Self::Fahrenheit(t) | Self::Kelvin(t) => t
+        }
+    }
+
+    pub const fn symbol(self) -> char {
+        match self {
+            Self::Celsius(_)    => 'C',
+            Self::Fahrenheit(_) => 'F',
+            Self::Kelvin(_)     => 'K'
+        }
+    }
+
+    pub const fn as_celsius(self) -> Self {
+        let temp = match self {
+            Self::Celsius(t)    => t,
+            Self::Fahrenheit(t) => (t - 32.0) * 5.0 / 9.0,
+            Self::Kelvin(t)     => t - 273.15
+        };
+        Self::Celsius(temp)
+    }
+
+    pub const fn as_fahrenheit(self) -> Self {
+        let temp = match self {
+            Self::Celsius(t)    => (t * 9.0 / 5.0) + 32.0,
+            Self::Fahrenheit(t) => t,
+            Self::Kelvin(t)     => (t - 273.15) * 9.0 / 5.0 + 32.0
+        };
+        Self::Fahrenheit(temp)
+    }
+
+    pub const fn as_kelvin(self) -> Self {
+        let temp = match self {
+            Self::Celsius(t)    => t + 273.15,
+            Self::Fahrenheit(t) => (t - 32.0) * 5.0 / 9.0 + 273.15,
+            Self::Kelvin(t)     => t
+        };
+        Self::Kelvin(temp)
+    }
+}
+
+impl core::fmt::Display for Temperature {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        let val = Config::get().format_temperature(*self);
+        write!(f, "{val}")
     }
 }
 
@@ -404,7 +495,7 @@ macro_rules! formatln {
 
 #[cfg(test)]
 mod tests {
-    use crate::formats::{Size, expand_rust_unicode, expand_unicode, split_by_len_ansi};
+    use crate::formats::{MemorySize, expand_rust_unicode, expand_unicode, split_by_len_ansi};
 
     #[test]
     fn test_conversion() {
@@ -418,11 +509,11 @@ mod tests {
 
     #[test]
     fn from_bytes_test() {
-        assert_eq!(Size::from_bytes(512).to_string(),           "512 Bytes");
-        assert_eq!(Size::from_bytes(1024).to_string(),          "1.00 Kb");
-        assert_eq!(Size::from_bytes(1536).to_string(),          "1.50 Kb");
-        assert_eq!(Size::from_bytes(536_870_912).to_string(),   "512.00 Mb");
-        assert_eq!(Size::from_bytes(2_147_483_648).to_string(), "2.00 Gb");
+        assert_eq!(MemorySize::from_bytes(512).to_string(),           "512 Bytes");
+        assert_eq!(MemorySize::from_bytes(1024).to_string(),          "1.00 Kb");
+        assert_eq!(MemorySize::from_bytes(1536).to_string(),          "1.50 Kb");
+        assert_eq!(MemorySize::from_bytes(536_870_912).to_string(),   "512.00 Mb");
+        assert_eq!(MemorySize::from_bytes(2_147_483_648).to_string(), "2.00 Gb");
     }
 
     #[test]
