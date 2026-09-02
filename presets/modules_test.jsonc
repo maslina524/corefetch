@@ -2,8 +2,8 @@
     "logo": null,
     "modules": [
         {
-            "type": "title",
-            "format": "lua: return string.format('Hello %s', (...).userName)"
+            "type": "memory",
+            "format": "lua:local used, total = ...\nlocal percent = (used / total) * 100\nif percent > 80 then\n    return string.format('\\u001b[31mCritical Memory Usage: %.2f%%\\u001b[0m', percent)\nelse\n    return string.format('Memory Ok: %.2f%%', percent)\nend"
         }
     ]
 }

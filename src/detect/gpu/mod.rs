@@ -4,7 +4,7 @@ use alloc::{
 };
 
 use crate::{
-    cfg_if, 
+    cfg_if,
     formats::Size, 
     nvidia::NvidiaLib,
     format
@@ -18,7 +18,7 @@ cfg_if! {
     }
 }
 
-#[derive(Default)]
+#[derive(Debug, Default)]
 pub enum GpuType {
     #[default]
     Unknown,
@@ -27,14 +27,6 @@ pub enum GpuType {
 }
 
 impl GpuType {
-    pub fn to_str(&self) -> &'static str {
-        match self {
-            Self::Unknown => "Unknown",
-            Self::Discrete => "Discrete",
-            Self::BuiltIn => "Built-in"
-        }
-    }
-
     pub fn get_by_vendor_and_bus(vendor_id: u32, device_id: u32, pci_address: &str) -> Self {
         match vendor_id {
             0x10DE => Self::Discrete,
@@ -47,12 +39,11 @@ impl GpuType {
                     dev_str.starts_with("69") ||
                     dev_str.starts_with("73") ||
                     dev_str.starts_with("74") {
-                        return GpuType::Discrete;
+                        return Self::Discrete;
                     }
-                    return GpuType::BuiltIn;
-                } else {
-                    return GpuType::Discrete;
+                    return Self::BuiltIn;
                 }
+                Self::Discrete
             },
             _ => Self::Unknown
         }
@@ -63,6 +54,16 @@ impl GpuType {
             Self::Discrete
         } else {
             Self::BuiltIn
+        }
+    }
+}
+
+impl core::fmt::Display for GpuType {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        match self {
+            Self::Unknown  => write!(f, "Unknown"),
+            Self::Discrete => write!(f, "Discrete"),
+            Self::BuiltIn  => write!(f, "Built-in")
         }
     }
 }

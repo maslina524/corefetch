@@ -6,7 +6,7 @@ use core::{
 };
 
 use alloc::{
-    string::{String, ToString},
+    string::String,
     borrow::ToOwned
 };
 
@@ -17,7 +17,6 @@ use crate::{
         DIGCF_PRESENT, GUID_DEVCLASS_DISPLAY, SP_DEVINFO_DATA, SetupDiOpenDevRegKey,
     },
     windows::regedit::Regedit,
-    windows::encoding::{utf16le_to_utf8, Utf16Len},
     formats::Size,
     detect::gpu::{GpuInfo, GpuType},
     abort,
@@ -43,7 +42,7 @@ impl GpuInfo {
         Self {
             vendor: Self::vendor_name(desc.VendorId),
             name,
-            device_id: desc.DeviceId.to_string(),
+            device_id: desc.DeviceId,
             driver,
             temperature: Self::temperature(desc.VendorId),
             typ: GpuType::get_old(desc.VendorId, &memory_total),
@@ -156,7 +155,7 @@ mod tests {
     fn vendor_test() {
         let info = GpuInfo::new();
         let name = info.vendor;
-        assert!(!name.is_empty());
+        assert_ne!(name, "");
         println!("Vendor: {name}");
     }
 
@@ -164,7 +163,7 @@ mod tests {
     fn name_test() {
         let info = GpuInfo::new();
         let name = info.name;
-        assert!(!name.is_empty());
+        assert_ne!(name, "");
         println!("Name: {name}");
     }
 
@@ -191,11 +190,5 @@ mod tests {
             assert!(info.temperature != 0.0);
             println!("Temperature: {}", info.temperature);
         }
-    }
-
-    #[test]
-    fn type_test() {
-        let info = GpuInfo::new();
-        println!("Type: {}", info.typ);
     }
 }
