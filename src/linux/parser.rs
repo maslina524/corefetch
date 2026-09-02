@@ -52,12 +52,19 @@ impl LinuxInfo {
         Self { inner: ret }
     }
 
-    pub fn get(&self, key: &str, default: impl ToString) -> String {
+    pub fn get_default(&self, key: &str, default: impl ToString) -> String {
         self
             .inner
             .get(key)
             .cloned()
             .unwrap_or_else(|| default.to_string())
+    }
+
+    pub fn get(&self, key: &str) -> Option<String> {
+        self
+            .inner
+            .get(key)
+            .cloned()
     }
 }
 

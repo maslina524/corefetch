@@ -15,10 +15,10 @@ impl CpuInfo {
         let info = LinuxInfo::parse_cpu_info()
             .unwrap_or_else(|e| abort!("Failed to open /proc/cpuinfo: {e}"));
 
-        let name = info.get("model name", "Unknown");
+        let name = info.get_default("model name", "Unknown");
         let logical_cores = Self::logical_cores_count();
         let base_freq = info
-            .get("key", "0")
+            .get_default("key", "0")
             .parse::<f64>()
             .unwrap_or(0.0) / 1000.0;
 
