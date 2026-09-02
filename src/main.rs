@@ -92,6 +92,10 @@ static ALLOCATOR: Allocator = Allocator;
 
 const MIN_OFFSET: usize = 24;
 
+pub trait Docs {
+    fn print_format();
+}
+
 #[cfg(not(test))]
 mod panic_impl {
     use core::panic::PanicInfo;
