@@ -1,3 +1,5 @@
+use core::str::FromStr;
+
 use alloc::{
     string::String,
     vec::Vec,
@@ -5,7 +7,13 @@ use alloc::{
 };
 
 use crate::{
-    format, warning, windows::{env, fs::{self, Access, File}, https::Request, path::Path}
+    format, 
+    formats::{Percent, Temperature},
+    warning, 
+    imp::env, 
+    imp::fs::{self, Access, File}, 
+    imp::https::Request, 
+    imp::path::Path
 };
 
 const WTTR_URL: &str = "https://wttr.in/?lang=en&format=%c;%C;%x;%h;%t;%f;%w;%l;%m;%M;%p;%P;%u;%D;%S;%z;%s;%d;%T;%Z";
@@ -16,9 +24,9 @@ pub struct WeatherInfo {
     pub condition_emoji: String,
     pub condition: String,
     pub condition_symbol: String,
-    pub humidity: String,
-    pub temperature_actual: String,
-    pub temperature_feels: String,
+    pub humidity: Percent,
+    pub temperature_actual: Temperature,
+    pub temperature_feels: Temperature,
     pub wind: String,
     pub location: String,
     pub moon_emoji: String,
@@ -85,9 +93,9 @@ impl WeatherInfo {
             condition_emoji: condition_emoji.to_owned(),
             condition: condition.to_owned(), 
             condition_symbol: condition_symbol.to_owned(), 
-            humidity: humidity.to_owned(), 
-            temperature_actual: temperature_actual.to_owned(), 
-            temperature_feels: temperature_feels.to_owned(), 
+            humidity: Percent::from_str(humidity).expect("Unreachable"), 
+            temperature_actual: Temperature::from_str(temperature_actual).expect("Unreachable"), 
+            temperature_feels: Temperature::from_str(temperature_feels).expect("Unreachable"), 
             wind: wind.to_owned(), 
             location: location.to_owned(), 
             moon_emoji: moon_emoji.to_owned(), 

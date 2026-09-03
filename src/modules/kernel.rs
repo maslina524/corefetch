@@ -1,4 +1,5 @@
 use alloc::string::String;
+use doc::Docs;
 
 use crate::{
     format,
@@ -11,13 +12,19 @@ use crate::{
 
 static KERNEL: OnceLock<Kernel> = OnceLock::new();
 
-#[derive(Debug)]
+#[derive(Debug, Docs)]
 pub struct Kernel {
+    #[doc = "Sysname"]
     pub sysname: &'static str,
+    #[doc = "Release"]
     pub release: String,
+    #[doc = "Version"]
     pub version: String,
+    #[doc = "Architecture"]
     pub arch: &'static str,
+    #[doc = "Display version"]
     pub display_version: String, // Exists in fastfetch, but not supported (?)
+    #[doc = "Page size"]
     pub page_size: String
 }
 
@@ -61,4 +68,3 @@ impl Module for Kernel {
 }
 
 impl_display_for_module!(Kernel);
-

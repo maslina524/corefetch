@@ -1,6 +1,7 @@
 use alloc::{
     string::String,
 };
+use doc::Docs;
 
 use crate::{
     format_for_module,
@@ -12,9 +13,11 @@ use crate::{
 
 static WALLPAPER: OnceLock<Wallpaper> = OnceLock::new();
 
-#[derive(Debug)]
+#[derive(Debug, Docs)]
 pub struct Wallpaper {
+    #[doc = "File name"]
     pub file_name: String,
+    #[doc = "Full path"]
     pub full_path: String
 }
 

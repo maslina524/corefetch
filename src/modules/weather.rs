@@ -1,11 +1,13 @@
 use alloc::string::String;
+use doc::Docs;
 
 use crate::{
-    format_for_module,
-    impl_display_for_module,
-    modules::Module,
-    sync::OnceLock,
-    detect::weather::WeatherInfo
+    detect::weather::WeatherInfo, 
+    format_for_module, 
+    formats::{Percent, Temperature}, 
+    impl_display_for_module, 
+    modules::Module, 
+    sync::OnceLock
 };
 
 static WEATHER: OnceLock<Weather> = OnceLock::new();
@@ -34,28 +36,49 @@ static WEATHER: OnceLock<Weather> = OnceLock::new();
 // Format string:
 // %c;%C;%x;%h;%t;%f;%w;%l;%m;%M;%p;%P;%u;%D;%S;%z;%s;%d;%T;%Z
 
-#[derive(Debug)]
+#[derive(Debug, Docs)]
 pub struct Weather {
+    #[doc = "Pretty string, like `+14°C — Overcast (Tver, Tver Oblast, RU)`"]
     pub result: String,
+    #[doc = "Condition emoji, like `🌤️`"]
     pub condition_emoji: String,
+    #[doc = "Condition, like `Partly Cloudy`"]
     pub condition: String,
+    #[doc = "Condition symbol, like `Partly m`"]
     pub condition_symbol: String,
-    pub humidity: String,
-    pub temperature_actual: String,
-    pub temperature_feels: String,
+    #[doc = "Humidity in percent"]
+    pub humidity: Percent,
+    #[doc = "Actual temperature"]
+    pub temperature_actual: Temperature,
+    #[doc = "Felt temperature."]
+    pub temperature_feels: Temperature,
+    #[doc = "Wind, like `↘22km/h`"]
     pub wind: String,
+    #[doc = "Location, like `Tver, Tver Oblast, RU`"]
     pub location: String,
+    #[doc = "Moon emoji"]
     pub moon_emoji: String,
+    #[doc = "Moon day"]
     pub moon_day: u8,
+    #[doc = "Precipitation"]
     pub precipitation: String,
+    #[doc = "Pressure, like `1017hPa`"]
     pub pressure: String,
+    #[doc = "UV index (0 - 11+)"]
     pub uv_index: u8,
+    #[doc = "Dawn time"]
     pub dawn: String,
+    #[doc = "Sunrise time"]
     pub sunrise: String,
+    #[doc = "Zenith time"]
     pub zenith: String,
+    #[doc = "Sunset time"]
     pub sunset: String,
+    #[doc = "Dusk time"]
     pub dusk: String,
+    #[doc = "Time, like `16:45:01+0300`"]
     pub time: String,
+    #[doc = "Timezone, like `Europe/Moscow`"]
     pub timezone: String
 }
 

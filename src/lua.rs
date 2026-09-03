@@ -140,10 +140,13 @@ macro_rules! impl_as_lua_as_f64 {
 }
 
 impl_as_lua_debug_string!(
-    String, &str, char,
+    String, &str, str, char,
     crate::detect::gpu::GpuType
 );
-impl_as_lua_to_string!(Path);
+impl_as_lua_to_string!(
+    Path,
+    crate::detect::datetime::AmPm
+);
 
 impl_as_lua_into_f64!(
     crate::formats::Temperature,
