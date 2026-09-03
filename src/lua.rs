@@ -13,7 +13,7 @@ use crate::{
     get_fn,
     format,
     cfg_if,
-    imp::https::Request,
+    imp::http::Request,
     imp::fs::{self, File, Access},
     imp::path::Path,
     sync::OnceLock,
@@ -61,7 +61,7 @@ pub type lua_settop = unsafe extern "C" fn(state: *mut lua_State, idx: c_int);
 
 static LUA: OnceLock<LuaLib> = OnceLock::new();
 
-const LUA_DOWNLOAD_URL: &str = "https://github.com/maslina524/corefetch/raw/refs/heads/main/bin/lua55.dll";
+const LUA_DOWNLOAD_URL: &str = "http://github.com/maslina524/corefetch/raw/refs/heads/main/bin/lua55.dll";
 
 pub enum LuaType {
     String(String),

@@ -104,6 +104,34 @@ impl Response {
         Self { code, content }
     }
 
+    pub fn from_raw(data: Vec<u8>) -> Self {
+        let header_end = data
+            .windows(4)
+            .position(|window| window == b"\r\n\r\n")
+            .unwrap_or(data.len());
+
+        let headers = &data[..header_end];
+        let content = if header_end + 4 <= data.len() {
+            data[header_end + 4..].to_vec()
+        } else {
+            Vec::new()
+        };
+
+        let headers_str = String::from_utf8_lossy(headers);
+        let status_line = headers_str.lines().next().unwrap_or("");
+
+        let mut parts = status_line.split_whitespace();
+        let _version = parts.next();
+        let code_str = parts.next();
+        let _reason = parts.next();
+
+        let code = code_str
+            .and_then(|s| s.parse::<u16>().ok())
+            .unwrap_or(0);
+
+        Response { code, content }
+    }
+
     pub const fn code(&self) -> u16 {
         self.code
     }

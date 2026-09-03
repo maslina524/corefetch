@@ -22,15 +22,19 @@ impl CpuInfo {
             .parse::<f64>()
             .unwrap_or(0.0) / 1000.0;
 
+        let vendor = Self::vendor();
+        let (family, model) = Self::get_family_and_model();
+        let code_name = Self::code_name(&vendor, family, model);
+
         Self {
             name,
-            vendor: Self::vendor(),
+            vendor,
             numa_nodes: Self::numa_nodes_count(),
             physical_cores: Self::physical_cores_count(),
             logical_cores,
             online_cores: Self::online_cores_count(logical_cores),
             packages: Self::package_count(),
-            code_name: Self::code_name(),
+            code_name,
             technology: Self::technology(),
             base_freq,
             temperature: Self::temperature(),

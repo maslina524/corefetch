@@ -12,11 +12,11 @@ use crate::{
     warning, 
     imp::env, 
     imp::fs::{self, Access, File}, 
-    imp::https::Request, 
+    imp::http::Request, 
     imp::path::Path
 };
 
-const WTTR_URL: &str = "https://wttr.in/?lang=en&format=%c;%C;%x;%h;%t;%f;%w;%l;%m;%M;%p;%P;%u;%D;%S;%z;%s;%d;%T;%Z";
+const WTTR_URL: &str = "http://wttr.in/?lang=en&format=%c;%C;%x;%h;%t;%f;%w;%l;%m;%M;%p;%P;%u;%D;%S;%z;%s;%d;%T;%Z";
 
 #[derive(Default)]
 pub struct WeatherInfo {

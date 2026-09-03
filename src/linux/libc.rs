@@ -20,6 +20,8 @@ pub type c_off = isize;
 pub type c_uid = u32;
 pub type c_gid = u32;
 pub type c_pid = i32;
+pub type c_socklen = c_uint;
+pub type c_sa_family = c_ushort;
 
 unsafe extern "C" {
     pub safe fn write(fd: c_int, buf: *const c_char, len: c_size);
@@ -58,6 +60,13 @@ unsafe extern "C" {
     pub safe fn sysconf(name: c_int) -> c_long;
     pub safe fn localtime(timep: *const c_time) -> *mut Tm;
     pub safe fn time(tloc: *mut c_time) -> c_time;
+    pub safe fn getaddrinfo(node: *const c_char, service: *const c_char, hints: *const AddrInfo, res: *mut *mut AddrInfo) -> c_int;
+    pub safe fn socket(domain: c_int, type_: c_int, protocol: c_int) -> c_int;
+    pub safe fn connect(sockfd: c_int, addr: *const SockAddr, addrlen: c_socklen) -> c_int;
+    pub safe fn send(sockfd: c_int, buf: *const c_void, len: c_size, flags: c_int) -> c_ssize;
+    pub safe fn recv(sockfd: c_int, buf: *mut c_void, len: c_size, flags: c_int) -> c_ssize;
+    pub safe fn close(fd: c_int) -> c_int;
+    pub safe fn freeaddrinfo(res: *mut AddrInfo);
 }
 
 static SYSINFO: OnceLock<Sysinfo> = OnceLock::new();
@@ -76,27 +85,37 @@ pub fn errno() -> i32 {
 
 #[repr(C)]
 #[derive(Default)]
+pub struct AddrInfo {
+    pub ai_flags: c_int,
+    pub ai_family: c_int,
+    pub ai_socktype: c_int,
+    pub ai_protocol: c_int,
+    pub ai_addrlen: c_socklen,
+    pub ai_addr: *mut SockAddr,
+    pub ai_canonname: *mut c_char,
+    pub ai_next: *mut AddrInfo,
+}
+
+#[repr(C)]
+#[derive(Default)]
 pub struct InAddr {
     pub s_addr: c_uint,
 }
 
 #[repr(C)]
 #[derive(Default)]
-pub struct SockaddrIn {
-    pub sin_family: c_ushort,
-    pub sin_port: c_ushort,
-    pub sin_addr: InAddr,
-    pub sin_zero: [c_uchar; 8],
+pub struct SockAddr {
+    pub sa_family: c_sa_family,
+    pub sa_data: [c_char; 14]
 }
 
 #[repr(C)]
 #[derive(Default)]
-pub struct Hostent {
-    pub h_name: *mut c_char,
-    pub h_aliases: *mut *mut c_char,
-    pub h_addrtype: c_int,
-    pub h_length: c_int,
-    pub h_addr_list: *mut *mut c_char,
+pub struct SockAddrIn {
+    pub sin_family: c_ushort,
+    pub sin_port: c_ushort,
+    pub sin_addr: InAddr,
+    pub sin_zero: [c_uchar; 8],
 }
 
 #[repr(C)]

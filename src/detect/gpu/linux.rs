@@ -7,7 +7,7 @@ use crate::{
     detect::gpu::{GpuInfo, GpuType}, 
     linux::fs::{self, ItemType},
     linux::parser::LinuxInfo,
-    formats::Size,
+    formats::MemorySize,
     warning,
     format
 };
@@ -40,8 +40,8 @@ impl GpuInfo {
     }
 
     #[todo::todo("Hard to implement on a VM, will be implemented later")]    
-    fn memory_total() -> Size {
-        Size::default()
+    fn memory_total() -> MemorySize {
+        MemorySize::default()
     }
 
     fn device_id(pci_address: &str) -> u32 {

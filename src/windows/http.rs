@@ -201,13 +201,13 @@ impl Request {
 
 #[cfg(test)]
 mod tests {
-    use crate::windows::https::{Request, Url};
+    use crate::windows::http::{Request, Url};
 
     extern crate std;
 
     #[test]
     fn example_response_test() {
-        let url = "https://wttr.in/?format=%c;%C;%x;%h;%t;%f;%H;%L;%w;%l;%m;%M;%p;%P;%e;%u;%D;%S;%z;%s;%d;%T;%Z";
+        let url = "http://wttr.in/?format=%c;%C;%x;%h;%t;%f;%H;%L;%w;%l;%m;%M;%p;%P;%e;%u;%D;%S;%z;%s;%d;%T;%Z";
         let response = Request::new(url).unwrap().get();
         println!("Response code: {}", response.code());
 
@@ -217,7 +217,7 @@ mod tests {
 
     #[test]
     fn url_parse_test() {
-        let string = "https://wttr.in/";
+        let string = "http://wttr.in/";
         let url = Url::new(string);
         std::println!("{url:?}");
     }
