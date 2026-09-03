@@ -231,7 +231,7 @@ impl LuaLib {
         ret.push_str("\nend\n\nreturn user_code(module_data)");
         ret = expand_rust_unicode(&ret);
         
-        crate::println!("{ret}");
+        // crate::println!("{ret}");
         self.exec_without_vars(&ret)
     }
 
