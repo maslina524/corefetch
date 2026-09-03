@@ -94,6 +94,7 @@ const MIN_OFFSET: usize = 24;
 
 pub trait Docs {
     fn print_format();
+    fn print_lua();
 }
 
 #[cfg(not(test))]
@@ -261,10 +262,15 @@ fn print_help(theme: Option<&str>) -> ! {
         let action = &t[idx + 1..];
 
         let vtable = DocsVtable::from_str(ident).unwrap_or_else(|| exit(1));
-        if action == "format" { (vtable.format)() } else {
-            println!("Incorrect action");
-            exit(1);
+        match action {
+            "format" => (vtable.format)(),
+            "lua" => (vtable.lua)(),
+            _ => {
+                println!("Incorrect action");
+                exit(1);
+            }
         }
+        
         exit(0);
     }
 

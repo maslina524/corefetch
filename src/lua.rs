@@ -63,16 +63,105 @@ static LUA: OnceLock<LuaLib> = OnceLock::new();
 
 const LUA_DOWNLOAD_URL: &str = "https://github.com/maslina524/corefetch/raw/refs/heads/main/bin/lua55.dll";
 
-pub enum Variable {
+pub enum LuaType {
     String(String),
-    Number(i64)
+    Number(f64),
+    Boolean(bool)
 }
 
-impl core::fmt::Debug for Variable {
+pub trait AsLua {
+    fn as_lua(&self) -> LuaType;
+    fn lua_type() -> &'static str;
+}
+
+macro_rules! impl_as_lua_debug_string {
+    ($($typ:ty),* $(,)?) => {
+        $(
+            impl AsLua for $typ {
+                fn as_lua(&self) -> LuaType {
+                    LuaType::String(crate::format!("{self:?}"))
+                }
+
+                fn lua_type() -> &'static str {
+                    "string"
+                }
+            }
+        )*
+    }
+}
+
+macro_rules! impl_as_lua_to_string {
+    ($($typ:ty),* $(,)?) => {
+        $(
+            impl AsLua for $typ {
+                fn as_lua(&self) -> LuaType {
+                    LuaType::String(alloc::string::ToString::to_string(self))
+                }
+
+                fn lua_type() -> &'static str {
+                    "string"
+                }
+            }
+        )*
+    }
+}
+
+macro_rules! impl_as_lua_into_f64 {
+    ($($typ:ty),* $(,)?) => {
+        $(
+            impl AsLua for $typ {
+                fn as_lua(&self) -> LuaType {
+                    LuaType::Number(f64::from(*self))
+                }
+
+                fn lua_type() -> &'static str {
+                    "number"
+                }
+            }
+        )*
+    }
+}
+
+macro_rules! impl_as_lua_as_f64 {
+    ($($typ:ty),* $(,)?) => {
+        $(
+            impl AsLua for $typ {
+                fn as_lua(&self) -> LuaType {
+                    #[allow(clippy::cast_precision_loss)]
+                    LuaType::Number(*self as f64)
+                }
+
+                fn lua_type() -> &'static str {
+                    "number"
+                }
+            }
+        )*
+    }
+}
+
+impl_as_lua_debug_string!(
+    String, &str, char,
+    crate::detect::gpu::GpuType
+);
+impl_as_lua_to_string!(Path);
+
+impl_as_lua_into_f64!(
+    crate::formats::Temperature,
+    crate::formats::Percent,
+    crate::formats::MemorySize,
+);
+impl_as_lua_as_f64!(
+    usize, u8, u16, u32, u64, u128,
+    isize, i8, i16, i32, i64, i128,
+    f32, f64,
+);
+
+impl core::fmt::Debug for LuaType {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
-            Self::String(s) => write!(f, "{s:?}"),
-            Self::Number(i)    => write!(f, "{i}")
+            Self::String(v) => write!(f, "{v}"),
+            Self::Number(v)    => write!(f, "{v}"),
+            Self::Boolean(v)  => write!(f, "{v}")
         }
     }
 }
@@ -122,7 +211,7 @@ impl LuaLib {
         })
     }
 
-    pub fn exec(&self, code: &str, vars: BTreeMap<String, Variable>) -> String {
+    pub fn exec(&self, code: &str, vars: BTreeMap<String, LuaType>) -> String {
         let code = code.trim();
         let mut ret = String::with_capacity(
             128 + code.len() + vars.len() * 16

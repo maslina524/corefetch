@@ -2,7 +2,6 @@ use alloc::string::String;
 use doc::Docs;
 
 use crate::{
-    Docs,
     impl_display_for_module,
     format_for_module,
     detect::cpu::CpuInfo,

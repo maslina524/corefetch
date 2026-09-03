@@ -19,13 +19,8 @@ fn field_to_config_name(field: &Field) -> String {
     field.ident.clone().unwrap().to_string().trim_start_matches("r#").replace('_', "-")
 }
 
-#[allow(clippy::missing_panics_doc)]
-#[proc_macro_derive(Docs)]
-pub fn docs_derive(input: TokenStream) -> TokenStream {
-    let input = parse_macro_input!(input as DeriveInput);
-    let struct_name = &input.ident;
-
-        let fields = match &input.data {
+fn get_fields(data: &Data) -> Vec<&Field> {
+    match data {
         Data::Struct(data_struct) => {
             match &data_struct.fields {
                 Fields::Named(fields_named) => {
@@ -42,7 +37,15 @@ pub fn docs_derive(input: TokenStream) -> TokenStream {
         _ => {
             panic!("Docs derive only works for structs");
         }
-    };
+    }
+}
+
+#[allow(clippy::missing_panics_doc)]
+#[proc_macro_derive(Docs)]
+pub fn docs_derive(input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as DeriveInput);
+    let struct_name = &input.ident;
+    let fields = get_fields(&input.data);
 
     let mut lines = Vec::with_capacity(fields.len());
     for (i, field) in fields.iter().enumerate() {
@@ -51,32 +54,65 @@ pub fn docs_derive(input: TokenStream) -> TokenStream {
         let doc = get_doc_comment(field).unwrap_or_else(|| "Empty".to_owned());
         lines.push(format!("{field_name:>20} : {:<4} : {doc}", format!("{{{idx}}}")));
     }
-        
-    let expanded = if lines.is_empty() {
+
+    // BUILD -h module-format  
+    let format = if lines.is_empty() {
         quote! {
-            impl Docs for #struct_name {
-                fn print_format() {
-                    crate::println!("Module `{}` doesn't support output formatting", stringify!(#struct_name));
-                }
+            fn print_format() {
+                crate::println!("Module `{}` doesn't support output formatting", stringify!(#struct_name));
             }
         }
     } else {
         let first_field = field_to_config_name(fields.first().unwrap());
         quote! {
-            impl Docs for #struct_name {
-                fn print_format() {
-                    crate::println!(
-                        "# In config file: {{ \"type\": \"{}\", \"format\": \"{{{}}} or {{1}}\" }}",
-                        stringify!(#struct_name).to_lowercase(), #first_field
-                    );
-                    crate::println!("The following variables are passed:");
-                    #(
-                        crate::println!("{}", #lines);
-                    )*
-                }
+            fn print_format() {
+                crate::println!(
+                    "# In config file: {{ \"type\": \"{}\", \"format\": \"{{{}}} or {{1}}\" }}",
+                    stringify!(#struct_name).to_lowercase(), #first_field
+                );
+                crate::println!("The following variables are passed:");
+                #(
+                    crate::println!("{}", #lines);
+                )*
             }
         }
     };
 
-    TokenStream::from(expanded)
+    // BUILD -h module-lua
+    let lua = if fields.is_empty() {
+        quote! {
+            fn print_lua() {
+                crate::println!("Module `{}` doesn't support lua", stringify!(#struct_name));
+            }
+        }
+    } else {
+        let lua_stmts = fields.iter().map(|field| {
+            let field_name = field_to_config_name(field);
+            let field_ty = &field.ty;
+            let doc = get_doc_comment(field).unwrap_or_else(|| "Empty".to_owned());
+            quote! {
+                crate::println!("{:>20} : {:<6} : {}", #field_name, #field_ty::lua_type(), #doc);
+            }
+        });
+        quote! {
+            fn print_lua() {
+                crate::println!(
+                    "# In config file: {{ \"type\": \"{}\", \"format\": \"lua: return ...\" }}",
+                    stringify!(#struct_name).to_lowercase()
+                );
+                crate::println!("The following variables are passed:");
+                #(#lua_stmts)*
+            }
+        }
+    };
+
+    let combined = quote! {
+        use crate::lua::AsLua;
+
+        impl crate::Docs for #struct_name {
+            #format
+            #lua
+        }
+    };
+    TokenStream::from(combined)
 }

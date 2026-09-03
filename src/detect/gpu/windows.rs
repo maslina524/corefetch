@@ -45,7 +45,7 @@ impl GpuInfo {
             device_id: desc.DeviceId,
             driver,
             temperature: Self::temperature(desc.VendorId),
-            typ: GpuType::get_old(desc.VendorId, &memory_total),
+            typ: GpuType::get_old(desc.VendorId, memory_total),
             memory_total,
             frequency: Self::frequency(desc.VendorId)
         }
