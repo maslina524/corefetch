@@ -80,7 +80,7 @@ pub fn docs_derive(input: TokenStream) -> TokenStream {
         let field_name = field_to_config_name(field);
         let idx = i + 1;
         let doc = get_doc_comment(field).unwrap_or_else(|| "Empty".to_owned());
-        lines.push(format!("{field_name:>20} : {:<4} : {doc}", format!("{{{idx}}}")));
+        lines.push(format!("{field_name:>24} : {:<4} : {doc}", format!("{{{idx}}}")));
     }
 
     // BUILD -h module-format  
@@ -121,7 +121,7 @@ pub fn docs_derive(input: TokenStream) -> TokenStream {
             let field_ty = &field.ty;
             let doc = get_doc_comment(field).unwrap_or_else(|| "Empty".to_owned());
             quote! {
-                crate::println!("{:>20} : {:<6} : {}", #field_name, #field_ty::lua_type(), #doc);
+                crate::println!("{:>24} : {:<6} : {}", #field_name, <#field_ty as AsLua>::lua_type(), #doc);
             }
         });
         

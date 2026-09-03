@@ -1,4 +1,5 @@
 use alloc::string::String;
+use doc::Docs;
 
 use crate::{
     format_for_module,
@@ -10,17 +11,27 @@ use crate::{
 
 static UPTIME: OnceLock<Uptime> = OnceLock::new();
 
-#[derive(Debug)]
+#[derive(Debug, Docs)]
 pub struct Uptime {
+    #[doc ="Days after boot"]
     pub days: u32,
+    #[doc ="Hours after boot"]
     pub hours: u8,
+    #[doc ="Minutes after boot"]
     pub minutes: u8,
+    #[doc ="Seconds after boot"]
     pub seconds: u8,
+    #[doc ="Milliseconds after boot"]
     pub milliseconds: u16,
+    #[doc ="Boot time in local timezone"]
     pub boot_time: String,
+    #[doc ="Years integer after boot"]
     pub years: u16,
+    #[doc ="Days of year after boot"]
     pub days_of_year: u32,
+    #[doc ="Years fraction after boot"]
     pub years_fraction: f32,
+    #[doc ="Formatted uptime"]
     pub formatted: String,
 }
 

@@ -1,4 +1,5 @@
 use alloc::string::String;
+use doc::Docs;
 
 use crate::{
     format,
@@ -11,20 +12,33 @@ use crate::{
 
 static OS: OnceLock<Os> = OnceLock::new();
 
-#[derive(Debug)]
+#[derive(Debug, Docs)]
 pub struct Os {
+    #[doc = "Name of the kernel"]
     pub sysname: &'static str,
+    #[doc = "Name"]
     pub name: String,
+    #[doc = "Pretty name, if available"]
     pub pretty_name: String,
+    #[doc = "ID"]
     pub id: String,
+    #[doc = "ID like"]
     pub id_like: String,
+    #[doc = "Variant"]
     pub variant: String,
+    #[doc = "Variant ID"]
     pub variant_id: String,
+    #[doc = "Version"]
     pub version: String,
+    #[doc = "Version ID"]
     pub version_id: String,
+    #[doc = "Version codename"]
     pub codename: String,
+    #[doc = "Build ID"]
     pub build_id: String,
+    #[doc = "Architecture"]
     pub arch: &'static str,
+    #[doc = "Logo as a nerd emoji"]
     pub nerd_emoji: char
 }
 

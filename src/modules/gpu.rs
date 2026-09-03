@@ -1,4 +1,5 @@
 use alloc::string::String;
+use doc::Docs;
 
 use crate::{
     detect::gpu::{GpuInfo, GpuType}, 
@@ -12,29 +13,51 @@ use crate::{
 
 static GPU: OnceLock<Gpu> = OnceLock::new();
 
-#[derive(Debug)]
+#[derive(Debug, Docs)]
 pub struct Gpu {
+    #[doc = "Vendor"]
     pub vendor: &'static str,
+    #[doc = "Name"]
     pub name: String,
+    #[doc = "Driver"]
     pub driver: String,
+    #[doc = "Temperature"]
     pub temperature: Temperature,
+    #[doc = "Core count"]
     pub core_count: usize,
+    #[doc = "Type"]
     pub r#type: GpuType,
+    #[doc = "Total dedicated memory"]
     pub dedicated_total: MemorySize,
+    #[doc = "Used dedicated memory"]
     pub dedicated_used: MemorySize,
+    #[doc = "Total shared memory"]
     pub shared_total: MemorySize,
+    #[doc = "Used shared memory"]
     pub shared_used: MemorySize,
+    #[doc = "The platform API used when detecting the GPU"]
     pub platform_api: String,
+    #[doc = "Current frequency in GHz"]
     pub frequency: String,
+    #[doc = "GPU vendor specific index"]
     pub index: u32,
+    #[doc = "Dedicated memory usage percentage num"]
     pub dedicated_percentage_num: Percent,
+    #[doc = "Dedicated memory usage percentage bar"]
     pub dedicated_percentage_bar: String,
+    #[doc = "Shared memory usage percentage num"]
     pub shared_percentage_num: Percent,
+    #[doc = "Shared memory usage percentage bar"]
     pub shared_percentage_bar: String,
+    #[doc = "Core usage percentage num"]
     pub core_usage_num: String,
+    #[doc = "Core usage percentage bar"]
     pub core_usage_bar: String,
+    #[doc = "Memory type (Windows only)"]
     pub memory_type: &'static str,
+    #[doc = "`PCIe` maximum speed in gen and lanes"]
     pub pcie_max_speed: String,
+    #[doc = "`PCIe` current speed in gen and lanes"]
     pub pcie_curr_speed: String
 }
 

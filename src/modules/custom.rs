@@ -1,3 +1,5 @@
+use doc::Docs;
+
 use crate::{
     impl_display_for_module,
     format_for_module,
@@ -7,7 +9,7 @@ use crate::{
 
 static CUSTOM: OnceLock<Custom> = OnceLock::new();
 
-#[derive(Debug)]
+#[derive(Debug, Docs)]
 pub struct Custom;
 
 impl Module for Custom {

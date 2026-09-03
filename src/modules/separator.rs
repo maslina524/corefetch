@@ -2,6 +2,7 @@ use alloc::{
     string::String,
     collections::BTreeMap
 };
+use doc::Docs;
 
 use crate::{
     impl_display_for_module, 
@@ -13,7 +14,7 @@ use crate::{
 
 static SEPARATOR: OnceLock<Separator> = OnceLock::new();
 
-#[derive(Debug)]
+#[derive(Debug, Docs)]
 pub struct Separator;
 
 impl Module for Separator {

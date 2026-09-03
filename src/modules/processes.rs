@@ -1,3 +1,5 @@
+use doc::Docs;
+
 use crate::{
     format_for_module,
     impl_display_for_module,
@@ -8,8 +10,9 @@ use crate::{
 
 static PROCESSES: OnceLock<Processes> = OnceLock::new();
 
-#[derive(Debug)]
+#[derive(Debug, Docs)]
 pub struct Processes {
+    #[doc = "Process count"]
     pub result: usize
 }
 

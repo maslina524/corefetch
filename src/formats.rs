@@ -1,6 +1,7 @@
 use core::{
-    cmp::Ordering,
-    fmt::Write
+    cmp::Ordering, 
+    fmt::Write, 
+    str::FromStr
 };
 
 use alloc::{
@@ -129,6 +130,18 @@ impl Percent {
     }
 }
 
+impl FromStr for Percent {
+    type Err = ();
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        s
+            .trim()
+            .trim_end_matches('%')
+            .parse::<u8>()
+            .map_err(|_| ())
+            .and_then(|v| Self::new_check(v).ok_or(()))
+    }
+}
+
 impl From<Percent> for f64 {
     #[allow(clippy::cast_precision_loss)]
     fn from(val: Percent) -> Self {
@@ -190,6 +203,35 @@ impl Temperature {
             Self::Kelvin(t)     => t
         };
         Self::Kelvin(temp)
+    }
+}
+
+impl Default for Temperature {
+    fn default() -> Self {
+        Self::Celsius(0.0)
+    }
+}
+
+impl FromStr for Temperature {
+    type Err = ();
+    fn from_str(mut s: &str) -> Result<Self, Self::Err> {
+        s = s.trim().trim_start_matches('+');
+        let (val_str, suffix) = if s.ends_with("°C") {
+            (s.trim_end_matches("°C"), "°C")
+        } else if s.ends_with("°F") {
+            (s.trim_end_matches("°F"), "°F")
+        } else if s.ends_with("°K") {
+            (s.trim_end_matches("°K"), "°K")
+        } else {
+            return Err(());
+        };
+        let val = val_str.parse::<f32>().map_err(|_| ())?;
+        match suffix {
+            "°C" => Ok(Self::Celsius(val)),
+            "°F" => Ok(Self::Fahrenheit(val)),
+            "°K" => Ok(Self::Kelvin(val)),
+            _ => unreachable!(),
+        }
     }
 }
 

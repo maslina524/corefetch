@@ -1,42 +1,67 @@
-use alloc::string::{String, ToString};
+use alloc::string::String;
+use doc::Docs;
 
 use crate::{
-    format_for_module,
-    impl_display_for_module,
-    format,
-    modules::Module,
-    detect::datetime::DatetimeInfo,
+    detect::datetime::{AmPm, DatetimeInfo}, 
+    format, 
+    format_for_module, 
+    impl_display_for_module, 
+    modules::Module, 
     sync::OnceLock
 };
 
 static DATETIME: OnceLock<Datetime> = OnceLock::new();
 
-#[derive(Debug)]
+#[derive(Debug, Docs)]
 pub struct Datetime {
+    #[doc = "Year"]
     pub year: u16,
+    #[doc = "Last two digits of year"]
     pub year_short: u16,
+    #[doc = "Month"]
     pub month: u16,
+    #[doc = "Month with leading zero"]
     pub month_pretty: String,
+    #[doc = "Month name"]
     pub month_name: String,
+    #[doc = "Month name short"]
     pub month_name_short: String,
+    #[doc = "Week number on year"]
     pub week: u16,
+    #[doc = "Weekday"]
     pub weekday: String,
+    #[doc = "Weekday short"]
     pub weekday_short: String,
+    #[doc = "Day in year"]
     pub day_in_year: u16,
+    #[doc = "Day in month"]
     pub day_in_month: u16,
+    #[doc = "Day in week"]
     pub day_in_week: u16,
+    #[doc = "Hour"]
     pub hour: u16,
+    #[doc = "Hour with leading zero"]
     pub hour_pretty: String,
+    #[doc = "Hour 12h format"]
     pub hour_12: u16,
+    #[doc = "Hour 12h format with leading zero"]
     pub hour_12_pretty: String,
+    #[doc = "Minute"]
     pub minute: u16,
+    #[doc = "Minute with leading zero"]
     pub minute_pretty: String,
+    #[doc = "Second"]
     pub second: u16,
+    #[doc = "Second with leading zero"]
     pub second_pretty: String,
+    #[doc = "Offset from UTC in the ISO 8601 format"]
     pub offset_from_utc: String,
+    #[doc = "Locale-dependent timezone name or abbreviation"]
     pub timezone_name: String,
+    #[doc = "Day in month with leading zero"]
     pub day_pretty: String,
-    pub am_pm: String
+    #[doc = "AM or PM"]
+    pub am_pm: AmPm
 }
 
 impl Module for Datetime {
@@ -66,7 +91,7 @@ impl Module for Datetime {
             offset_from_utc: time.offset_utc,
             timezone_name: time.timezone_name,
             day_pretty: format!("{:02}", time.day_in_month),
-            am_pm: time.am_pm.to_string()
+            am_pm: time.am_pm
         }
     }
 
@@ -100,3 +125,4 @@ impl Module for Datetime {
 }
 
 impl_display_for_module!(Datetime);
+

@@ -1,3 +1,5 @@
+use doc::Docs;
+
 use crate::{
     impl_display_for_module,
     format_for_module,
@@ -7,19 +9,30 @@ use crate::{
 
 static COMMIT: OnceLock<Commit> = OnceLock::new();
 
-#[derive(Debug)]
+#[derive(Debug, Docs)]
 pub struct Commit {
+    #[doc = "Author"]
     pub author: &'static str,
+    #[doc = "Author's email"]
     pub email: &'static str,
+    #[doc = "Creation date, `like Sep 03 2026, 20:09:11`"]
     pub date: &'static str,
+    #[doc = "Creation (small) date, like `Sep 03 2026`"]
     pub date_small: &'static str,
+    #[doc = "Commit sha1 hash"]
     pub sha: &'static str,
+    #[doc = "Commit sha1 hash truncated to 7 chars"]
     pub sha_short: &'static str,
+    #[doc = "Message"]
     pub message: &'static str,
-    pub files: &'static str,
-    pub added: &'static str,
-    pub deleted: &'static str,
-    pub total: &'static str
+    #[doc = "Number of changed files"]
+    pub files: usize,
+    #[doc = "Number of added lines"]
+    pub added: usize,
+    #[doc = "Number of deleted lines"]
+    pub deleted: usize,
+    #[doc = "Total number of changed lines"]
+    pub total: usize
 }
 
 impl Module for Commit {
@@ -32,10 +45,10 @@ impl Module for Commit {
             sha: env!("COMMIT_SHA"),
             sha_short: env!("COMMIT_SHA_SMALL"),
             message: env!("COMMIT_MESSAGE"),
-            files: env!("COMMIT_FILES"),
-            added: env!("COMMIT_ADDED"),
-            deleted: env!("COMMIT_DELETED"),
-            total: env!("COMMIT_TOTAL")
+            files: env!("COMMIT_FILES").parse::<usize>().expect("Unreachable"),
+            added: env!("COMMIT_ADDED").parse::<usize>().expect("Unreachable"),
+            deleted: env!("COMMIT_DELETED").parse::<usize>().expect("Unreachable"),
+            total: env!("COMMIT_TOTAL").parse::<usize>().expect("Unreachable")
         }
     }
 

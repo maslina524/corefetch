@@ -26,7 +26,7 @@ pub use cpu::Cpu;
 pub use custom::Custom;
 pub use datetime::Datetime;
 pub use gpu::Gpu;
-pub use initsystem::InitSystem;
+pub use initsystem::Initsystem;
 pub use kernel::Kernel;
 pub use locale::Locale;
 pub use memory::Memory;
@@ -65,7 +65,25 @@ pub struct DocsVtable {
 impl DocsVtable {
     pub fn from_str(name: &str) -> Option<Self> {
         match name {
-            "cpu" => Some(Self { format: Cpu::print_format, lua: Cpu::print_lua }),
+            "break"      => Some(Self { format: Break::print_format,      lua: Break::print_lua      }),
+            "colors"     => Some(Self { format: Colors::print_format,     lua: Colors::print_lua     }),
+            "commit"     => Some(Self { format: Commit::print_format,     lua: Commit::print_lua     }),
+            "cpu"        => Some(Self { format: Cpu::print_format,        lua: Cpu::print_lua        }),
+            "custom"     => Some(Self { format: Custom::print_format,     lua: Custom::print_lua     }),
+            "datetime"   => Some(Self { format: Datetime::print_format,   lua: Datetime::print_lua   }),
+            "gpu"        => Some(Self { format: Gpu::print_format,        lua: Gpu::print_lua        }),
+            "initsystem" => Some(Self { format: Initsystem::print_format, lua: Initsystem::print_lua }),
+            "kernel"     => Some(Self { format: Kernel::print_format,     lua: Kernel::print_lua     }),
+            "locale"     => Some(Self { format: Locale::print_format,     lua: Locale::print_lua     }),
+            "memory"     => Some(Self { format: Memory::print_format,     lua: Memory::print_lua     }),
+            "os"         => Some(Self { format: Os::print_format,         lua: Os::print_lua         }),
+            "processes"  => Some(Self { format: Processes::print_format,  lua:Processes::print_lua   }),
+            "separator"  => Some(Self { format: Separator::print_format,  lua: Separator::print_lua  }),
+            "title"      => Some(Self { format: Title::print_format,      lua: Title::print_lua      }),
+            "uptime"     => Some(Self { format: Uptime::print_format,     lua: Uptime::print_lua     }),
+            "version"    => Some(Self { format: Version::print_format,    lua: Version::print_lua    }),
+            "wallpaper"  => Some(Self { format: Wallpaper::print_format,  lua: Wallpaper::print_lua  }),
+            "weather"    => Some(Self { format: Weather::print_format,    lua: Weather::print_lua    }),
             _ => None,
         }
     }
@@ -89,7 +107,7 @@ pub fn from_preset_module(module: &ConfigModule) -> Option<Box<dyn Module>> {
         "custom"     => Some(Box::new( Custom::new()     )),
         "datetime"   => Some(Box::new( Datetime::new()   )),
         "gpu"        => Some(Box::new( Gpu::new()        )),
-        "initsystem" => Some(Box::new( InitSystem::new() )),
+        "initsystem" => Some(Box::new( Initsystem::new() )),
         "kernel"     => Some(Box::new( Kernel::new()     )),
         "locale"     => Some(Box::new( Locale::new()     )),
         "memory"     => Some(Box::new( Memory::new()     )),

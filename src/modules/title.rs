@@ -1,4 +1,5 @@
 use alloc::string::String;
+use doc::Docs;
 
 use crate::{
     detect::title::TitleInfo,
@@ -11,19 +12,31 @@ use crate::{
 
 static TITLE: OnceLock<Title> = OnceLock::new();
 
-#[derive(Debug)]
+#[derive(Debug, Docs)]
 pub struct Title {
+    #[doc = "User name"]
     pub user_name: String,
+    #[doc = "Host name"]
     pub host_name: String,
+    #[doc = "Home directory"]
     pub home_dir: Path,
+    #[doc = "Executable path of current process"]
     pub exe_path: Path,
+    #[doc = "User's default shell"]
     pub user_shell: Path,
+    #[doc = "User name (colored)"]
     pub user_name_colored: String,
+    #[doc = "@ symbol (colored)"]
     pub at_symbol_colored: &'static str,
+    #[doc = "Host name (colored)"]
     pub host_name_colored: String,
+    #[doc = "Full user name"]
     pub full_user_name: String,
+    #[doc = "UID (*nix) / SID (Windows)"]
     pub user_id: String,
+    #[doc = "PID of current process"]
     pub pid: u32,
+    #[doc = "CWD with home dir replaced by `~`"]
     pub cwd: Path
 }
 

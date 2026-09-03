@@ -1,4 +1,5 @@
 use alloc::string::String;
+use doc::Docs;
 
 use crate::{
     detect::memory::MemoryInfo,
@@ -11,11 +12,15 @@ use crate::{
 
 static MEMORY: OnceLock<Memory> = OnceLock::new();
 
-#[derive(Debug)]
+#[derive(Debug, Docs)]
 pub struct Memory {
+    #[doc = "Used size"]
     pub used: MemorySize,
+    #[doc = "Total size"]
     pub total: MemorySize,
+    #[doc = "Percentage used (num)"]
     pub percentage: Percent,
+    #[doc = "Percentage used (bar)"]
     pub percentage_bar: String,
 }
 

@@ -9,6 +9,7 @@ use {
 
 use proc_macro::TokenStream;
 
+#[cfg(unstable)]
 static COUNTER: AtomicU32 = AtomicU32::new(1);
 
 #[cfg(unstable)]

@@ -1,3 +1,5 @@
+use doc::Docs;
+
 use crate::{
     format_for_module,
     impl_display_for_module,
@@ -7,21 +9,33 @@ use crate::{
 
 static VERSION: OnceLock<Version> = OnceLock::new();
 
-#[derive(Debug)]
+#[derive(Debug, Docs)]
 pub struct Version {
+    #[doc = "Project name"]
     pub project_name: &'static str,
     #[allow(clippy::struct_field_names)]
+    #[doc = "Version"]
     pub version: &'static str,
     #[allow(clippy::struct_field_names)]
+    #[doc = "Version tweak"]
     pub version_tweak: &'static str,
+    #[doc = "Build type (debug or release)"]
     pub build_type: &'static str,
+    #[doc = "System name"]
     pub sysname: &'static str,
+    #[doc = "Architecture"]
     pub arch: &'static str,
+    #[doc = "Always empty"]
     pub cmake_built_type: &'static str,
+    #[doc = "Date time when compiling, like `Sep 03 2026, 22:09:40`"]
     pub compile_time: &'static str,
+    #[doc = "Rustc version, like `rustc 1.97.1`"]
     pub compiler: &'static str,
+    #[doc = "Glibc version, always empty on windows"]
     pub libc: &'static str,
+    #[doc = "Cargo version, like `cargo 1.97.1`"]
     pub package_manager: &'static str,
+    #[doc = "Link to the release of this version of corefetch"]
     pub release_link: &'static str
 }
 
@@ -70,7 +84,7 @@ impl Module for Version {
         Version,
         project_name, version, version_tweak, build_type,
         sysname, arch, cmake_built_type, compile_time,
-        compiler, libc
+        compiler, libc, package_manager, release_link
     );
 }
 

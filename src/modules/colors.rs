@@ -3,6 +3,7 @@ use alloc::{
     collections::BTreeMap,
     vec
 };
+use doc::Docs;
 
 use crate::{
     format,
@@ -14,7 +15,7 @@ use crate::{
 
 static COLORS: OnceLock<Colors> = OnceLock::new();
 
-#[derive(Debug)]
+#[derive(Debug, Docs)]
 pub struct Colors;
 
 impl Module for Colors {
