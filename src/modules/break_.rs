@@ -2,8 +2,10 @@ use alloc::{
     string::String,
     collections::BTreeMap
 };
+use doc::Docs;
 
 use crate::{
+    Docs,
     impl_display_for_module, 
     modules::Module, 
     sync::OnceLock,
@@ -12,7 +14,7 @@ use crate::{
 
 static BREAK: OnceLock<Break> = OnceLock::new();
 
-#[derive(Debug)]
+#[derive(Debug, Docs)]
 pub struct Break;
 
 impl Module for Break {

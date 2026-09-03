@@ -46,6 +46,7 @@ use alloc::{
 };
 
 use crate::{
+    Docs,
     config::ConfigModule,
     json::Value
 };
@@ -54,6 +55,19 @@ use crate::{
 pub struct FormatValue<'a> {
     pub format: Option<&'a str>,
     pub color: Option<&'a str>
+}
+
+pub struct DocsVtable {
+    pub format: fn()
+}
+
+impl DocsVtable {
+    pub fn from_str(name: &str) -> Option<Self> {
+        match name {
+            "cpu" => Some(Self { format: Cpu::print_format }),
+            _ => None,
+        }
+    }
 }
 
 pub trait Module {

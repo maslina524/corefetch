@@ -15,6 +15,10 @@ fn get_doc_comment(field: &syn::Field) -> Option<String> {
     None
 }
 
+fn field_to_config_name(field: &Field) -> String {
+    field.ident.clone().unwrap().to_string().trim_start_matches("r#").replace('_', "-")
+}
+
 #[allow(clippy::missing_panics_doc)]
 #[proc_macro_derive(Docs)]
 pub fn docs_derive(input: TokenStream) -> TokenStream {
@@ -42,10 +46,10 @@ pub fn docs_derive(input: TokenStream) -> TokenStream {
 
     let mut lines = Vec::with_capacity(fields.len());
     for (i, field) in fields.iter().enumerate() {
-        let field_name = field.ident.clone().unwrap().to_string();
+        let field_name = field_to_config_name(field);
         let idx = i + 1;
         let doc = get_doc_comment(field).unwrap_or_else(|| "Empty".to_owned());
-        lines.push(format!("{field_name:>20} {:<4} : {doc}", format!("{{{idx}}}")));
+        lines.push(format!("{field_name:>20} : {:<4} : {doc}", format!("{{{idx}}}")));
     }
         
     let expanded = if lines.is_empty() {
@@ -57,9 +61,14 @@ pub fn docs_derive(input: TokenStream) -> TokenStream {
             }
         }
     } else {
+        let first_field = field_to_config_name(fields.first().unwrap());
         quote! {
             impl Docs for #struct_name {
                 fn print_format() {
+                    crate::println!(
+                        "# In config file: {{ \"type\": \"{}\", \"format\": \"{{{}}} or {{1}}\" }}",
+                        stringify!(#struct_name).to_lowercase(), #first_field
+                    );
                     crate::println!("The following variables are passed:");
                     #(
                         crate::println!("{}", #lines);
