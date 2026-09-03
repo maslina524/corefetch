@@ -58,13 +58,14 @@ pub struct FormatValue<'a> {
 }
 
 pub struct DocsVtable {
-    pub format: fn()
+    pub format: fn(),
+    pub lua: fn()
 }
 
 impl DocsVtable {
     pub fn from_str(name: &str) -> Option<Self> {
         match name {
-            "cpu" => Some(Self { format: Cpu::print_format }),
+            "cpu" => Some(Self { format: Cpu::print_format, lua: Cpu::print_lua }),
             _ => None,
         }
     }
@@ -150,8 +151,7 @@ macro_rules! format_for_module {
 
                 $(
                     let key_str = stringify!($field).trim_start_matches("r#");
-                    let value_str = $crate::alloc::string::ToString::to_string(&self.$field);
-                    vars.insert(alloc::borrow::ToOwned::to_owned(key_str), $crate::lua::Variable::String(value_str));
+                    vars.insert(alloc::borrow::ToOwned::to_owned(key_str), $crate::lua::AsLua::as_lua(&self.$field));
                 )*
 
                 $crate::lua::LuaLib::get().exec(code, vars)

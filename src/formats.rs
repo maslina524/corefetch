@@ -27,7 +27,7 @@ use crate::{
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub enum ColorPlan { FG, BG }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum MemorySize {
     Byte(u16),
     Kb(f32),
@@ -56,22 +56,29 @@ impl MemorySize {
         }
     }
 
-    pub fn as_bytes(&self) -> u64 {
+    pub fn as_bytes(self) -> u64 {
         match self {
-            Self::Byte(b) => *b as u64,
+            Self::Byte(b) => b as u64,
             Self::Kb(b) => (b * 1024.0) as u64,
             Self::Mb(b) => (b * 1024.0 * 1024.0) as u64,
             Self::Gb(b) => (b * 1024.0 * 1024.0 * 1024.0) as u64
         }
     }
 
-    pub fn as_kilobytes(&self) -> f64 {
+    pub fn as_kilobytes(self) -> f64 {
         match self {
-            Self::Byte(b) => *b as f64 / 1024.0,
-            Self::Kb(b) => *b as f64,
+            Self::Byte(b) => b as f64 / 1024.0,
+            Self::Kb(b) => b as f64,
             Self::Mb(b) => (b * 1024.0) as f64,
             Self::Gb(b) => (b * 1024.0 * 1024.0) as f64
         }
+    }
+}
+
+impl From<MemorySize> for f64 {
+    #[allow(clippy::cast_precision_loss)]
+    fn from(val: MemorySize) -> Self {
+        val.as_bytes() as Self
     }
 }
 
@@ -119,6 +126,13 @@ impl Percent {
         } else {
             Some(Self(percent))
         }
+    }
+}
+
+impl From<Percent> for f64 {
+    #[allow(clippy::cast_precision_loss)]
+    fn from(val: Percent) -> Self {
+        val.get() as Self
     }
 }
 
@@ -176,6 +190,13 @@ impl Temperature {
             Self::Kelvin(t)     => t
         };
         Self::Kelvin(temp)
+    }
+}
+
+impl From<Temperature> for f64 {
+    #[allow(clippy::cast_precision_loss)]
+    fn from(val: Temperature) -> Self {
+        val.get() as Self
     }
 }
 

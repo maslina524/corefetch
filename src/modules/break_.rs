@@ -2,10 +2,10 @@ use alloc::{
     string::String,
     collections::BTreeMap
 };
+
 use doc::Docs;
 
 use crate::{
-    Docs,
     impl_display_for_module, 
     modules::Module, 
     sync::OnceLock,

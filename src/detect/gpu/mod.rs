@@ -18,12 +18,22 @@ cfg_if! {
     }
 }
 
-#[derive(Debug, Default)]
+#[derive(Default)]
 pub enum GpuType {
     #[default]
     Unknown,
     Discrete,
     BuiltIn
+}
+
+impl core::fmt::Debug for GpuType {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        match self {
+            Self::Unknown  => write!(f, "\"Unknown\""),
+            Self::Discrete => write!(f, "\"Discrete\""),
+            Self::BuiltIn  => write!(f, "\"Built-in\""),
+        }
+    }
 }
 
 impl GpuType {
@@ -49,8 +59,8 @@ impl GpuType {
         }
     }
 
-    pub fn get_old(vendor: u32, memory: &MemorySize) -> Self {
-        if *memory > MemorySize::Mb(256.0) && [0x10DE, 0x1002, 0x1022].contains(&vendor) {
+    pub fn get_old(vendor: u32, memory: MemorySize) -> Self {
+        if memory > MemorySize::Mb(256.0) && [0x10DE, 0x1002, 0x1022].contains(&vendor) {
             Self::Discrete
         } else {
             Self::BuiltIn
