@@ -1,6 +1,8 @@
 use alloc::string::String;
+use doc::Docs;
 
 use crate::{
+    Docs,
     impl_display_for_module,
     format_for_module,
     detect::cpu::CpuInfo,
@@ -12,21 +14,35 @@ use crate::{
 
 static CPU: OnceLock<Cpu> = OnceLock::new();
 
-#[derive(Debug)]
+#[derive(Debug, Docs)]
 pub struct Cpu {
+    #[doc = "Name"]
     pub name: String,
+    #[doc = "Vendor"]
     pub vendor: String,
+    #[doc = "Physical core count"]
     pub cores_physical: usize,
+    #[doc = "Logical core count"]
     pub cores_logical: usize,
+    #[doc = "Online core count"]
     pub cores_online: usize,
+    #[doc = "Base frequency (formatted)"]
     pub freq_base: String,
+    #[doc = "Max frequency (formatted)"]
     pub freq_max: String,
+    #[doc = "Temperature (not available in windows)"]
     pub temperature: Temperature,
+    #[doc = "Logical core count grouped by frequency (not available)"]
     pub core_types: String,
+    #[doc = "Package count"]
     pub packages: usize,
+    #[doc = "Microarchitecture"]
     pub march: String,
+    #[doc = "NUMA node count"]
     pub numa_nodes: usize,
+    #[doc = "Code name, like \"Raptor Lake\""]
     pub code_name: String,
+    #[doc = "Technology"]
     pub technology: String
 }
 

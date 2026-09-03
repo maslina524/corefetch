@@ -75,7 +75,7 @@ use alloc::{
 use crate::{
     json::Json,
     logo::LogoInfo, 
-    modules::{FormatValue, Module, Os, Version, Commit}, 
+    modules::{DocsVtable, FormatValue, Module, Os, Version, Commit}, 
     imp::allocator::Allocator,
     imp::env,
     imp::fs::{self, ReadError},
@@ -253,7 +253,21 @@ fn get_logo_name_and_custom(val: &str) -> (String, Option<String>) {
     }
 }
 
-fn print_help(_theme: Option<&str>) -> ! {
+#[cold]
+fn print_help(theme: Option<&str>) -> ! {
+    if let Some(t) = theme {
+        let idx = t.find('-').unwrap_or_else(|| exit(1));
+        let ident = &t[..idx];
+        let action = &t[idx + 1..];
+
+        let vtable = DocsVtable::from_str(ident).unwrap_or_else(|| exit(1));
+        if action == "format" { (vtable.format)() } else {
+            println!("Incorrect action");
+            exit(1);
+        }
+        exit(0);
+    }
+
     let multi = multi_string!(
         "corefetch is a neofetch-like tool for beautiful system information display with flexible output customization",
         "",
@@ -265,6 +279,7 @@ fn print_help(_theme: Option<&str>) -> ! {
         "      --version-raw     \tPrint raw corefetch version (major.minor.patch)",
     );
     println!("{}", colored!(multi));
+    
     exit(0)
 }
 
