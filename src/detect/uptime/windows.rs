@@ -5,6 +5,7 @@ use crate::{
         GetTickCount64, FILETIME, SYSTEMTIME, FileTimeToSystemTime,
         GetSystemTimeAsFileTime, FileTimeToLocalFileTime
     },
+    detect::uptime::UptimeInfo,
     format
 };
 
@@ -12,20 +13,6 @@ const DAY_MS: u64 = 1000 * 60 * 60 * 24;
 const HOUR_MS: u64 = 1000 * 60 * 60;
 const MIN_MS: u64 = 1000 * 60;
 const SEC_MS: u64 = 1000;
-
-#[derive(Debug)]
-pub struct UptimeInfo {
-    pub years: u16,
-    pub days: u32,
-    pub hours: u8,
-    pub mins: u8,
-    pub secs: u8,
-    pub ms: u16,
-    pub boot_time: String,
-    pub days_of_year: u32,
-    pub years_fraction: f32,
-    pub formatted: String
-}
 
 impl UptimeInfo {
     pub fn new() -> Self {
@@ -95,18 +82,6 @@ impl UptimeInfo {
             st.wYear, st.wMonth, st.wDay,
             st.wHour, st.wMinute, st.wSecond
         )
-    }
-
-    fn formatted(days: u32, hours: u8, mins: u8, secs: u8) -> String {
-        if days > 0 {
-            format!("{days} days, {hours} hours, {mins} mins")
-        } else if hours > 0 {
-            format!("{hours} hours, {mins} mins")
-        } else if mins > 0 {
-            format!("{mins} mins")
-        } else {
-            format!("{secs} seconds")
-        }
     }
 }
 

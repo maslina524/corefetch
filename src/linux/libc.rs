@@ -67,6 +67,7 @@ unsafe extern "C" {
     pub safe fn recv(sockfd: c_int, buf: *mut c_void, len: c_size, flags: c_int) -> c_ssize;
     pub safe fn close(fd: c_int) -> c_int;
     pub safe fn freeaddrinfo(res: *mut AddrInfo);
+    pub safe fn localtime_r(timep: *const c_time, result: *mut Tm) -> *mut Tm;
 }
 
 static SYSINFO: OnceLock<Sysinfo> = OnceLock::new();

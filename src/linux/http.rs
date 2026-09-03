@@ -1,10 +1,21 @@
-use core::{ffi::{c_int, c_void}, ptr};
-
-use alloc::{
-    ffi::CString, string::{String, ToString}, vec::Vec,
+use core::{
+    ffi::{c_int, c_void}, 
+    ptr
 };
 
-use crate::{abort, linux::libc::{AddrInfo, close, connect, freeaddrinfo, getaddrinfo, recv, send, socket}, url::{Response, Url}};
+use alloc::{
+    ffi::CString, 
+    string::{String, ToString}, 
+    vec::Vec,
+};
+
+use crate::{
+    abort,
+    linux::libc::{
+        AddrInfo, close, connect, freeaddrinfo, getaddrinfo, recv, send, socket
+    }, 
+    url::{Response, Url}
+};
 
 const BUF_SIZE: usize = 1024;
 
