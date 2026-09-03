@@ -388,7 +388,7 @@ pub fn format_color(s: &str, plan: ColorPlan) -> String {
         ("white", true,  ColorPlan::FG) => FG_LIGHT_WHITE,
         ("white", false, ColorPlan::BG) => BG_WHITE,
         ("white", true,  ColorPlan::BG) => BG_LIGHT_WHITE,
-        // Unknown color → default
+        // Unknown color -> default
         _ => if plan == ColorPlan::BG { BG_DEFAULT } else { FG_DEFAULT },
     };
     ret.push(color_str);
@@ -471,7 +471,7 @@ pub fn snake_to_camel_ascii(s: &str) -> String {
     let mut transition = false;
 
     for ch in chars {
-        if ch == '_' {
+        if ch == '_' || ch == '-' {
             transition = true;
             continue;
         }

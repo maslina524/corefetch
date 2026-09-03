@@ -40,6 +40,34 @@ fn get_fields(data: &Data) -> Vec<&Field> {
     }
 }
 
+fn snake_to_camel_ascii(s: &str) -> String {
+    let mut ret = String::with_capacity(s.len());
+    let chars = s.chars();
+    let mut transition = false;
+
+    for ch in chars {
+        if ch == '_' || ch == '-' {
+            transition = true;
+            continue;
+        }
+        if transition {
+            if ch.is_ascii_lowercase() {
+                let idx = ch as u32 - 32;
+                ret.push(char::from_u32(idx).unwrap());
+            } else {
+                ret.push(ch);
+            }
+
+            transition = false;
+            continue;
+        }
+        
+        ret.push(ch);
+    }
+
+    ret
+}
+
 #[allow(clippy::missing_panics_doc)]
 #[proc_macro_derive(Docs)]
 pub fn docs_derive(input: TokenStream) -> TokenStream {
@@ -86,6 +114,8 @@ pub fn docs_derive(input: TokenStream) -> TokenStream {
             }
         }
     } else {
+        let first_field = field_to_config_name(fields.first().unwrap());
+        let first_field_camel = snake_to_camel_ascii(&first_field);
         let lua_stmts = fields.iter().map(|field| {
             let field_name = field_to_config_name(field);
             let field_ty = &field.ty;
@@ -94,11 +124,12 @@ pub fn docs_derive(input: TokenStream) -> TokenStream {
                 crate::println!("{:>20} : {:<6} : {}", #field_name, #field_ty::lua_type(), #doc);
             }
         });
+        
         quote! {
             fn print_lua() {
                 crate::println!(
-                    "# In config file: {{ \"type\": \"{}\", \"format\": \"lua: return ...\" }}",
-                    stringify!(#struct_name).to_lowercase()
+                    "# In config file: {{ \"type\": \"{}\", \"format\": \"lua: return (...).{}\" }}",
+                    stringify!(#struct_name).to_lowercase(), #first_field_camel
                 );
                 crate::println!("The following variables are passed:");
                 #(#lua_stmts)*
