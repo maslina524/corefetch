@@ -1,6 +1,6 @@
 use crate::{
     detect::memory::MemoryInfo, 
-    formats::Size, 
+    formats::MemorySize, 
     linux::libc::get_sysinfo
 };
 
@@ -11,8 +11,8 @@ impl MemoryInfo {
         let total_raw = info.totalram;
         let in_use_raw = info.totalram - info.freeram;
 
-        let total = Size::from_bytes(total_raw);
-        let in_use = Size::from_bytes(in_use_raw);
+        let total = MemorySize::from_bytes(total_raw);
+        let in_use = MemorySize::from_bytes(in_use_raw);
 
         Self { total, in_use }
     }
@@ -22,7 +22,7 @@ impl MemoryInfo {
 mod tests {
     use crate::{
         detect::memory::MemoryInfo,
-        formats::Size
+        formats::MemorySize
     };
 
     #[test]
@@ -33,7 +33,7 @@ mod tests {
 
         println!("Total: {total}, In use: {in_use}");
 
-        assert!(total != Size::default());
-        assert!(in_use != Size::default());
+        assert!(total != MemorySize::default());
+        assert!(in_use != MemorySize::default());
     }
 }

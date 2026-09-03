@@ -6,4 +6,4 @@ pub mod path;
 pub mod error;
 pub mod fs;
 pub mod parser;
-pub mod https;
+pub mod http;

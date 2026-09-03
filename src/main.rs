@@ -79,7 +79,7 @@ use crate::{
     imp::allocator::Allocator,
     imp::env,
     imp::fs::{self, ReadError},
-    imp::https::Request, 
+    imp::http::Request, 
     config::{Config, ConfigModule},
     url::Url,
     formats::split_by_len_ansi,

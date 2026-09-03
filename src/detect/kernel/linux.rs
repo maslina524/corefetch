@@ -5,7 +5,7 @@ use alloc::{
 
 use crate::{
     detect::kernel::KernelInfo, 
-    formats::Size, 
+    formats::MemorySize, 
     linux::fs,
     linux::libc::sysconf,
     abort
@@ -38,8 +38,8 @@ impl KernelInfo {
         }
     }
 
-    fn page_size() -> Size {
+    fn page_size() -> MemorySize {
         let bytes = sysconf(_SC_PAGESIZE);
-        Size::from_bytes(bytes as u64)
+        MemorySize::from_bytes(bytes as u64)
     }
 }
