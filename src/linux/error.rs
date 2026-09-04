@@ -42,6 +42,10 @@ impl ErrorCode {
     pub const fn is_file_not_found(&self) -> bool {
         self.0 == 0x2
     }
+
+    pub const fn is_already_exists(&self) -> bool {
+        self.0 == 0x11
+    }
 }
 
 impl Display for ErrorCode {

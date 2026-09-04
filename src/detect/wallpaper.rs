@@ -34,7 +34,7 @@ pub fn full_path() -> error::Result<Path> {
     Ok(Path::new())
 }
 
-pub fn file_name(path: &Path) -> String {
+pub fn file_name(_path: &Path) -> String {
     // path
     //     .parts()
     //     .last()

@@ -106,7 +106,7 @@ impl Path {
     pub fn exists(&self) -> bool {
         let c_str = self.as_c_str();
         // SAFETY: Completely safe
-        access(c_str.as_ptr(), 0) == 1
+        access(c_str.as_ptr(), 0) == 0
     }
 
     pub fn parent(&self) -> Option<Self> {
@@ -165,8 +165,6 @@ impl core::fmt::Display for Path {
 #[cfg(test)]
 mod tests {
     use crate::linux::path::Path;
-  
-    extern crate std;
 
     #[test]
     fn get_local_test() {

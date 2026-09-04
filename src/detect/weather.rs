@@ -141,11 +141,15 @@ impl WeatherInfo {
 
     fn set_cache(hour: u64, data: &str) -> Option<()> {
         let path_dir = Path::cache();
-        fs::create_dirs(&path_dir).ok()?;
+        if let Err(e) = fs::create_dirs(&path_dir) {
+            warning!("Failed to create {path_dir}: {e}");
+        }
+
         let path = path_dir.join("weather");
         let file = File::create_always(path, Access::Write).ok()?;
         let formatted = format!("{hour}\n{data}");
         file.write(formatted).ok()?;
+
         Some(())
     }
 }
