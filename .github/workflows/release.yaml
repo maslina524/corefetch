@@ -7,13 +7,28 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            artifact: corefetch-windows
+            binary: corefetch.exe
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            artifact: corefetch-linux
+            binary: corefetch
+
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@master
         with:
-          targets: x86_64-pc-windows-msvc
+          toolchain: ${{ matrix.os == 'ubuntu-latest' && 'nightly' || 'stable' }}
+          targets: ${{ matrix.target }}
+          components: ${{ matrix.os == 'ubuntu-latest' && 'rust-src' || '' }}
 
       - uses: actions/cache@v4
         with:
@@ -24,19 +39,24 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: ${{ runner.os }}-cargo-
 
-      - run: cargo build --release --target x86_64-pc-windows-msvc
+      - name: Build
+        run: cargo build --release --target ${{ matrix.target }}
 
       - name: Rename binary
         shell: bash
         run: |
-          cd target/x86_64-pc-windows-msvc/release/
-          mv corefetch.exe corefetch-windows.exe
+          cd target/${{ matrix.target }}/release/
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            mv "${{ matrix.binary }}" "${{ matrix.artifact }}.exe"
+          else
+            mv "${{ matrix.binary }}" "${{ matrix.artifact }}"
+          fi
 
-      - name: Upload artifacts
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: corefetch-windows
-          path: target/x86_64-pc-windows-msvc/release/corefetch-windows*
+          name: ${{ matrix.artifact }}
+          path: target/${{ matrix.target }}/release/${{ matrix.artifact }}*
 
   release:
     needs: [build]
