@@ -1,6 +1,6 @@
 [package]
 name = "corefetch"
-version = "0.1.5"
+version = "0.2.0"
 edition = "2024"
 description = "fastfetch-based program written in rust with #![no_std]"
 license = "MIT"
@@ -18,18 +18,17 @@ path = "src/main.rs"
 
 [profile.release]
 opt-level = "z"
-debug = true
-lto = true
-codegen-units = 1
-panic = "abort"
-# strip = true
-
-[profile.dev]
-opt-level = 0
 lto = true
 codegen-units = 1
 panic = "abort"
 strip = true
+
+[profile.dev]
+opt-level = 0
+lto = true
+debug = true
+codegen-units = 1
+panic = "abort"
 
 [dependencies]
 # Local crate, ONLY for macro-attr: #[todo("...")]
