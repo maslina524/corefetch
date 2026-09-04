@@ -8,6 +8,7 @@ impl LocaleInfo {
     pub fn new() -> Self {
         setlocale(LC_ALL, c"".as_ptr());
         let ptr = setlocale(LC_ALL, ptr::null());
+        // SAFETY: libs are guaranteed to store a valid cstr
         let c_str = unsafe { CStr::from_ptr(ptr) };
         let locale = c_str.to_string_lossy().into_owned();
 

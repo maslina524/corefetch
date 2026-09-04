@@ -27,20 +27,24 @@ impl TitleInfo {
         let uid = getuid();
         let pw_ptr = getpwuid(uid);
         if pw_ptr.is_null() {
-            abort!("Failed to call `getpwuid`: {}", ErrorCode::last())
+            abort!("Failed to call `getpwuid`: {}", ErrorCode::last());
         }
+        // SAFETY: libc always returns a valid pointer
         let pw = unsafe { &*pw_ptr };
 
+        // SAFETY: libs are guaranteed to store a valid cstr
         let user_name_c_str = unsafe { CStr::from_ptr(pw.pw_name) };
         let user_name = user_name_c_str.to_string_lossy().into_owned();
 
         let user_id = pw.pw_uid.to_string();
         let pid = getpid() as u32;
 
+        // SAFETY: libs are guaranteed to store a valid cstr
         let home_dir_c_str = unsafe { CStr::from_ptr(pw.pw_dir) };
         let home_dir_string = home_dir_c_str.to_string_lossy().into_owned();
         let home_dir = Path::from(home_dir_string);
 
+        // SAFETY: libs are guaranteed to store a valid cstr
         let user_shell_c_str = unsafe { CStr::from_ptr(pw.pw_shell) };
         let user_shell_string = user_shell_c_str.to_string_lossy().into_owned();
         let user_shell = Path::from(user_shell_string);
@@ -75,6 +79,7 @@ impl TitleInfo {
             return Path::new();
         }
 
+        // SAFETY: libs are guaranteed to store a valid cstr
         let c_str = unsafe { CStr::from_ptr(buf.as_ptr()) };
         let string = c_str.to_string_lossy().into_owned();
         Path::from(string)
@@ -92,6 +97,7 @@ impl TitleInfo {
         let mut buf = [c_char::default(); HOST_NAME_MAX + 1];
         let ret = gethostname(buf.as_mut_ptr(), HOST_NAME_MAX + 1);
         if ret != 0 {
+            // SAFETY: libs are guaranteed to store a valid cstr
             let c_str = unsafe { CStr::from_ptr(buf.as_mut_ptr()) };
             c_str.to_string_lossy().into_owned()
         } else {
@@ -101,9 +107,7 @@ impl TitleInfo {
     }
 
     fn exe_path() -> Path {
-        let path_string = if let Some(s) = fs::read_link("/proc/self/exe", PATH_MAX) {
-            s
-        } else {
+        let Some(path_string) = fs::read_link("/proc/self/exe", PATH_MAX) else {
             warning!("Failed to get exe path");
             return Path::new()
         };

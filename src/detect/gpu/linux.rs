@@ -16,10 +16,8 @@ const GPU_CLASSES: [&str; 6] = ["0x0300", "0x0301", "0x0302", "0x0380", "0x0381"
 
 impl GpuInfo {
     pub fn new() -> Self {
-        let pci_address = if let Some(id) = Self::pci_address() {
-            id
-        } else {
-            return GpuInfo::default()
+        let Some(pci_address) = Self::pci_address() else {
+            return Self::default()
         };
 
         let vendor_id = Self::vendor_id(&pci_address);
@@ -87,9 +85,7 @@ impl GpuInfo {
 
             let name = entry.name();
             let content_path = format!("/sys/bus/pci/devices/{name}/class");
-            let content = if let Ok(c) = fs::read_to_string(content_path) {
-                c
-            } else {
+            let Ok(content) = fs::read_to_string(content_path) else {
                 continue;
             };
 

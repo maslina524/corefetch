@@ -104,7 +104,7 @@ impl Response {
         Self { code, content }
     }
 
-    pub fn from_raw(data: Vec<u8>) -> Self {
+    pub fn from_raw(data: &[u8]) -> Self {
         let header_end = data
             .windows(4)
             .position(|window| window == b"\r\n\r\n")
@@ -129,7 +129,7 @@ impl Response {
             .and_then(|s| s.parse::<u16>().ok())
             .unwrap_or(0);
 
-        Response { code, content }
+        Self { code, content }
     }
 
     pub const fn code(&self) -> u16 {

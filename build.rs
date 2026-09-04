@@ -242,6 +242,13 @@ fn get_libc_version() -> String {
 #[tokio::main]
 #[allow(clippy::too_many_lines)]
 async fn main() {
+    println!("cargo:rustc-link-arg=-lc");
+    println!("cargo:rustc-link-arg=-lgcc");
+    println!("cargo:rustc-link-arg=-lm");
+    println!("cargo:rustc-link-arg=-lgcc_eh");
+
+    println!("cargo:rustc-link-arg=-pthread");
+
     // Bypasses caching, runs every time during compilation
     let timestamp = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)

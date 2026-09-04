@@ -33,7 +33,7 @@ mod tests {
 
         println!("Total: {total}, In use: {in_use}");
 
-        assert!(total != MemorySize::default());
-        assert!(in_use != MemorySize::default());
+        assert_ne!(total, MemorySize::default());
+        assert_ne!(in_use, MemorySize::default());
     }
 }

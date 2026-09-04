@@ -30,6 +30,7 @@ impl Path {
         if ptr.is_null() {
             abort!("Failed to get HOME");
         }
+        // SAFETY: libs are guaranteed to store a valid cstr
         let c_str = unsafe { CStr::from_ptr(ptr) };
         let string = c_str.to_string_lossy().into_owned();
         Self::from(string)
@@ -51,20 +52,24 @@ impl Path {
         Self { inner: String::with_capacity(cap) }
     }
 
-    fn clear(self) -> Self {
-        let inner = self.inner
-            .replace('\\', "/")
-            .split('/')
-            .filter(|x| !x.is_empty())
-            .fold(String::new(), |mut acc, s| {
-                if !acc.is_empty() {
-                    acc.push('/');
-                }
-                acc.push_str(s);
-                acc
-            });
+    fn clear(mut self) -> Self {
+        let is_absolute = self.inner.starts_with('/');
+        self.inner = self.inner.replace('\\', "/");
+        let parts: Vec<&str> = self.inner.split('/').filter(|x| !x.is_empty()).collect();
+        let mut new_inner = String::new();
+        
+        if is_absolute {
+            new_inner.push('/');
+        }
 
-        Self { inner }
+        for (i, part) in parts.iter().enumerate() {
+            if i > 0 {
+                new_inner.push('/');
+            }
+            new_inner.push_str(part);
+        }
+        self.inner = new_inner;
+        self
     }
 
     pub const fn as_str(&self) -> &String {

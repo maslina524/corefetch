@@ -47,6 +47,7 @@ impl ErrorCode {
 impl Display for ErrorCode {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         let ptr = strerror(self.0);
+        // SAFETY: libs are guaranteed to store a valid cstr
         let c_str = unsafe { CStr::from_ptr(ptr) };
         write!(f, "{c_str:?}")
     }

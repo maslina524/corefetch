@@ -52,7 +52,7 @@ impl LinuxInfo {
         Self { inner: ret }
     }
 
-    pub fn get_default(&self, key: &str, default: impl ToString) -> String {
+    pub fn get_default(&self, key: &str, default: &impl ToString) -> String {
         self
             .inner
             .get(key)
@@ -76,19 +76,15 @@ pub fn parse_range_notation(s: &str, capacity: Option<usize>) -> Vec<usize> {
             if let (Ok(start), Ok(end)) = (
                 part[..pos].parse::<usize>(),
                 part[pos + 1..].parse::<usize>(),
-            ) {
-                if start <= end {
-                    ret.extend(start..=end);
-                }
+            ) && start <= end {
+                ret.extend(start..=end);
             }
-        } else {
-            if let Ok(n) = part.parse::<usize>() {
-                ret.push(n);
-            }
+        } else if let Ok(n) = part.parse::<usize>() {
+            ret.push(n);
         }
     }
 
-    ret.sort();
+    ret.sort_unstable();
     ret.dedup();
     ret
 }

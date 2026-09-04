@@ -15,10 +15,10 @@ impl CpuInfo {
         let info = LinuxInfo::parse_cpu_info()
             .unwrap_or_else(|e| abort!("Failed to open /proc/cpuinfo: {e}"));
 
-        let name = info.get_default("model name", "Unknown");
+        let name = info.get_default("model name", &"Unknown");
         let logical_cores = Self::logical_cores_count();
         let base_freq = info
-            .get_default("key", "0")
+            .get_default("key", &"0")
             .parse::<f64>()
             .unwrap_or(0.0) / 1000.0;
 
@@ -53,9 +53,7 @@ impl CpuInfo {
                 break;
             }
             let content = fs::read_to_string(path).unwrap();
-            let id = if let Ok(n) = content.trim().parse::<usize>() {
-                n
-            } else {
+            let Ok(id) = content.trim().parse::<usize>() else {
                 continue;
             };
             if !ret.contains(&id) {
@@ -96,9 +94,7 @@ impl CpuInfo {
                 break;
             }
             let content = fs::read_to_string(path).unwrap();
-            let id = if let Ok(n) = content.trim().parse::<usize>() {
-                n
-            } else {
+            let Ok(id) = content.trim().parse::<usize>() else {
                 continue;
             };
             if !ret.contains(&id) {
