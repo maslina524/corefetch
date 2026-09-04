@@ -15,13 +15,13 @@ impl OsInfo {
 
         let os_release = LinuxInfo::parse_os_release().unwrap();
 
-        let name = os_release.get_default("NAME", "Unknown".to_owned());
-        let codename = os_release.get_default("VERSION_CODENAME", "".to_owned());
-        let variant = os_release.get_default("VARIANT", "".to_owned());
-        let variant_id = os_release.get_default("VARIANT_ID", "".to_owned());
-        let id = os_release.get_default("ID", "Unknown".to_owned());
+        let name = os_release.get_default("NAME", &"Unknown".to_owned());
+        let codename = os_release.get_default("VERSION_CODENAME", &String::new());
+        let variant = os_release.get_default("VARIANT", &String::new());
+        let variant_id = os_release.get_default("VARIANT_ID", &String::new());
+        let id = os_release.get_default("ID", &"Unknown");
         let version = Self::get_version(&id).unwrap_or_else(|| {
-            os_release.get_default("VERSION_ID", "Unknown")
+            os_release.get_default("VERSION_ID", &"Unknown")
         });
         let nerd = Self::nerd(&id);
 

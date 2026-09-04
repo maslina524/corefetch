@@ -18,7 +18,7 @@ pub fn args_init(argc: usize, argv: *const *const u8) -> Vec<String> {
     let mut ret = Vec::new();
     for i in 0..argc {
         // SAFETY: Moving strictly within the allocated memory by Linux
-        let start_ptr = unsafe { *argv.add(i as usize) };
+        let start_ptr = unsafe { *argv.add(i) };
 
         let mut len = 0;
         // SAFETY: Moving until the end of the allocated string
@@ -75,9 +75,7 @@ pub fn processes_count() -> usize {
 pub fn find_pid_by_name(name: &str) -> u32 {
     for entry in fs::read_dir("/proc").unwrap() {
         let entry_name = entry.name();
-        let pid = if let Ok(n) = entry_name.parse::<u32>() {
-            n
-        } else {
+        let Ok(pid) = entry_name.parse::<u32>() else {
             continue;
         };
 
@@ -92,7 +90,7 @@ pub fn find_pid_by_name(name: &str) -> u32 {
             return pid;
         }
     }
-    return 0;
+    0
 }
 
 pub fn terminal_size() -> (usize, usize) {
@@ -102,6 +100,7 @@ pub fn terminal_size() -> (usize, usize) {
         if ptr.is_null() {
             return None;
         }
+        // SAFETY: libs are guaranteed to store a valid cstr
         let cstr = unsafe { CStr::from_ptr(ptr) };
         let bytes = cstr.to_bytes();
         if bytes.is_empty() {
@@ -109,7 +108,7 @@ pub fn terminal_size() -> (usize, usize) {
         }
         let mut value = 0usize;
         for &b in bytes {
-            if b < b'0' || b > b'9' {
+            if !b.is_ascii_digit() {
                 warning!("Failed to get {} (terminal_size)", str::from_utf8(name).unwrap());
                 return None;
             }

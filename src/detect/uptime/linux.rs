@@ -26,6 +26,7 @@ impl UptimeInfo {
         let ms_remainder = (rem % SEC_MS) as u16;
 
         let years = (days / 365) as u16;
+        #[allow(clippy::cast_precision_loss)]
         let years_fraction = (days as f32) / 365.0;
 
         let boot_time = Self::boot_time(uptime_secs);
@@ -53,7 +54,7 @@ impl UptimeInfo {
         let boot_ts = now_ts as u64 - uptime_secs;
 
         let mut tm = Tm::default();
-        localtime_r((&raw const boot_ts).cast(), &mut tm);
+        localtime_r((&raw const boot_ts).cast(), &raw mut tm);
 
         format!(
             "{:04}-{:02}-{:02} {:02}:{:02}:{:02}",
@@ -74,6 +75,6 @@ mod tests {
     #[test]
     fn uptime_test() {
         let uptime = UptimeInfo::new();
-        println!("{:#?}", uptime);
+        println!("{uptime:#?}");
     }
 }

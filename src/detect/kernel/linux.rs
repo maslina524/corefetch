@@ -12,7 +12,7 @@ use crate::{
 };
 
 const SYSNAME: &str = "Linux";
-const _SC_PAGESIZE: i32 = 30;
+const SC_PAGESIZE: i32 = 30;
 
 impl KernelInfo {
     pub fn new() -> Self {
@@ -23,11 +23,10 @@ impl KernelInfo {
         splited.next();
         let release = splited.next().unwrap_or("Unknown").to_owned();
         
-        let version = if let Some(index) = content.find("#1 SMP") {
-            &content[index..]
-        } else {
-            "Unknown"
-        }.to_owned();
+        let version = content
+            .find("#1 SMP")
+            .map_or("Unknown", |index| &content[index..])
+            .to_owned();
 
         Self { 
             sysname: SYSNAME, 
@@ -39,7 +38,7 @@ impl KernelInfo {
     }
 
     fn page_size() -> MemorySize {
-        let bytes = sysconf(_SC_PAGESIZE);
+        let bytes = sysconf(SC_PAGESIZE);
         MemorySize::from_bytes(bytes as u64)
     }
 }

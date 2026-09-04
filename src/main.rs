@@ -186,10 +186,10 @@ fn build_info_buf(max_len: usize) -> Vec<String> {
 }
 
 pub fn exit(code: u32) -> ! {
-    // SAFETY: The function is used in the binary, everything is safe
     cfg_if! {
         if #[cfg(target_os = "linux")] {
-            crate::linux::libc::exit(code as i32)
+            // SAFETY: Run in binary, safe
+            unsafe { crate::linux::libc::exit(code as i32) }
         } else if #[cfg(target_os = "windows")] {
             // SAFETY: Run in binary, safe
             unsafe { crate::windows::link::ExitProcess(code) }
@@ -418,3 +418,6 @@ fn corefetch_main() -> i32 {
 
     0
 }
+
+// BUILD FOR LINUX
+// cargo build --release -Z build-std --target x86_64-unknown-linux-gnu

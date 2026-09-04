@@ -1,4 +1,4 @@
-use core::ffi::{CStr, c_void, c_int, c_char};
+use core::ffi::{CStr, c_int, c_char};
 
 use alloc::{
     string::{FromUtf8Error, String}, 
@@ -8,8 +8,8 @@ use alloc::{
 
 use crate::{
     linux::libc::{
-        FILE, fopen, fread, fclose, fwrite, fseek, ftell, rewind, mkdir, DIR, opendir, readdir, 
-        readlink
+        FileHandle, fopen, fread, fclose, fwrite, fseek, ftell, rewind, mkdir,
+        Dir, opendir, readdir, readlink
     },
     linux::error::{self, ErrorCode},
     linux::path::Path
@@ -21,6 +21,7 @@ const DT_DIR    : u8    = 4;
 const DT_LNK    : u8    = 10;
 
 #[repr(u32)]
+#[derive(Clone, Copy)]
 pub enum Access {
     Read,
     Write,
@@ -31,7 +32,7 @@ pub enum Access {
 }
 
 impl Access {
-    fn as_cstr(&self) -> &'static CStr {
+    const fn as_cstr(self) -> &'static CStr {
         match self {
             Self::Read => c"r",
             Self::Write => c"w",
@@ -72,12 +73,13 @@ impl core::fmt::Display for ReadError {
 
 impl core::error::Error for ReadError {}
 
-pub struct File(FILE);
+pub struct File(FileHandle);
 
 impl File {
     pub fn open(path: impl Into<Path>, access: Access) -> error::Result<Self> {
         let path = path.into();
         let c_str = path.as_c_str();
+        crate::println!("Trying to open: {c_str:?}");
         let file = fopen(c_str.as_ptr(), access.as_cstr().as_ptr());
 
         if file.is_null() {
@@ -100,13 +102,13 @@ impl File {
         Self::create_new(path, access)
     }
 
-    pub const fn as_handle(&self) -> FILE {
+    pub const fn as_handle(&self) -> FileHandle {
         self.0
     }
 
     pub fn write(&self, buf: impl Into<Vec<u8>>) -> error::Result<()> {
         let buf = buf.into();
-        let written = fwrite(buf.as_ptr() as *const c_void, 1, buf.len(), self.0);
+        let written = fwrite(buf.as_ptr().cast(), 1, buf.len(), self.0);
         if written == buf.len() {
             Ok(())
         } else {
@@ -149,10 +151,10 @@ pub enum ItemType {
 impl From<u8> for ItemType {
     fn from(value: u8) -> Self {
         match value {
-            DT_REG => ItemType::File,
-            DT_DIR => ItemType::Dir,
-            DT_LNK => ItemType::Link,
-            _ => ItemType::Unknown,
+            DT_REG => Self::File,
+            DT_DIR => Self::Dir,
+            DT_LNK => Self::Link,
+            _ => Self::Unknown,
         }
     }
 }
@@ -168,13 +170,13 @@ impl Item {
         self.typ.clone()
     }
 
-    pub fn name(&self) -> &String {
+    pub const fn name(&self) -> &String {
         &self.name
     }
 }
 
 pub struct ReadDirIter {
-    dir: DIR
+    dir: Dir
 }
 
 impl Iterator for ReadDirIter {
@@ -198,7 +200,7 @@ impl Iterator for ReadDirIter {
             let name = c_str_name.to_string_lossy().into_owned();
             let typ = ItemType::from(item.d_type);
 
-            return Some(Item { name, typ });
+            return Some(Item { typ, name });
         }
     }
 }
@@ -257,12 +259,13 @@ pub fn read_link(path: impl Into<Path>, len: usize) -> Option<String> {
     let mut buf = vec![c_char::default(); len];
 
     let len = readlink(c_path.as_ptr(), buf.as_mut_ptr(), len - 1);
-    if len != -1 {
+    if len == -1 {
+        None
+    } else {
         buf[len as usize] = 0;
+        // SAFETY: libs are guaranteed to store a valid cstr
         let c_str = unsafe { CStr::from_ptr(buf.as_ptr()) };
         Some(c_str.to_string_lossy().into_owned())
-    } else {
-        None
     }
 }
 

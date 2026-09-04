@@ -1,5 +1,5 @@
 use core::{
-    ffi::{c_int, c_void}, 
+    ffi::c_int, 
     ptr
 };
 
@@ -68,6 +68,7 @@ impl Request {
         let mut sockfd: c_int = -1;
         let mut rp = result;
         while !rp.is_null() {
+            // SAFETY: libc always returns a valid pointer
             let ai = unsafe { &*rp };
             sockfd = socket(ai.ai_family, ai.ai_socktype, ai.ai_protocol);
             if sockfd == -1 {
@@ -98,7 +99,7 @@ impl Request {
 
         let req_bytes = req.as_bytes();
 
-        let sent = send(sockfd, req_bytes.as_ptr() as *const c_void, req_bytes.len(), 0);
+        let sent = send(sockfd, req_bytes.as_ptr().cast(), req_bytes.len(), 0);
         if sent == -1 {
             close(sockfd);
             abort!("send failed");
@@ -107,7 +108,7 @@ impl Request {
         let mut response_data = Vec::new();
         let mut buffer = [0u8; BUF_SIZE];
         loop {
-            let n = recv(sockfd, buffer.as_mut_ptr() as *mut c_void, buffer.len(), 0);
+            let n = recv(sockfd, buffer.as_mut_ptr().cast(), buffer.len(), 0);
             if n < 0 {
                 close(sockfd);
                 abort!("recv failed");
@@ -120,7 +121,7 @@ impl Request {
 
         close(sockfd);
 
-        Response::from_raw(response_data)
+        Response::from_raw(&response_data)
     }
 }
 
