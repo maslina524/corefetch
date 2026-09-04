@@ -79,7 +79,7 @@ impl GpuInfo {
         };
 
         for entry in entries {
-            if entry.typ() != ItemType::Dir || entry.typ() != ItemType::Link {
+            if entry.typ() != ItemType::Dir && entry.typ() != ItemType::Link {
                 continue;
             }
             let name = entry.name();
@@ -87,7 +87,7 @@ impl GpuInfo {
             if let Ok(content) = fs::read_to_string(content_path)
                 && GPU_CLASSES.contains(&content.trim())
             {
-                return Some(content);
+                return Some(entry.into_name());
             }
         }
 

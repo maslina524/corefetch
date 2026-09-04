@@ -40,8 +40,6 @@ unsafe extern "C" {
     pub safe fn strerror(errnum: c_int) -> *mut c_char;
     pub safe fn fwrite(ptr: *const c_void, size: c_size, nmemb: c_size, stream: FileHandle) -> c_size;
     pub safe fn fread(ptr: *mut c_void, size: c_size, nmemb: c_size, stream: FileHandle) -> c_size;
-    pub safe fn fseek(stream: FileHandle, offset: c_long, whence: c_int) -> c_int;
-    pub safe fn ftell(stream: FileHandle) -> c_long;
     pub safe fn rewind(stream: FileHandle);
     pub safe fn mkdir(pathname: *const c_char, mode: c_mode) -> c_int;
     pub safe fn clock_gettime(clockid: c_clockid, tp: *mut Timespec) -> c_int;

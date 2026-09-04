@@ -1,4 +1,7 @@
-use core::ffi::{CStr, c_int, c_char};
+use core::{
+    ffi::{CStr, c_int, c_char},
+    ptr
+};
 
 use alloc::{
     string::{FromUtf8Error, String}, 
@@ -8,7 +11,7 @@ use alloc::{
 
 use crate::{
     linux::libc::{
-        FileHandle, fopen, fread, fclose, fwrite, fseek, ftell, rewind, mkdir,
+        FileHandle, fopen, fread, fclose, fwrite, rewind, mkdir,
         Dir, opendir, readdir, readlink, ferror
     },
     linux::error::{self, ErrorCode},
@@ -177,6 +180,10 @@ impl Item {
     pub const fn name(&self) -> &String {
         &self.name
     }
+    
+    pub fn into_name(self) -> String {
+        self.name
+    }
 }
 
 pub struct ReadDirIter {
@@ -228,7 +235,7 @@ pub fn read_dir_all(path: impl Into<Path>) -> error::Result<Vec<Item>> {
     let path = path.into();
     let c_path = path.as_c_str();
 
-    let fd = unsafe { open(c_path.as_ptr(), O_RDONLY | O_DIRECTORY, 0) };
+    let fd = open(c_path.as_ptr(), O_RDONLY | O_DIRECTORY, 0);
     if fd < 0 {
         return Err(ErrorCode::last());
     }
@@ -237,10 +244,10 @@ pub fn read_dir_all(path: impl Into<Path>) -> error::Result<Vec<Item>> {
     let mut buf = vec![0u8; BUF_SIZE];
 
     loop {
-        let n = unsafe { getdents64(fd, buf.as_mut_ptr().cast(), BUF_SIZE) };
+        let n = getdents64(fd, buf.as_mut_ptr().cast(), BUF_SIZE);
         if n < 0 {
             let err = ErrorCode::last();
-            unsafe { close(fd); }
+            close(fd);
             return Err(err);
         }
         if n == 0 {
@@ -249,12 +256,16 @@ pub fn read_dir_all(path: impl Into<Path>) -> error::Result<Vec<Item>> {
 
         let mut pos = 0;
         while pos < n as usize {
-            let entry = unsafe { &*buf.as_ptr().add(pos).cast::<LinuxDirent64>() };
+            // SAFETY: libc always returns a valid pointer
+            let entry = unsafe {
+                ptr::read_unaligned(buf.as_ptr().add(pos).cast::<LinuxDirent64>()) 
+            };
             let reclen = entry.d_reclen as usize;
             if reclen == 0 {
                 break;
             }
 
+            // SAFETY: Libc is guaranteed to return a valid string
             let name_cstr = unsafe { CStr::from_ptr(entry.d_name.as_ptr()) };
             let name = name_cstr.to_string_lossy().into_owned();
             if name != "." && name != ".." {
@@ -265,7 +276,7 @@ pub fn read_dir_all(path: impl Into<Path>) -> error::Result<Vec<Item>> {
         }
     }
 
-    unsafe { close(fd); }
+    close(fd);
     Ok(items)
 }
 
@@ -288,10 +299,12 @@ pub fn create_dir(path: impl Into<Path>) -> error::Result<()> {
 
     let ret = mkdir(c_path.as_ptr(), 0o755);
     if ret == -1 {
-        Err(ErrorCode::last())
-    } else {
-        Ok(())
+        let err = ErrorCode::last();
+        if !err.is_already_exists() {
+            return Err(err);
+        }
     }
+    Ok(())
 }
 
 pub fn create_dirs(path: impl Into<Path>) -> error::Result<()> {

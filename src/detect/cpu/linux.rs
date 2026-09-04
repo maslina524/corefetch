@@ -1,7 +1,12 @@
 use alloc::vec::Vec;
 
 use crate::{
-    abort, detect::cpu::CpuInfo, format, imp::{fs, parser::{LinuxInfo, parse_range_notation}, path::Path}, warning
+    abort, 
+    detect::cpu::CpuInfo, 
+    format, 
+    imp::fs,
+    imp::parser::{LinuxInfo, parse_range_notation},
+    imp::path::Path
 };
 
 impl CpuInfo {
