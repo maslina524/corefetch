@@ -14,7 +14,8 @@ use crate::{
     linux::libc::{
         AddrInfo, close, connect, freeaddrinfo, getaddrinfo, recv, send, socket
     }, 
-    url::{Response, Url}
+    url::{Response, Url},
+    format
 };
 
 const BUF_SIZE: usize = 1024;
@@ -44,7 +45,9 @@ impl Request {
     }
 
     fn send(self, method: &str) -> Response {
-        let c_hostname = CString::new(self.url.domain.clone()).expect("invalid hostname");
+        // crate::println!("Url: {:#?}", self.url);
+        let full_domain = format!("{}.{}", self.url.domain, self.url.tld);
+        let c_hostname = CString::new(full_domain).expect("invalid hostname");
         let c_port = CString::new(self.url.port().to_string()).expect("invalid port");
 
         let hints = AddrInfo {
@@ -62,7 +65,7 @@ impl Request {
             &raw mut result,
         );
         if ret != 0 {
-            abort!("getaddrinfo failed");
+            abort!("getaddrinfo failed, url: `{}`", self.url);
         }
 
         let mut sockfd: c_int = -1;
@@ -123,9 +126,4 @@ impl Request {
 
         Response::from_raw(&response_data)
     }
-}
-
-#[cfg(test)]
-mod tests {
-
 }

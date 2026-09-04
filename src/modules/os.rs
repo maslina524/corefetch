@@ -45,7 +45,11 @@ pub struct Os {
 impl Module for Os {
     fn new() -> Self {
         let info = OsInfo::new();
-        let pretty_name = format!("{} {} ({})", info.id, info.variant, info.codename);
+
+        // #[cfg(target_os = "windows")]
+        // let pretty_name = format!("{} {} ({})", info.id, info.variant, info.codename);
+        // #[cfg(target_os = "linux")]
+        let pretty_name = format!("{} ({})", info.name, info.codename);
 
         Self { 
             sysname: info.sysname, 

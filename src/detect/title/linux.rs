@@ -96,7 +96,7 @@ impl TitleInfo {
     fn host_name() -> String {
         let mut buf = [c_char::default(); HOST_NAME_MAX + 1];
         let ret = gethostname(buf.as_mut_ptr(), HOST_NAME_MAX + 1);
-        if ret != 0 {
+        if ret == 0 {
             // SAFETY: libs are guaranteed to store a valid cstr
             let c_str = unsafe { CStr::from_ptr(buf.as_mut_ptr()) };
             c_str.to_string_lossy().into_owned()

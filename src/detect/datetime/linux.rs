@@ -21,7 +21,7 @@ impl DatetimeInfo {
         // SAFETY: libc always returns a valid pointer
         let info = unsafe { &*info_ptr };
 
-        let year = info.tm_year as u16;
+        let year = info.tm_year as u16 + 1900;
         let month = info.tm_mon as u16;
 
         let month_name = Self::month_name(month);

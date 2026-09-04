@@ -12,7 +12,7 @@ use crate::{
     format
 };
 
-const GPU_CLASSES: [&str; 6] = ["0x0300", "0x0301", "0x0302", "0x0380", "0x0381", "0x0382"];
+const GPU_CLASSES: [&str; 6] = ["0x030000", "0x030100", "0x030200", "0x038000", "0x038100", "0x038200"];
 
 impl GpuInfo {
     pub fn new() -> Self {
@@ -70,26 +70,23 @@ impl GpuInfo {
     }
 
     fn pci_address() -> Option<String> {
-        let iter = match fs::read_dir("/sys/bus/pci/devices") {
-            Ok(i) => i,
+        let entries = match fs::read_dir_all("/sys/bus/pci/devices") {
+            Ok(v) => v,
             Err(e) => {
-                warning!("Failed to get devices: {e}");
+                warning!("Failed to read devices: {e}");
                 return None;
             }
         };
 
-        for entry in iter {
-            if entry.typ() != ItemType::Dir {
+        for entry in entries {
+            if entry.typ() != ItemType::Dir || entry.typ() != ItemType::Link {
                 continue;
             }
-
             let name = entry.name();
             let content_path = format!("/sys/bus/pci/devices/{name}/class");
-            let Ok(content) = fs::read_to_string(content_path) else {
-                continue;
-            };
-
-            if GPU_CLASSES.contains(&content.trim()) {
+            if let Ok(content) = fs::read_to_string(content_path)
+                && GPU_CLASSES.contains(&content.trim())
+            {
                 return Some(content);
             }
         }

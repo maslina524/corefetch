@@ -322,6 +322,8 @@ fn print_version(method: Option<&str>) -> ! {
 
 static ARGS: OnceLock<Vec<String>> = OnceLock::new();
 
+// BUILD FOR LINUX
+// cargo build --release -Z build-std
 // #[cfg(not(test))]
 cfg_if! {
     if #[cfg(target_os = "linux")] {
@@ -366,7 +368,8 @@ fn corefetch_main() -> i32 {
             get_logo_name_and_custom(val)
         })
     } else {
-        (Os::get().id.to_lowercase(), None)
+        let id = Os::get().id.to_lowercase();
+        (id, None)
     };
 
     // Build buffers
@@ -418,6 +421,3 @@ fn corefetch_main() -> i32 {
 
     0
 }
-
-// BUILD FOR LINUX
-// cargo build --release -Z build-std --target x86_64-unknown-linux-gnu

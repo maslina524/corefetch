@@ -9,11 +9,17 @@ use alloc::{
 use crate::{
     linux::libc::{
         FileHandle, fopen, fread, fclose, fwrite, fseek, ftell, rewind, mkdir,
-        Dir, opendir, readdir, readlink
+        Dir, opendir, readdir, readlink, ferror
     },
     linux::error::{self, ErrorCode},
     linux::path::Path
 };
+
+use crate::linux::libc::{open, close, getdents64, LinuxDirent64};
+const O_RDONLY: c_int = 0;
+const O_DIRECTORY: c_int = 0x10000;
+const AT_FDCWD: c_int = -100;
+const BUF_SIZE: usize = 4096 * 16; 
 
 const SEEK_END  : c_int = 2;
 const DT_REG    : u8    = 8;
@@ -79,7 +85,6 @@ impl File {
     pub fn open(path: impl Into<Path>, access: Access) -> error::Result<Self> {
         let path = path.into();
         let c_str = path.as_c_str();
-        crate::println!("Trying to open: {c_str:?}");
         let file = fopen(c_str.as_ptr(), access.as_cstr().as_ptr());
 
         if file.is_null() {
@@ -117,20 +122,19 @@ impl File {
     }
 
     pub fn read(&self) -> error::Result<Vec<u8>> {
-        if fseek(self.0, 0, SEEK_END) != 0 {
-            return Err(ErrorCode::last());
-        }
-        let size = ftell(self.0);
-        if size < 0 {
-            return Err(ErrorCode::last());
-        }
-        let size = size as usize;
         rewind(self.0);
+        let mut buf = Vec::new();
+        let mut chunk = [0u8; 4096];
 
-        let mut buf = vec![0u8; size];
-        let readed = fread(buf.as_mut_ptr().cast(), 1, size, self.0);
-        if readed != size {
-            return Err(ErrorCode::last());
+        loop {
+            let n = fread(chunk.as_mut_ptr().cast(), 1, chunk.len(), self.0);
+            if n == 0 {
+                if ferror(self.0) != 0 {
+                    return Err(ErrorCode::last());
+                }
+                break;
+            }
+            buf.extend_from_slice(&chunk[..n]);
         }
 
         Ok(buf)
@@ -143,7 +147,7 @@ impl Drop for File {
     }
 }
 
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ItemType {
     File, Dir, Link, Unknown
 }
@@ -159,7 +163,7 @@ impl From<u8> for ItemType {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Item {
     typ: ItemType,
     name: String
@@ -182,7 +186,9 @@ pub struct ReadDirIter {
 impl Iterator for ReadDirIter {
     type Item = Item;
     fn next(&mut self) -> Option<Self::Item> {
+        crate::println!("Called ReadDirIter::next()");
         loop {
+            crate::println!("Called libc readdir");
             let raw_item = readdir(&raw mut self.dir);
             if raw_item.is_null() {
                 return None
@@ -200,6 +206,7 @@ impl Iterator for ReadDirIter {
             let name = c_str_name.to_string_lossy().into_owned();
             let typ = ItemType::from(item.d_type);
 
+            crate::println!("Return item");
             return Some(Item { typ, name });
         }
     }
@@ -215,6 +222,51 @@ pub fn read_dir(path: impl Into<Path>) -> error::Result<ReadDirIter> {
     }
 
     Ok(ReadDirIter { dir })
+}
+
+pub fn read_dir_all(path: impl Into<Path>) -> error::Result<Vec<Item>> {
+    let path = path.into();
+    let c_path = path.as_c_str();
+
+    let fd = unsafe { open(c_path.as_ptr(), O_RDONLY | O_DIRECTORY, 0) };
+    if fd < 0 {
+        return Err(ErrorCode::last());
+    }
+
+    let mut items = Vec::new();
+    let mut buf = vec![0u8; BUF_SIZE];
+
+    loop {
+        let n = unsafe { getdents64(fd, buf.as_mut_ptr().cast(), BUF_SIZE) };
+        if n < 0 {
+            let err = ErrorCode::last();
+            unsafe { close(fd); }
+            return Err(err);
+        }
+        if n == 0 {
+            break;
+        }
+
+        let mut pos = 0;
+        while pos < n as usize {
+            let entry = unsafe { &*buf.as_ptr().add(pos).cast::<LinuxDirent64>() };
+            let reclen = entry.d_reclen as usize;
+            if reclen == 0 {
+                break;
+            }
+
+            let name_cstr = unsafe { CStr::from_ptr(entry.d_name.as_ptr()) };
+            let name = name_cstr.to_string_lossy().into_owned();
+            if name != "." && name != ".." {
+                let typ = ItemType::from(entry.d_type);
+                items.push(Item { typ, name });
+            }
+            pos += reclen;
+        }
+    }
+
+    unsafe { close(fd); }
+    Ok(items)
 }
 
 pub fn read(path: impl Into<Path>) -> error::Result<Vec<u8>> {

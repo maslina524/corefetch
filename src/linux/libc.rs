@@ -70,6 +70,10 @@ unsafe extern "C" {
     pub safe fn close(fd: c_int) -> c_int;
     pub safe fn freeaddrinfo(res: *mut AddrInfo);
     pub safe fn localtime_r(timep: *const c_time, result: *mut Tm) -> *mut Tm;
+    pub safe fn ferror(stream: FileHandle) -> c_int;
+    pub safe fn getdents64(fd: c_int, dirp: *mut c_void, count: c_size) -> c_ssize;
+    pub safe fn open(pathname: *const c_char, flags: c_int, ...) -> c_int;
+    pub safe fn ioctl(fd: c_int, op: c_ulong, ...) -> c_int;
 }
 
 static SYSINFO: OnceLock<Sysinfo> = OnceLock::new();
@@ -85,6 +89,30 @@ pub fn get_sysinfo() -> &'static Sysinfo {
 pub fn errno() -> i32 {
     // SAFETY: libc always returns a valid pointer
     unsafe { *__errno_location() }
+}
+
+#[repr(C)]
+#[derive(Default)]
+pub struct Winsize {
+    pub ws_row: c_ushort,
+    pub ws_col: c_ushort,
+    pub ws_xpixel: c_ushort,
+    pub ws_ypixel: c_ushort,
+}
+
+#[repr(C)]
+pub struct LinuxDirent64 {
+    pub d_ino: u64,
+    pub d_off: i64,
+    pub d_reclen: u16,
+    pub d_type: u8,
+    pub d_name: [c_char; 256],
+}
+
+impl Default for LinuxDirent64 {
+    fn default() -> Self {
+        Self { d_ino: 0, d_off: 0, d_reclen: 0, d_type: 0, d_name: [c_char::default(); 256] }
+    }
 }
 
 #[repr(C)]

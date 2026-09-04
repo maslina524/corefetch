@@ -6,12 +6,15 @@ use alloc::{
 };
 
 use crate::{
-    linux::libc::{Timespec, clock_gettime, get_sysinfo, getenv},
+    linux::libc::{Timespec, clock_gettime, get_sysinfo, getenv, ioctl, Winsize},
     linux::fs,
     ARGS,
     format,
-    warning
+    warning,
+    abort
 };
+
+const TIOCGWINSZ: u64 = 0x5413;
 
 #[allow(clippy::similar_names, reason = "that's what they're called in C, i don't give a fuck about clippy")]
 pub fn args_init(argc: usize, argv: *const *const u8) -> Vec<String> {
@@ -119,5 +122,27 @@ pub fn terminal_size() -> (usize, usize) {
 
     let lines = parse_env_var(b"LINES\0").unwrap_or(0);
     let cols = parse_env_var(b"COLUMNS\0").unwrap_or(0);
-    (lines, cols)
+
+    if lines == 0 || cols == 0 {
+        let mut info = Winsize::default();
+        let ret = ioctl(1, TIOCGWINSZ, &raw mut info);
+        if ret == -1 {
+            abort!("failet to call ioctl");
+        }
+        
+        (info.ws_col as usize, info.ws_row as usize)
+    } else {
+        (cols, lines)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::linux::env;
+
+    #[test]
+    fn terminal_size_test() {
+        let (w, h) = env::terminal_size();
+        println!("({w}, {h})");
+    }
 }

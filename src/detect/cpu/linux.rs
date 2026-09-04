@@ -1,13 +1,7 @@
 use alloc::vec::Vec;
 
 use crate::{
-    abort, 
-    detect::cpu::CpuInfo, 
-    imp::parser::LinuxInfo,
-    imp::fs,
-    imp::path::Path,
-    imp::parser::parse_range_notation,
-    format
+    abort, detect::cpu::CpuInfo, format, imp::{fs, parser::{LinuxInfo, parse_range_notation}, path::Path}, warning
 };
 
 impl CpuInfo {
@@ -80,7 +74,11 @@ impl CpuInfo {
     }
 
     fn online_cores_count(logical_cores: usize) -> usize {
-        let content = fs::read_to_string("/sys/devices/system/cpu/online").unwrap();
+        let content = match  fs::read_to_string("/sys/devices/system/cpu/online") {
+            Ok(c) => c,
+            Err(e) => abort!("Failed to read /sys/devices/system/cpu/online: {e}")
+        };
+
         let cores = parse_range_notation(&content, Some(logical_cores));
         cores.len()
     }
