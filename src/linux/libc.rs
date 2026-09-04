@@ -72,6 +72,9 @@ unsafe extern "C" {
     pub safe fn getdents64(fd: c_int, dirp: *mut c_void, count: c_size) -> c_ssize;
     pub safe fn open(pathname: *const c_char, flags: c_int, ...) -> c_int;
     pub safe fn ioctl(fd: c_int, op: c_ulong, ...) -> c_int;
+    pub safe fn popen(command: *const c_char, typ: *const c_char) -> FileHandle;
+    pub safe fn pclose(stream: FileHandle) -> c_int;
+    pub safe fn fgets(s: *mut c_char, size: c_int, stream: FileHandle) -> *mut c_char;
 }
 
 static SYSINFO: OnceLock<Sysinfo> = OnceLock::new();
@@ -85,7 +88,7 @@ pub fn get_sysinfo() -> &'static Sysinfo {
 }
 
 pub fn errno() -> i32 {
-    // SAFETY: libc always returns a valid pointer
+    // SAFETY: Libc always returns a valid pointer
     unsafe { *__errno_location() }
 }
 

@@ -1,5 +1,6 @@
 use alloc::{
     string::String,
+    borrow::ToOwned
 };
 use doc::Docs;
 
@@ -7,8 +8,9 @@ use crate::{
     format_for_module,
     impl_display_for_module,
     modules::Module,
-    detect::wallpaper,
-    sync::OnceLock
+    sync::OnceLock,
+    detect::wallpaper::WallpaperInfo,
+    imp::path::Path
 };
 
 static WALLPAPER: OnceLock<Wallpaper> = OnceLock::new();
@@ -22,12 +24,20 @@ pub struct Wallpaper {
 }
 
 impl Module for Wallpaper {
+    #[allow(clippy::redundant_closure)]
     fn new() -> Self {
-        let (file_name, full_path) = wallpaper::full_path().map_or_else(|_| (String::new(), String::new()), |p| {
-            let file = wallpaper::file_name(&p);
-            let string = p.into_inner();
-            (file, string)
-        });
+        let info = WallpaperInfo::new();
+
+        let file_name = info.full_path
+            .as_ref()
+            .map_or_else(
+                || "No graphical env".to_owned(), 
+                |p| Path::from(p).pop().unwrap()
+            );
+
+        let full_path = info.full_path
+            .unwrap_or_else(|| "No graphical env".to_owned());
+
         Self {
             file_name,
             full_path

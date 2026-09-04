@@ -4,7 +4,7 @@ pub mod io;
 pub mod encoding;
 pub mod error;
 pub mod env;
-pub mod https;
+pub mod http;
 pub mod path;
 pub mod fs;
 pub mod regedit;

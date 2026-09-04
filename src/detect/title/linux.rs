@@ -29,7 +29,7 @@ impl TitleInfo {
         if pw_ptr.is_null() {
             abort!("Failed to call `getpwuid`: {}", ErrorCode::last());
         }
-        // SAFETY: libc always returns a valid pointer
+        // SAFETY: Libc always returns a valid pointer
         let pw = unsafe { &*pw_ptr };
 
         // SAFETY: libs are guaranteed to store a valid cstr
