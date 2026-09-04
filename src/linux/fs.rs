@@ -256,7 +256,7 @@ pub fn read_dir_all(path: impl Into<Path>) -> error::Result<Vec<Item>> {
 
         let mut pos = 0;
         while pos < n as usize {
-            // SAFETY: libc always returns a valid pointer
+            // SAFETY: Libc always returns a valid pointer
             let entry = unsafe {
                 ptr::read_unaligned(buf.as_ptr().add(pos).cast::<LinuxDirent64>()) 
             };

@@ -18,7 +18,7 @@ impl DatetimeInfo {
     pub fn new() -> Self {
         let time = time(ptr::null_mut());
         let info_ptr = localtime(&raw const time);
-        // SAFETY: libc always returns a valid pointer
+        // SAFETY: Libc always returns a valid pointer
         let info = unsafe { &*info_ptr };
 
         let year = info.tm_year as u16 + 1900;

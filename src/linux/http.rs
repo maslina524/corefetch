@@ -71,7 +71,7 @@ impl Request {
         let mut sockfd: c_int = -1;
         let mut rp = result;
         while !rp.is_null() {
-            // SAFETY: libc always returns a valid pointer
+            // SAFETY: Libc always returns a valid pointer
             let ai = unsafe { &*rp };
             sockfd = socket(ai.ai_family, ai.ai_socktype, ai.ai_protocol);
             if sockfd == -1 {
