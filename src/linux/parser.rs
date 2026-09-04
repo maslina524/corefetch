@@ -46,7 +46,7 @@ impl LinuxInfo {
                 v = &v[1..v.len() - 1];
             }
 
-            ret.insert(k, v.to_owned());
+            ret.insert(k, v.trim().to_owned());
         }
 
         Self { inner: ret }
@@ -69,6 +69,10 @@ impl LinuxInfo {
 }
 
 pub fn parse_range_notation(s: &str, capacity: Option<usize>) -> Vec<usize> {
+    if s.trim().is_empty() {
+        return Vec::new();
+    }
+    
     let mut ret = capacity.map_or_else(Vec::new, Vec::with_capacity);
 
     for part in s.split(',').map(str::trim) {

@@ -186,7 +186,7 @@ macro_rules! format_for_module {
             let full_string = if key_raw.len() == 0 {
                 value_raw
             } else {
-                $crate::format!("\x1b[{key_color}m{key_raw}\x1b[0m{separator}{value_raw}")
+                $crate::format!("\x1b[{key_color};1m{key_raw}\x1b[0m{separator}{value_raw}")
             };
             $crate::format_module!(&full_string, self, $($field),*)
         }

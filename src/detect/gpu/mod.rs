@@ -94,6 +94,7 @@ impl GpuInfo {
     fn name(vendor_id: u32) -> String {
         match vendor_id {
             0x10DE => NvidiaLib::get().device_name(),
+            0x15ad => "VMware".to_owned(),
             _ => "Unknown".to_owned(),
         }
     }
