@@ -12,6 +12,5 @@ fn main() {
     
     if rustc_version.contains("nightly") || rustc_version.contains("dev") {
         println!("cargo:rustc-cfg=unstable");
-        println!("cargo:warning=Unstable features enabled (nightly)");
     }
 }
