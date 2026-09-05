@@ -33,7 +33,7 @@ Currently being developed only for Windows, with Linux support planned for the f
 
 ## Install
 
-Building from source, if you have `cargo` installed:
+Building from source if you have `cargo` installed. Building requires the `nightly` version of the compiler, the project should pull the required version itself:
 
 ```bash
 $ cargo install corefetch

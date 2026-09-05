@@ -242,13 +242,11 @@ fn get_libc_version() -> String {
 #[tokio::main]
 #[allow(clippy::too_many_lines)]
 async fn main() {
-    println!("cargo:rustc-link-arg=-lc");
-    println!("cargo:rustc-link-arg=-lgcc");
-    println!("cargo:rustc-link-arg=-lm");
-    println!("cargo:rustc-link-arg=-lgcc_eh");
-
-    println!("cargo:rustc-link-arg=-pthread");
-
+    #[cfg(target_os = "linux")]
+    {
+        println!("cargo:rustc-link-arg=-lc");
+    }
+    
     // Bypasses caching, runs every time during compilation
     let timestamp = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
@@ -288,6 +286,9 @@ async fn main() {
         rustc_version = rustc_version[..idx - 1].trim().to_string();
     }
     println!("cargo:rustc-env=RUSTC_VERSION={}", rustc_version.trim());
+
+    let is_nightly = rustc_version.contains("nightly") || rustc_version.contains("dev");
+    assert!(is_nightly, "\x1b[31;1mTo compile and work with the corefetch source code, the nightly version of the compiler is required\x1b[0m");
 
     // ENV: CARGO_VERSION
     let mut cargo_version = Command::new("cargo")
@@ -370,18 +371,5 @@ async fn main() {
             encoded,
             (encoded as f64 / raw as f64).mul_add(-100.0, 100.0)
         );
-    }
-
-    let is_nightly = rustc_version.contains("nightly") || rustc_version.contains("dev");
-    if !is_nightly {
-        println!("cargo:warning=The project is not being built in the nightly version, this will not affect the result");
-        println!("cargo:warning=in any way, but the local `todo` crate will not work; if you are going to work");
-        println!("cargo:warning=on the project (contribute), it is better to \x1b[4minstall the nightly version\x1b[0m:");
-        println!("cargo:warning=");
-        println!("cargo:warning=\x1b[36m$ rustup install nightly\x1b[0m");
-        println!("cargo:warning=\x1b[36m$ rustup override set nightly\x1b[0m");
-        println!("cargo:warning=");
-        println!("cargo:warning=\x1b[36m$ rustup component add rustfmt --toolchain nightly\x1b[0m");
-        println!("cargo:warning=\x1b[36m$ rustup component add clippy --toolchain nightly\x1b[0m");
     }
 }
