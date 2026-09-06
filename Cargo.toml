@@ -32,11 +32,11 @@ panic = "abort"
 
 [dependencies]
 # Local crate, ONLY for macro-attr: #[todo("...")]
-todo = { path = "./todo" }
+todo = { path = "./todo", version = "0.0.0" }
 
 # Local crate, creates help documentation for the module,
 # has dependencies (unfortunately cannot be without them)
-doc = { path = "./doc" }
+doc = { path = "./doc", version = "0.0.0" }
 
 [build-dependencies]
 chrono = "0.4.45"
@@ -49,3 +49,4 @@ tokio = { version = "1.53.1", features = ["full"] }
 
 [workspace]
 members = ["todo", "doc"]
+resolver = "2"

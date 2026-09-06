@@ -36,7 +36,7 @@
 Сборка из исходников, если у вас установлен `cargo`:
 
 ```bash
-$ cargo install corefetch
+$ cargo +nightly install --git https://github.com/maslina524/corefetch corefetch
 ```
 
 <img src="images/jarvis.gif" width="75%" />

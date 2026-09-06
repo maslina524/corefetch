@@ -36,7 +36,7 @@ Currently being developed only for Windows, with Linux support planned for the f
 Building from source if you have `cargo` installed. Building requires the `nightly` version of the compiler, the project should pull the required version itself:
 
 ```bash
-$ cargo install corefetch
+$ cargo +nightly install --git https://github.com/maslina524/corefetch corefetch
 ```
 
 <img src="images/jarvis.gif" width="50%" />
