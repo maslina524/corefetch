@@ -139,7 +139,7 @@ impl LogoInfo {
                     if let Some(i) = ch.to_digit(10) && i > 0 {
                         let code = self.colors.get(i as usize - 1).unwrap_or(&"0");
                         cur_code = code;
-                        ret_line.push_str(&format!("\x1b[{code}m"));
+                        ret_line.push_str(&format!("\x1b[1;{code}m"));
                     } else {
                         ret_line.push('$');
                         ret_line.push(ch);

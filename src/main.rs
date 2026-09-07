@@ -322,26 +322,27 @@ fn print_version(method: Option<&str>) -> ! {
 
 static ARGS: OnceLock<Vec<String>> = OnceLock::new();
 
-// BUILD FOR LINUX
-// cargo build --release -Z build-std
+#[cfg(target_os = "linux")]
+use core::ffi::c_char;
+
 // #[cfg(not(test))]
-cfg_if! {
-    if #[cfg(target_os = "linux")] {
-        use core::ffi::c_char;
-        
-        #[unsafe(no_mangle)]
-        #[allow(clippy::similar_names, reason = "that's what they're called in C, i don't give a fuck about clippy")]
-        extern "C" fn main(argc: c_int, argv: *const *const c_char) -> c_int {
-            ARGS.set(|| imp::env::args_init(argc as usize, argv.cast()));
-            corefetch_main() as c_int
-        }
-    } else if #[cfg(target_os = "windows")] {
-        #[unsafe(no_mangle)]
-        extern "C" fn main() -> c_int {
-            ARGS.set(imp::env::args_init);
-            corefetch_main() as c_int
-        }
-    }
+#[allow(
+    clippy::similar_names, 
+    reason = "that's what they're called in C, i don't give a fuck about clippy"
+)]
+#[cfg(target_os = "linux")]
+#[unsafe(no_mangle)]
+extern "C" fn main(argc: c_int, argv: *const *const c_char) -> c_int {
+    ARGS.set(|| imp::env::args_init(argc as usize, argv.cast()));
+    corefetch_main() as c_int
+}
+
+// #[cfg(not(test))]
+#[cfg(target_os = "windows")]
+#[unsafe(no_mangle)]
+extern "C" fn main() -> c_int {
+    ARGS.set(imp::env::args_init);
+    corefetch_main() as c_int
 }
 
 fn corefetch_main() -> i32 {
