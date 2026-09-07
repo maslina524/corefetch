@@ -51,8 +51,9 @@ impl GpuInfo {
                 return 0;
             }
         };
+        let trimmed = content.trim_start_matches("0x").trim();
 
-        u32::from_str_radix(&content, 16)
+        u32::from_str_radix(trimmed, 16)
             .unwrap_or(0)
     }
 
@@ -101,8 +102,9 @@ impl GpuInfo {
                 warning!("Failed to read /sys/class/drm/card0/device/vendor: {e}");
                 "0x0".to_owned()
             });
+        let trimmed = content.trim_start_matches("0x").trim();
 
-        u32::from_str_radix(&content, 16)
+        u32::from_str_radix(trimmed, 16)
             .unwrap_or(0)
     }
 }
