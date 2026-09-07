@@ -152,6 +152,7 @@ impl_as_lua_into_f64!(
     crate::formats::Temperature,
     crate::formats::Percent,
     crate::formats::MemorySize,
+    crate::formats::Frequency
 );
 impl_as_lua_as_f64!(
     usize, u8, u16, u32, u64, u128,

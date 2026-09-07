@@ -31,7 +31,7 @@ impl GpuInfo {
             |e| abort!("CreateDXGIFactory error: {e}")
         );
 
-        let name = Self::name(desc.VendorId);
+        let name = Self::name(desc.VendorId, desc.DeviceId);
 
         let driver = Self::driver_version().unwrap_or_else(
             || { warning!("Failed to get driver version"); String::from("Unknown") }

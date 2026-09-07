@@ -2,12 +2,11 @@ use alloc::string::String;
 use doc::Docs;
 
 use crate::{
-    detect::gpu::{GpuInfo, GpuType}, 
-    format, 
-    format_for_module, 
-    formats::{Percent, MemorySize, Temperature}, 
-    impl_display_for_module, 
-    modules::Module, 
+    detect::gpu::{GpuInfo, GpuType},
+    format_for_module,
+    formats::{Frequency, MemorySize, Percent, Temperature},
+    impl_display_for_module,
+    modules::Module,
     sync::OnceLock
 };
 
@@ -38,7 +37,7 @@ pub struct Gpu {
     #[doc = "The platform API used when detecting the GPU"]
     pub platform_api: String,
     #[doc = "Current frequency in GHz"]
-    pub frequency: String,
+    pub frequency: Frequency,
     #[doc = "GPU vendor specific index"]
     pub index: u32,
     #[doc = "Dedicated memory usage percentage num"]
@@ -68,7 +67,7 @@ impl Module for Gpu {
             vendor: info.vendor,
             name: info.name,
             driver: info.driver,
-            temperature: Temperature::Celsius(info.temperature),
+            temperature: info.temperature,
             core_count: 0,
             r#type: info.typ,
             dedicated_total: info.memory_total,
@@ -76,7 +75,7 @@ impl Module for Gpu {
             shared_total: MemorySize::default(),
             shared_used: MemorySize::default(),
             platform_api: String::new(),
-            frequency: format!("{:.2} GHz", info.frequency),
+            frequency: info.frequency,
             index: info.device_id,
             dedicated_percentage_num: Percent::default(),
             dedicated_percentage_bar: String::new(),

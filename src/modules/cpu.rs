@@ -2,13 +2,12 @@ use alloc::string::String;
 use doc::Docs;
 
 use crate::{
-    impl_display_for_module,
-    format_for_module,
     detect::cpu::CpuInfo,
+    format_for_module, 
+    formats::{Frequency, Temperature}, 
+    impl_display_for_module, 
     modules::Module, 
-    sync::OnceLock,
-    formats::Temperature,
-    format
+    sync::OnceLock
 };
 
 static CPU: OnceLock<Cpu> = OnceLock::new();
@@ -26,9 +25,9 @@ pub struct Cpu {
     #[doc = "Online core count"]
     pub cores_online: usize,
     #[doc = "Base frequency (formatted)"]
-    pub freq_base: String,
+    pub freq_base: Frequency,
     #[doc = "Max frequency (formatted)"]
-    pub freq_max: String,
+    pub freq_max: Frequency,
     #[doc = "Temperature (not available in windows)"]
     pub temperature: Temperature,
     #[doc = "Logical core count grouped by frequency (not available)"]
@@ -54,8 +53,8 @@ impl Module for Cpu {
             cores_physical: info.physical_cores,
             cores_logical: info.logical_cores,
             cores_online: info.online_cores,
-            freq_base: format!("{:.2} GHz", info.base_freq),
-            freq_max: format!("{:.2} GHz", info.max_freq),
+            freq_base: info.base_freq,
+            freq_max: info.max_freq,
             temperature: Temperature::Celsius(info.temperature),
             core_types: info.logical_grouped,
             packages: info.packages,

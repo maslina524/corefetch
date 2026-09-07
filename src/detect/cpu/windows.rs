@@ -11,13 +11,14 @@ use alloc::{
 };
 
 use crate::{
-    detect::cpu::CpuInfo,
-    imp::error::ErrorCode,
-    imp::link::{
+    detect::cpu::CpuInfo, 
+    formats::Frequency, 
+    windows::error::ErrorCode,
+    windows::link::{
         GetActiveProcessorCount, GetLogicalProcessorInformation, GetNumaHighestNodeNumber,
         SYSTEM_LOGICAL_PROCESSOR_INFORMATION
     },
-    imp::regedit::{Regedit, Access, Hkey}
+    windows::regedit::{Access, Hkey, Regedit}
 };
 
 type LogicalInfo = SYSTEM_LOGICAL_PROCESSOR_INFORMATION;
@@ -45,9 +46,9 @@ impl CpuInfo {
             packages: Self::package_count(&logical_info),
             code_name,
             technology: Self::technology(),
-            base_freq: Self::base_freq_formatted(&cpu_regedit_handle),
+            base_freq: Self::base_freq(&cpu_regedit_handle),
             temperature: Self::temperature(),
-            max_freq: Self::max_freq_formatted(),
+            max_freq: Self::max_freq(),
             logical_grouped: Self::logical_grouped(),
             micro_arch: Self::micro_arch()
         }
@@ -139,11 +140,12 @@ impl CpuInfo {
         (unsafe { GetActiveProcessorCount(0) }) as usize
     }
 
-    fn base_freq_formatted(handle: &Regedit) -> f64 {
-        handle.read("~MHz").map_or_else(|_| 0.0, |key| {
+    fn base_freq(handle: &Regedit) -> Frequency {
+        let val = handle.read("~MHz").map_or_else(|_| 0.0, |key| {
             let mhz = key.as_u32().unwrap_or(0);
-            mhz as f64 / 1000.0
-        })
+            mhz as f32 / 1000.0
+        });
+        Frequency::MHz(val)
     }
 
     fn name(handle: &Regedit) -> String {

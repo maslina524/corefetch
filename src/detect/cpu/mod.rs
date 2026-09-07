@@ -7,8 +7,9 @@ use alloc::{
 };
 
 use crate::{
-    cfg_if,
-    format
+    cfg_if, 
+    format, 
+    formats::Frequency
 };
 
 cfg_if! {
@@ -30,8 +31,8 @@ pub struct CpuInfo {
     pub packages: usize,
     pub code_name: String,
     pub technology: String,
-    pub base_freq: f64,
-    pub max_freq: f64,
+    pub base_freq: Frequency,
+    pub max_freq: Frequency,
     pub temperature: f32,
     pub logical_grouped: String,
     pub micro_arch: String
@@ -216,8 +217,8 @@ impl CpuInfo {
         String::new()
     }
 
-    const fn max_freq_formatted() -> f64 {
-        0.0
+    fn max_freq() -> Frequency {
+        Frequency::default()
     }
 
     const fn temperature() -> f32 {

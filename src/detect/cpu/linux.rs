@@ -1,12 +1,7 @@
 use alloc::vec::Vec;
 
 use crate::{
-    abort, 
-    detect::cpu::CpuInfo, 
-    format, 
-    imp::fs,
-    imp::parser::{LinuxInfo, parse_range_notation},
-    imp::path::Path
+    abort, detect::cpu::CpuInfo, format, formats::Frequency, imp::{fs, parser::{LinuxInfo, parse_range_notation}, path::Path}
 };
 
 impl CpuInfo {
@@ -16,10 +11,12 @@ impl CpuInfo {
 
         let name = info.get_default("model name", &"Unknown");
         let logical_cores = Self::logical_cores_count();
-        let base_freq = info
+        
+        let base_freq_raw = info
             .get_default("key", &"0")
-            .parse::<f64>()
-            .unwrap_or(0.0) / 1000.0;
+            .parse::<u64>()
+            .unwrap_or(0);
+        let base_freq = Frequency::from_hz(base_freq_raw);
 
         let vendor = Self::vendor();
         let (family, model) = Self::get_family_and_model();
@@ -37,7 +34,7 @@ impl CpuInfo {
             technology: Self::technology(),
             base_freq,
             temperature: Self::temperature(),
-            max_freq: Self::max_freq_formatted(),
+            max_freq: Self::max_freq(),
             logical_grouped: Self::logical_grouped(),
             micro_arch: Self::micro_arch()
         }

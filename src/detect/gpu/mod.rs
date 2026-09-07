@@ -4,10 +4,10 @@ use alloc::{
 };
 
 use crate::{
-    cfg_if,
-    formats::MemorySize, 
-    nvidia::NvidiaLib,
-    format
+    cfg_if, 
+    format, 
+    formats::{Frequency, MemorySize, Temperature}, 
+    nvidia::NvidiaLib
 };
 
 cfg_if! {
@@ -84,10 +84,10 @@ pub struct GpuInfo {
     pub name: String,
     pub device_id: u32,
     pub driver: String,
-    pub temperature: f32,
+    pub temperature: Temperature,
     pub typ: GpuType,
     pub memory_total: MemorySize,
-    pub frequency: f32
+    pub frequency: Frequency
 }
 
 impl GpuInfo {
@@ -148,18 +148,20 @@ impl GpuInfo {
         }
     }
 
-    fn temperature(vendor_id: u32) -> f32 {
-        match vendor_id {
+    fn temperature(vendor_id: u32) -> Temperature {
+        let val = match vendor_id {
             0x10DE => NvidiaLib::get().gpu_temperature() as f32,
             _ => 0.0,
-        }
+        };
+        Temperature::Celsius(val)
     }
 
-    fn frequency(vendor_id: u32) -> f32 {
-        match vendor_id {
+    fn frequency(vendor_id: u32) -> Frequency {
+        let val = match vendor_id {
             0x10DE => NvidiaLib::get().get_frequency_ghz() as f32,
             _ => 0.0,
-        }
+        };
+        Frequency::GHz(val)
     }
 
     const fn vendor_name(vendor_id: u32) -> &'static str {

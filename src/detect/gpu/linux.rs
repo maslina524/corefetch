@@ -22,7 +22,6 @@ impl GpuInfo {
 
         let vendor_id = Self::vendor_id(&pci_address);
         let device_id = Self::device_id(&pci_address);
-        crate::println!("VID: {vendor_id:X} DID: {device_id:X}");
         let driver = Self::driver(&pci_address).unwrap_or(String::new());
         let memory_total = Self::memory_total();
 
