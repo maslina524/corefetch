@@ -91,11 +91,19 @@ pub struct GpuInfo {
 }
 
 impl GpuInfo {
-    fn name(vendor_id: u32) -> String {
+    fn name(vendor_id: u32, device_id: u32) -> String {
         match vendor_id {
             0x10DE => NvidiaLib::get().device_name(),
-            0x15ad => "VMware".to_owned(),
+            0x15ad => Self::vmware_name(device_id).to_owned(),
             _ => "Unknown".to_owned(),
+        }
+    }
+
+    const fn vmware_name(device_id: u32) -> &'static str {
+        match device_id {
+            0x0405 => "VMware SVGA II",
+            0x0710 => "VMware SVGA",
+            _ => "VMware Unknown"
         }
     }
 
