@@ -141,11 +141,11 @@ impl CpuInfo {
     }
 
     fn base_freq(handle: &Regedit) -> Frequency {
-        let val = handle.read("~MHz").map_or_else(|_| 0.0, |key| {
+        let val = handle.read("~MHz").map_or_else(|_| 0, |key| {
             let mhz = key.as_u32().unwrap_or(0);
-            mhz as f32 / 1000.0
+            mhz as u64 / 1000
         });
-        Frequency::MHz(val)
+        Frequency::from_hz(val)
     }
 
     fn name(handle: &Regedit) -> String {
@@ -157,7 +157,7 @@ impl CpuInfo {
 
 #[cfg(test)]
 mod tests {
-    use crate::detect::cpu::CpuInfo;
+    use crate::{detect::cpu::CpuInfo, formats::Frequency};
 
     extern crate std;
 
@@ -191,7 +191,7 @@ mod tests {
     #[test]
     fn base_freq_test() {
         let info = CpuInfo::new();
-        assert!(info.base_freq != 0.0);
+        assert!(info.base_freq != Frequency::default());
     }
 
     #[test]

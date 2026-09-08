@@ -8,7 +8,12 @@
 [![No deps](https://img.shields.io/badge/Fully-no%20deps-green?style=for-the-badge&logo=data:image/svg%2bxml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIGZpbGw9IiNmZmZmZmYiIHdpZHRoPSI4MDBweCIgaGVpZ2h0PSI4MDBweCIgdmlld0JveD0iMCAwIDE5MjAgMTkyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjEzLjMzMyA5NjBjMC0xNjcuMzYgNTYtMzIxLjcwNyAxNDkuNDQtNDQ2LjRMMTQwNi40IDE1NTcuMjI3Yy0xMjQuNjkzIDkzLjQ0LTI3OS4wNCAxNDkuNDQtNDQ2LjQgMTQ5LjQ0LTQxMS42MjcgMC03NDYuNjY3LTMzNS4wNC03NDYuNjY3LTc0Ni42NjdtMTQ5My4zMzQgMGMwIDE2Ny4zNi01NiAzMjEuNzA3LTE0OS40NCA0NDYuNEw1MTMuNiAzNjIuNzczYzEyNC42OTMtOTMuNDQgMjc5LjA0LTE0OS40NCA0NDYuNC0xNDkuNDQgNDExLjYyNyAwIDc0Ni42NjcgMzM1LjA0IDc0Ni42NjcgNzQ2LjY2N005NjAgMEM0MjkuNzYgMCAwIDQyOS43NiAwIDk2MHM0MjkuNzYgOTYwIDk2MCA5NjAgOTYwLTQyOS43NiA5NjAtOTYwUzE0OTAuMjQgMCA5NjAgMCIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+)](https://github.com/maslina524/corefetch/blob/main/Cargo.toml)
 [![Ru README](https://img.shields.io/badge/Ru-README-red?style=for-the-badge&logo=readme&logoColor=ffffff)](README-ru.md)
 
-**Corefetch** is a neofetch-like tool for beautiful system information display with flexible output customization, written entirely in Rust with the `#![no_std]` attribute and no dependencies except the standard `alloc`. Fully compatible with [fastfetch](https://github.com/fastfetch-cli/fastfetch)
+**Corefetch** is a neofetch-like tool for beautiful system information display with flexible output customization, written entirely in Rust with the `#![no_std]` attribute and no dependencies in target except the standard `alloc`. Fully compatible with [fastfetch](https://github.com/fastfetch-cli/fastfetch)
+
+> [!WARNING]
+>
+> Not all functions may work correctly on different systems, in particular due to the complexity of testing, 
+> if you notice an error, please write an Issue or suggest your fix.
 
 <table>
   <tr>
@@ -29,7 +34,7 @@ The project is created based on and with full compatibility with [fastfetch](htt
 
 Fully written in pure Rust with the `#![no_std]` attribute and no third-party dependencies. Created in accordance with [clippy](https://github.com/rust-lang/rust-clippy) lints.
 
-Currently being developed only for Windows, with Linux support planned for the future.
+Currently being developed only for Linux and Windows.
 
 ## Install
 
