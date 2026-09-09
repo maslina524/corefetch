@@ -247,7 +247,14 @@ fn get_libc_version() -> String {
 #[allow(clippy::too_many_lines)]
 async fn main() {
     #[cfg(target_os = "linux")]
-    {
+    {   
+        // Lua lib
+        println!("cargo:rustc-link-search=native=/usr/lib/x86_64-linux-gnu");
+        println!("cargo:rustc-link-lib=static=lua5.4");
+        println!("cargo:rustc-link-lib=dylib=dl");
+        println!("cargo:rustc-link-lib=dylib=m");
+        println!("cargo:rustc-link-arg=-pthread");
+
         println!("cargo:rustc-link-arg=-lc");
     }
     

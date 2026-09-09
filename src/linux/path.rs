@@ -13,7 +13,7 @@ use crate::{
 };
 
 #[repr(transparent)]
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct Path {
     inner: String
 }
@@ -159,6 +159,12 @@ impl From<&Self> for Path {
 impl core::fmt::Display for Path {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "{}", self.inner)
+    }
+}
+
+impl core::fmt::Debug for Path {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(f, "\"{}\"", self.inner)
     }
 }
 

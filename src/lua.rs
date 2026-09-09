@@ -10,7 +10,6 @@ use alloc::{
 use crate::{
     info,
     abort,
-    get_fn,
     format,
     cfg_if,
     imp::http::Request,
@@ -22,15 +21,13 @@ use crate::{
 
 cfg_if! {
     if #[cfg(target_os = "windows")] {
-        use crate::windows::link::{FreeLibrary, HMODULE, LoadLibraryW};
+        use crate::{
+            windows::link::{FreeLibrary, HMODULE, LoadLibraryW},
+            get_fn
+        };
 
         type ApiBaseFn = unsafe extern "system" fn() -> isize;
         type LibHandle = HMODULE;
-    } else if #[cfg(target_os = "linux")] {
-        use crate::linux::libc::{dlopen, dlclose};
-
-        type ApiBaseFn = *mut c_void;
-        type LibHandle = *mut c_void;
     }
 }
 
@@ -40,7 +37,7 @@ pub type lua_State = *mut c_void;
 #[allow(non_camel_case_types)]
 pub type luaL_newstate = unsafe extern "C" fn() -> *mut lua_State;
 #[allow(non_camel_case_types)]
-pub type luaL_openselectedlibs = unsafe extern "C" fn(state: *mut lua_State, mask: c_int);
+pub type luaL_openlibs = unsafe extern "C" fn(state: *mut lua_State);
 #[allow(non_camel_case_types)]
 pub type luaL_loadstring = unsafe extern "C" fn(state: *mut lua_State, s: *const c_char) -> c_int;
 #[allow(non_camel_case_types)]
@@ -58,6 +55,24 @@ pub type lua_close = unsafe extern "C" fn(state: *mut lua_State);
 pub type lua_tolstring = unsafe extern "C" fn(state: *mut lua_State, idx: c_int, len: *mut usize) -> *const c_char;
 #[allow(non_camel_case_types)]
 pub type lua_settop = unsafe extern "C" fn(state: *mut lua_State, idx: c_int);
+
+#[cfg(target_os = "linux")]
+unsafe extern "C" {
+    unsafe fn luaL_newstate() -> *mut lua_State;
+    unsafe fn luaL_openlibs(state: *mut lua_State);
+    unsafe fn luaL_loadstring(state: *mut lua_State, s: *const c_char) -> c_int;
+    unsafe fn lua_pcallk(
+        state: *mut lua_State,
+        nargs: c_int,
+        nresults: c_int,
+        errfunc: c_int,
+        ctx: isize,
+        k: Option<unsafe extern "C" fn(*mut lua_State, c_int, isize)>,
+    ) -> c_int;
+    unsafe fn lua_close(state: *mut lua_State);
+    unsafe fn lua_tolstring(state: *mut lua_State, idx: c_int, len: *mut usize) -> *const c_char;
+    unsafe fn lua_settop(state: *mut lua_State, idx: c_int);
+}
 
 static LUA: OnceLock<LuaLib> = OnceLock::new();
 
@@ -141,10 +156,10 @@ macro_rules! impl_as_lua_as_f64 {
 
 impl_as_lua_debug_string!(
     String, &str, str, char,
-    crate::detect::gpu::GpuType
+    crate::detect::gpu::GpuType,
+    crate::imp::path::Path
 );
 impl_as_lua_to_string!(
-    Path,
     crate::detect::datetime::AmPm
 );
 
@@ -171,9 +186,10 @@ impl core::fmt::Debug for LuaType {
 }
 
 pub struct LuaLib {
+    #[cfg(target_os = "windows")]
     handle: LibHandle,
     new_state: luaL_newstate,
-    open_selected_libs: luaL_openselectedlibs,
+    open_libs: luaL_openlibs,
     load_string: luaL_loadstring,
     pcall: lua_pcallk,
     close: lua_close,
@@ -188,31 +204,54 @@ unsafe impl Sync for LuaLib {}
 impl LuaLib {
     pub fn get() -> &'static Self {
         LUA.get_or_init(|| {
-            let lib = load();
-
-            // SAFETY: `transmute` fully complies with the documentation
-            let new_state = unsafe { get_fn!(lib, c"luaL_newstate", luaL_newstate) };
-            // SAFETY: `transmute` fully complies with the documentation
-            let open_selected_libs = unsafe { get_fn!(lib, c"luaL_openselectedlibs", luaL_openselectedlibs) };
-            // SAFETY: `transmute` fully complies with the documentation
-            let load_string = unsafe { get_fn!(lib, c"luaL_loadstring", luaL_loadstring) };
-            // SAFETY: `transmute` fully complies with the documentation
-            let pcall = unsafe { get_fn!(lib, c"lua_pcallk", lua_pcallk) };
-            // SAFETY: `transmute` fully complies with the documentation
-            let close = unsafe { get_fn!(lib, c"lua_close", lua_close) };
-            // SAFETY: `transmute` fully complies with the documentation
-            let to_lstring = unsafe { get_fn!(lib, c"lua_tolstring", lua_tolstring) };
-
-            Self {
-                handle: lib,
-                new_state,
-                open_selected_libs,
-                load_string,
-                pcall,
-                close,
-                to_lstring,
+            cfg_if! {
+                if #[cfg(target_os = "windows")] {
+                    Self::new_dynamic()
+                } else if #[cfg(target_os = "linux")] {
+                    Self::new_static()
+                }
             }
         })
+    }
+
+    #[cfg(target_os = "linux")]
+    pub fn new_static() -> Self {
+        Self {
+            new_state: luaL_newstate,
+            open_libs: luaL_openlibs,
+            load_string: luaL_loadstring,
+            pcall: lua_pcallk,
+            close: lua_close,
+            to_lstring: lua_tolstring,
+        }
+    }
+
+    #[cfg(target_os = "windows")]
+    pub fn new_dynamic() -> Self {
+        let lib = load();
+
+        // SAFETY: `transmute` fully complies with the documentation
+        let new_state = unsafe { get_fn!(lib, c"luaL_newstate", luaL_newstate) };
+        // SAFETY: `transmute` fully complies with the documentation
+        let open_selected_libs = unsafe { get_fn!(lib, c"luaL_openselectedlibs", luaL_openselectedlibs) };
+        // SAFETY: `transmute` fully complies with the documentation
+        let load_string = unsafe { get_fn!(lib, c"luaL_loadstring", luaL_loadstring) };
+        // SAFETY: `transmute` fully complies with the documentation
+        let pcall = unsafe { get_fn!(lib, c"lua_pcallk", lua_pcallk) };
+        // SAFETY: `transmute` fully complies with the documentation
+        let close = unsafe { get_fn!(lib, c"lua_close", lua_close) };
+        // SAFETY: `transmute` fully complies with the documentation
+        let to_lstring = unsafe { get_fn!(lib, c"lua_tolstring", lua_tolstring) };
+
+        Self {
+            handle: lib,
+            new_state,
+            open_selected_libs,
+            load_string,
+            pcall,
+            close,
+            to_lstring,
+        }
     }
 
     pub fn exec(&self, code: &str, vars: BTreeMap<String, LuaType>) -> String {
@@ -248,7 +287,7 @@ impl LuaLib {
 
         // SAFETY: `luaL_openselectedlibs` takes a valid state and opens all
         // standard libraries (mask = -1 means all)
-        unsafe { (self.open_selected_libs)(state, -1) };
+        unsafe { (self.open_libs)(state) };
 
         let c_code = CString::new(code).expect("Lua code contains NUL bytes");
 
@@ -310,10 +349,16 @@ impl LuaLib {
         result_string
     }
 
+    #[cfg(target_os = "windows")]
     pub fn drop_lua() {
         if let Some(lib) = LUA.get() {
             unload(lib.handle);
         }
+    }
+
+    #[cfg(target_os = "linux")]
+    pub const fn drop_lua() {
+        /* Doing nothing since this is a static library */
     }
 }
 
@@ -346,40 +391,25 @@ pub fn get_lua_path() -> Path {
     path
 }
 
-cfg_if! {
-    if #[cfg(target_os = "windows")] {
-        fn load() -> LibHandle {
-            // SAFETY: `as_wide_str` returns a null‑terminated wide string,
-            // which is safe to pass to `LoadLibraryW`
-            let lib = unsafe {
-                let path = get_lua_path().as_wide_str().unwrap();
-                LoadLibraryW(path.as_ptr())
-            };
-            if lib.is_null() {
-                abort!("Failed to load lua55.dll");
-            }
-            lib
-        }
-
-        fn unload(lib: LibHandle) {
-            // SAFETY: The handle is guaranteed to be valid because it was
-            // loaded once and never unloaded before this call
-            unsafe { FreeLibrary(lib) };
-        }
-    } else if #[cfg(target_os = "linux")] {
-        fn load() -> LibHandle {
-            let path = get_lua_path().as_c_str();
-            let lib = dlopen(path.as_ptr().cast(), 1);
-            if lib.is_null() {
-                abort!("Failed to load lua55.dll");
-            }
-            lib
-        }
-
-        fn unload(lib: LibHandle) {
-            dlclose(lib);
-        }
+#[cfg(target_os = "windows")]
+fn load() -> LibHandle {
+    // SAFETY: `as_wide_str` returns a null‑terminated wide string,
+    // which is safe to pass to `LoadLibraryW`
+    let lib = unsafe {
+        let path = get_lua_path().as_wide_str().unwrap();
+        LoadLibraryW(path.as_ptr())
+    };
+    if lib.is_null() {
+        abort!("Failed to load lua55.dll");
     }
+    lib
+}
+
+#[cfg(target_os = "windows")]
+fn unload(lib: LibHandle) {
+    // SAFETY: The handle is guaranteed to be valid because it was
+    // loaded once and never unloaded before this call
+    unsafe { FreeLibrary(lib) };
 }
 
 #[cfg(test)]
