@@ -28,7 +28,7 @@ jobs:
         with:
           toolchain: ${{ matrix.os == 'ubuntu-latest' && 'nightly' || 'stable' }}
           targets: ${{ matrix.target }}
-          components: ${{ matrix.os == 'ubuntu-latest' && 'rust-src' || '' }}
+          components: rust-src
 
       - uses: actions/cache@v4
         with:
@@ -40,7 +40,9 @@ jobs:
           restore-keys: ${{ runner.os }}-cargo-
 
       - name: Build
-        run: cargo build --release --target ${{ matrix.target }}
+        run: |
+          rustup component add rust-src --toolchain nightly-x86_64-pc-windows-msvc
+          cargo build --release --target ${{ matrix.target }}
 
       - name: Rename binary
         shell: bash
@@ -51,6 +53,17 @@ jobs:
           else
             mv "${{ matrix.binary }}" "${{ matrix.artifact }}"
           fi
+
+      - name: Generate SHA-256 hash
+        shell: bash
+        run: |
+          cd target/${{ matrix.target }}/release/
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            BIN="${{ matrix.artifact }}.exe"
+          else
+            BIN="${{ matrix.artifact }}"
+          fi
+          ./$BIN --version hash > "${{ matrix.artifact }}-sha256"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

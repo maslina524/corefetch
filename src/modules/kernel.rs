@@ -2,10 +2,10 @@ use alloc::string::String;
 use doc::Docs;
 
 use crate::{
-    format,
-    impl_display_for_module,
-    format_for_module,
     detect::kernel::KernelInfo,
+    format_for_module, 
+    formats::MemorySize, 
+    impl_display_for_module, 
     modules::Module, 
     sync::OnceLock
 };
@@ -25,7 +25,7 @@ pub struct Kernel {
     #[doc = "Display version"]
     pub display_version: String, // Exists in fastfetch, but not supported (?)
     #[doc = "Page size"]
-    pub page_size: String
+    pub page_size: MemorySize
 }
 
 impl Module for Kernel {
@@ -38,7 +38,7 @@ impl Module for Kernel {
             version: info.version,
             arch: env!("TARGET_ARCH"),
             display_version: info.display_version,
-            page_size: format!("{}", info.page_size)
+            page_size: info.page_size
         }
     }
 
