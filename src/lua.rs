@@ -39,6 +39,8 @@ pub type luaL_newstate = unsafe extern "C" fn() -> *mut lua_State;
 #[allow(non_camel_case_types)]
 pub type luaL_openlibs = unsafe extern "C" fn(state: *mut lua_State);
 #[allow(non_camel_case_types)]
+pub type luaL_openselectedlibs = unsafe extern "C" fn(state: *mut lua_State, mask: c_int);
+#[allow(non_camel_case_types)]
 pub type luaL_loadstring = unsafe extern "C" fn(state: *mut lua_State, s: *const c_char) -> c_int;
 #[allow(non_camel_case_types)]
 pub type lua_pcallk = unsafe extern "C" fn(
@@ -189,7 +191,10 @@ pub struct LuaLib {
     #[cfg(target_os = "windows")]
     handle: LibHandle,
     new_state: luaL_newstate,
+    #[cfg(target_os = "linux")]
     open_libs: luaL_openlibs,
+    #[cfg(target_os = "windows")]
+    open_selected_libs: luaL_openselectedlibs,
     load_string: luaL_loadstring,
     pcall: lua_pcallk,
     close: lua_close,
@@ -285,9 +290,15 @@ impl LuaLib {
             abort!("Failed to create new Lua state");
         }
 
+        
+        #[cfg(target_os = "linux")]
+        // SAFETY: Completely safe
+        unsafe { (self.open_libs)(state) };
+
+        #[cfg(target_os = "windows")]
         // SAFETY: `luaL_openselectedlibs` takes a valid state and opens all
         // standard libraries (mask = -1 means all)
-        unsafe { (self.open_libs)(state) };
+        unsafe { (self.open_selected_libs)(state, -1) }
 
         let c_code = CString::new(code).expect("Lua code contains NUL bytes");
 
