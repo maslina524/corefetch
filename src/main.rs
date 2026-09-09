@@ -295,6 +295,7 @@ fn print_version(method: Option<&str>) -> ! {
         None             => println!("{} {} ({})", ver.project_name, ver.version, ver.arch),
         Some("raw")      => println!("{}", ver.version),
         Some("dbg")      => println!("{ver:#?}"),
+        Some("hash")     => println!("{}", ver.hash),
         Some("extended") => {
             let typ = match ver.build_type {
                 "release" => "\x1b[32mrelease\x1b[0m",

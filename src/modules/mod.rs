@@ -51,6 +51,8 @@ use crate::{
     json::Value
 };
 
+static UNSUPPORTED_FIELDS: [&str; 1] = ["{cmake-built-type}"];
+
 #[derive(Default)]
 pub struct FormatValue<'a> {
     pub format: Option<&'a str>,
@@ -208,6 +210,12 @@ macro_rules! format_module {
             
             let value = &$crate::format_module!(@to_string &$obj.$field);
             
+            if result.contains(&placeholder_hyphen.as_str())
+                && $crate::modules::UNSUPPORTED_FIELDS.contains(&placeholder_hyphen.as_str())
+            {
+                $crate::warning!("Unsupported field {placeholder_hyphen} in corefetch")
+            }
+
             result = result.replace(&placeholder_underscore, value);
             result = result.replace(&placeholder_hyphen, value);
             

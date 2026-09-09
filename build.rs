@@ -1,6 +1,7 @@
 use std::{
     fs,
     env,
+    fmt::Write,
     path::PathBuf,
     process::Command,
     str::FromStr,
@@ -18,6 +19,9 @@ use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use reqwest::{Client, Method, Request, Url};
 use serde_json::{Value, Map};
 use regex::Regex;
+use sha2::{Sha256, Digest};
+use walkdir::WalkDir;
+use std::io::Read;
 
 const VALID_CHARS: &[char] = &[
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
@@ -339,6 +343,34 @@ async fn main() {
     let ver = get_libc_version();
     println!("cargo:rustc-env=LIBC_VERSION={ver}");
 
+    // ENV: PROJECT_HASH
+    let mut hasher = Sha256::new();
+
+    for entry in WalkDir::new("src")
+        .into_iter()
+        .filter_map(Result::ok)
+        .filter(|e| e.file_type().is_file())
+    {
+        let path = entry.path();
+        hasher.update(path.to_string_lossy().as_bytes());
+
+        if let Ok(mut file) = fs::File::open(path) {
+            let mut buffer = Vec::new();
+            if file.read_to_end(&mut buffer).is_ok() {
+                hasher.update(&buffer);
+            }
+        }
+    }
+
+    let hash = hasher.finalize();
+    let hex_string = hash.iter()
+        .try_fold(String::new(), |mut acc, b| {
+            let _ = write!(&mut acc, "{b:02x}");
+            Ok::<String, ()>(acc)
+        })
+        .unwrap();
+
+    println!("cargo:rustc-env=PROJECT_HASH={hex_string}");
 
     // COMPRESS LOGOS
     let raw_bytes_len = AtomicUsize::new(0);

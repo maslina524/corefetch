@@ -36,7 +36,9 @@ pub struct Version {
     #[doc = "Cargo version, like `cargo 1.97.1`"]
     pub package_manager: &'static str,
     #[doc = "Link to the release of this version of corefetch"]
-    pub release_link: &'static str
+    pub release_link: &'static str,
+    #[doc = "Hash of the `src/` directory"]
+    pub hash: &'static str
 }
 
 impl Module for Version {
@@ -58,7 +60,8 @@ impl Module for Version {
             compiler: env!("RUSTC_VERSION"), 
             libc: env!("LIBC_VERSION"),
             package_manager: env!("CARGO_VERSION"),
-            release_link: concat!("https://github.com/maslina524/corefetch/releases/tag/v", env!("CARGO_PKG_VERSION"))
+            release_link: concat!("https://github.com/maslina524/corefetch/releases/tag/v", env!("CARGO_PKG_VERSION")),
+            hash: env!("PROJECT_HASH")
         }
     }
 
@@ -84,7 +87,8 @@ impl Module for Version {
         Version,
         project_name, version, version_tweak, build_type,
         sysname, arch, cmake_built_type, compile_time,
-        compiler, libc, package_manager, release_link
+        compiler, libc, package_manager, release_link,
+        hash
     );
 }
 
