@@ -63,7 +63,7 @@ cfg_if! {
 extern crate alloc;
 
 use core::{
-    ffi::c_int,
+    ffi::c_int, 
     slice::Iter
 };
 
@@ -94,7 +94,22 @@ const MIN_OFFSET: usize = 24;
 
 pub trait Docs {
     fn print_format();
-    fn print_lua();
+    // 473kb -> 448kb
+    fn strings_lua() -> Option<&'static [LuaDocsString]>;
+}
+
+#[derive(Debug)]
+pub enum LuaDocsTyp {
+    String,
+    Number,
+    Boolean
+}
+
+#[derive(Debug)]
+pub struct LuaDocsString {
+    name: &'static str,
+    typ: &'static str,
+    desc: Option<&'static str>
 }
 
 #[cfg(not(test))]
@@ -264,7 +279,20 @@ fn print_help(theme: Option<&str>) -> ! {
         let vtable = DocsVtable::from_str(ident).unwrap_or_else(|| exit(1));
         match action {
             "format" => (vtable.format)(),
-            "lua" => (vtable.lua)(),
+            "lua" => {
+                if let Some(doc) = (vtable.lua)() {
+                    println!(
+                        "# In config file: {{ \"type\": \"{ident}\", \"format\": \"lua: return (...).{}\" }}",
+                        doc[0].name
+                    );
+                    println!("The following variables are passed:");
+                    for i in doc {
+                        println!("{:>24} : {:<7} : {}", i.name, i.typ, i.desc.unwrap_or("Empty"));
+                    }
+                } else {
+                    println!("Module `{ident}` doesn't support output formatting")
+                }
+            },
             _ => {
                 println!("Incorrect action");
                 exit(1);

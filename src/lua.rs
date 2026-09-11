@@ -87,8 +87,8 @@ pub enum LuaType {
 }
 
 pub trait AsLua {
+    const LUA_TYPE: &'static str;
     fn as_lua(&self) -> LuaType;
-    fn lua_type() -> &'static str;
 }
 
 macro_rules! impl_as_lua_debug_string {
@@ -99,9 +99,7 @@ macro_rules! impl_as_lua_debug_string {
                     LuaType::String(crate::format!("{self:?}"))
                 }
 
-                fn lua_type() -> &'static str {
-                    "string"
-                }
+                const LUA_TYPE: &'static str = "string";
             }
         )*
     }
@@ -115,9 +113,7 @@ macro_rules! impl_as_lua_to_string {
                     LuaType::String(alloc::string::ToString::to_string(self))
                 }
 
-                fn lua_type() -> &'static str {
-                    "string"
-                }
+                const LUA_TYPE: &'static str = "string";
             }
         )*
     }
@@ -131,9 +127,7 @@ macro_rules! impl_as_lua_into_f64 {
                     LuaType::Number(f64::from(*self))
                 }
 
-                fn lua_type() -> &'static str {
-                    "number"
-                }
+                const LUA_TYPE: &'static str = "number";
             }
         )*
     }
@@ -148,9 +142,7 @@ macro_rules! impl_as_lua_as_f64 {
                     LuaType::Number(*self as f64)
                 }
 
-                fn lua_type() -> &'static str {
-                    "number"
-                }
+                const LUA_TYPE: &'static str = "number";
             }
         )*
     }
