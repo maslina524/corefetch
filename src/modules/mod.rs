@@ -48,7 +48,8 @@ use alloc::{
 use crate::{
     Docs,
     config::ConfigModule,
-    json::Value
+    json::Value,
+    formats
 };
 
 static UNSUPPORTED_FIELDS: [&str; 1] = ["{cmake-built-type}"];
@@ -97,7 +98,7 @@ pub trait Module {
     fn key(&self) -> &'static str;
     fn title(&self) -> &'static str;
     fn string_name(&self) -> &'static str;
-    fn format(&self, key: FormatValue, format: FormatValue, map: &BTreeMap<String, Value>) -> alloc::string::String;
+    fn format(&self, key: FormatValue, format: FormatValue, map: Option<&BTreeMap<String, Value>>) -> String;
 }
 
 pub fn from_preset_module(module: &ConfigModule) -> Option<Box<dyn Module>> {
@@ -133,9 +134,10 @@ where
     for (k, v) in fields {
         let placeholder_underscore = alloc::fmt::format(format_args!("{{{}}}", k.trim_start_matches("r#")));
         let placeholder_hyphen = placeholder_underscore.replace('_', "-");
+        let value = || { v.to_string() };
 
-        s = s.replace(placeholder_hyphen.as_str(), &v.to_string());
-        s = s.replace(&crate::format!("{{{idx}}}"), &v.to_string());
+        s = formats::lazy_replace(&s, placeholder_hyphen.as_str(), value).into_owned();
+        s = formats::lazy_replace(&s, &crate::format!("{{{idx}}}"), value).into_owned();
         idx += 1;
     }
     s
@@ -150,7 +152,7 @@ macro_rules! impl_display_for_module {
                     f, "{}", self.format(
                         $crate::modules::FormatValue::default(), 
                         $crate::modules::FormatValue::default(), 
-                        &alloc::collections::BTreeMap::new()
+                        None
                     )
                 )
             }
@@ -163,7 +165,7 @@ macro_rules! impl_display_for_module {
                     f, "{}", self.format(
                         $crate::modules::FormatValue::default(), 
                         $crate::modules::FormatValue::default(), 
-                        &alloc::collections::BTreeMap::new()
+                        None
                     )
                 )
             }
@@ -178,7 +180,7 @@ macro_rules! format_for_module {
             &self,
             key: super::FormatValue, 
             format: super::FormatValue, 
-            _map: &alloc::collections::BTreeMap<alloc::string::String, $crate::json::Value>
+            _map: Option<&alloc::collections::BTreeMap<alloc::string::String, $crate::json::Value>>
         ) -> alloc::string::String {
             let title_raw = format.format.unwrap_or(self.title());
             let value_raw = if let Some(code) = title_raw.strip_prefix("lua:") {

@@ -99,13 +99,6 @@ pub trait Docs {
 }
 
 #[derive(Debug)]
-pub enum LuaDocsTyp {
-    String,
-    Number,
-    Boolean
-}
-
-#[derive(Debug)]
 pub struct DocString {
     name: &'static str,
     second: &'static str,
@@ -178,7 +171,7 @@ fn get_module_lines(preset_module: &ConfigModule, max_len_line: usize) -> Option
                 format: preset_module.format.as_deref(), 
                 color: None
             },
-            &preset_module.map
+            Some(&preset_module.map)
         );
         split_by_len_ansi(&string, max_len_line)
     })

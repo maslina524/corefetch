@@ -187,7 +187,7 @@ mod tests {
     fn temperature_test() {
         let info = GpuInfo::new();
         if info.vendor == "NVIDIA" {
-            assert!(info.temperature != 0.0);
+            assert!(info.temperature.get() != 0.0);
             println!("Temperature: {}", info.temperature);
         }
     }

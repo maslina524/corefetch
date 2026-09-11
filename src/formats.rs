@@ -5,8 +5,8 @@ use core::{
 };
 
 use alloc::{
-    string::String,
-    borrow::ToOwned,
+    borrow::{Cow, ToOwned}, 
+    string::String, 
     vec::Vec,
     vec
 };
@@ -594,6 +594,14 @@ pub fn snake_to_camel_ascii(s: &str) -> String {
     ret
 }
 
+pub fn lazy_replace<'b>(s: &'b str, key: &'b str, value_fn: impl FnOnce() -> String) -> Cow<'b, str> {
+    if s.contains(key) {
+        Cow::Owned(s.replace(key, &value_fn()))
+    } else {
+        Cow::Borrowed(s)
+    }
+}
+
 #[macro_export]
 macro_rules! format {
     ($($tt:tt)*) => {{
@@ -617,7 +625,9 @@ macro_rules! formatln {
 
 #[cfg(test)]
 mod tests {
-    use crate::formats::{MemorySize, expand_rust_unicode, expand_unicode, split_by_len_ansi};
+    use crate::formats::{
+        MemorySize, expand_rust_unicode, expand_unicode, split_by_len_ansi
+    };
 
     #[test]
     fn test_conversion() {

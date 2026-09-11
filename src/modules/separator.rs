@@ -40,8 +40,8 @@ impl Module for Separator {
         "separator"
     }
 
-    fn format(&self, _key: super::FormatValue, _format: super::FormatValue, _map: &BTreeMap<String, Value>) -> String {
-        let title = Title::get().format(FormatValue::default(), FormatValue::default(), &BTreeMap::new());
+    fn format(&self, _key: super::FormatValue, _format: super::FormatValue, _map: Option<&BTreeMap<String, Value>>) -> String {
+        let title = Title::get().format(FormatValue::default(), FormatValue::default(), None);
         "-".repeat(formats::visible_len(&title))
     }
 }
