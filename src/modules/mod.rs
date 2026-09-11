@@ -40,7 +40,6 @@ pub use wallpaper::Wallpaper;
 pub use weather::Weather;
 
 use alloc::{
-    boxed::Box,
     string::{String, ToString},
     collections::BTreeMap
 };
@@ -53,6 +52,28 @@ use crate::{
 };
 
 static UNSUPPORTED_FIELDS: [&str; 1] = ["{cmake-built-type}"];
+
+static REGISTRY: &[(&str, fn() -> &'static dyn Module)] = &[
+    ("break",      || Break::get()),
+    ("colors",     || Colors::get()),
+    ("commit",     || Commit::get()),
+    ("cpu",        || Cpu::get()),
+    ("custom",     || Custom::get()),
+    ("datetime",   || Datetime::get()),
+    ("gpu",        || Gpu::get()),
+    ("initsystem", || Initsystem::get()),
+    ("kernel",     || Kernel::get()),
+    ("locale",     || Locale::get()),
+    ("memory",     || Memory::get()),
+    ("os",         || Os::get()),
+    ("processes",  || Processes::get()),
+    ("separator",  || Separator::get()),
+    ("title",      || Title::get()),
+    ("uptime",     || Uptime::get()),
+    ("version",    || Version::get()),
+    ("wallpaper",  || Wallpaper::get()),
+    ("weather",    || Weather::get()),
+];
 
 #[derive(Default)]
 pub struct FormatValue<'a> {
@@ -101,29 +122,11 @@ pub trait Module {
     fn format(&self, key: FormatValue, format: FormatValue, map: Option<&BTreeMap<String, Value>>) -> String;
 }
 
-pub fn from_preset_module(module: &ConfigModule) -> Option<Box<dyn Module>> {
-    match module.typ.to_lowercase().as_str() {
-        "break"      => Some(Box::new( Break::new()      )),
-        "colors"     => Some(Box::new( Colors::new()     )),
-        "commit"     => Some(Box::new( Commit::new()     )),
-        "cpu"        => Some(Box::new( Cpu::new()        )),
-        "custom"     => Some(Box::new( Custom::new()     )),
-        "datetime"   => Some(Box::new( Datetime::new()   )),
-        "gpu"        => Some(Box::new( Gpu::new()        )),
-        "initsystem" => Some(Box::new( Initsystem::new() )),
-        "kernel"     => Some(Box::new( Kernel::new()     )),
-        "locale"     => Some(Box::new( Locale::new()     )),
-        "memory"     => Some(Box::new( Memory::new()     )),
-        "os"         => Some(Box::new( Os::new()         )),
-        "processes"  => Some(Box::new( Processes::new()  )),
-        "separator"  => Some(Box::new( Separator::new()  )),
-        "title"      => Some(Box::new( Title::new()      )),
-        "uptime"     => Some(Box::new( Uptime::new()     )),
-        "version"    => Some(Box::new( Version::new()    )),
-        "wallpaper"  => Some(Box::new( Wallpaper::new()  )),
-        "weather"    => Some(Box::new( Weather::new()    )),
-        _ => None,
-    }
+pub fn from_preset_module(m: &ConfigModule) -> Option<&'static dyn Module> {
+    REGISTRY
+        .iter()
+        .find(|(k, _)| k.eq_ignore_ascii_case(&m.typ))
+        .map(|(_, f)| f())
 }
 
 pub fn replace_fields<T>(mut s: String, fields: &[(&str, T)]) -> String
