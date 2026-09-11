@@ -41,7 +41,7 @@ pub use weather::Weather;
 
 use alloc::{
     boxed::Box,
-    string::String,
+    string::{String, ToString},
     collections::BTreeMap
 };
 
@@ -125,6 +125,22 @@ pub fn from_preset_module(module: &ConfigModule) -> Option<Box<dyn Module>> {
     }
 }
 
+pub fn replace_fields<T>(mut s: String, fields: &[(&str, T)]) -> String
+where 
+    T: ToString
+{
+    let mut idx = 1;
+    for (k, v) in fields {
+        let placeholder_underscore = alloc::fmt::format(format_args!("{{{}}}", k.trim_start_matches("r#")));
+        let placeholder_hyphen = placeholder_underscore.replace('_', "-");
+
+        s = s.replace(placeholder_hyphen.as_str(), &v.to_string());
+        s = s.replace(&crate::format!("{{{idx}}}"), &v.to_string());
+        idx += 1;
+    }
+    s
+}
+
 #[macro_export]
 macro_rules! impl_display_for_module {
     ($name:ident) => {
@@ -140,7 +156,7 @@ macro_rules! impl_display_for_module {
             }
         }
     };
-    ($name:ident, $lt:lifetime) => {
+    ($name:ident < $lt:lifetime >) => {
         impl core::fmt::Display for $name<$lt> {
             fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
                 write!(
@@ -197,36 +213,19 @@ macro_rules! format_for_module {
 
 #[macro_export]
 macro_rules! format_module {
-    ($format:expr, $obj:ident, $($field:ident),*) => {{
-        #[allow(unused_mut)]
-        let mut result = alloc::string::ToString::to_string($format);
-        #[allow(unused_mut)]
-        #[allow(unused_variables)]
-        let mut idx = 1;
-        
-        $(
-            let placeholder_underscore = alloc::fmt::format(format_args!("{{{}}}", stringify!($field).trim_start_matches("r#")));
-            let placeholder_hyphen = placeholder_underscore.replace('_', "-");
-            
-            let value = &$crate::format_module!(@to_string &$obj.$field);
-            
-            if result.contains(&placeholder_hyphen.as_str())
-                && $crate::modules::UNSUPPORTED_FIELDS.contains(&placeholder_hyphen.as_str())
-            {
-                $crate::warning!("Unsupported field {placeholder_hyphen} in corefetch")
-            }
+    ($format:expr, $obj:ident $(,)?) => {{
+        $crate::format_module!(@to_string $format)
+    }};
 
-            result = result.replace(&placeholder_underscore, value);
-            result = result.replace(&placeholder_hyphen, value);
-            
-            let placeholder_idx = alloc::fmt::format(format_args!("{{{}}}", idx));
-            result = result.replace(&placeholder_idx, value);
-            
-            #[allow(unused_assignments)]
-            { idx += 1 };
-        )*
-        
-        result
+    ($format:expr, $obj:ident, $($field:ident),*) => {{
+        let result = $crate::format_module!(@to_string $format);        
+        $crate::modules::replace_fields(
+            result, 
+            &[$((
+                stringify!($field), 
+                &$crate::format_module!(@to_string &$obj.$field)
+            )),*]
+        )
     }};
     
     (@to_string $expr:expr) => {{

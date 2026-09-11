@@ -100,7 +100,7 @@ impl Module for Gpu {
     }
 
     fn title(&self) -> &'static str {
-        "{name} @ {frequency} ({dedicated_total}) [{type}]"
+        "{name} @ {frequency} ({dedicated-total}) [{type}]"
     }
 
     fn string_name(&self) -> &'static str {
