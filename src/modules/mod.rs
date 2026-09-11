@@ -60,32 +60,32 @@ pub struct FormatValue<'a> {
 }
 
 pub struct DocsVtable {
-    pub format: fn(),
-    pub lua: fn() -> Option<&'static [crate::LuaDocsString]>
+    pub format: fn() -> Option<&'static [crate::DocString]>,
+    pub lua: fn() -> Option<&'static [crate::DocString]>
 }
 
 impl DocsVtable {
     pub fn from_str(name: &str) -> Option<Self> {
         match name {
-            "break"      => Some(Self { format: Break::print_format,      lua: Break::strings_lua      }),
-            "colors"     => Some(Self { format: Colors::print_format,     lua: Colors::strings_lua     }),
-            "commit"     => Some(Self { format: Commit::print_format,     lua: Commit::strings_lua     }),
-            "cpu"        => Some(Self { format: Cpu::print_format,        lua: Cpu::strings_lua        }),
-            "custom"     => Some(Self { format: Custom::print_format,     lua: Custom::strings_lua     }),
-            "datetime"   => Some(Self { format: Datetime::print_format,   lua: Datetime::strings_lua   }),
-            "gpu"        => Some(Self { format: Gpu::print_format,        lua: Gpu::strings_lua        }),
-            "initsystem" => Some(Self { format: Initsystem::print_format, lua: Initsystem::strings_lua }),
-            "kernel"     => Some(Self { format: Kernel::print_format,     lua: Kernel::strings_lua     }),
-            "locale"     => Some(Self { format: Locale::print_format,     lua: Locale::strings_lua     }),
-            "memory"     => Some(Self { format: Memory::print_format,     lua: Memory::strings_lua     }),
-            "os"         => Some(Self { format: Os::print_format,         lua: Os::strings_lua         }),
-            "processes"  => Some(Self { format: Processes::print_format,  lua: Processes::strings_lua  }),
-            "separator"  => Some(Self { format: Separator::print_format,  lua: Separator::strings_lua  }),
-            "title"      => Some(Self { format: Title::print_format,      lua: Title::strings_lua      }),
-            "uptime"     => Some(Self { format: Uptime::print_format,     lua: Uptime::strings_lua     }),
-            "version"    => Some(Self { format: Version::print_format,    lua: Version::strings_lua    }),
-            "wallpaper"  => Some(Self { format: Wallpaper::print_format,  lua: Wallpaper::strings_lua  }),
-            "weather"    => Some(Self { format: Weather::print_format,    lua: Weather::strings_lua    }),
+            "break"      => Some(Self { format: Break::strings_format,      lua: Break::strings_lua      }),
+            "colors"     => Some(Self { format: Colors::strings_format,     lua: Colors::strings_lua     }),
+            "commit"     => Some(Self { format: Commit::strings_format,     lua: Commit::strings_lua     }),
+            "cpu"        => Some(Self { format: Cpu::strings_format,        lua: Cpu::strings_lua        }),
+            "custom"     => Some(Self { format: Custom::strings_format,     lua: Custom::strings_lua     }),
+            "datetime"   => Some(Self { format: Datetime::strings_format,   lua: Datetime::strings_lua   }),
+            "gpu"        => Some(Self { format: Gpu::strings_format,        lua: Gpu::strings_lua        }),
+            "initsystem" => Some(Self { format: Initsystem::strings_format, lua: Initsystem::strings_lua }),
+            "kernel"     => Some(Self { format: Kernel::strings_format,     lua: Kernel::strings_lua     }),
+            "locale"     => Some(Self { format: Locale::strings_format,     lua: Locale::strings_lua     }),
+            "memory"     => Some(Self { format: Memory::strings_format,     lua: Memory::strings_lua     }),
+            "os"         => Some(Self { format: Os::strings_format,         lua: Os::strings_lua         }),
+            "processes"  => Some(Self { format: Processes::strings_format,  lua: Processes::strings_lua  }),
+            "separator"  => Some(Self { format: Separator::strings_format,  lua: Separator::strings_lua  }),
+            "title"      => Some(Self { format: Title::strings_format,      lua: Title::strings_lua      }),
+            "uptime"     => Some(Self { format: Uptime::strings_format,     lua: Uptime::strings_lua     }),
+            "version"    => Some(Self { format: Version::strings_format,    lua: Version::strings_lua    }),
+            "wallpaper"  => Some(Self { format: Wallpaper::strings_format,  lua: Wallpaper::strings_lua  }),
+            "weather"    => Some(Self { format: Weather::strings_format,    lua: Weather::strings_lua    }),
             _ => None,
         }
     }

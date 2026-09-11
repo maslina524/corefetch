@@ -75,33 +75,34 @@ pub fn docs_derive(input: TokenStream) -> TokenStream {
     let struct_name = &input.ident;
     let fields = get_fields(&input.data);
 
-    let mut lines = Vec::with_capacity(fields.len());
-    for (i, field) in fields.iter().enumerate() {
-        let field_name = field_to_config_name(field);
-        let idx = i + 1;
-        let doc = get_doc_comment(field).unwrap_or_else(|| "Empty".to_owned());
-        lines.push(format!("{field_name:>24} : {:<4} : {doc}", format!("{{{idx}}}")));
-    }
-
-    // BUILD -h module-format  
-    let format = if lines.is_empty() {
+    // BUILD -h module-format
+    let format = if fields.is_empty() {
         quote! {
-            fn print_format() {
-                crate::println!("Module `{}` doesn't support output formatting", stringify!(#struct_name));
+            fn strings_format() -> Option<&'static [crate::DocString]> {
+                None
             }
         }
     } else {
-        let first_field = field_to_config_name(fields.first().unwrap());
+        let mut idx = 1;
+        let strings = fields.iter().map(|field| {
+            let name = field_to_config_name(field);
+            let typ = format!("{{{idx}}}");
+            let desc = match get_doc_comment(field) {
+                Some(s) => quote! { Some(#s) },
+                None => quote! { None }
+            };
+            idx += 1;
+
+            quote! {
+                crate::DocString { name: #name, second: #typ, desc: #desc }
+            }
+        });
+
         quote! {
-            fn print_format() {
-                crate::println!(
-                    "# In config file: {{ \"type\": \"{}\", \"format\": \"{{{}}} or {{1}}\" }}",
-                    stringify!(#struct_name).to_lowercase(), #first_field
-                );
-                crate::println!("The following variables are passed:");
-                #(
-                    crate::println!("{}", #lines);
-                )*
+            fn strings_format() -> Option<&'static [crate::DocString]> {
+                Some(&[
+                    #(#strings),*
+                ])
             }
         }
     };
@@ -109,7 +110,7 @@ pub fn docs_derive(input: TokenStream) -> TokenStream {
     // BUILD -h module-lua
     let lua = if fields.is_empty() {
         quote! {
-            fn strings_lua() -> Option<&'static [crate::LuaDocsString]> {
+            fn strings_lua() -> Option<&'static [crate::DocString]> {
                 None
             }
         }
@@ -123,11 +124,11 @@ pub fn docs_derive(input: TokenStream) -> TokenStream {
             };
 
             quote! {
-                crate::LuaDocsString { name: #name, typ: <#field_ty as crate::lua::AsLua>::LUA_TYPE, desc: #desc }
+                crate::DocString { name: #name, second: <#field_ty as crate::lua::AsLua>::LUA_TYPE, desc: #desc }
             }
         });
         quote! {
-            fn strings_lua() -> Option<&'static [crate::LuaDocsString]> {
+            fn strings_lua() -> Option<&'static [crate::DocString]> {
                 Some(&[
                     #(#strings),*
                 ])

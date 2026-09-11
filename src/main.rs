@@ -92,10 +92,10 @@ static ALLOCATOR: Allocator = Allocator;
 
 const MIN_OFFSET: usize = 24;
 
+// 473kb -> 428kb
 pub trait Docs {
-    fn print_format();
-    // 473kb -> 448kb
-    fn strings_lua() -> Option<&'static [LuaDocsString]>;
+    fn strings_format() -> Option<&'static [DocString]>;
+    fn strings_lua() -> Option<&'static [DocString]>;
 }
 
 #[derive(Debug)]
@@ -106,9 +106,9 @@ pub enum LuaDocsTyp {
 }
 
 #[derive(Debug)]
-pub struct LuaDocsString {
+pub struct DocString {
     name: &'static str,
-    typ: &'static str,
+    second: &'static str,
     desc: Option<&'static str>
 }
 
@@ -278,7 +278,20 @@ fn print_help(theme: Option<&str>) -> ! {
 
         let vtable = DocsVtable::from_str(ident).unwrap_or_else(|| exit(1));
         match action {
-            "format" => (vtable.format)(),
+            "format" => {
+                if let Some(doc) = (vtable.format)() {
+                    println!(
+                        "# In config file: {{ \"type\": \"{ident}\", \"format\": \"{{{}}} or {{1}}\" }}",
+                        doc[0].name
+                    );
+                    println!("The following variables are passed:");
+                    for i in doc {
+                        println!("{:>24} : {:<4} : {}", i.name, i.second, i.desc.unwrap_or("Empty"));
+                    }
+                } else {
+                    println!("Module `{ident}` doesn't support output formatting")
+                }
+            },
             "lua" => {
                 if let Some(doc) = (vtable.lua)() {
                     println!(
@@ -287,10 +300,10 @@ fn print_help(theme: Option<&str>) -> ! {
                     );
                     println!("The following variables are passed:");
                     for i in doc {
-                        println!("{:>24} : {:<7} : {}", i.name, i.typ, i.desc.unwrap_or("Empty"));
+                        println!("{:>24} : {:<6} : {}", i.name, i.second, i.desc.unwrap_or("Empty"));
                     }
                 } else {
-                    println!("Module `{ident}` doesn't support output formatting")
+                    println!("Module `{ident}` doesn't support lua")
                 }
             },
             _ => {
