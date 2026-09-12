@@ -51,9 +51,12 @@ use crate::{
     formats
 };
 
+type ModulePtr = &'static dyn Module;
+type Registy = (&'static str, fn() -> ModulePtr);
+
 static UNSUPPORTED_FIELDS: [&str; 1] = ["{cmake-built-type}"];
 
-static REGISTRY: &[(&str, fn() -> &'static dyn Module)] = &[
+static REGISTRY: &[Registy] = &[
     ("break",      || Break::get()),
     ("colors",     || Colors::get()),
     ("commit",     || Commit::get()),
@@ -133,15 +136,13 @@ pub fn replace_fields<T>(mut s: String, fields: &[(&str, T)]) -> String
 where 
     T: ToString
 {
-    let mut idx = 1;
-    for (k, v) in fields {
+    for (idx, (k, v)) in (1..).zip(fields.iter()) {
         let placeholder_underscore = alloc::fmt::format(format_args!("{{{}}}", k.trim_start_matches("r#")));
         let placeholder_hyphen = placeholder_underscore.replace('_', "-");
         let value = || { v.to_string() };
 
         s = formats::lazy_replace(&s, placeholder_hyphen.as_str(), value).into_owned();
         s = formats::lazy_replace(&s, &crate::format!("{{{idx}}}"), value).into_owned();
-        idx += 1;
     }
     s
 }

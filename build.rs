@@ -45,6 +45,7 @@ struct Commit {
 impl Commit {
     pub fn new_git() -> Self {
         let log = Command::new("git")
+            .env("LC_ALL", "C")
             .args([
                 "log",
                 "--format=%an%n%ae%n%ad%n%H%n%h%n%s",
@@ -68,6 +69,7 @@ impl Commit {
         let message = log_parts[5].to_owned();
 
         let numstat = Command::new("git")
+            .env("LC_ALL", "C")
             .args(["log", "--format=", "--shortstat", "-1"])
             .output()
             .ok()

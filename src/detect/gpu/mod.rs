@@ -97,7 +97,16 @@ impl GpuInfo {
             0x15ad => format!("VMware {}", Self::vmware_name(device_id)),
             0x1002 => format!("AMD {}", Self::amd_name(device_id)),
             0x8086 => format!("Intel {}", Self::intel_name(device_id)),
+            0x80EE => format!("InnoTek Systemberatung GmbH {}", Self::innotek_name(device_id)),
             _ => "Unknown".to_owned(),
+        }
+    }
+
+    const fn innotek_name(device_id: u32) -> &'static str {
+        match device_id {
+            0xBEEF => "VirtualBox Graphics Adapter",
+            0xCAFE => "VirtualBox Guest Service",
+            _ => "Unknown"
         }
     }
 

@@ -13,10 +13,10 @@ impl CpuInfo {
         let logical_cores = Self::logical_cores_count();
         
         let base_freq_raw = info
-            .get_default("key", &"0")
-            .parse::<u64>()
-            .unwrap_or(0);
-        let base_freq = Frequency::from_hz(base_freq_raw);
+            .get("cpu MHz")
+            .map_or(0.0, |s| s.parse::<f64>().unwrap_or(0.0));
+
+        let base_freq = Frequency::from_hz((base_freq_raw * 1000.0) as u64);
 
         let vendor = Self::vendor();
         let (family, model) = Self::get_family_and_model();

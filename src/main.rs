@@ -282,7 +282,7 @@ fn print_help(theme: Option<&str>) -> ! {
                         println!("{:>24} : {:<4} : {}", i.name, i.second, i.desc.unwrap_or("Empty"));
                     }
                 } else {
-                    println!("Module `{ident}` doesn't support output formatting")
+                    println!("Module `{ident}` doesn't support output formatting");
                 }
             },
             "lua" => {
@@ -296,7 +296,7 @@ fn print_help(theme: Option<&str>) -> ! {
                         println!("{:>24} : {:<6} : {}", i.name, i.second, i.desc.unwrap_or("Empty"));
                     }
                 } else {
-                    println!("Module `{ident}` doesn't support lua")
+                    println!("Module `{ident}` doesn't support lua");
                 }
             },
             _ => {

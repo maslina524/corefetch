@@ -29,10 +29,6 @@ debug = true
 codegen-units = 1
 panic = "abort"
 
-[profile.test]
-panic = "unwind"
-inherit = "dev"
-
 [dependencies]
 # Local crate, ONLY for macro-attr: #[todo("...")]
 todo = { path = "./todo", version = "0.0.0" }

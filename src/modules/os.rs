@@ -49,7 +49,7 @@ impl Module for Os {
         // #[cfg(target_os = "windows")]
         // let pretty_name = format!("{} {} ({})", info.id, info.variant, info.codename);
         // #[cfg(target_os = "linux")]
-        let pretty_name = format!("{} ({})", info.name, info.codename);
+        let pretty_name = format!("{} {}", info.name, info.version);
 
         Self { 
             sysname: info.sysname, 

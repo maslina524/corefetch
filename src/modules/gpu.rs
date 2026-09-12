@@ -100,7 +100,11 @@ impl Module for Gpu {
     }
 
     fn title(&self) -> &'static str {
-        "{name} @ {frequency} ({dedicated-total}) [{type}]"
+        if matches!(self.r#type, GpuType::Unknown) {
+            "{name}"
+        } else {
+            "{name} @ {frequency} ({dedicated-total}) [{type}]"
+        }
     }
 
     fn string_name(&self) -> &'static str {
