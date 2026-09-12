@@ -25,6 +25,8 @@ pub type c_pid = i32;
 pub type c_socklen = c_uint;
 pub type c_sa_family = c_ushort;
 
+const SYS_GETDENTS64: c_long = 61;
+
 #[link(name = "c")]
 unsafe extern "C" {
     pub safe fn write(fd: i32, buf: *const c_void, len: c_size) -> c_ssize;
@@ -37,7 +39,6 @@ unsafe extern "C" {
     pub safe fn access(path: *const c_char, mode: c_int) -> c_int;
     pub safe fn fopen(pathname: *const c_char, mode: *const c_char) -> FileHandle;
     pub safe fn fclose(stream: FileHandle) -> c_int;
-    pub safe fn __errno_location() -> *mut c_int;
     pub safe fn strerror(errnum: c_int) -> *mut c_char;
     pub safe fn fwrite(ptr: *const c_void, size: c_size, nmemb: c_size, stream: FileHandle) -> c_size;
     pub safe fn fread(ptr: *mut c_void, size: c_size, nmemb: c_size, stream: FileHandle) -> c_size;
@@ -70,12 +71,28 @@ unsafe extern "C" {
     pub safe fn freeaddrinfo(res: *mut AddrInfo);
     pub safe fn localtime_r(timep: *const c_time, result: *mut Tm) -> *mut Tm;
     pub safe fn ferror(stream: FileHandle) -> c_int;
-    pub safe fn getdents64(fd: c_int, dirp: *mut c_void, count: c_size) -> c_ssize;
+    pub safe fn syscall(num: c_long, ...) -> c_long;
     pub safe fn open(pathname: *const c_char, flags: c_int, ...) -> c_int;
     pub safe fn ioctl(fd: c_int, op: c_ulong, ...) -> c_int;
     pub safe fn popen(command: *const c_char, typ: *const c_char) -> FileHandle;
     pub safe fn pclose(stream: FileHandle) -> c_int;
     pub safe fn fgets(s: *mut c_char, size: c_int, stream: FileHandle) -> *mut c_char;
+}
+
+#[cfg(not(target_os = "android"))]
+#[link(name = "c")]
+unsafe extern "C" {
+    pub safe fn __errno_location() -> *mut c_int;
+}
+
+#[cfg(target_os = "android")]
+#[link(name = "c")]
+unsafe extern "C" {
+    pub safe fn __errno() -> *mut c_int;
+}
+
+pub fn getdents64(fd: c_int, dirp: *mut c_void, count: c_size) -> c_ssize {
+    syscall(SYS_GETDENTS64, fd, dirp, count) as c_ssize
 }
 
 static SYSINFO: OnceLock<Sysinfo> = OnceLock::new();
@@ -89,7 +106,9 @@ pub fn get_sysinfo() -> &'static Sysinfo {
 }
 
 pub fn errno() -> i32 {
-    // SAFETY: Libc always returns a valid pointer
+    #[cfg(target_os = "android")]
+    unsafe { *__errno() }
+    #[cfg(not(target_os = "android"))]
     unsafe { *__errno_location() }
 }
 

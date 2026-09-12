@@ -73,14 +73,14 @@ impl TitleInfo {
 
     fn cwd() -> Path {
         let mut buf = vec![0i8; PATH_MAX];
-        let ret = getcwd(buf.as_mut_ptr(), PATH_MAX);
+        let ret = getcwd(buf.as_mut_ptr().cast(), PATH_MAX);
         if ret.is_null() {
             warning!("Failed to call `getcwd`");
             return Path::new();
         }
 
         // SAFETY: libs are guaranteed to store a valid cstr
-        let c_str = unsafe { CStr::from_ptr(buf.as_ptr()) };
+        let c_str = unsafe { CStr::from_ptr(buf.as_ptr().cast()) };
         let string = c_str.to_string_lossy().into_owned();
         Path::from(string)
     }

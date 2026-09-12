@@ -265,6 +265,8 @@ async fn main() {
                 .expect("set LUA_ANDROID_LIB_DIR to lua build dir");
             println!("cargo:rustc-link-search=native={lua_dir}");
             println!("cargo:rustc-link-lib=static=lua5.4");
+            println!("cargo:rustc-link-arg=-Wl,--no-as-needed");
+            println!("cargo:rustc-link-arg=-lc");
             println!("cargo:rustc-link-lib=dylib=m");
             println!("cargo:rustc-link-lib=dylib=dl");
         }
