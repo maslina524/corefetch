@@ -89,6 +89,7 @@ unsafe extern "C" {
 #[link(name = "c")]
 unsafe extern "C" {
     pub safe fn __errno() -> *mut c_int;
+    pub safe fn __system_property_get(name: *const c_char, value: *mut c_char) -> c_int;
 }
 
 pub fn getdents64(fd: c_int, dirp: *mut c_void, count: c_size) -> c_ssize {
