@@ -30,6 +30,10 @@ jobs:
           targets: ${{ matrix.target }}
           components: rust-src
 
+      - name: Install Lua dev (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get update && sudo apt-get install -y liblua5.4-dev
+
       - uses: actions/cache@v4
         with:
           path: |

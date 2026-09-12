@@ -6,7 +6,9 @@ use alloc::{
 };
 
 use crate::{
-    linux::libc::{Timespec, clock_gettime, get_sysinfo, getenv, ioctl, Winsize},
+    linux::libc::{
+        Timespec, clock_gettime, getenv, ioctl, Winsize
+    },
     linux::fs,
     ARGS,
     format,
@@ -71,8 +73,17 @@ pub fn timestamp_hours() -> u64 {
     timestamp_secs() / 3600
 }
 
-pub fn processes_count() -> usize {
-    get_sysinfo().procs as usize
+pub fn processes_count() -> Option<usize> {
+    let entries = fs::read_dir_all("/proc").ok()?;
+    let mut ret = 0;
+    for entry in entries {
+        let name = entry.name();
+        if name.parse::<u32>().is_ok() {
+            ret += 1;
+        }
+    }
+
+    Some(ret)
 }
 
 pub fn find_pid_by_name(name: &str) -> u32 {
