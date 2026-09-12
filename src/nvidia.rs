@@ -19,7 +19,7 @@ cfg_if! {
 
         type ApiBaseFn = unsafe extern "system" fn() -> isize;
         type LibHandle = HMODULE;
-    } else if #[cfg(target_os = "linux")] {
+    } else if #[cfg(any(target_os = "linux", target_os = "android"))] {
         use crate::linux::libc::{dlopen, dlclose};
 
         type ApiBaseFn = *mut c_void;
@@ -199,7 +199,7 @@ cfg_if! {
                 FreeLibrary(lib)
             };
         }
-    } else if #[cfg(target_os = "linux")] {
+    } else if #[cfg(any(target_os = "linux", target_os = "android"))] {
         fn load() -> LibHandle {
             let lib_names = [c"libnvidia-ml.so.1", c"libnvidia-ml.so"];
 

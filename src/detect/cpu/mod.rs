@@ -15,7 +15,7 @@ use crate::{
 cfg_if! {
     if #[cfg(target_os = "windows")] {
         mod windows;
-    } else if #[cfg(target_os = "linux")] {
+    } else if #[cfg(any(target_os = "linux", target_os = "android"))] {
         mod linux;
     }
 }

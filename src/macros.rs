@@ -72,7 +72,7 @@ macro_rules! get_fn {
     }};
 }
 
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "android"))]
 #[macro_export]
 macro_rules! get_fn {
     ($handle:tt, $name:expr, $typ:ident) => {{

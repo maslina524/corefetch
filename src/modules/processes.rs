@@ -1,7 +1,11 @@
 use doc::Docs;
 
 use crate::{
-    format_for_module, imp::env, impl_display_for_module, modules::Module, sync::OnceLock, warning
+    format_for_module, 
+    imp::env, 
+    impl_display_for_module, 
+    modules::Module, 
+    sync::OnceLock
 };
 
 static PROCESSES: OnceLock<Processes> = OnceLock::new();
@@ -14,10 +18,10 @@ pub struct Processes {
 
 impl Module for Processes {
     fn new() -> Self {
-        #[cfg(target_os = "linux")]
+        #[cfg(any(target_os = "linux", target_os = "android"))]
         let result = env::processes_count()
             .unwrap_or_else(|| { 
-                warning!("Failed to read /proc"); 
+                crate::warning!("Failed to read /proc"); 
                 0 
             });
 

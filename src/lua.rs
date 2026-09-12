@@ -58,7 +58,7 @@ pub type lua_tolstring = unsafe extern "C" fn(state: *mut lua_State, idx: c_int,
 #[allow(non_camel_case_types)]
 pub type lua_settop = unsafe extern "C" fn(state: *mut lua_State, idx: c_int);
 
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "android"))]
 unsafe extern "C" {
     unsafe fn luaL_newstate() -> *mut lua_State;
     unsafe fn luaL_openlibs(state: *mut lua_State);
@@ -183,7 +183,7 @@ pub struct LuaLib {
     #[cfg(target_os = "windows")]
     handle: LibHandle,
     new_state: luaL_newstate,
-    #[cfg(target_os = "linux")]
+    #[cfg(any(target_os = "linux", target_os = "android"))]
     open_libs: luaL_openlibs,
     #[cfg(target_os = "windows")]
     open_selected_libs: luaL_openselectedlibs,
@@ -204,14 +204,14 @@ impl LuaLib {
             cfg_if! {
                 if #[cfg(target_os = "windows")] {
                     Self::new_dynamic()
-                } else if #[cfg(target_os = "linux")] {
+                } else if #[cfg(any(target_os = "linux", target_os = "android"))] {
                     Self::new_static()
                 }
             }
         })
     }
 
-    #[cfg(target_os = "linux")]
+    #[cfg(any(target_os = "linux", target_os = "android"))]
     pub fn new_static() -> Self {
         Self {
             new_state: luaL_newstate,
@@ -283,7 +283,7 @@ impl LuaLib {
         }
 
         
-        #[cfg(target_os = "linux")]
+        #[cfg(any(target_os = "linux", target_os = "android"))]
         // SAFETY: Completely safe
         unsafe { (self.open_libs)(state) };
 
@@ -359,7 +359,7 @@ impl LuaLib {
         }
     }
 
-    #[cfg(target_os = "linux")]
+    #[cfg(any(target_os = "linux", target_os = "android"))]
     pub const fn drop_lua() {
         /* Doing nothing since this is a static library */
     }

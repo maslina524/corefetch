@@ -25,6 +25,7 @@ pub type c_pid = i32;
 pub type c_socklen = c_uint;
 pub type c_sa_family = c_ushort;
 
+#[link(name = "c")]
 unsafe extern "C" {
     pub safe fn write(fd: i32, buf: *const c_void, len: c_size) -> c_ssize;
     pub unsafe fn malloc(size: c_size) -> *mut c_void;

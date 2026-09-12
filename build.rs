@@ -214,7 +214,7 @@ fn github_actions() -> bool {
         .is_ok_and(|s| s.trim() == "true")
 }
 
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "android"))]
 fn get_libc_version() -> String {
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
     let c_file = out_dir.join("version.c");
@@ -248,16 +248,27 @@ fn get_libc_version() -> String {
 #[tokio::main]
 #[allow(clippy::too_many_lines)]
 async fn main() {
-    #[cfg(target_os = "linux")]
-    {   
-        // Lua lib
-        println!("cargo:rustc-link-search=native=/usr/lib/x86_64-linux-gnu");
-        println!("cargo:rustc-link-lib=static=lua5.4");
-        println!("cargo:rustc-link-lib=dylib=dl");
-        println!("cargo:rustc-link-lib=dylib=m");
-        println!("cargo:rustc-link-arg=-pthread");
+    let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
+    let target_arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap();
 
-        println!("cargo:rustc-link-arg=-lc");
+    match (target_os.as_str(), target_arch.as_str()) {
+        ("linux", "x86_64") => {
+            println!("cargo:rustc-link-search=native=/usr/lib/x86_64-linux-gnu");
+            println!("cargo:rustc-link-lib=static=lua5.4");
+            println!("cargo:rustc-link-lib=dylib=dl");
+            println!("cargo:rustc-link-lib=dylib=m");
+            println!("cargo:rustc-link-arg=-pthread");
+            println!("cargo:rustc-link-arg=-lc");
+        }
+        ("android", "aarch64") => {
+            let lua_dir = env::var("LUA_ANDROID_LIB_DIR")
+                .expect("set LUA_ANDROID_LIB_DIR to lua build dir");
+            println!("cargo:rustc-link-search=native={lua_dir}");
+            println!("cargo:rustc-link-lib=static=lua5.4");
+            println!("cargo:rustc-link-lib=dylib=m");
+            println!("cargo:rustc-link-lib=dylib=dl");
+        }
+        _ => {}
     }
     
     // Bypasses caching, runs every time during compilation
@@ -346,10 +357,12 @@ async fn main() {
     }
 
     // ENV: LIBC_VERSION
-    #[cfg(target_os = "windows")]
-    let ver = String::new();
-    #[cfg(target_os = "linux")]
-    let ver = get_libc_version();
+    let ver = match target_os.as_str() {
+        #[cfg(target_os = "linux")]
+        "linux"   => get_libc_version(),
+        "android" => "bionic".to_string(),
+        _         => String::new(),
+    };
     println!("cargo:rustc-env=LIBC_VERSION={ver}");
 
     // ENV: PROJECT_HASH

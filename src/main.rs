@@ -52,7 +52,7 @@ cfg_if! {
     if #[cfg(target_os = "windows")] {
         mod windows;
         use windows as imp;
-    } else if #[cfg(target_os = "linux")] {
+    } else if #[cfg(any(target_os = "linux", target_os = "android"))] {
         mod linux;
         use linux as imp;
     } else {
@@ -195,7 +195,7 @@ fn build_info_buf(max_len: usize) -> Vec<String> {
 
 pub fn exit(code: u32) -> ! {
     cfg_if! {
-        if #[cfg(target_os = "linux")] {
+        if #[cfg(any(target_os = "linux", target_os = "android"))] {
             // SAFETY: Run in binary, safe
             unsafe { crate::linux::libc::exit(code as i32) }
         } else if #[cfg(target_os = "windows")] {
@@ -357,7 +357,7 @@ fn print_version(method: Option<&str>) -> ! {
 
 static ARGS: OnceLock<Vec<String>> = OnceLock::new();
 
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "android"))]
 use core::ffi::c_char;
 
 // #[cfg(not(test))]
@@ -365,7 +365,7 @@ use core::ffi::c_char;
     clippy::similar_names, 
     reason = "that's what they're called in C, i don't give a fuck about clippy"
 )]
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "android"))]
 #[unsafe(no_mangle)]
 extern "C" fn main(argc: c_int, argv: *const *const c_char) -> c_int {
     ARGS.set(|| imp::env::args_init(argc as usize, argv.cast()));
