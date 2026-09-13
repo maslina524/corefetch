@@ -3,21 +3,21 @@ use core::arch::x86_64::{__cpuid, __cpuid_count, _xgetbv};
 
 use alloc::{
     string::String,
-    borrow::ToOwned,
-    vec
+    borrow::ToOwned
 };
 
 use crate::{
-    cfg_if, 
     format, 
     formats::Frequency
 };
 
-cfg_if! {
+crate::cfg_if! {
     if #[cfg(target_os = "windows")] {
         mod windows;
-    } else if #[cfg(any(target_os = "linux", target_os = "android"))] {
+    } else if #[cfg(target_os = "linux")] {
         mod linux;
+    } else if #[cfg(target_os = "android")] {
+        mod android;
     }
 }
 
@@ -42,6 +42,8 @@ pub struct CpuInfo {
 impl CpuInfo {
     #[cfg(target_arch = "x86_64")]
     fn vendor() -> String {
+        use alloc::vec;
+        
         let ret = __cpuid(0);
         let (_, ebx, ecx, edx) = (ret.eax, ret.ebx, ret.ecx, ret.edx);
 

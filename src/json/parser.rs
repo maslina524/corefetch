@@ -82,28 +82,19 @@ impl Value {
 }
 
 #[derive(Debug, Clone)]
-pub struct Map {
-    keys: Vec<String>,
-    values: Vec<Value>
-}
+pub struct Map(Vec<(String, Value)>);
 
 impl Map {
-    pub const fn new() -> Self {
-        Self { keys: Vec::new(), values: Vec::new() }
+    pub const fn new() -> Self { 
+        Self(Vec::new()) 
     }
 
     pub fn insert(&mut self, key: String, value: Value) {
-        self.keys.push(key);
-        self.values.push(value);
+        self.0.push((key, value));
     }
 
     pub fn get(&self, key: &str) -> Option<&Value> {
-        for (i, k) in self.keys.iter().enumerate() {
-            if k == key {
-                return Some(&self.values[i])
-            }
-        }
-        None
+        self.0.iter().find(|(k, _)| k == key).map(|(_, v)| v)
     }
 
     pub fn get_string(&self, key: &str) -> Option<&String> {

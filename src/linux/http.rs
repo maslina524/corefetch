@@ -46,8 +46,19 @@ impl Request {
 
     fn send(self, method: &str) -> Response {
         // crate::println!("Url: {:#?}", self.url);
-        let full_domain = format!("{}.{}", self.url.domain, self.url.tld);
-        let c_hostname = CString::new(full_domain).expect("invalid hostname");
+        let full_domain = if self.url.subdomains.is_empty() {
+            format!("{}.{}", self.url.domain, self.url.tld)
+        } else {
+            format!(
+                "{}.{}.{}",
+                self.url.subdomains.join("."),
+                self.url.domain,
+                self.url.tld
+            )
+        };
+        // crate::println!("Full domain: {}", full_domain);
+
+        let c_hostname = CString::new(full_domain.clone()).expect("invalid hostname");
         let c_port = CString::new(self.url.port().to_string()).expect("invalid port");
 
         let hints = AddrInfo {
@@ -73,6 +84,12 @@ impl Request {
         while !rp.is_null() {
             // SAFETY: Libc always returns a valid pointer
             let ai = unsafe { &*rp };
+            // crate::println!(
+            //     "ai: family={} socktype={} proto={} addrlen={} addr={:p} next={:p}",
+            //     ai.ai_family, ai.ai_socktype, ai.ai_protocol,
+            //     ai.ai_addrlen, ai.ai_addr, ai.ai_next
+            // );
+
             sockfd = socket(ai.ai_family, ai.ai_socktype, ai.ai_protocol);
             if sockfd == -1 {
                 rp = ai.ai_next;
@@ -89,7 +106,7 @@ impl Request {
         freeaddrinfo(result);
 
         if sockfd == -1 {
-            abort!("could not connect to host");
+            abort!("Failed to connect to host");
         }
 
         let mut req = String::new();
@@ -97,7 +114,11 @@ impl Request {
         req.push(' ');
         req.push_str(&self.url.path);
         req.push_str(" HTTP/1.1\r\nHost: ");
-        req.push_str(&self.url.domain);
+        req.push_str(&full_domain);
+        if let Some(port) = self.url.port { 
+            use core::fmt::Write;
+            let _ = write!(req, ":{port}");
+        }
         req.push_str("\r\nConnection: close\r\n\r\n");
 
         let req_bytes = req.as_bytes();
@@ -105,7 +126,7 @@ impl Request {
         let sent = send(sockfd, req_bytes.as_ptr().cast(), req_bytes.len(), 0);
         if sent == -1 {
             close(sockfd);
-            abort!("send failed");
+            abort!("Send failed");
         }
 
         let mut response_data = Vec::new();
@@ -114,7 +135,7 @@ impl Request {
             let n = recv(sockfd, buffer.as_mut_ptr().cast(), buffer.len(), 0);
             if n < 0 {
                 close(sockfd);
-                abort!("recv failed");
+                abort!("Recv failed");
             }
             if n == 0 {
                 break;

@@ -76,7 +76,11 @@ impl Module for Cpu {
     }
 
     fn title(&self) -> &'static str {
-        "{name} ({core-types}) @ {freq-base}"
+        if self.core_types.is_empty() {
+            "{name} @ {freq-base}"
+        } else {
+            "{name} ({core-types}) @ {freq-base}"
+        }
     }
 
     fn string_name(&self) -> &'static str {

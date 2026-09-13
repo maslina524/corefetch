@@ -121,13 +121,26 @@ pub fn errno() -> i32 {
 }
 
 #[repr(C)]
-#[derive(Default)]
 pub struct Utsname {
-    pub sysname: *mut c_char,
-    pub nodename: *mut c_char,
-    pub release: *mut c_char,
-    pub version: *mut c_char,
-    pub machine: *mut c_char,
+    pub sysname:    [u8; 65],
+    pub nodename:   [u8; 65],
+    pub release:    [u8; 65],
+    pub version:    [u8; 65],
+    pub machine:    [u8; 65],
+    pub domainname: [u8; 65],
+}
+
+impl Default for Utsname {
+    fn default() -> Self {
+        Self { 
+            sysname: [0u8; 65], 
+            nodename: [0u8; 65], 
+            release: [0u8; 65], 
+            version: [0u8; 65], 
+            machine: [0u8; 65], 
+            domainname: [0u8; 65] 
+        }
+    }
 }
 
 #[repr(C)]
@@ -154,6 +167,7 @@ impl Default for LinuxDirent64 {
     }
 }
 
+#[cfg(not(target_arch = "aarch64"))]
 #[repr(C)]
 #[derive(Default)]
 pub struct AddrInfo {
@@ -164,6 +178,20 @@ pub struct AddrInfo {
     pub ai_addrlen: c_socklen,
     pub ai_addr: *mut SockAddr,
     pub ai_canonname: *mut c_char,
+    pub ai_next: *mut Self,
+}
+
+#[cfg(target_arch = "aarch64")]
+#[repr(C)]
+#[derive(Default)]
+pub struct AddrInfo {
+    pub ai_flags: c_int,
+    pub ai_family: c_int,
+    pub ai_socktype: c_int,
+    pub ai_protocol: c_int,
+    pub ai_addrlen: c_uint,
+    pub ai_canonname: *mut c_char,
+    pub ai_addr: *mut SockAddr,
     pub ai_next: *mut Self,
 }
 
