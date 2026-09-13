@@ -21,9 +21,9 @@ use crate::{
 use crate::linux::libc::{open, close, getdents64, LinuxDirent64};
 const O_RDONLY: c_int = 0;
 
-#[cfg(target_arch = "arm")]
+#[cfg(target_arch = "aarch64")]
 const O_DIRECTORY: c_int = 0x4000;
-#[cfg(not(target_arch = "arm"))]
+#[cfg(not(target_arch = "aarch64"))]
 const O_DIRECTORY: c_int = 0x10000;
 
 const AT_FDCWD: c_int = -100;
@@ -241,6 +241,7 @@ pub fn read_dir_all(path: impl Into<Path>) -> error::Result<Vec<Item>> {
     let c_path = path.as_c_str();
 
     let fd = open(c_path.as_ptr(), O_RDONLY | O_DIRECTORY, 0);
+    // crate::println!("Open: Fd: {fd}, Path: {c_path:?}, Error: {}:{}", ErrorCode::last(), ErrorCode::last().code());
     if fd < 0 {
         return Err(ErrorCode::last());
     }

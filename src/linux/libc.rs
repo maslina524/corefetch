@@ -99,6 +99,7 @@ unsafe extern "C" {
 }
 
 pub fn getdents64(fd: c_int, dirp: *mut c_void, count: c_size) -> c_ssize {
+    // crate::println!("\x1b[1mCall `getdents64`: Syscall: {SYS_GETDENTS64}, Fd: {fd}, Dirp: {dirp:?}, Count: {count}\x1b[0m");
     syscall(SYS_GETDENTS64, fd, dirp, count) as c_ssize
 }
 

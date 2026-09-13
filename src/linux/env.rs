@@ -82,7 +82,6 @@ pub fn processes_count() -> usize {
         }
     };
 
-    crate::println!("ENTRIES: {entries:#?}");
     let mut ret = 0;
     for entry in entries {
         let name = entry.name();
