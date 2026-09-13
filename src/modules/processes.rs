@@ -18,14 +18,6 @@ pub struct Processes {
 
 impl Module for Processes {
     fn new() -> Self {
-        #[cfg(any(target_os = "linux", target_os = "android"))]
-        let result = env::processes_count()
-            .unwrap_or_else(|| { 
-                crate::warning!("Failed to read /proc"); 
-                0 
-            });
-
-        #[cfg(target_os = "windows")]
         let result = env::processes_count();
 
         Self {

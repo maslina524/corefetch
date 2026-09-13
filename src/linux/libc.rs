@@ -2,6 +2,7 @@
     non_camel_case_types,
     clippy::struct_field_names,
     suspicious_runtime_symbol_definitions,
+    invalid_runtime_symbol_definitions,
     reason = "C type"
 )]
 
@@ -25,6 +26,10 @@ pub type c_pid = i32;
 pub type c_socklen = c_uint;
 pub type c_sa_family = c_ushort;
 
+#[cfg(target_arch = "x86_64")]
+const SYS_GETDENTS64: c_long = 217;
+
+#[cfg(target_arch = "aarch64")]
 const SYS_GETDENTS64: c_long = 61;
 
 #[link(name = "c")]
@@ -72,7 +77,7 @@ unsafe extern "C" {
     pub safe fn localtime_r(timep: *const c_time, result: *mut Tm) -> *mut Tm;
     pub safe fn ferror(stream: FileHandle) -> c_int;
     pub safe fn syscall(num: c_long, ...) -> c_long;
-    pub safe fn open(pathname: *const c_char, flags: c_int, ...) -> c_int;
+    pub safe fn open(pathname: *const c_char, flags: c_int, mode: c_mode) -> c_int;
     pub safe fn ioctl(fd: c_int, op: c_ulong, ...) -> c_int;
     pub safe fn popen(command: *const c_char, typ: *const c_char) -> FileHandle;
     pub safe fn pclose(stream: FileHandle) -> c_int;

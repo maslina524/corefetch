@@ -180,7 +180,11 @@ fn get_module_lines(preset_module: &ConfigModule, max_len_line: usize) -> Option
 fn build_info_buf(max_len: usize) -> Vec<String> {
     let padding = Config::get().get_logo_padding();
     let (w, _) = env::terminal_size();
-    let max_len_line = w - max_len - padding.left - padding.right; 
+    let max_len_line = if max_len + padding.left + padding.right < w {
+        w - max_len - padding.left - padding.right
+    } else {
+        w
+    };
     let mut ret = Vec::new();
     let preset = Config::get();
 

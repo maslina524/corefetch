@@ -24,10 +24,11 @@ strip = "symbols"
 
 [profile.dev]
 opt-level = 0
-lto = true
+lto = false
 debug = true
 codegen-units = 1
 panic = "abort"
+overflow-checks = true
 
 [dependencies]
 # Local crate, ONLY for macro-attr: #[todo("...")]

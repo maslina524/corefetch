@@ -73,8 +73,16 @@ pub fn timestamp_hours() -> u64 {
     timestamp_secs() / 3600
 }
 
-pub fn processes_count() -> Option<usize> {
-    let entries = fs::read_dir_all("/proc").ok()?;
+pub fn processes_count() -> usize {
+    let entries = match fs::read_dir_all("/proc") {
+        Ok(e) => e,
+        Err(e) => {
+            warning!("Failed to read /proc: {e}");
+            return 0
+        }
+    };
+
+    crate::println!("ENTRIES: {entries:#?}");
     let mut ret = 0;
     for entry in entries {
         let name = entry.name();
@@ -83,7 +91,7 @@ pub fn processes_count() -> Option<usize> {
         }
     }
 
-    Some(ret)
+    ret
 }
 
 pub fn find_pid_by_name(name: &str) -> u32 {

@@ -20,7 +20,12 @@ use crate::{
 
 use crate::linux::libc::{open, close, getdents64, LinuxDirent64};
 const O_RDONLY: c_int = 0;
+
+#[cfg(target_arch = "arm")]
+const O_DIRECTORY: c_int = 0x4000;
+#[cfg(not(target_arch = "arm"))]
 const O_DIRECTORY: c_int = 0x10000;
+
 const AT_FDCWD: c_int = -100;
 const BUF_SIZE: usize = 4096 * 16; 
 

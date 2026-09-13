@@ -19,7 +19,12 @@ macro_rules! info {
 #[macro_export]
 macro_rules! warning {
     ($($args:tt)*) => {{
+        #[cfg(debug_assertions)]
+        $crate::eprint!("\x1b[1;{}mwarning\x1b[0m:{}:{}: ", $crate::color::FG_YELLOW, file!(), line!());
+
+        #[cfg(not(debug_assertions))]
         $crate::eprint!("\x1b[1;{}mwarning\x1b[0m: ", $crate::color::FG_YELLOW);
+
         $crate::eprintln!($($args)*);
     }};
 }
@@ -27,7 +32,12 @@ macro_rules! warning {
 #[macro_export]
 macro_rules! abort {
     ($($args:tt)*) => {{
+        #[cfg(debug_assertions)]
+        $crate::eprint!("\x1b[1;{}mabort\x1b[0m:{}:{}: ", $crate::color::FG_RED, file!(), line!());
+
+        #[cfg(not(debug_assertions))]
         $crate::eprint!("\x1b[1;{}mabort\x1b[0m: ", $crate::color::FG_RED);
+
         $crate::eprintln!($($args)*);
         $crate::exit(101)
     }};

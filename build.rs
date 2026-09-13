@@ -262,7 +262,7 @@ async fn main() {
         }
         ("android", "aarch64") => {
             let lua_dir = env::var("LUA_ANDROID_LIB_DIR")
-                .expect("set LUA_ANDROID_LIB_DIR to lua build dir");
+                .unwrap_or("bin/android-aarch64".to_owned());
             println!("cargo:rustc-link-search=native={lua_dir}");
             println!("cargo:rustc-link-lib=static=lua5.4");
             println!("cargo:rustc-link-arg=-Wl,--no-as-needed");
