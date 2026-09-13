@@ -13,11 +13,12 @@ jobs:
         include:
           - os: windows-latest
             target: x86_64-pc-windows-msvc
-            artifact: corefetch-windows
             binary: corefetch.exe
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            artifact: corefetch-linux
+            binary: corefetch
+          - os: ubuntu-latest
+            target: aarch64-linux-android
             binary: corefetch
 
     runs-on: ${{ matrix.os }}
@@ -30,9 +31,19 @@ jobs:
           targets: ${{ matrix.target }}
           components: rust-src
 
-      - name: Install Lua dev (Linux)
-        if: matrix.os == 'ubuntu-latest'
+      - name: Install Lua dev (Linux GNU)
+        if: matrix.target == 'x86_64-unknown-linux-gnu'
         run: sudo apt-get update && sudo apt-get install -y liblua5.4-dev
+
+      - name: Install Android NDK env
+        if: contains(matrix.target, 'android')
+        run: |
+          echo "ANDROID_NDK_HOME=${ANDROID_NDK_HOME:-${ANDROID_NDK_ROOT}}" >> $GITHUB_ENV
+          echo "ANDROID_NDK_ROOT=${ANDROID_NDK_ROOT:-${ANDROID_NDK_HOME}}" >> $GITHUB_ENV
+
+      - name: Install cargo-ndk (Android)
+        if: contains(matrix.target, 'android')
+        run: cargo install cargo-ndk --locked
 
       - uses: actions/cache@v4
         with:
@@ -40,40 +51,51 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: ${{ runner.os }}-cargo-
+          key: ${{ runner.os }}-${{ matrix.target }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-${{ matrix.target }}-cargo-
 
-      - name: Build
+      - name: Build (desktop)
+        if: "!contains(matrix.target, 'android')"
         run: |
           rustup component add rust-src --toolchain nightly-x86_64-pc-windows-msvc
           cargo build --release --target ${{ matrix.target }}
+
+      - name: Build (Android arm64)
+        if: contains(matrix.target, 'android')
+        env:
+          ANDROID_PLATFORM: "24"
+        run: |
+          cargo ndk -t arm64-v8a --platform 24 build --release
 
       - name: Rename binary
         shell: bash
         run: |
           cd target/${{ matrix.target }}/release/
           if [ "${{ matrix.os }}" = "windows-latest" ]; then
-            mv "${{ matrix.binary }}" "${{ matrix.artifact }}.exe"
+            mv "${{ matrix.binary }}" "corefetch-${{ matrix.target }}.exe"
           else
-            mv "${{ matrix.binary }}" "${{ matrix.artifact }}"
+            mv "${{ matrix.binary }}" "corefetch-${{ matrix.target }}"
           fi
 
       - name: Generate SHA-256 hash
         shell: bash
+        if: "!contains(matrix.target, 'android')"
         run: |
           cd target/${{ matrix.target }}/release/
           if [ "${{ matrix.os }}" = "windows-latest" ]; then
-            BIN="${{ matrix.artifact }}.exe"
+            BIN="corefetch-${{ matrix.target }}.exe"
           else
-            BIN="${{ matrix.artifact }}"
+            BIN="corefetch-${{ matrix.target }}"
           fi
-          ./$BIN --version hash > "${{ matrix.artifact }}-sha256"
+          ./$BIN --version hash > "sha256-${{ matrix.target }}"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.artifact }}
-          path: target/${{ matrix.target }}/release/${{ matrix.artifact }}*
+          name: corefetch-${{ matrix.target }}
+          path: |
+            target/${{ matrix.target }}/release/corefetch-${{ matrix.target }}*
+            target/${{ matrix.target }}/release/sha256-${{ matrix.target }}
 
   release:
     needs: [build]
