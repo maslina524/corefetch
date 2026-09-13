@@ -78,7 +78,7 @@ pub fn docs_derive(input: TokenStream) -> TokenStream {
     // BUILD -h module-format
     let format = if fields.is_empty() {
         quote! {
-            fn strings_format() -> Option<&'static [crate::DocString]> {
+            fn strings_format() -> Option<&'static [crate::modules::DocString]> {
                 None
             }
         }
@@ -94,12 +94,12 @@ pub fn docs_derive(input: TokenStream) -> TokenStream {
             idx += 1;
 
             quote! {
-                crate::DocString { name: #name, second: #typ, desc: #desc }
+                crate::modules::DocString { name: #name, second: #typ, desc: #desc }
             }
         });
 
         quote! {
-            fn strings_format() -> Option<&'static [crate::DocString]> {
+            fn strings_format() -> Option<&'static [crate::modules::DocString]> {
                 Some(&[
                     #(#strings),*
                 ])
@@ -110,7 +110,7 @@ pub fn docs_derive(input: TokenStream) -> TokenStream {
     // BUILD -h module-lua
     let lua = if fields.is_empty() {
         quote! {
-            fn strings_lua() -> Option<&'static [crate::DocString]> {
+            fn strings_lua() -> Option<&'static [crate::modules::DocString]> {
                 None
             }
         }
@@ -124,12 +124,37 @@ pub fn docs_derive(input: TokenStream) -> TokenStream {
             };
 
             quote! {
-                crate::DocString { name: #name, second: <#field_ty as crate::lua::AsLua>::LUA_TYPE, desc: #desc }
+                crate::modules::DocString { name: #name, second: <#field_ty as crate::lua::AsLua>::LUA_TYPE, desc: #desc }
             }
         });
         quote! {
-            fn strings_lua() -> Option<&'static [crate::DocString]> {
+            fn strings_lua() -> Option<&'static [crate::modules::DocString]> {
                 Some(&[
+                    #(#strings),*
+                ])
+            }
+        }
+    };
+
+    // BUILD -h module-example
+    let example = if fields.is_empty() {
+        quote! {
+            fn strings_example(self) -> Option<alloc::vec::Vec<(&'static str, alloc::string::String)>> {
+                None
+            }
+        }
+    } else {
+        let strings = fields.iter().map(|field| {
+            let name = field_to_config_name(field);
+            let ident = field.ident.as_ref().unwrap();
+
+            quote! {
+                (#name, crate::format!("{}", self.#ident))
+            }
+        });
+        quote! {
+            fn strings_example(self) -> Option<alloc::vec::Vec<(&'static str, alloc::string::String)>> {
+                Some(alloc::vec![
                     #(#strings),*
                 ])
             }
@@ -139,9 +164,10 @@ pub fn docs_derive(input: TokenStream) -> TokenStream {
     let combined = quote! {
         use crate::lua::AsLua;
 
-        impl crate::Docs for #struct_name {
+        impl crate::modules::Docs for #struct_name {
             #format
             #lua
+            #example
         }
     };
     TokenStream::from(combined)

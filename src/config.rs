@@ -140,6 +140,7 @@ impl Config {
         }
     }
 
+    #[track_caller]
     pub fn get() -> &'static Self {
         PRESET
             .get()

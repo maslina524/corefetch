@@ -92,19 +92,6 @@ static ALLOCATOR: Allocator = Allocator;
 
 const MIN_OFFSET: usize = 24;
 
-// 473kb -> 428kb
-pub trait Docs {
-    fn strings_format() -> Option<&'static [DocString]>;
-    fn strings_lua() -> Option<&'static [DocString]>;
-}
-
-#[derive(Debug)]
-pub struct DocString {
-    name: &'static str,
-    second: &'static str,
-    desc: Option<&'static str>
-}
-
 #[cfg(not(test))]
 mod panic_impl {
     use core::panic::PanicInfo;
@@ -161,7 +148,7 @@ fn build_logo_buf(lines: &Vec<(String, usize)>, max_len: usize) -> Vec<String> {
 }
 
 fn get_module_lines(preset_module: &ConfigModule, max_len_line: usize) -> Option<Vec<String>> {
-    modules::from_preset_module(preset_module).map(|module| {
+    modules::from_preset_module(&preset_module.typ).map(|module| {
         let string = module.format(
             FormatValue {
                 format: preset_module.key.as_deref(), 
@@ -301,6 +288,27 @@ fn print_help(theme: Option<&str>) -> ! {
                     }
                 } else {
                     println!("Module `{ident}` doesn't support lua");
+                }
+            },
+            "example" => {
+                Config::get_or_init(Config::default());
+                
+                let Some(module) = modules::from_preset_module(ident) else {
+                    println!("Module `{ident}` doesn't have variables");
+                    exit(1)
+                };
+
+                if let Some(doc) = (vtable.example)(module) {
+                    // println!(
+                    //     "# In config file: {{ \"type\": \"{ident}\", \"format\": \"lua: return (...).{}\" }}",
+                    //     doc[0].name
+                    // );
+                    println!("The following variables are passed:");
+                    for (name, value) in doc {
+                        println!("{name:>24} : {value}");
+                    }
+                } else {
+                    println!("Module `{ident}` doesn't have variables");
                 }
             },
             _ => {

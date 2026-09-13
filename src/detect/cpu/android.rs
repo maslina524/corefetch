@@ -6,16 +6,12 @@ use alloc::{
 };
 
 use crate::{
-    abort, 
-    detect::cpu::CpuInfo,
-    format, 
-    formats::Frequency, 
-    linux::{
+    abort, detect::cpu::CpuInfo, format, formats::Frequency, linux::{
         fs,
         libc::__system_property_get,
         parser::{LinuxInfo, parse_range_notation}, 
         path::Path
-    }
+    }, warning
 };
 
 const PROP_VALUE_MAX: usize = 92;
@@ -31,12 +27,6 @@ impl CpuInfo {
 
         let name = Self::tech_to_name(tech.to_bytes()).to_owned();
         let logical_cores = Self::logical_cores_count();
-        
-        let base_freq_raw = info
-            .get("cpu MHz")
-            .map_or(0.0, |s| s.parse::<f64>().unwrap_or(0.0));
-
-        let base_freq = Frequency::from_hz((base_freq_raw * 1000.0) as u64);
 
         let vendor = Self::vendor();
         let (family, model) = Self::get_family_and_model();
@@ -52,23 +42,51 @@ impl CpuInfo {
             packages: Self::package_count(),
             code_name,
             technology: Self::technology(),
-            base_freq,
+            base_freq: Self::base_freq_android(),
             temperature: Self::temperature(),
-            max_freq: Self::max_freq(),
+            max_freq: Self::max_freq_android(),
             logical_grouped: Self::logical_grouped(),
             micro_arch: Self::micro_arch()
         }
     }
 
+    fn max_freq_android() -> Frequency {
+        match fs::read_to_string("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq") {
+            Ok(c) => {
+                crate::println!("Max freq raw: `{c}`");
+                let hz = c.trim().parse::<u64>().unwrap_or(0);
+                Frequency::from_hz(hz)
+            },
+            Err(e) => {
+                warning!("Failed to read .../cpufreq/cpuinfo_max_freq: {e}");
+                Frequency::default()
+            }
+        }
+    }
+
+    fn base_freq_android() -> Frequency {
+        match fs::read_to_string("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq") {
+            Ok(c) => {
+                crate::println!("Base freq raw: `{c}`");
+                let hz = c.trim().parse::<u64>().unwrap_or(0);
+                Frequency::from_hz(hz)
+            },
+            Err(e) => {
+                warning!("Failed to read .../cpufreq/scaling_cur_freq: {e}");
+                Frequency::default()
+            }
+        }
+    }
+
     fn tech_to_name(tech: &[u8]) -> &'static str {
         match tech {
-            b"SM6225" =>   "Snapdragon 680 4G",
+            b"SM6225" =>    "Snapdragon 680 4G",
             b"SM6225-AD" => "Snapdragon 685",
-            b"SM6115" =>   "Snapdragon 662/665/460",
-            b"SM4250" =>   "Snapdragon 460",
-            b"SM6375" =>   "Snapdragon 695 5G",
-            b"SM8450" =>   "Snapdragon 8 Gen 1",
-            b"SM8550" =>   "Snapdragon 8 Gen 2",
+            b"SM6115" =>    "Snapdragon 662/665/460",
+            b"SM4250" =>    "Snapdragon 460",
+            b"SM6375" =>    "Snapdragon 695 5G",
+            b"SM8450" =>    "Snapdragon 8 Gen 1",
+            b"SM8550" =>    "Snapdragon 8 Gen 2",
             _ => "Unknown"
         }
     }
