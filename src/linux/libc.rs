@@ -77,6 +77,7 @@ unsafe extern "C" {
     pub safe fn popen(command: *const c_char, typ: *const c_char) -> FileHandle;
     pub safe fn pclose(stream: FileHandle) -> c_int;
     pub safe fn fgets(s: *mut c_char, size: c_int, stream: FileHandle) -> *mut c_char;
+    pub safe fn uname(st: *mut Utsname) -> c_int;
 }
 
 #[cfg(not(target_os = "android"))]
@@ -111,6 +112,16 @@ pub fn errno() -> i32 {
     unsafe { *__errno() }
     #[cfg(not(target_os = "android"))]
     unsafe { *__errno_location() }
+}
+
+#[repr(C)]
+#[derive(Default)]
+pub struct Utsname {
+    pub sysname: *mut c_char,
+    pub nodename: *mut c_char,
+    pub release: *mut c_char,
+    pub version: *mut c_char,
+    pub machine: *mut c_char,
 }
 
 #[repr(C)]

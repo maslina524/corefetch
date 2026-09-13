@@ -360,6 +360,9 @@ static ARGS: OnceLock<Vec<String>> = OnceLock::new();
 #[cfg(any(target_os = "linux", target_os = "android"))]
 use core::ffi::c_char;
 
+// ANDROID BUILD:
+// LUA_ANDROID_LIB_DIR=$PWD/bin/android-aarch64 cargo build --release --target aarch64-linux-android
+
 // #[cfg(not(test))]
 #[allow(
     clippy::similar_names, 

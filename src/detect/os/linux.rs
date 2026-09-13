@@ -9,10 +9,10 @@ use crate::{
     detect::os::OsInfo
 };
 
+const SYSNAME: &str = "Linux";
+
 impl OsInfo {
     pub fn new() -> Self {
-        let sysname = "Linux";
-
         let os_release = LinuxInfo::parse_os_release().unwrap();
 
         let name = os_release.get_default("NAME", &"Unknown".to_owned());
@@ -26,7 +26,7 @@ impl OsInfo {
         let nerd = Self::nerd(&id);
 
         Self { 
-            sysname,
+            sysname: SYSNAME,
             name,
             id: id.clone(),
             id_like: id,

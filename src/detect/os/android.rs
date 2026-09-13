@@ -14,18 +14,17 @@ use crate::{
 };
 
 const PROP_VALUE_MAX: usize = 92;
+const SYSNAME: &str = "Linux";
 
 impl OsInfo {
     pub fn new() -> Self {
-        let sysname = "Linux";
-
         let name = "Android".to_owned();
         let codename = String::new();
         let variant = String::new();
         let variant_id = String::new();
         let id = "android".to_owned();
 
-        let c_version = [0u8; PROP_VALUE_MAX + 1];
+        let mut c_version = [0u8; PROP_VALUE_MAX + 1];
         __system_property_get(c"ro.build.version.release".as_ptr(), c_version.as_mut_ptr());
         let version = CStr::from_bytes_until_nul(&c_version)
             .unwrap()
@@ -33,7 +32,7 @@ impl OsInfo {
             .into_owned();
 
         Self { 
-            sysname,
+            sysname: SYSNAME,
             name,
             id: id.clone(),
             id_like: id,
