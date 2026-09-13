@@ -365,7 +365,10 @@ static ARGS: OnceLock<Vec<String>> = OnceLock::new();
 use core::ffi::c_char;
 
 // ANDROID BUILD:
-// LUA_ANDROID_LIB_DIR=$PWD/bin/android-aarch64 cargo build --release --target aarch64-linux-android
+// cargo ndk -t arm64-v8a --platform 24 build --release
+
+// WINDOWS & LINUX
+// cargo build --release
 
 // #[cfg(not(test))]
 #[allow(

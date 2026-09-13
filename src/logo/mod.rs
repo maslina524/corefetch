@@ -118,7 +118,9 @@ impl LogoInfo {
         
         let lines: Vec<String> = lines_string.lines().map(ToOwned::to_owned).collect();
         let mut ret = Vec::new();
-        let mut cur_code = "";
+        let mut cur_code = self.colors.first()
+            .map(ToOwned::to_owned)
+            .unwrap_or_default();
         for line in lines {
             let mut ret_len = 0;
             let mut ret_line = format!("\x1b[1;{cur_code}m");

@@ -14,6 +14,16 @@ pub fn get() -> &'static Vec<LogoInfo> {
     F.get_or_init(|| {
         vec![
             LogoInfo {
+                names: &["ferris", "rust"],
+                lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/f/ferris.txt")),
+                colors: &[
+                    color::FG_RED,
+                    color::FG_WHITE
+                ],
+                color_keys: color::FG_RED,
+                color_title: color::FG_RED
+            },
+            LogoInfo {
                 names: &["fastfetch", "ff"],
                 lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/f/fastfetch.txt")),
                 colors: &[
