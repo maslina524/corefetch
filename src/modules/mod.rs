@@ -97,34 +97,34 @@ pub trait Docs {
     fn strings_example(self) -> Option<alloc::vec::Vec<(&'static str, String)>>;
 }
 
-pub struct DocsVtable<T> {
+pub struct DocsVtable {
     pub format: fn() -> Option<&'static [DocString]>,
     pub lua: fn() -> Option<&'static [DocString]>,
-    pub example: fn(T) -> Option<alloc::vec::Vec<Example>>
+    pub example: fn() -> Option<alloc::vec::Vec<Example>>
 }
 
-impl<T> DocsVtable<T> {
+impl DocsVtable {
     pub fn from_str(name: &str) -> Option<Self> {
         match name {
-            "break"      => Some(Self { format: Break::strings_format,      lua: Break::strings_lua,      example: |_| Break::strings_example(Break::new())           }),
-            "colors"     => Some(Self { format: Colors::strings_format,     lua: Colors::strings_lua,     example: |_| Colors::strings_example(Colors::new())         }),
-            "commit"     => Some(Self { format: Commit::strings_format,     lua: Commit::strings_lua,     example: |_| Commit::strings_example(Commit::new())         }),
-            "cpu"        => Some(Self { format: Cpu::strings_format,        lua: Cpu::strings_lua,        example: |_| Cpu::strings_example(Cpu::new())               }),
-            "custom"     => Some(Self { format: Custom::strings_format,     lua: Custom::strings_lua,     example: |_| Custom::strings_example(Custom::new())         }),
-            "datetime"   => Some(Self { format: Datetime::strings_format,   lua: Datetime::strings_lua,   example: |_| Datetime::strings_example(Datetime::new())     }),
-            "gpu"        => Some(Self { format: Gpu::strings_format,        lua: Gpu::strings_lua,        example: |_| Gpu::strings_example(Gpu::new())               }),
-            "initsystem" => Some(Self { format: Initsystem::strings_format, lua: Initsystem::strings_lua, example: |_| Initsystem::strings_example(Initsystem::new()) }),
-            "kernel"     => Some(Self { format: Kernel::strings_format,     lua: Kernel::strings_lua,     example: |_| Kernel::strings_example(Kernel::new())         }),
-            "locale"     => Some(Self { format: Locale::strings_format,     lua: Locale::strings_lua,     example: |_| Locale::strings_example(Locale::new())         }),
-            "memory"     => Some(Self { format: Memory::strings_format,     lua: Memory::strings_lua,     example: |_| Memory::strings_example(Memory::new())         }),
-            "os"         => Some(Self { format: Os::strings_format,         lua: Os::strings_lua,         example: |_| Os::strings_example(Os::new())                 }),
-            "processes"  => Some(Self { format: Processes::strings_format,  lua: Processes::strings_lua,  example: |_| Processes::strings_example(Processes::new())   }),
-            "separator"  => Some(Self { format: Separator::strings_format,  lua: Separator::strings_lua,  example: |_| Separator::strings_example(Separator::new())   }),
-            "title"      => Some(Self { format: Title::strings_format,      lua: Title::strings_lua,      example: |_| Title::strings_example(Title::new())           }),
-            "uptime"     => Some(Self { format: Uptime::strings_format,     lua: Uptime::strings_lua,     example: |_| Uptime::strings_example(Uptime::new())         }),
-            "version"    => Some(Self { format: Version::strings_format,    lua: Version::strings_lua,    example: |_| Version::strings_example(Version::new())       }),
-            "wallpaper"  => Some(Self { format: Wallpaper::strings_format,  lua: Wallpaper::strings_lua,  example: |_| Wallpaper::strings_example(Wallpaper::new())   }),
-            "weather"    => Some(Self { format: Weather::strings_format,    lua: Weather::strings_lua,    example: |_| Weather::strings_example(Weather::new())       }),
+            "break"      => Some(Self { format: Break::strings_format,      lua: Break::strings_lua,      example: || Break::strings_example(Break::new())           }),
+            "colors"     => Some(Self { format: Colors::strings_format,     lua: Colors::strings_lua,     example: || Colors::strings_example(Colors::new())         }),
+            "commit"     => Some(Self { format: Commit::strings_format,     lua: Commit::strings_lua,     example: || Commit::strings_example(Commit::new())         }),
+            "cpu"        => Some(Self { format: Cpu::strings_format,        lua: Cpu::strings_lua,        example: || Cpu::strings_example(Cpu::new())               }),
+            "custom"     => Some(Self { format: Custom::strings_format,     lua: Custom::strings_lua,     example: || Custom::strings_example(Custom::new())         }),
+            "datetime"   => Some(Self { format: Datetime::strings_format,   lua: Datetime::strings_lua,   example: || Datetime::strings_example(Datetime::new())     }),
+            "gpu"        => Some(Self { format: Gpu::strings_format,        lua: Gpu::strings_lua,        example: || Gpu::strings_example(Gpu::new())               }),
+            "initsystem" => Some(Self { format: Initsystem::strings_format, lua: Initsystem::strings_lua, example: || Initsystem::strings_example(Initsystem::new()) }),
+            "kernel"     => Some(Self { format: Kernel::strings_format,     lua: Kernel::strings_lua,     example: || Kernel::strings_example(Kernel::new())         }),
+            "locale"     => Some(Self { format: Locale::strings_format,     lua: Locale::strings_lua,     example: || Locale::strings_example(Locale::new())         }),
+            "memory"     => Some(Self { format: Memory::strings_format,     lua: Memory::strings_lua,     example: || Memory::strings_example(Memory::new())         }),
+            "os"         => Some(Self { format: Os::strings_format,         lua: Os::strings_lua,         example: || Os::strings_example(Os::new())                 }),
+            "processes"  => Some(Self { format: Processes::strings_format,  lua: Processes::strings_lua,  example: || Processes::strings_example(Processes::new())   }),
+            "separator"  => Some(Self { format: Separator::strings_format,  lua: Separator::strings_lua,  example: || Separator::strings_example(Separator::new())   }),
+            "title"      => Some(Self { format: Title::strings_format,      lua: Title::strings_lua,      example: || Title::strings_example(Title::new())           }),
+            "uptime"     => Some(Self { format: Uptime::strings_format,     lua: Uptime::strings_lua,     example: || Uptime::strings_example(Uptime::new())         }),
+            "version"    => Some(Self { format: Version::strings_format,    lua: Version::strings_lua,    example: || Version::strings_example(Version::new())       }),
+            "wallpaper"  => Some(Self { format: Wallpaper::strings_format,  lua: Wallpaper::strings_lua,  example: || Wallpaper::strings_example(Wallpaper::new())   }),
+            "weather"    => Some(Self { format: Weather::strings_format,    lua: Weather::strings_lua,    example: || Weather::strings_example(Weather::new())       }),
             _ => None,
         }
     }

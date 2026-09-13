@@ -293,12 +293,7 @@ fn print_help(theme: Option<&str>) -> ! {
             "example" => {
                 Config::get_or_init(Config::default());
                 
-                let Some(module) = modules::from_preset_module(ident) else {
-                    println!("Module `{ident}` doesn't have variables");
-                    exit(1)
-                };
-
-                if let Some(doc) = (vtable.example)(module) {
+                if let Some(doc) = (vtable.example)() {
                     // println!(
                     //     "# In config file: {{ \"type\": \"{ident}\", \"format\": \"lua: return (...).{}\" }}",
                     //     doc[0].name
@@ -467,7 +462,7 @@ fn corefetch_main() -> i32 {
         }
     }
 
-    // The handle is created not with GetStdHandle,
+    // The handle is created not with `GetStdHandle`,
     // but with `CreateFile`, which requires manual freeing
     #[cfg(target_os = "windows")]
     let _ = env::close_terminal_handle();
