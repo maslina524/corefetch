@@ -82,7 +82,7 @@ use crate::{
     imp::http::Request, 
     config::{Config, ConfigModule},
     url::Url,
-    formats::split_by_len_ansi,
+    formats::SplittedAnsiIter,
     nvidia::NvidiaLib,
     sync::OnceLock
 };
@@ -147,7 +147,7 @@ fn build_logo_buf(lines: &Vec<(String, usize)>, max_len: usize) -> Vec<String> {
     ret
 }
 
-fn get_module_lines(preset_module: &ConfigModule, max_len_line: usize) -> Option<Vec<String>> {
+fn get_module_lines(preset_module: &ConfigModule, max_len_line: usize) -> Option<SplittedAnsiIter> {
     modules::from_preset_module(&preset_module.typ).map(|module| {
         let string = module.format(
             FormatValue {
@@ -160,11 +160,11 @@ fn get_module_lines(preset_module: &ConfigModule, max_len_line: usize) -> Option
             },
             Some(&preset_module.map)
         );
-        split_by_len_ansi(&string, max_len_line)
+        SplittedAnsiIter::new(&string, max_len_line)
     })
 }
 
-fn build_info_buf(max_len: usize) -> Vec<String> {
+fn build_info_buf(max_len: usize) -> Vec<&'static str> {
     let padding = Config::get().get_logo_padding();
     let (w, _) = env::terminal_size();
     let max_len_line = if max_len + padding.left + padding.right < w {
@@ -385,7 +385,7 @@ extern "C" fn main(argc: c_int, argv: *const *const c_char) -> c_int {
     corefetch_main() as c_int
 }
 
-// #[cfg(not(test))]
+#[cfg(not(test))]
 #[cfg(target_os = "windows")]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
@@ -443,7 +443,7 @@ fn corefetch_main() -> i32 {
         let empty_logo_line = " ".repeat(max_logo_len_padding);
         for i in 0..max_lines {
             let logo_line = logo_buf.get(i).map_or(empty_logo_line.as_str(), String::as_str);
-            let info_line = info_buf.get(i).map_or("", String::as_str);
+            let info_line = info_buf.get(i).map_or("", |s| *s);
             println!("{logo_line}{info_line}\x1b[0m");
         }
     } else {

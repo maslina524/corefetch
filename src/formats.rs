@@ -1,14 +1,14 @@
 use core::{
     cmp::Ordering, 
     fmt::Write, 
-    str::FromStr
+    str::FromStr,
+    ops::Range
 };
 
 use alloc::{
     borrow::{Cow, ToOwned}, 
-    string::String, 
-    vec::Vec,
-    vec
+    string::String,
+    vec::Vec
 };
 
 // Why does clippy think this variant is better than `colors::*`?
@@ -497,74 +497,114 @@ pub fn format_color(s: &str, plan: ColorPlan) -> String {
     ret.join(";")
 }
 
-pub fn split_by_len_ansi(s: &str, len: usize) -> Vec<String> {
-    if s.trim().is_empty() {
-        return vec![String::new()];
-    }
-    let chars: Vec<char> = s.chars().collect();
-    let mut ret = Vec::new();
-    let mut build_string_len = 0;
-    let mut build_string = String::new();
-    let mut currect_ansi = String::from("\x1b[0m");
-    let mut pos = 0;
-
-    while pos < chars.len() {
-        if chars[pos] == '\x1b' {
-            currect_ansi = String::new();
-            while pos < chars.len() && chars[pos] != 'm' {
-                currect_ansi.push(chars[pos]);
-                pos += 1;
-            }
-            currect_ansi.push('m');
-            pos += 1;
-
-            build_string.push_str(&currect_ansi);
-            continue;
-        }
-
-        if chars[pos] == '\n' {
-            if currect_ansi != "\x1b[0m" {
-                build_string.push_str("\x1b[0m");
-            }
-
-            if visible_len(&build_string) > 0 {
-                ret.push(build_string);
-            }
-
-            build_string_len = 0;
-            build_string = if currect_ansi == "\x1b[0m" {
-                String::new()
-            } else {
-                currect_ansi.clone()
-            };
-            pos += 1;
-            continue;
-        }
-
-        build_string.push(chars[pos]);
-        pos += 1;
-        build_string_len += 1;
-
-        if build_string_len >= len {
-            if currect_ansi != "\x1b[0m" {
-                build_string.push_str("\x1b[0m");
-            }
-            ret.push(build_string);
-            build_string_len = 0;
-            build_string = if currect_ansi == "\x1b[0m" {
-                String::new()
-            } else {
-                currect_ansi.clone()
-            };
-        }
-    }
-
-    if visible_len(&build_string) > 0 {
-        ret.push(build_string);
-    }
-
-    ret
+#[derive(Clone)]
+pub struct SplittedAnsiIter {
+    buf: &'static str,
+    ranges: Vec<Range<usize>>,
+    index: usize,
 }
+
+impl SplittedAnsiIter {
+    pub fn new(s: &str, len: usize) -> Self {
+        if s.trim().is_empty() {
+            return Self { buf: "", ranges: Vec::new(), index: 0 };
+        }
+
+        let mut buf = String::with_capacity(s.len() + 32);
+        let mut ranges: Vec<Range<usize>> = Vec::new();
+
+        let mut build_len = 0;
+        let mut chunk_start = 0;
+        let mut current_ansi = String::from("\x1b[0m");
+
+        let mut it = s.chars();
+        while let Some(ch) = it.next() {
+            if ch == '\x1b' {
+                current_ansi.clear();
+                current_ansi.push('\x1b');
+                buf.push('\x1b');
+                for c in it.by_ref() {
+                    current_ansi.push(c);
+                    buf.push(c);
+                    if c == 'm' {
+                        break;
+                    }
+                }
+                continue;
+            }
+            
+            if ch == '\n' {
+                if current_ansi != "\x1b[0m" {
+                    buf.push_str("\x1b[0m");
+                }
+                if build_len > 0 {
+                    ranges.push(chunk_start..buf.len());
+                } else {
+                    buf.truncate(chunk_start);
+                }
+                build_len = 0;
+                chunk_start = buf.len();
+                if current_ansi != "\x1b[0m" {
+                    buf.push_str(&current_ansi);
+                }
+                continue;
+            }
+
+            buf.push(ch);
+            build_len += 1;
+
+            if build_len >= len {
+                if current_ansi != "\x1b[0m" {
+                    buf.push_str("\x1b[0m");
+                }
+                ranges.push(chunk_start..buf.len());
+                build_len = 0;
+                chunk_start = buf.len();
+                if current_ansi != "\x1b[0m" {
+                    buf.push_str(&current_ansi);
+                }
+            }
+        }
+
+        if build_len > 0 {
+            if current_ansi != "\x1b[0m" {
+                buf.push_str("\x1b[0m");
+            }
+            ranges.push(chunk_start..buf.len());
+        }
+
+        Self {
+            buf: String::leak(buf),
+            ranges,
+            index: 0,
+        }
+    }
+
+    pub fn len(&self) -> usize {
+        self.ranges.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.ranges.is_empty()
+    }
+}
+
+impl Iterator for SplittedAnsiIter {
+    type Item = &'static str;
+
+    fn next(&mut self) -> Option<&'static str> {
+        let r = self.ranges.get(self.index)?;
+        self.index += 1;
+        Some(&self.buf[r.clone()])
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        let rem = self.ranges.len() - self.index;
+        (rem, Some(rem))
+    }
+}
+
+impl ExactSizeIterator for SplittedAnsiIter {}
 
 pub fn snake_to_camel_ascii(s: &str) -> String {
     let mut ret = String::with_capacity(s.len());
@@ -626,7 +666,10 @@ macro_rules! formatln {
 #[cfg(test)]
 mod tests {
     use crate::formats::{
-        MemorySize, expand_rust_unicode, expand_unicode, split_by_len_ansi
+        MemorySize, 
+        expand_rust_unicode, 
+        expand_unicode, 
+        SplittedAnsiIter
     };
 
     #[test]
@@ -651,7 +694,7 @@ mod tests {
     #[test]
     fn split_by_len_test() {
         let s = "HelloHelloHello";
-        let lines = split_by_len_ansi(s, 5);
+        let lines = SplittedAnsiIter::new(s, 5).collect::<Vec<&str>>();
         assert_eq!(lines, vec![
             "Hello",
             "Hello",
@@ -662,7 +705,7 @@ mod tests {
     #[test]
     fn split_by_len_ansi_test() {
         let s = "\x1b[31mHelloHelloHello\x1b[0m";
-        let lines = split_by_len_ansi(s, 5);
+        let lines = SplittedAnsiIter::new(s, 5).collect::<Vec<&str>>();
         assert_eq!(lines, vec![
             "\x1b[31mHello\x1b[0m",
             "\x1b[31mHello\x1b[0m",
