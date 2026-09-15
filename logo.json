@@ -1,0 +1,6711 @@
+{
+  "a": [
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/a/adelie.txt",
+      "names": [
+        "adélie",
+        "adelie"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/a/aeros.txt",
+      "names": [
+        "aeros"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/a/aeon.txt",
+      "names": [
+        "aeon"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/a/aerynos.txt",
+      "names": [
+        "aerynos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/a/aerynos_old.txt",
+      "names": [
+        "aerynos old"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_MAGENTA",
+        "color::FG_RED",
+        "color::FG_YELLOW",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/a/afterglow.txt",
+      "names": [
+        "afterglow"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/a/aix.txt",
+      "names": [
+        "aix"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_LIGHT_YELLOW",
+        "color::FG_BLUE",
+        "color::FG_LIGHT_GREEN",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/a/almalinux.txt",
+      "names": [
+        "almalinux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/a/alpine.txt",
+      "names": [
+        "alpine"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/a/alpine2.txt",
+      "names": [
+        "alpine2"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/a/alpine_small.txt",
+      "names": [
+        "alpine small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/a/alpine2_small.txt",
+      "names": [
+        "alpine2 small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/a/alpine3_small.txt",
+      "names": [
+        "alpine3 small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_CYAN",
+      "color_title": "color::FG_CYAN",
+      "colors": [
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/a/alter.txt",
+      "names": [
+        "alter"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_YELLOW",
+      "colors": [
+        "color::FG_YELLOW",
+        "color::FG_BLACK",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/a/altlinux.txt",
+      "names": [
+        "altlinux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_YELLOW",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/a/amazon.txt",
+      "names": [
+        "amazon"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/a/amazon_linux.txt",
+      "names": [
+        "amazon linux",
+        "amzn"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_LIGHT_RED",
+        "color::FG_YELLOW",
+        "color::FG_BLUE",
+        "color::FG_CYAN",
+        "color::FG_LIGHT_YELLOW",
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/a/amiga.txt",
+      "names": [
+        "amiga"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_CYAN",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/a/amogos.txt",
+      "names": [
+        "amogos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/a/anarchy.txt",
+      "names": [
+        "anarchy"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/a/android.txt",
+      "names": [
+        "android"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/a/android_small.txt",
+      "names": [
+        "android small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/a/anduinos.txt",
+      "names": [
+        "anduinos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_CYAN",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/a/antergos.txt",
+      "names": [
+        "antergos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED"
+      ],
+      "lines": "/temp/a/antix.txt",
+      "names": [
+        "antix"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_BLACK",
+        "color::FG_YELLOW",
+        "color::FG_CYAN",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/a/anushos.txt",
+      "names": [
+        "anushos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/a/aoscosretro.txt",
+      "names": [
+        "aosc os/retro",
+        "aoscosretro"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/a/aoscosretro_small.txt",
+      "names": [
+        "aosc os/retro small",
+        "aoscosretro small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_BLACK",
+        "color::FG_RED",
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/a/aoscos.txt",
+      "names": [
+        "aosc os",
+        "aoscos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/a/aoscos_old.txt",
+      "names": [
+        "aosc os old",
+        "aoscos old"
+      ]
+    },
+    {
+      "color_keys": "color::FG_CYAN",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_CYAN",
+        "color::FG_CYAN",
+        "color::FG_CYAN",
+        "color::FG_CYAN",
+        "color::FG_CYAN",
+        "color::FG_CYAN",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/a/aperture.txt",
+      "names": [
+        "aperture"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_YELLOW",
+        "color::FG_LIGHT_RED",
+        "color::FG_RED",
+        "color::FG_MAGENTA",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/m/macos.txt",
+      "names": [
+        "apple"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_YELLOW",
+        "color::FG_RED",
+        "color::FG_MAGENTA",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/m/macos_small.txt",
+      "names": [
+        "apple small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/a/apricity.txt",
+      "names": [
+        "apricity"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/a/archbox.txt",
+      "names": [
+        "archbox"
+      ]
+    },
+    {
+      "color_keys": "color::FG_CYAN",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/a/archcraft.txt",
+      "names": [
+        "archcraft"
+      ]
+    },
+    {
+      "color_keys": "color::FG_CYAN",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/a/archcraft2.txt",
+      "names": [
+        "archcraft2"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/a/arch.txt",
+      "names": [
+        "arch",
+        "archmerge"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/a/arch2.txt",
+      "names": [
+        "arch2"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/a/arch3.txt",
+      "names": [
+        "arch3"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/a/arch_small.txt",
+      "names": [
+        "arch small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/a/arch_old.txt",
+      "names": [
+        "arch old"
+      ]
+    },
+    {
+      "color_keys": "color::FG_CYAN",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/a/archlabs.txt",
+      "names": [
+        "archlabs"
+      ]
+    },
+    {
+      "color_keys": "color::FG_CYAN",
+      "color_title": "color::FG_CYAN",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_BLACK"
+      ],
+      "lines": "/temp/a/archstrike.txt",
+      "names": [
+        "archstrike"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/a/arkane.txt",
+      "names": [
+        "arkane",
+        "arkane linux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/a/armbian.txt",
+      "names": [
+        "armbian"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED"
+      ],
+      "lines": "/temp/a/armbian2.txt",
+      "names": [
+        "armbian2"
+      ]
+    },
+    {
+      "color_keys": "color::FG_CYAN",
+      "color_title": "color::FG_CYAN",
+      "colors": [
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/a/artix.txt",
+      "names": [
+        "artix"
+      ]
+    },
+    {
+      "color_keys": "color::FG_CYAN",
+      "color_title": "color::FG_CYAN",
+      "colors": [
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/a/artix_small.txt",
+      "names": [
+        "artix small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_CYAN",
+      "color_title": "color::FG_CYAN",
+      "colors": [
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/a/artix2_small.txt",
+      "names": [
+        "artix2 small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/a/arco.txt",
+      "names": [
+        "arco",
+        "arcolinux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/a/arco_small.txt",
+      "names": [
+        "arco small",
+        "arcolinux small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/a/arselinux.txt",
+      "names": [
+        "arse",
+        "arselinux",
+        "arse-linux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/a/arya.txt",
+      "names": [
+        "arya"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_YELLOW",
+        "color::FG_GREEN",
+        "color::FG_RED",
+        "color::FG_LIGHT_BLACK",
+        "color::FG_WHITE",
+        "color::FG_CYAN",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/a/asahi.txt",
+      "names": [
+        "asahi",
+        "asahi-linux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_LIGHT_YELLOW",
+        "color::FG_CYAN",
+        "color::FG_RED",
+        "color::FG_LIGHT_RED",
+        "color::FG_WHITE",
+        "color::FG_BLACK",
+        "color::FG_LIGHT_CYAN"
+      ],
+      "lines": "/temp/a/asahi2.txt",
+      "names": [
+        "asahi2",
+        "asahi-linux2"
+      ]
+    },
+    {
+      "color_keys": "color::FG_CYAN",
+      "color_title": "color::FG_CYAN",
+      "colors": [
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/a/aster.txt",
+      "names": [
+        "aster"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/a/asteroidos.txt",
+      "names": [
+        "asteroidos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/a/astos.txt",
+      "names": [
+        "astos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_LIGHT_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/a/astra_linux.txt",
+      "names": [
+        "astra",
+        "astra linux",
+        "astralinux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_MAGENTA",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/j/januslinux.txt",
+      "names": [
+        "ataraxia"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_LIGHT_BLUE",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_LIGHT_BLUE"
+      ],
+      "lines": "/temp/a/athenaos.txt",
+      "names": [
+        "athenaos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/a/athenaos_old.txt",
+      "names": [
+        "athenaos old"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_MAGENTA",
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/a/aurora.txt",
+      "names": [
+        "aurora"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/a/axos.txt",
+      "names": [
+        "axos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/a/azos.txt",
+      "names": [
+        "azos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/a/azurelinux.txt",
+      "names": [
+        "azurelinux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/a/azurelinux2.txt",
+      "names": [
+        "azurelinux2"
+      ]
+    }
+  ],
+  "b": [
+    {
+      "color_keys": "color::FG_LIGHT_BLACK",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_LIGHT_BLACK",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/b/bedrock.txt",
+      "names": [
+        "bedrock"
+      ]
+    },
+    {
+      "color_keys": "color::FG_LIGHT_BLACK",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_LIGHT_BLACK",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/b/bedrock_small.txt",
+      "names": [
+        "bedrock small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/b/berserkarch.txt",
+      "names": [
+        "berserkarch"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_CYAN",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_YELLOW",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/b/biglinux.txt",
+      "names": [
+        "biglinux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/b/bitrig.txt",
+      "names": [
+        "bitrig"
+      ]
+    },
+    {
+      "color_keys": "color::FG_LIGHT_RED",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_LIGHT_RED",
+        "color::FG_BLACK"
+      ],
+      "lines": "/temp/b/blackarch.txt",
+      "names": [
+        "blackarch"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLACK",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLACK"
+      ],
+      "lines": "/temp/b/blackmesa.txt",
+      "names": [
+        "blackmesa",
+        "black-mesa"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_YELLOW",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_YELLOW",
+        "color::FG_LIGHT_BLUE"
+      ],
+      "lines": "/temp/b/blackpanther.txt",
+      "names": [
+        "blackpanther"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/b/blag.txt",
+      "names": [
+        "blag"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/b/blankon.txt",
+      "names": [
+        "blankon"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/b/bluelight.txt",
+      "names": [
+        "bluelight"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_LIGHT_YELLOW",
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/b/bodhi.txt",
+      "names": [
+        "bodhi"
+      ]
+    },
+    {
+      "color_keys": "color::FG_CYAN",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_GREEN",
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/b/bonsai.txt",
+      "names": [
+        "bonsai"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/b/bredos.txt",
+      "names": [
+        "bredos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE",
+        "color::FG_BLUE",
+        "color::FG_YELLOW",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/b/bsd.txt",
+      "names": [
+        "bsd"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/b/bunsenlabs.txt",
+      "names": [
+        "bunsenlabs"
+      ]
+    }
+  ],
+  "c": [
+    {
+      "color_keys": "color::FG_CYAN",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_CYAN",
+        "color::FG_BLACK"
+      ],
+      "lines": "/temp/c/cachyos.txt",
+      "names": [
+        "cachyos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_CYAN",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/c/cachyos_small.txt",
+      "names": [
+        "cachyos small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_CYAN",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/c/cachyos_old_small.txt",
+      "names": [
+        "cachyos old small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/c/calculate.txt",
+      "names": [
+        "calculate"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/c/calinixos.txt",
+      "names": [
+        "calinixos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/c/calinixos_small.txt",
+      "names": [
+        "calinixos small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/c/carbs.txt",
+      "names": [
+        "carbs"
+      ]
+    },
+    {
+      "color_keys": "color::FG_CYAN",
+      "color_title": "color::FG_CYAN",
+      "colors": [
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/c/cbl_mariner.txt",
+      "names": [
+        "cbl-mariner"
+      ]
+    },
+    {
+      "color_keys": "color::FG_CYAN",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_MAGENTA",
+        "color::FG_BLACK"
+      ],
+      "lines": "/temp/c/celos.txt",
+      "names": [
+        "celos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/c/center.txt",
+      "names": [
+        "center"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_YELLOW",
+      "colors": [
+        "color::FG_YELLOW",
+        "color::FG_GREEN",
+        "color::FG_BLUE",
+        "color::FG_MAGENTA",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/c/centos.txt",
+      "names": [
+        "centos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_YELLOW",
+      "colors": [
+        "color::FG_YELLOW",
+        "color::FG_GREEN",
+        "color::FG_BLUE",
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/c/centos_small.txt",
+      "names": [
+        "centos small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/c/cereus.txt",
+      "names": [
+        "cereus"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_MAGENTA",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/c/chakra.txt",
+      "names": [
+        "chakra"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/c/chaletos.txt",
+      "names": [
+        "chaletos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/c/chapeau.txt",
+      "names": [
+        "chapeau"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_MAGENTA",
+        "color::FG_BLUE",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/c/chimera_linux.txt",
+      "names": [
+        "chimera"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_RED",
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/c/chimera_linux2.txt",
+      "names": [
+        "chimera2"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_MAGENTA",
+        "color::FG_BLUE",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/c/chimera_linux_small.txt",
+      "names": [
+        "chimera small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/c/chonkysealos.txt",
+      "names": [
+        "chonkysealos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_RED",
+        "color::FG_YELLOW",
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/c/chrom.txt",
+      "names": [
+        "chrom",
+        "chromeos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/c/cleanjaro.txt",
+      "names": [
+        "cleanjaro"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/c/cleanjaro_small.txt",
+      "names": [
+        "cleanjaro small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_YELLOW",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/c/clear_linux.txt",
+      "names": [
+        "clear linux",
+        "clearlinux",
+        "clear linux os"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/c/clearos.txt",
+      "names": [
+        "clearos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_CYAN",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/c/clover.txt",
+      "names": [
+        "clover"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_BLUE",
+        "color::FG_LIGHT_BLACK",
+        "color::FG_LIGHT_BLUE",
+        "color::FG_BLACK"
+      ],
+      "lines": "/temp/c/cobalt.txt",
+      "names": [
+        "cobalt"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/c/codex.txt",
+      "names": [
+        "codex linux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_YELLOW",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_YELLOW",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/c/condres.txt",
+      "names": [
+        "condres"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/f/fedora_coreos.txt",
+      "names": [
+        "coreos",
+        "container linux by coreos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_LIGHT_WHITE",
+        "color::FG_YELLOW",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/t/torizoncore.txt",
+      "names": [
+        "common-torizon"
+      ]
+    },
+    {
+      "color_keys": "color::FG_LIGHT_RED",
+      "color_title": "color::FG_YELLOW",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_LIGHT_YELLOW",
+        "color::FG_YELLOW",
+        "color::FG_LIGHT_RED",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/c/cosmic.txt",
+      "names": [
+        "cosmic"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_MAGENTA",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/c/crux.txt",
+      "names": [
+        "crux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_MAGENTA",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/c/crux_small.txt",
+      "names": [
+        "crux small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_MAGENTA",
+      "colors": [
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/c/crystal.txt",
+      "names": [
+        "crystal",
+        "crystal",
+        "crystal-linux",
+        "crystal-linux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_YELLOW",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/c/cucumber.txt",
+      "names": [
+        "cucumber",
+        "cucumberos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_YELLOW",
+      "colors": [
+        "color::FG_YELLOW",
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/c/cuerdos.txt",
+      "names": [
+        "cuerdos",
+        "cuerdos gnu/linux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_WHITE",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/c/cutefishos.txt",
+      "names": [
+        "cutefishos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_CYAN",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_CYAN",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/c/cuteos.txt",
+      "names": [
+        "cuteos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_CYAN",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_CYAN",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/c/cyberos.txt",
+      "names": [
+        "cyberos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_MAGENTA",
+      "colors": [
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/c/cycledream.txt",
+      "names": [
+        "cycledream"
+      ]
+    }
+  ],
+  "d": [
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED"
+      ],
+      "lines": "/temp/d/dahlia.txt",
+      "names": [
+        "dahliaos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_CYAN",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_CYAN",
+        "color::FG_MAGENTA",
+        "color::FG_YELLOW",
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/d/darkos.txt",
+      "names": [
+        "darkos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/d/debian.txt",
+      "names": [
+        "debian"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED"
+      ],
+      "lines": "/temp/d/debian_small.txt",
+      "names": [
+        "debian small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/d/deepin.txt",
+      "names": [
+        "deepin"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/d/desaos.txt",
+      "names": [
+        "desaos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_MAGENTA",
+      "colors": [
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/d/devuan.txt",
+      "names": [
+        "devuan"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_MAGENTA",
+      "colors": [
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/d/devuan_small.txt",
+      "names": [
+        "devuan small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_LIGHT_BLACK",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_LIGHT_BLACK"
+      ],
+      "lines": "/temp/d/dietpi.txt",
+      "names": [
+        "dietpi"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/d/dracos.txt",
+      "names": [
+        "dracos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/d/dragonfly.txt",
+      "names": [
+        "dragonfly"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/d/dragonfly_small.txt",
+      "names": [
+        "dragonfly small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_DEFAULT",
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/d/dragonfly_old.txt",
+      "names": [
+        "dragonfly old"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/d/drauger.txt",
+      "names": [
+        "draugeros",
+        "drauger"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_LIGHT_GREEN",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_LIGHT_GREEN"
+      ],
+      "lines": "/temp/d/droidian.txt",
+      "names": [
+        "droidian"
+      ]
+    }
+  ],
+  "e": [
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/e/elbrus.txt",
+      "names": [
+        "elbrus"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/e/elementary.txt",
+      "names": [
+        "elementary"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/e/elementary_small.txt",
+      "names": [
+        "elementary small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_CYAN",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_LIGHT_CYAN",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/e/elive.txt",
+      "names": [
+        "elive"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/e/emmabuntus.txt",
+      "names": [
+        "emmabuntus"
+      ]
+    },
+    {
+      "color_keys": "color::FG_LIGHT_BLUE",
+      "color_title": "color::FG_LIGHT_BLUE",
+      "colors": [
+        "color::FG_LIGHT_BLUE"
+      ],
+      "lines": "/temp/e/enos.txt",
+      "names": [
+        "enos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/e/encryptos.txt",
+      "names": [
+        "encryptos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_MAGENTA",
+        "color::FG_RED",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/e/endeavouros.txt",
+      "names": [
+        "endeavouros"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_MAGENTA",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/e/endeavouros_small.txt",
+      "names": [
+        "endeavouros small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/e/endless.txt",
+      "names": [
+        "endless"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/e/enso.txt",
+      "names": [
+        "enso"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/e/eshanizedos.txt",
+      "names": [
+        "eshanizedos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/e/eurolinux.txt",
+      "names": [
+        "eurolinux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/e/evolutionos.txt",
+      "names": [
+        "evolutionos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/e/evolutionos_small.txt",
+      "names": [
+        "evolutionos small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_LIGHT_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/e/evolutionos_old.txt",
+      "names": [
+        "evolutionos old"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_LIGHT_YELLOW",
+        "color::FG_LIGHT_RED",
+        "color::FG_LIGHT_BLACK",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/e/eweos.txt",
+      "names": [
+        "eweos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/e/exherbo.txt",
+      "names": [
+        "exherbo"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_MAGENTA",
+      "colors": [
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/e/exodia_predator.txt",
+      "names": [
+        "exodia"
+      ]
+    }
+  ],
+  "f": [
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/f/ferris.txt",
+      "names": [
+        "ferris",
+        "rust"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_YELLOW",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_RED",
+        "color::FG_YELLOW",
+        "color::FG_GREEN",
+        "color::FG_DEFAULT",
+        "color::FG_MAGENTA",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/f/fastfetch.txt",
+      "names": [
+        "fastfetch",
+        "ff"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/f/fedora.txt",
+      "names": [
+        "fedora"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_YELLOW",
+        "color::FG_GREEN",
+        "color::FG_RED",
+        "color::FG_LIGHT_BLACK",
+        "color::FG_WHITE",
+        "color::FG_CYAN",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/a/asahi.txt",
+      "names": [
+        "fedora-asahi-remix"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/f/fedora_small.txt",
+      "names": [
+        "fedora small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/f/fedora2_small.txt",
+      "names": [
+        "fedora2 small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/f/fedora_old.txt",
+      "names": [
+        "fedora old"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/f/fedora_silverblue.txt",
+      "names": [
+        "fedora-silverblue"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/f/fedora_kinoite.txt",
+      "names": [
+        "fedora-kinoite"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/f/fedora_sericea.txt",
+      "names": [
+        "fedora-sericea"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/f/fedora_coreos.txt",
+      "names": [
+        "fedora-coreos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/f/femboyos.txt",
+      "names": [
+        "femboyos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/f/feren.txt",
+      "names": [
+        "feren"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/f/flatcar.txt",
+      "names": [
+        "flatcar"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/f/filotimo.txt",
+      "names": [
+        "filotimo"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/f/finnix.txt",
+      "names": [
+        "finnix"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_LIGHT_CYAN"
+      ],
+      "lines": "/temp/f/floflis.txt",
+      "names": [
+        "floflis"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/f/freebsd.txt",
+      "names": [
+        "freebsd"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED"
+      ],
+      "lines": "/temp/f/freebsd_small.txt",
+      "names": [
+        "freebsd small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/f/freemint.txt",
+      "names": [
+        "freemint"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/f/frugalware.txt",
+      "names": [
+        "frugalware",
+        "frugalware-linux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_MAGENTA",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/f/funtoo.txt",
+      "names": [
+        "funtoo"
+      ]
+    }
+  ],
+  "g": [
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/g/galliumos.txt",
+      "names": [
+        "galliumos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED"
+      ],
+      "lines": "/temp/g/garuda.txt",
+      "names": [
+        "garuda"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED"
+      ],
+      "lines": "/temp/g/garuda_dragon.txt",
+      "names": [
+        "garudadragon",
+        "garuda-dragon"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED"
+      ],
+      "lines": "/temp/g/garuda_small.txt",
+      "names": [
+        "garuda small",
+        "garuda-linux small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_MAGENTA",
+      "colors": [
+        "color::FG_MAGENTA",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/g/gentoo.txt",
+      "names": [
+        "gentoo"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_MAGENTA",
+      "colors": [
+        "color::FG_MAGENTA",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/g/gentoo_small.txt",
+      "names": [
+        "gentoo small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/g/ghostbsd.txt",
+      "names": [
+        "ghostbsd"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/g/ghostfreak.txt",
+      "names": [
+        "ghostfreak"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_MAGENTA",
+      "colors": [
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/g/glaucus.txt",
+      "names": [
+        "glaucus"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/g/gnewsense.txt",
+      "names": [
+        "gnewsense"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/g/gnome.txt",
+      "names": [
+        "gnome os"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/g/gnu.txt",
+      "names": [
+        "gnu"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_MAGENTA",
+      "colors": [
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/g/gobolinux.txt",
+      "names": [
+        "gobolinux",
+        "gobo"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/g/goldendoglinux.txt",
+      "names": [
+        "goldendoglinux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/g/grapheneos.txt",
+      "names": [
+        "grapheneos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_GREEN",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/g/grombyang.txt",
+      "names": [
+        "grombyang"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/g/guix.txt",
+      "names": [
+        "guix"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/g/guix_small.txt",
+      "names": [
+        "guix small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED"
+      ],
+      "lines": "/temp/g/gxde.txt",
+      "names": [
+        "gxde"
+      ]
+    }
+  ],
+  "h": [
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_YELLOW",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/h/haiku.txt",
+      "names": [
+        "haiku"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_YELLOW",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/h/haiku2.txt",
+      "names": [
+        "haiku2"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_YELLOW",
+      "colors": [
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/h/haiku_small.txt",
+      "names": [
+        "haiku small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/h/hamonikr.txt",
+      "names": [
+        "hamonikr"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/h/hardclanz.txt",
+      "names": [
+        "hardclanz"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/f/freebsd.txt",
+      "names": [
+        "hardenedbsd"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/h/harmonyos.txt",
+      "names": [
+        "harmonyos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/h/hash.txt",
+      "names": [
+        "hash"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/h/heliumos.txt",
+      "names": [
+        "heliumos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED"
+      ],
+      "lines": "/temp/h/hce.txt",
+      "names": [
+        "huawei cloud euleros",
+        "hce"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/h/huayra.txt",
+      "names": [
+        "huayra"
+      ]
+    },
+    {
+      "color_keys": "color::FG_LIGHT_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_LIGHT_BLUE"
+      ],
+      "lines": "/temp/h/hybrid.txt",
+      "names": [
+        "hybrid"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_RED"
+      ],
+      "lines": "/temp/h/hydroos.txt",
+      "names": [
+        "hydroos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_LIGHT_BLACK",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_LIGHT_BLACK"
+      ],
+      "lines": "/temp/h/hyperbola.txt",
+      "names": [
+        "hyperbola"
+      ]
+    },
+    {
+      "color_keys": "color::FG_LIGHT_BLACK",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_LIGHT_BLACK"
+      ],
+      "lines": "/temp/h/hyperbola_small.txt",
+      "names": [
+        "hyperbola small"
+      ]
+    }
+  ],
+  "i": [
+    {
+      "color_keys": "color::FG_LIGHT_BLACK",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_LIGHT_BLACK"
+      ],
+      "lines": "/temp/i/iglunix.txt",
+      "names": [
+        "iglunix",
+        "iglu"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_CYAN",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/i/instantos.txt",
+      "names": [
+        "instantos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE",
+        "color::FG_BLUE",
+        "color::FG_BLACK",
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/i/interix.txt",
+      "names": [
+        "interix"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/i/irix.txt",
+      "names": [
+        "irix"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_MAGENTA",
+      "colors": [
+        "color::FG_BLACK"
+      ],
+      "lines": "/temp/i/ironclad.txt",
+      "names": [
+        "ironclad"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED"
+      ],
+      "lines": "/temp/i/itc.txt",
+      "names": [
+        "itc"
+      ]
+    }
+  ],
+  "j": [
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_MAGENTA",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/j/januslinux.txt",
+      "names": [
+        "januslinux"
+      ]
+    }
+  ],
+  "k": [
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/k/kaisen.txt",
+      "names": [
+        "kaisen"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_LIGHT_BLACK"
+      ],
+      "lines": "/temp/k/kali.txt",
+      "names": [
+        "kali"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_LIGHT_BLACK"
+      ],
+      "lines": "/temp/k/kali_small.txt",
+      "names": [
+        "kali small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/k/kalpa_desktop.txt",
+      "names": [
+        "kalpa-desktop"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/k/kaos.txt",
+      "names": [
+        "kaos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/k/kernelos.txt",
+      "names": [
+        "kernelos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_YELLOW",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/k/kdelinux.txt",
+      "names": [
+        "kdelinux",
+        "kde-linux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/k/kdeneon.txt",
+      "names": [
+        "kde neon"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::BG_WHITE",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/k/kibaos.txt",
+      "names": [
+        "kibaos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_WHITE",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/k/kibojoe.txt",
+      "names": [
+        "kibojoe"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_MAGENTA",
+        "color::FG_WHITE",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/k/kiss.txt",
+      "names": [
+        "kiss"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_BLACK",
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/k/kiss2.txt",
+      "names": [
+        "kiss2"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/k/kogaion.txt",
+      "names": [
+        "kogaion"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/k/korora.txt",
+      "names": [
+        "korora"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/k/krassos.txt",
+      "names": [
+        "krassos",
+        "krass"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/k/kslinux.txt",
+      "names": [
+        "kslinux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/k/kubuntu.txt",
+      "names": [
+        "kubuntu",
+        "kubuntu-linux",
+        "kde-ubuntu"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_CYAN",
+        "color::FG_WHITE",
+        "color::FG_LIGHT_BLACK"
+      ],
+      "lines": "/temp/k/kylin.txt",
+      "names": [
+        "kylin"
+      ]
+    }
+  ],
+  "l": [
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_DEFAULT",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/l/lainos.txt",
+      "names": [
+        "lainos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/l/langitketujuh.txt",
+      "names": [
+        "langitketujuh",
+        "l7"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/l/laxeros.txt",
+      "names": [
+        "laxeros"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/l/lede.txt",
+      "names": [
+        "lede"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_YELLOW",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_YELLOW",
+        "color::FG_WHITE",
+        "color::FG_CYAN",
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/l/libreelec.txt",
+      "names": [
+        "libreelec"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/l/lilidog.txt",
+      "names": [
+        "lilidog"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/l/lingmo.txt",
+      "names": [
+        "lingmo",
+        "lingmoos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/l/limeos.txt",
+      "names": [
+        "limeos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/l/linspire.txt",
+      "names": [
+        "linspire",
+        "lindows"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_YELLOW",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_LIGHT_BLACK",
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/l/linux.txt",
+      "names": [
+        "linux",
+        "linux-generic"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLACK",
+      "color_title": "color::FG_YELLOW",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_BLACK",
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/l/lfs.txt",
+      "names": [
+        "linuxfromscratch",
+        "lfs"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLACK",
+        "color::FG_WHITE",
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/l/linux_small.txt",
+      "names": [
+        "linux small",
+        "linux-generic small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/l/linuxlite.txt",
+      "names": [
+        "linuxlite"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/l/linuxlite_small.txt",
+      "names": [
+        "linuxlite small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/l/linuxmint.txt",
+      "names": [
+        "linuxmint"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/l/linuxmint_small.txt",
+      "names": [
+        "linuxmint small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/l/linuxmint2.txt",
+      "names": [
+        "linuxmint2"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/l/linuxmint2_small.txt",
+      "names": [
+        "linuxmint2 small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/l/linuxmint_old.txt",
+      "names": [
+        "linuxmint old"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/l/live_raizo.txt",
+      "names": [
+        "live raizo",
+        "live raizo"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/l/lliurex.txt",
+      "names": [
+        "lliurex"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/l/lmde.txt",
+      "names": [
+        "lmde"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_BLACK",
+        "color::FG_YELLOW",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/l/locos.txt",
+      "names": [
+        "locos",
+        "loc-os",
+        "loc-os linux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/l/lubuntu.txt",
+      "names": [
+        "lubuntu"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE",
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/l/lunar.txt",
+      "names": [
+        "lunar"
+      ]
+    }
+  ],
+  "m": [
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_YELLOW",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/m/macaronios.txt",
+      "names": [
+        "macaroni"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_YELLOW",
+        "color::FG_LIGHT_RED",
+        "color::FG_RED",
+        "color::FG_MAGENTA",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/m/macos.txt",
+      "names": [
+        "macos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_YELLOW",
+        "color::FG_RED",
+        "color::FG_MAGENTA",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/m/macos_small.txt",
+      "names": [
+        "macos small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_YELLOW",
+        "color::FG_LIGHT_RED",
+        "color::FG_RED",
+        "color::FG_MAGENTA",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/m/macos2.txt",
+      "names": [
+        "macos2"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_YELLOW",
+        "color::FG_RED",
+        "color::FG_MAGENTA",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/m/macos2_small.txt",
+      "names": [
+        "macos2 small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_YELLOW",
+        "color::FG_LIGHT_RED",
+        "color::FG_RED",
+        "color::FG_MAGENTA",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/m/macos3.txt",
+      "names": [
+        "macos3"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED"
+      ],
+      "lines": "/temp/m/mainsailos.txt",
+      "names": [
+        "mainsailos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED"
+      ],
+      "lines": "/temp/m/mainsailos_small.txt",
+      "names": [
+        "mainsailos small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_CYAN",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/m/mageia.txt",
+      "names": [
+        "mageia"
+      ]
+    },
+    {
+      "color_keys": "color::FG_CYAN",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/m/mageia_small.txt",
+      "names": [
+        "mageia small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_YELLOW",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/m/mandriva.txt",
+      "names": [
+        "mandriva",
+        "mandrake"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/m/manjaro.txt",
+      "names": [
+        "manjaro",
+        "manjaro-arm"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/m/manjaro_small.txt",
+      "names": [
+        "manjaro small",
+        "manjaro-arm small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/m/massos.txt",
+      "names": [
+        "massos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_YELLOW",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/m/matuusos.txt",
+      "names": [
+        "matuusos",
+        "matuus"
+      ]
+    },
+    {
+      "color_keys": "color::FG_CYAN",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/m/maui.txt",
+      "names": [
+        "maui"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/m/mauna.txt",
+      "names": [
+        "mauna"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_YELLOW",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_YELLOW",
+        "color::FG_YELLOW",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/m/meowix.txt",
+      "names": [
+        "meowix"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/m/mer.txt",
+      "names": [
+        "mer"
+      ]
+    },
+    {
+      "color_keys": "color::FG_LIGHT_BLACK",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/m/midnightbsd.txt",
+      "names": [
+        "midnightbsd"
+      ]
+    },
+    {
+      "color_keys": "color::FG_LIGHT_BLACK",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_LIGHT_BLACK"
+      ],
+      "lines": "/temp/m/midos.txt",
+      "names": [
+        "midos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_LIGHT_BLACK",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_LIGHT_BLACK",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/m/midos_old.txt",
+      "names": [
+        "midos old"
+      ]
+    },
+    {
+      "color_keys": "color::FG_CYAN",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED"
+      ],
+      "lines": "/temp/m/minimal.txt",
+      "names": [
+        "minimal system"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_YELLOW",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE",
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/m/minix.txt",
+      "names": [
+        "minix"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/m/miracle_linux.txt",
+      "names": [
+        "miraclelinux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/m/mos.txt",
+      "names": [
+        "mos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_MAGENTA",
+        "color::FG_WHITE",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/m/msys2.txt",
+      "names": [
+        "msys2"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_CYAN",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/m/mx.txt",
+      "names": [
+        "mx"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_CYAN",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/m/mx_small.txt",
+      "names": [
+        "mx small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_CYAN",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/m/mx2.txt",
+      "names": [
+        "mx2"
+      ]
+    }
+  ],
+  "n": [
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/n/namib.txt",
+      "names": [
+        "namib"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/n/nebios.txt",
+      "names": [
+        "nebios"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_YELLOW",
+        "color::FG_WHITE",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/n/nekos.txt",
+      "names": [
+        "nekos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/n/neptune.txt",
+      "names": [
+        "neptune"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/n/netrunner.txt",
+      "names": [
+        "netrunner"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_LIGHT_BLUE",
+        "color::FG_LIGHT_BLUE"
+      ],
+      "lines": "/temp/n/nexalinux.txt",
+      "names": [
+        "nexalinux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/n/nitrux.txt",
+      "names": [
+        "nitrux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_CYAN",
+        "color::FG_BLUE",
+        "color::FG_CYAN",
+        "color::FG_BLUE",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/n/nixos.txt",
+      "names": [
+        "nixos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_CYAN",
+        "color::FG_BLUE",
+        "color::FG_CYAN",
+        "color::FG_BLUE",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/n/nixos_small.txt",
+      "names": [
+        "nixos small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/n/nixos_old.txt",
+      "names": [
+        "nixos old"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/n/nixos_old_small.txt",
+      "names": [
+        "nixos old small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/n/nixos2.txt",
+      "names": [
+        "nixos2"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/n/netbsd.txt",
+      "names": [
+        "netbsd"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/n/netbsd2.txt",
+      "names": [
+        "netbsd2"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/n/netbsd_small.txt",
+      "names": [
+        "netbsd small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/n/nobara.txt",
+      "names": [
+        "nobara"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/n/nomadbsd.txt",
+      "names": [
+        "nomadbsd"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/n/nuros.txt",
+      "names": [
+        "nuros"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/n/nurunner.txt",
+      "names": [
+        "nurunner"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/n/nutyx.txt",
+      "names": [
+        "nutyx"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/n/nethydra.txt",
+      "names": [
+        "nethydra"
+      ]
+    }
+  ],
+  "o": [
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/o/obarun.txt",
+      "names": [
+        "obarun"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/o/obrevenge.txt",
+      "names": [
+        "obrevenge"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_MAGENTA",
+        "color::FG_CYAN",
+        "color::FG_LIGHT_BLUE"
+      ],
+      "lines": "/temp/o/obsidianos.txt",
+      "names": [
+        "obsidianos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_YELLOW",
+        "color::FG_LIGHT_BLACK"
+      ],
+      "lines": "/temp/o/omnios.txt",
+      "names": [
+        "omnios"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/o/openkylin.txt",
+      "names": [
+        "openkylin"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_YELLOW",
+        "color::FG_WHITE",
+        "color::FG_CYAN",
+        "color::FG_RED",
+        "color::FG_LIGHT_BLACK"
+      ],
+      "lines": "/temp/o/openbsd.txt",
+      "names": [
+        "openbsd"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_YELLOW",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/o/openbsd_small.txt",
+      "names": [
+        "openbsd small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/o/openeuler.txt",
+      "names": [
+        "openeuler"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/o/openindiana.txt",
+      "names": [
+        "openindiana"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/o/openmamba.txt",
+      "names": [
+        "openmamba"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_YELLOW",
+        "color::FG_LIGHT_YELLOW"
+      ],
+      "lines": "/temp/o/openruyi.txt",
+      "names": [
+        "openruyi"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/o/openstage.txt",
+      "names": [
+        "openstage"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/o/opensuse.txt",
+      "names": [
+        "opensuse"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/o/opensuse_small.txt",
+      "names": [
+        "opensuse small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/o/opensuse_microos.txt",
+      "names": [
+        "opensuse-microos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/o/opensuse_leap.txt",
+      "names": [
+        "opensuse-leap"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/o/opensuse_leap_old.txt",
+      "names": [
+        "opensuse-leap old"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/o/opensuse_tumbleweed.txt",
+      "names": [
+        "opensuse-tumbleweed"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/o/opensuse_tumbleweed_small.txt",
+      "names": [
+        "opensuse-tumbleweed small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/o/opensuse_tumbleweed_old.txt",
+      "names": [
+        "opensuse-tumbleweed old"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/o/opensuse_tumbleweed2.txt",
+      "names": [
+        "opensuse-tumbleweed2"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/o/opensuse_slowroll.txt",
+      "names": [
+        "opensuse-slowroll",
+        "opensuse-tumbleweed-slowroll"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/o/openmandriva.txt",
+      "names": [
+        "openmandriva"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/o/openwrt.txt",
+      "names": [
+        "openwrt"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/o/openwrt_small.txt",
+      "names": [
+        "openwrt small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/o/openwrt_old.txt",
+      "names": [
+        "openwrt old"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/o/opnsense.txt",
+      "names": [
+        "opnsense"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED"
+      ],
+      "lines": "/temp/o/oracle.txt",
+      "names": [
+        "ol",
+        "oracle"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_MAGENTA",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_MAGENTA",
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/o/orchid.txt",
+      "names": [
+        "orchid"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_MAGENTA",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_MAGENTA",
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/o/orchid_small.txt",
+      "names": [
+        "orchid small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/o/oreon.txt",
+      "names": [
+        "oreon"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/o/origami.txt",
+      "names": [
+        "origami"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/o/origami_small.txt",
+      "names": [
+        "origami small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_LIGHT_WHITE",
+        "color::FG_LIGHT_BLUE"
+      ],
+      "lines": "/temp/o/os2warp.txt",
+      "names": [
+        "os2warp"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/o/os_elbrus.txt",
+      "names": [
+        "os elbrus"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/o/osmc.txt",
+      "names": [
+        "osmc",
+        "open source media center"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_YELLOW",
+        "color::FG_LIGHT_RED",
+        "color::FG_RED",
+        "color::FG_MAGENTA",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/m/macos.txt",
+      "names": [
+        "osx"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_YELLOW",
+        "color::FG_RED",
+        "color::FG_MAGENTA",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/m/macos_small.txt",
+      "names": [
+        "osx small"
+      ]
+    }
+  ],
+  "p": [
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/p/pacbsd.txt",
+      "names": [
+        "pacbsd"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_RED",
+        "color::FG_BLACK"
+      ],
+      "lines": "/temp/p/panwah.txt",
+      "names": [
+        "panwah"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_MAGENTA",
+      "colors": [
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/p/parabola.txt",
+      "names": [
+        "parabola"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_MAGENTA",
+      "colors": [
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/p/parabola_small.txt",
+      "names": [
+        "parabola small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/p/parabola2_small.txt",
+      "names": [
+        "parabola2 small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/p/parch.txt",
+      "names": [
+        "parch"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/p/pardus.txt",
+      "names": [
+        "pardus"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/p/parrot.txt",
+      "names": [
+        "parrot"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_YELLOW",
+        "color::FG_RED",
+        "color::FG_WHITE",
+        "color::FG_LIGHT_BLACK"
+      ],
+      "lines": "/temp/p/parsix.txt",
+      "names": [
+        "parsix"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/p/pcbsd.txt",
+      "names": [
+        "pcbsd",
+        "trueos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/p/pclinuxos.txt",
+      "names": [
+        "pclinuxos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_YELLOW",
+        "color::FG_RED",
+        "color::FG_MAGENTA",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/p/pearos.txt",
+      "names": [
+        "pearos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_MAGENTA",
+        "color::FG_LIGHT_MAGENTA",
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/p/pengwin.txt",
+      "names": [
+        "pengwin"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_MAGENTA",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/p/pentoo.txt",
+      "names": [
+        "pentoo"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/p/peppermint.txt",
+      "names": [
+        "peppermint"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/p/peropesis.txt",
+      "names": [
+        "peropesis"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/p/phyos.txt",
+      "names": [
+        "phyos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/p/pikaos.txt",
+      "names": [
+        "pikaos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/p/pisi.txt",
+      "names": [
+        "pisilinux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_RED",
+        "color::FG_WHITE",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/p/pnm_linux.txt",
+      "names": [
+        "pnm linux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_CYAN",
+      "color_title": "color::FG_CYAN",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/p/pop.txt",
+      "names": [
+        "pop",
+        "popos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_CYAN",
+      "color_title": "color::FG_CYAN",
+      "colors": [
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/p/pop_small.txt",
+      "names": [
+        "pop small",
+        "popos small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/p/porteus.txt",
+      "names": [
+        "porteus"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/p/postmarketos.txt",
+      "names": [
+        "postmarketos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/p/postmarketos2.txt",
+      "names": [
+        "postmarketos2"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/p/postmarketos_small.txt",
+      "names": [
+        "postmarketos small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/p/proxmox.txt",
+      "names": [
+        "proxmox"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_YELLOW",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/p/puffos.txt",
+      "names": [
+        "puffos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/p/puppy.txt",
+      "names": [
+        "puppy"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/p/pureos.txt",
+      "names": [
+        "pureos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/p/pureos_small.txt",
+      "names": [
+        "pureos small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/p/prismlinux.txt",
+      "names": [
+        "prismlinux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/p/prismlinux_small.txt",
+      "names": [
+        "prismlinux small"
+      ]
+    }
+  ],
+  "q": [
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/q/qts.txt",
+      "names": [
+        "qts"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/q/quasar.txt",
+      "names": [
+        "quasar"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/q/q4os.txt",
+      "names": [
+        "q4os"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/q/qubes.txt",
+      "names": [
+        "qubes"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/q/qubes_small.txt",
+      "names": [
+        "qubes small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_MAGENTA",
+        "color::FG_BLACK"
+      ],
+      "lines": "/temp/q/qubyt.txt",
+      "names": [
+        "qubyt"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_YELLOW",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/q/quibian.txt",
+      "names": [
+        "quibian"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/q/quirinux.txt",
+      "names": [
+        "quirinux"
+      ]
+    }
+  ],
+  "r": [
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/r/radix.txt",
+      "names": [
+        "radix"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/r/raspbian.txt",
+      "names": [
+        "raspbian"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/r/raspbian_small.txt",
+      "names": [
+        "raspbian small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/r/ravynos.txt",
+      "names": [
+        "ravynos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLACK",
+        "color::FG_BLUE",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/r/rebornos.txt",
+      "names": [
+        "rebornos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/r/rebornos_small.txt",
+      "names": [
+        "rebornos small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/r/redcore.txt",
+      "names": [
+        "redcore"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED"
+      ],
+      "lines": "/temp/r/rhel.txt",
+      "names": [
+        "rhel",
+        "redhat"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED"
+      ],
+      "lines": "/temp/r/rhel_small.txt",
+      "names": [
+        "rhel small",
+        "redhat small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/r/rhel_old.txt",
+      "names": [
+        "rhel old",
+        "redhat old"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/r/redos.txt",
+      "names": [
+        "redos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/r/redos_small.txt",
+      "names": [
+        "redos small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED"
+      ],
+      "lines": "/temp/r/redstar.txt",
+      "names": [
+        "redstar"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/r/redrose.txt",
+      "names": [
+        "redrose"
+      ]
+    },
+    {
+      "color_keys": "color::FG_LIGHT_BLACK",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_LIGHT_BLACK"
+      ],
+      "lines": "/temp/r/refracta.txt",
+      "names": [
+        "refracta"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_RED",
+        "color::FG_BLUE",
+        "color::FG_MAGENTA",
+        "color::FG_YELLOW",
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/r/regata.txt",
+      "names": [
+        "regata"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/r/regolith.txt",
+      "names": [
+        "regolith"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/r/rhaymos.txt",
+      "names": [
+        "rhaymos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/r/rocky.txt",
+      "names": [
+        "rocky"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/r/rocky_small.txt",
+      "names": [
+        "rocky small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/r/rosa.txt",
+      "names": [
+        "rosa"
+      ]
+    },
+    {
+      "color_keys": "color::FG_MAGENTA",
+      "color_title": "color::FG_MAGENTA",
+      "colors": [
+        "color::FG_MAGENTA",
+        "color::FG_LIGHT_BLUE",
+        "color::FG_LIGHT_MAGENTA",
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/r/rhino.txt",
+      "names": [
+        "rhino linux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_MAGENTA",
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/r/rengeos.txt",
+      "names": [
+        "rengeos"
+      ]
+    }
+  ],
+  "s": [
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/s/sabayon.txt",
+      "names": [
+        "sabayon"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/s/sabotage.txt",
+      "names": [
+        "sabotage"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_MAGENTA"
+      ],
+      "lines": "/temp/s/sailfish.txt",
+      "names": [
+        "sailfish"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_RED",
+        "color::FG_YELLOW",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/s/salentos.txt",
+      "names": [
+        "salentos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/s/salientos.txt",
+      "names": [
+        "salient os",
+        "salientos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/s/salix.txt",
+      "names": [
+        "salix"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_YELLOW",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/s/sambabox.txt",
+      "names": [
+        "sambabox"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_MAGENTA",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/s/sasanqua.txt",
+      "names": [
+        "sasanqua"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/s/scientific.txt",
+      "names": [
+        "scientific"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_MAGENTA",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/s/secureblue.txt",
+      "names": [
+        "secureblue"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/s/serpent_os.txt",
+      "names": [
+        "serpent os"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_LIGHT_BLACK",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/s/semc.txt",
+      "names": [
+        "semc"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/s/septor.txt",
+      "names": [
+        "septor"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/s/serene.txt",
+      "names": [
+        "serene"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/s/sharklinux.txt",
+      "names": [
+        "sharklinux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/s/shastraos.txt",
+      "names": [
+        "shastraos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/s/shebang.txt",
+      "names": [
+        "shebang"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/s/siduction.txt",
+      "names": [
+        "siduction"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/s/skiffos.txt",
+      "names": [
+        "skiffos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/s/sleeperos.txt",
+      "names": [
+        "sleeperos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/s/sleeperos_small.txt",
+      "names": [
+        "sleeperos small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_YELLOW",
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/s/slitaz.txt",
+      "names": [
+        "slitaz"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/s/spoinkos.txt",
+      "names": [
+        "spoinkos",
+        "spoink-os"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_YELLOW",
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/s/slackel.txt",
+      "names": [
+        "slackel"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/s/slackware.txt",
+      "names": [
+        "slackware"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/s/slackware_small.txt",
+      "names": [
+        "slackware small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/s/smartos.txt",
+      "names": [
+        "smartos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/s/snigdhaos.txt",
+      "names": [
+        "snigdhaos",
+        "snigdha"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/s/soda.txt",
+      "names": [
+        "soda"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/s/source_mage.txt",
+      "names": [
+        "source mage",
+        "source mage gnu/linux",
+        "source mage",
+        "sourcemage"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/s/solaris.txt",
+      "names": [
+        "solaris",
+        "sunos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/s/solaris_small.txt",
+      "names": [
+        "solaris small",
+        "sunos small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/s/solus.txt",
+      "names": [
+        "solus",
+        "solus-linux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/s/sparky.txt",
+      "names": [
+        "sparky"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/s/star.txt",
+      "names": [
+        "star"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/s/stock_linux.txt",
+      "names": [
+        "stock linux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/s/steamos.txt",
+      "names": [
+        "steamos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/s/steamdeck.txt",
+      "names": [
+        "steamdeck"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/s/steamdeck_small.txt",
+      "names": [
+        "steamdeck small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/s/steamdeck.txt",
+      "names": [
+        "steamdeckoled"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/s/sulin.txt",
+      "names": [
+        "sulin"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/s/summitos.txt",
+      "names": [
+        "summitos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/s/suse.txt",
+      "names": [
+        "suse",
+        "suse-linux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/o/opensuse_small.txt",
+      "names": [
+        "suse small",
+        "suse-linux small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/s/swagarch.txt",
+      "names": [
+        "swagarch"
+      ]
+    }
+  ],
+  "t": [
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE",
+        "color::FG_YELLOW",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/t/t2.txt",
+      "names": [
+        "t2",
+        "t2 sde",
+        "t2/linux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/t/t2_small.txt",
+      "names": [
+        "t2 small",
+        "t2 sde small",
+        "t2/linux small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/t/tails.txt",
+      "names": [
+        "tails"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/t/tatra.txt",
+      "names": [
+        "tatra"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/t/tearch.txt",
+      "names": [
+        "tearch"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_YELLOW",
+        "color::FG_RED",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/t/templeos.txt",
+      "names": [
+        "templeos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_MAGENTA",
+        "color::FG_BLUE",
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/t/tileos.txt",
+      "names": [
+        "tileos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_LIGHT_WHITE",
+        "color::FG_YELLOW",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/t/torizoncore.txt",
+      "names": [
+        "torizon os",
+        "torizoncore"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/t/trisquel.txt",
+      "names": [
+        "trisquel"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/t/truenas_scale.txt",
+      "names": [
+        "truenas-scale"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/t/turkish.txt",
+      "names": [
+        "turkish"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/t/tuxedo_os.txt",
+      "names": [
+        "tuxedo os",
+        "tuxedo"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_RED",
+        "color::FG_BLUE",
+        "color::FG_MAGENTA",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/t/twister.txt",
+      "names": [
+        "twister"
+      ]
+    }
+  ],
+  "u": [
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_WHITE",
+        "color::FG_LIGHT_BLACK"
+      ],
+      "lines": "/temp/u/ublinux.txt",
+      "names": [
+        "ublinux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_WHITE",
+        "color::FG_LIGHT_BLACK"
+      ],
+      "lines": "/temp/u/ublinux_small.txt",
+      "names": [
+        "ublinux small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/u/ubuntu.txt",
+      "names": [
+        "ubuntu"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/u/ubuntu_small.txt",
+      "names": [
+        "ubuntu small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/u/ubuntu_old.txt",
+      "names": [
+        "ubuntu old"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE",
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/u/ubuntu_old2.txt",
+      "names": [
+        "ubuntu old2"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED"
+      ],
+      "lines": "/temp/u/ubuntu_old2_small.txt",
+      "names": [
+        "ubuntu old2 small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/u/ubuntu_budgie.txt",
+      "names": [
+        "ubuntu budgie",
+        "ubuntu-budgie"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/u/ubuntu_cinnamon.txt",
+      "names": [
+        "ubuntu cinnamon",
+        "ubuntu-cinnamon"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_MAGENTA",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_MAGENTA",
+        "color::FG_WHITE",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/u/ubuntu_gnome.txt",
+      "names": [
+        "ubuntu gnome",
+        "ubuntu-gnome"
+      ]
+    },
+    {
+      "color_keys": "color::FG_RED",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE",
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/u/ubuntu_kylin.txt",
+      "names": [
+        "ubuntu kylin",
+        "ubuntu-kylin"
+      ]
+    },
+    {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/u/ubuntu_mate.txt",
+      "names": [
+        "ubuntu mate",
+        "ubuntu-mate"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/u/ubuntu_studio.txt",
+      "names": [
+        "ubuntu studio",
+        "ubuntu-studio"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/u/ubuntu_sway.txt",
+      "names": [
+        "ubuntu sway",
+        "ubuntu-sway"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_YELLOW",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/u/ubuntu_touch.txt",
+      "names": [
+        "ubuntu touch",
+        "ubuntu-touch"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_MAGENTA",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/u/ubuntu_unity.txt",
+      "names": [
+        "ubuntu unity",
+        "ubuntu-unity"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/u/ultramarine.txt",
+      "names": [
+        "ultramarine"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/u/ultramarine_small.txt",
+      "names": [
+        "ultramarine small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_WHITE",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/u/unifi.txt",
+      "names": [
+        "unifi"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/u/univalent.txt",
+      "names": [
+        "univalent"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/u/univention.txt",
+      "names": [
+        "univention"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/u/uos.txt",
+      "names": [
+        "uos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_LIGHT_BLUE",
+        "color::FG_LIGHT_BLUE",
+        "color::FG_WHITE",
+        "color::FG_LIGHT_BLUE",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/u/urukos.txt",
+      "names": [
+        "urukos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/u/uwuntu.txt",
+      "names": [
+        "uwuntu"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/u/uzbek.txt",
+      "names": [
+        "uzbek"
+      ]
+    }
+  ],
+  "v": [
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/v/valhalla.txt",
+      "names": [
+        "valhalla",
+        "valhallaos",
+        "valhalla-linux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_YELLOW",
+      "colors": [
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/v/vanilla.txt",
+      "names": [
+        "vanilla"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_YELLOW",
+      "colors": [
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/v/vanilla2.txt",
+      "names": [
+        "vanilla2"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_LIGHT_YELLOW",
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/v/vanilla_small.txt",
+      "names": [
+        "vanilla small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_LIGHT_BLACK",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/v/venom.txt",
+      "names": [
+        "venom"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_LIGHT_BLACK",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/v/venom_small.txt",
+      "names": [
+        "venom small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/v/vincentos.txt",
+      "names": [
+        "vincentos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT",
+        "color::FG_RED",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/v/vnux.txt",
+      "names": [
+        "vnux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_WHITE",
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/v/vzlinux.txt",
+      "names": [
+        "vzlinux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN",
+        "color::FG_LIGHT_BLACK"
+      ],
+      "lines": "/temp/v/void.txt",
+      "names": [
+        "void"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/v/void_small.txt",
+      "names": [
+        "void small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_YELLOW",
+        "color::FG_DEFAULT",
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/v/void2.txt",
+      "names": [
+        "void2"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/v/void2_small.txt",
+      "names": [
+        "void2 small"
+      ]
+    }
+  ],
+  "w": [
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_WHITE"
+      ],
+      "lines": "/temp/w/wii_linux.txt",
+      "names": [
+        "wiilinuxngx",
+        "wiilinux",
+        "wii-linux",
+        "wii linux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_CYAN",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_BLUE",
+        "color::FG_BLUE",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/w/windows_2025.txt",
+      "names": [
+        "windows server 2025"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_CYAN",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_BLUE",
+        "color::FG_BLUE",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/w/windows_11.txt",
+      "names": [
+        "windows 11",
+        "windows server 2022"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_CYAN",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_BLUE",
+        "color::FG_BLUE",
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/w/windows_11_small.txt",
+      "names": [
+        "windows 11 small"
+      ]
+    },
+    {
+      "color_keys": "color::FG_YELLOW",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_CYAN",
+        "color::FG_CYAN",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/w/windows_8.txt",
+      "names": [
+        "windows 8",
+        "windows 8.1",
+        "windows 10",
+        "windows server 2012",
+        "windows server 2012 r2",
+        "windows server 2016",
+        "windows server 2019"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_GREEN",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_GREEN",
+        "color::FG_BLUE",
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/w/windows.txt",
+      "names": [
+        "windows",
+        "windows 7",
+        "windows server 2008",
+        "windows server 2008 r2"
+      ]
+    },
+    {
+      "color_keys": "color::FG_CYAN",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_BLUE",
+        "color::FG_YELLOW",
+        "color::FG_GREEN",
+        "color::FG_RED",
+        "color::FG_BLACK"
+      ],
+      "lines": "/temp/w/windows_95.txt",
+      "names": [
+        "windows 95",
+        "windows 9x"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/w/wolfos.txt",
+      "names": [
+        "wolfos"
+      ]
+    }
+  ],
+  "x": [
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_RED",
+        "color::FG_BLACK",
+        "color::FG_BLACK",
+        "color::FG_BLUE",
+        "color::FG_YELLOW"
+      ],
+      "lines": "/temp/x/xcp_ng.txt",
+      "names": [
+        "xcp-ng",
+        "xenenterprise"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_RED",
+      "colors": [
+        "color::FG_RED",
+        "color::FG_LIGHT_BLACK"
+      ],
+      "lines": "/temp/x/xenia.txt",
+      "names": [
+        "xenia"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_YELLOW",
+        "color::FG_GREEN",
+        "color::FG_RED"
+      ],
+      "lines": "/temp/x/xenia_old.txt",
+      "names": [
+        "xenia old"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/x/xeroarch.txt",
+      "names": [
+        "xeroarch"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_CYAN",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/x/xferience.txt",
+      "names": [
+        "xferience"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/x/xubuntu.txt",
+      "names": [
+        "xubuntu"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/x/xray_os.txt",
+      "names": [
+        "xray os"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE",
+        "color::FG_CYAN"
+      ],
+      "lines": "/temp/x/xinux.txt",
+      "names": [
+        "xinux"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/x/xj380.txt",
+      "names": [
+        "xj380"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/x/ximper.txt",
+      "names": [
+        "ximper"
+      ]
+    }
+  ],
+  "y": [
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_DEFAULT",
+        "color::FG_DEFAULT"
+      ],
+      "lines": "/temp/y/yiffos.txt",
+      "names": [
+        "yiffos"
+      ]
+    }
+  ],
+  "z": [
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/z/zerene.txt",
+      "names": [
+        "zerene"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/z/zorin.txt",
+      "names": [
+        "zorin"
+      ]
+    },
+    {
+      "color_keys": "color::FG_DEFAULT",
+      "color_title": "color::FG_DEFAULT",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/z/zos.txt",
+      "names": [
+        "z/os",
+        "zos"
+      ]
+    },
+    {
+      "color_keys": "color::FG_BLUE",
+      "color_title": "color::FG_BLUE",
+      "colors": [
+        "color::FG_BLUE"
+      ],
+      "lines": "/temp/z/zraxyl.txt",
+      "names": [
+        "zraxyl"
+      ]
+    }
+  ]
+}

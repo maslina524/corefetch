@@ -2,10 +2,12 @@ use std::{
     fs,
     env,
     fmt::Write,
-    path::PathBuf,
+    path::{Path, PathBuf},
     process::Command,
     str::FromStr,
+    io::Read,
     sync::atomic::{AtomicUsize, Ordering},
+    collections::BTreeMap
 };
 
 use chrono::{DateTime, FixedOffset};
@@ -21,7 +23,10 @@ use serde_json::{Value, Map};
 use regex::Regex;
 use sha2::{Sha256, Digest};
 use walkdir::WalkDir;
-use std::io::Read;
+
+use proc_macro2::{Ident, Span, TokenStream};
+use quote::quote;
+use serde::Deserialize;
 
 const VALID_CHARS: &[char] = &[
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
@@ -245,6 +250,74 @@ fn get_libc_version() -> String {
     String::from_utf8(output.stdout).unwrap().trim().to_string()
 }
 
+#[derive(Deserialize)]
+struct LogoEntry {
+    names: Vec<String>,
+    lines: String,
+    colors: Vec<String>,
+    color_keys: String,
+    color_title: String,
+}
+
+fn generate(input_json: &Path, out_dir: &Path) -> std::io::Result<()> {
+    let text = fs::read_to_string(input_json)?;
+    let map: BTreeMap<String, Vec<LogoEntry>> =
+        serde_json::from_str(&text).expect("invalid logo JSON");
+
+    for (letter, entries) in &map {
+        let code = generate_module(letter, entries);
+        fs::write(out_dir.join(format!("{letter}.rs")), code.to_string())?;
+    }
+    Ok(())
+}
+
+fn generate_module(letter: &str, entries: &[LogoEntry]) -> TokenStream {
+    let static_name = Ident::new(&letter.to_ascii_uppercase(), Span::call_site());
+
+    let logo_infos = entries.iter().map(generate_logo_info);
+
+    quote! {
+        static #static_name: crate::sync::OnceLock<alloc::vec::Vec<crate::logo::LogoInfo>> = crate::sync::OnceLock::new();
+
+        pub fn get() -> &'static alloc::vec::Vec<crate::logo::LogoInfo> {
+            use crate::color;
+            #static_name.get_or_init(|| {
+                alloc::vec![
+                    #(#logo_infos),*
+                ]
+            })
+        }
+    }
+}
+
+fn generate_logo_info(entry: &LogoEntry) -> TokenStream {
+    let names: Vec<_> = entry.names.iter().collect();
+    let path_lit = &entry.lines;
+
+    let colors: Vec<syn::Path> = entry
+        .colors
+        .iter()
+        .map(|c| syn::parse_str::<syn::Path>(c).expect("bad color path"))
+        .collect();
+
+    let color_keys: syn::Path =
+        syn::parse_str(&entry.color_keys).expect("bad color_keys path");
+    let color_title: syn::Path =
+        syn::parse_str(&entry.color_title).expect("bad color_title path");
+
+    quote! {
+        crate::logo::LogoInfo {
+            names: &[#(#names),*],
+            lines: include_bytes!(concat!(env!("LOGO_OUT_DIR"), #path_lit)),
+            colors: &[
+                #(#colors),*
+            ],
+            color_keys: #color_keys,
+            color_title: #color_title,
+        }
+    }
+}
+
 #[tokio::main]
 #[allow(clippy::too_many_lines)]
 async fn main() {
@@ -428,4 +501,14 @@ async fn main() {
             (encoded as f64 / raw as f64).mul_add(-100.0, 100.0)
         );
     }
+
+    // GENERATE LOGOS
+    let manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
+    let json_path = manifest_dir.join("logo.json");
+    let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap()).join("logo");
+
+    println!("cargo:rerun-if-changed={}", json_path.display());
+
+    fs::create_dir_all(&out_dir).expect("create OUT_DIR/logo");
+    generate(&json_path, &out_dir).expect("generate logo modules");
 }
