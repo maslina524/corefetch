@@ -12,32 +12,18 @@ use crate::{
     abort
 };
 
-mod a;
-mod b;
-mod c;
-mod d;
-mod e;
-mod f;
-mod g;
-mod h;
-mod i;
-mod j;
-mod k;
-mod l;
-mod m;
-mod n;
-mod o;
-mod p;
-mod q;
-mod r;
-mod s;
-mod t;
-mod u;
-mod v;
-mod w;
-mod x;
-mod y;
-mod z;
+macro_rules! logo_mod {
+    ($($letter:ident),* $(,)?) => {
+        $(
+            pub mod $letter {
+                include!(concat!(env!("OUT_DIR"), "/logo/", stringify!($letter), ".rs"));
+            }
+        )*
+    };
+}
+
+logo_mod!(a, b, c, d, e, f, g, h, i, j, k, l, m,
+          n, o, p, q, r, s, t, u, v, w, x, y, z);
 
 const UNKNOWN: &[u8] = include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/_/unknown.txt"));
 static UNKNOWN_PTR: &LogoInfo = &LogoInfo {

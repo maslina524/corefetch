@@ -373,7 +373,7 @@ use core::ffi::c_char;
 // WINDOWS & LINUX
 // cargo build --release
 
-// #[cfg(not(test))]
+#[cfg(not(test))]
 #[allow(
     clippy::similar_names, 
     reason = "that's what they're called in C, i don't give a fuck about clippy"
