@@ -93,7 +93,6 @@ impl LogoInfo {
     }
 
     pub fn get() -> Option<&'static Self> {
-        crate::println!("Get logo info");
         LOGO_INFO.get().map(|v| &**v)
     }
 

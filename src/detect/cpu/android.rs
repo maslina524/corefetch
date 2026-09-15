@@ -6,12 +6,17 @@ use alloc::{
 };
 
 use crate::{
-    abort, detect::cpu::CpuInfo, format, formats::Frequency, linux::{
+    abort, 
+    detect::cpu::CpuInfo, 
+    format, 
+    formats::Frequency, 
+    linux::{
         fs,
         libc::__system_property_get,
         parser::{LinuxInfo, parse_range_notation}, 
         path::Path
-    }, warning
+    }, 
+    warning
 };
 
 const PROP_VALUE_MAX: usize = 92;
