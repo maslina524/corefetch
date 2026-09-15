@@ -68,14 +68,14 @@ impl OsInfo {
     
     fn get_version(id: &str) -> Option<String> {
         match id {
-            "debian" => fs::read_to_string("/etc/debian_version").ok(),
-            "alpine" => fs::read_to_string("/etc/alpine-version").ok(),
+            "debian" => fs::read_to_string("/etc/debian_version").map(|s| s.trim().to_owned()).ok(),
+            "alpine" => fs::read_to_string("/etc/alpine-version").map(|s| s.trim().to_owned()).ok(),
             "rhel" | "centos" | "fedora" | "rocky" | "almalinux" => {
-                let content = fs::read_to_string("/etc/redhat-release").ok()?;
+                let content = fs::read_to_string("/etc/redhat-release").map(|s| s.trim().to_owned()).ok()?;
                 Some(Self::extract_version(&content))
             },
             "gentoo" => {
-                let content = fs::read_to_string("/etc/gentoo-release").ok()?;
+                let content = fs::read_to_string("/etc/gentoo-release").map(|s| s.trim().to_owned()).ok()?;
                 Some(Self::extract_version(&content))
             },
             "arch" => Some("Rolling".to_owned()),

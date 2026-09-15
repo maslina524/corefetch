@@ -64,7 +64,7 @@ impl LinuxInfo {
         self
             .inner
             .get(key)
-            .cloned()
+            .map(|s| s.trim().to_owned())
     }
 }
 

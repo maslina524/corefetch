@@ -18,9 +18,6 @@ const PROP_VALUE_MAX: usize = 92;
 
 impl CpuInfo {
     pub fn new() -> Self {
-        let info = LinuxInfo::parse_cpu_info()
-            .unwrap_or_else(|e| abort!("Failed to open /proc/cpuinfo: {e}"));
-
         let mut c_tech = [0u8; PROP_VALUE_MAX + 1];
         __system_property_get(c"ro.soc.model".as_ptr(), c_tech.as_mut_ptr());
         let tech = unsafe { CStr::from_ptr(c_tech.as_ptr().cast()) };
@@ -53,7 +50,6 @@ impl CpuInfo {
     fn max_freq_android() -> Frequency {
         match fs::read_to_string("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq") {
             Ok(c) => {
-                crate::println!("Max freq raw: `{c}`");
                 let hz = c.trim().parse::<u64>().unwrap_or(0);
                 Frequency::from_hz(hz)
             },
@@ -67,7 +63,6 @@ impl CpuInfo {
     fn base_freq_android() -> Frequency {
         match fs::read_to_string("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq") {
             Ok(c) => {
-                crate::println!("Base freq raw: `{c}`");
                 let hz = c.trim().parse::<u64>().unwrap_or(0);
                 Frequency::from_hz(hz)
             },

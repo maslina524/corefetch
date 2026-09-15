@@ -291,6 +291,7 @@ fn print_help(theme: Option<&str>) -> ! {
                 }
             },
             "example" => {
+                LogoInfo::new(&crate::detect::os::get_id().to_lowercase());
                 Config::get_or_init(Config::default());
                 
                 if let Some(doc) = (vtable.example)() {
@@ -368,12 +369,26 @@ static ARGS: OnceLock<Vec<String>> = OnceLock::new();
 use core::ffi::c_char;
 
 // ANDROID BUILD:
+// rustup toolchain install nightly
+// rustup component add rust-src --toolchain nightly
+// rustup target add aarch64-linux-android --toolchain nightly
+
+// cd ~
+// wget https://dl.google.com/android/repository/android-ndk-r27c-linux.zip
+// unzip android-ndk-r27c-linux.zip
+// ~/android-ndk-r27c/ndk-build --version
+
+// export ANDROID_NDK_HOME=$HOME/android-ndk-r27c
+// export ANDROID_NDK_ROOT=$ANDROID_NDK_HOME
+// export ANDROID_PLATFORM=24
+// export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
+
 // cargo ndk -t arm64-v8a --platform 24 build --release
 
 // WINDOWS & LINUX
 // cargo build --release
 
-#[cfg(not(test))]
+// #[cfg(not(test))]
 #[allow(
     clippy::similar_names, 
     reason = "that's what they're called in C, i don't give a fuck about clippy"
@@ -385,7 +400,7 @@ extern "C" fn main(argc: c_int, argv: *const *const c_char) -> c_int {
     corefetch_main() as c_int
 }
 
-#[cfg(not(test))]
+// #[cfg(not(test))]
 #[cfg(target_os = "windows")]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
@@ -417,7 +432,7 @@ fn corefetch_main() -> i32 {
             get_logo_name_and_custom(val)
         })
     } else {
-        let id = Os::get().id.to_lowercase();
+        let id = crate::detect::os::get_id().to_lowercase();
         (id, None)
     };
 

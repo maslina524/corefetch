@@ -22,3 +22,25 @@ pub struct OsInfo {
     pub variant_id: String,
     pub nerd: char
 }
+
+#[cfg(target_os = "android")]
+pub fn get_id() -> String {
+    alloc::borrow::ToOwned::to_owned("android")
+}
+
+#[cfg(target_os = "linux")]
+pub fn get_id() -> String {
+    use crate::linux::parser::LinuxInfo;
+
+    let os_release = LinuxInfo::parse_os_release().unwrap();
+    os_release.get_default("ID", &"Unknown")
+}
+
+#[cfg(target_os = "windows")]
+pub fn get_id() -> String {
+    use crate::windows::env;
+
+    let (_, _, build) = env::get_version();
+    let version = OsInfo::version(build as i32).to_owned();
+    format!("Windows {version}")
+}

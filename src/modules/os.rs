@@ -2,11 +2,12 @@ use alloc::string::String;
 use doc::Docs;
 
 use crate::{
-    format,
-    format_for_module,
-    impl_display_for_module,
-    modules::Module,
     detect::os::OsInfo, 
+    format, 
+    format_for_module, 
+    impl_display_for_module,
+    logo::LogoInfo, 
+    modules::Module, 
     sync::OnceLock
 };
 
@@ -39,7 +40,9 @@ pub struct Os {
     #[doc = "Architecture"]
     pub arch: &'static str,
     #[doc = "Logo as a nerd emoji"]
-    pub nerd_emoji: char
+    pub nerd_emoji: char,
+    #[doc = "Logo as a colored nerd emoji"]
+    pub colored_nerd_emoji: String
 }
 
 impl Module for Os {
@@ -64,7 +67,11 @@ impl Module for Os {
             codename: info.codename, 
             build_id: String::new(), 
             arch: env!("TARGET_ARCH"),
-            nerd_emoji: info.nerd
+            nerd_emoji: info.nerd,
+            colored_nerd_emoji: format!(
+                "\x1b[{}m{}\x1b[0m", 
+                LogoInfo::get().expect("Unreachable").color_keys, info.nerd
+            ),
         }
     }
 
