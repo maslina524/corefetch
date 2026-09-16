@@ -47,7 +47,6 @@ pub struct LogoInfo {
 impl LogoInfo {
     pub fn new(name: &str) -> &Self {
         LOGO_INFO.get_or_init(|| {
-            crate::println!("Setup logo info");
             let Some(first_char) = name.chars().next() else {
                 abort!("An empty string was passed for logo")
             };

@@ -5,7 +5,7 @@
 /temp
 /test
 /.VSCodeCounter
-/test.jsonc
+/test*
 Cargo.lock
 sum.ps1
 flamegraph*

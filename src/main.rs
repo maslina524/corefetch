@@ -75,7 +75,9 @@ use alloc::{
 use crate::{
     json::Json,
     logo::LogoInfo, 
-    modules::{DocsVtable, FormatValue, Module, Os, Version, Commit}, 
+    modules::{
+        DocsVtable, FormatValue, Module, Version, Commit
+    }, 
     imp::allocator::Allocator,
     imp::env,
     imp::fs::{self, ReadError},
@@ -236,20 +238,21 @@ fn get_config(args: &mut Iter<'_, String>) -> Config {
 
 fn get_logo_name_and_custom(val: &str) -> (String, Option<String>) {
     let ready_val = val.to_lowercase().replace('_', " ");
+    let id = crate::detect::os::get_id().to_lowercase();
     match fs::read_to_string(val) {
-        Ok(s) => (Os::get().id.to_lowercase(), Some(s)),
+        Ok(s) => (id, Some(s)),
         Err(e) => {
             match e {
                 ReadError::Utf8(u) => {
                     warning!("Failed to use logo from fs: {u}");
-                    (Os::get().id.to_lowercase(), None)
+                    (id, None)
                 }
                 ReadError::Code(c) => {
                     if c.is_file_not_found() {
                         (ready_val, None)
                     } else {
                         warning!("Failed to use logo from fs: {c}");
-                        (Os::get().id.to_lowercase(), None)
+                        (id, None)
                     }
                 }
             }

@@ -168,6 +168,13 @@ impl_as_lua_as_f64!(
     isize, i8, i16, i32, i64, i128,
     f32, f64,
 );
+impl AsLua for bool {
+    fn as_lua(&self) -> LuaType {
+        #[allow(clippy::cast_precision_loss)]
+        LuaType::Boolean(*self)
+    }
+    const LUA_TYPE: &'static str = "bollean";
+}
 
 impl core::fmt::Debug for LuaType {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {

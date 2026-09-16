@@ -1,5 +1,6 @@
 #![allow(
     non_camel_case_types,
+    non_snake_case,
     clippy::struct_field_names,
     suspicious_runtime_symbol_definitions,
     invalid_runtime_symbol_definitions,
@@ -43,6 +44,8 @@ unsafe extern "C" {
     pub safe fn getenv(name: *const c_char) -> *mut c_char;
     pub safe fn access(path: *const c_char, mode: c_int) -> c_int;
     pub safe fn fopen(pathname: *const c_char, mode: *const c_char) -> FileHandle;
+    pub safe fn setmntent(filename: *const c_char, typ: *const c_char) -> FileHandle;
+    pub safe fn getmntent(stream: FileHandle) -> *mut Mntent;
     pub safe fn fclose(stream: FileHandle) -> c_int;
     pub safe fn strerror(errnum: c_int) -> *mut c_char;
     pub safe fn fwrite(ptr: *const c_void, size: c_size, nmemb: c_size, stream: FileHandle) -> c_size;
@@ -118,6 +121,17 @@ pub fn errno() -> i32 {
     unsafe { *__errno() }
     #[cfg(not(target_os = "android"))]
     unsafe { *__errno_location() }
+}
+
+#[repr(C)]
+#[derive(Default)]
+pub struct Mntent {
+    pub mnt_fsnameL: *const c_char,
+    pub mnt_dirL: *const c_char,
+    pub mnt_typeL: *const c_char,
+    pub mnt_optsL: *const c_char,
+    pub mnt_freqL: c_int,
+    pub mnt_passnoL: c_int,
 }
 
 #[repr(C)]

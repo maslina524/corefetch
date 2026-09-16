@@ -4,6 +4,7 @@ pub mod commit;     // NF) Commit        : Display last commit
 pub mod cpu;        // 15) CPU           : Print CPU name, frequency, etc.
 pub mod custom;     // 19) Custom        : Print a custom string, with or without key
 pub mod datetime;   // 20) DateTime      : Print the current date and time
+pub mod disk;       // 22) Disk          : Print partitions, space usage, file system, etc
 pub mod gpu;        // 29) GPU           : Print GPU names, memory sizes, types, etc
 pub mod initsystem; // 32) InitSystem    : Print init system (pid 1) name and version
 pub mod kernel;     // 33) Kernel        : Print system kernel version
@@ -25,6 +26,7 @@ pub use commit::Commit;
 pub use cpu::Cpu;
 pub use custom::Custom;
 pub use datetime::Datetime;
+pub use disk::{DiskList, Disk};
 pub use gpu::Gpu;
 pub use initsystem::Initsystem;
 pub use kernel::Kernel;
@@ -62,6 +64,7 @@ static REGISTRY: &[Registy] = &[
     ("cpu",        || Cpu::get()),
     ("custom",     || Custom::get()),
     ("datetime",   || Datetime::get()),
+    ("disk",       || DiskList::get()),
     ("gpu",        || Gpu::get()),
     ("initsystem", || Initsystem::get()),
     ("kernel",     || Kernel::get()),
@@ -77,7 +80,7 @@ static REGISTRY: &[Registy] = &[
     ("weather",    || Weather::get()),
 ];
 
-#[derive(Default)]
+#[derive(Default, Clone, Copy)]
 pub struct FormatValue<'a> {
     pub format: Option<&'a str>,
     pub color: Option<&'a str>
@@ -112,6 +115,7 @@ impl DocsVtable {
             "cpu"        => Some(Self { format: Cpu::strings_format,        lua: Cpu::strings_lua,        example: || Cpu::strings_example(Cpu::new())               }),
             "custom"     => Some(Self { format: Custom::strings_format,     lua: Custom::strings_lua,     example: || Custom::strings_example(Custom::new())         }),
             "datetime"   => Some(Self { format: Datetime::strings_format,   lua: Datetime::strings_lua,   example: || Datetime::strings_example(Datetime::new())     }),
+            "disk"       => Some(Self { format: Disk::strings_format,       lua: Disk::strings_lua,       example: || Disk::strings_example(DiskList::new().list[0].clone()) }),
             "gpu"        => Some(Self { format: Gpu::strings_format,        lua: Gpu::strings_lua,        example: || Gpu::strings_example(Gpu::new())               }),
             "initsystem" => Some(Self { format: Initsystem::strings_format, lua: Initsystem::strings_lua, example: || Initsystem::strings_example(Initsystem::new()) }),
             "kernel"     => Some(Self { format: Kernel::strings_format,     lua: Kernel::strings_lua,     example: || Kernel::strings_example(Kernel::new())         }),
@@ -237,21 +241,26 @@ macro_rules! format_for_module {
             let key_color = key.color.unwrap_or($crate::logo::LogoInfo::get().unwrap().color_keys);
             let key_raw   = key.format.unwrap_or(self.key());
 
-            if key_raw.is_empty() {
+            let key_substituted = $crate::modules::replace_fields(
+                alloc::borrow::ToOwned::to_owned(key_raw),
+                fields,
+            );
+
+            if key_substituted.is_empty() {
                 return Some(value_substituted);
             }
 
             let separator = $crate::config::Config::get().get_display_separator();
 
             let mut full_string = alloc::string::String::with_capacity(
-                key_color.len() + key_raw.len() + separator.len()
+                key_color.len() + key_substituted.len() + separator.len()
                     + value_substituted.len() + 8,
             );
             {
                 use alloc::fmt::Write as _;
                 let _ = write!(
                     full_string,
-                    "\x1b[{key_color};1m{key_raw}\x1b[0m{separator}{value_substituted}"
+                    "\x1b[{key_color};1m{key_substituted}\x1b[0m{separator}{value_substituted}"
                 );
             }
 
