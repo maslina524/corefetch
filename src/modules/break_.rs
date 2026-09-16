@@ -40,8 +40,8 @@ impl Module for Break {
         "break"
     }
 
-    fn format(&self, _key: super::FormatValue, _format: super::FormatValue, _map: Option<&BTreeMap<String, Value>>) -> String {
-        String::from('\n')
+    fn format(&self, _key: super::FormatValue, _format: super::FormatValue, _map: Option<&BTreeMap<String, Value>>) -> Option<String> {
+        Some(String::from('\n'))
     }
 }
 

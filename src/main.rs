@@ -160,7 +160,11 @@ fn get_module_lines(preset_module: &ConfigModule, max_len_line: usize) -> Option
             },
             Some(&preset_module.map)
         );
-        SplittedAnsiIter::new(&string, max_len_line)
+        if let Some(s) = string {
+            SplittedAnsiIter::new(&s, max_len_line)
+        } else {
+            SplittedAnsiIter::empty()
+        }
     })
 }
 

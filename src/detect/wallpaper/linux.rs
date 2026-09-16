@@ -7,7 +7,10 @@ use alloc::{
 
 use crate::{
     detect::wallpaper::WallpaperInfo, 
-    linux::libc::{getenv, popen, fgets, pclose}
+    linux::{
+        libc::{fgets, getenv, pclose, popen}, 
+        path::Path
+    }
 };
 
 impl WallpaperInfo {
@@ -17,11 +20,12 @@ impl WallpaperInfo {
             .and_then(|s| Self::call(&s.trim().to_lowercase()))
             .map(|s| {
                 if let Some(stripped) = s.strip_prefix("file://") {
-                    stripped.to_owned()
+                    Path::from(stripped)
                 } else {
-                    s
+                    Path::from(s)
                 }
-            });
+            })
+            .unwrap_or_default();
 
         Self {
             full_path,

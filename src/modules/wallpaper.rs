@@ -1,7 +1,5 @@
-use alloc::{
-    string::String,
-    borrow::ToOwned
-};
+use alloc::string::String
+;
 use doc::Docs;
 
 use crate::{
@@ -20,27 +18,21 @@ pub struct Wallpaper {
     #[doc = "File name"]
     pub file_name: String,
     #[doc = "Full path"]
-    pub full_path: String
+    pub full_path: Path
 }
 
 impl Module for Wallpaper {
     #[allow(clippy::redundant_closure)]
     fn new() -> Self {
         let info = WallpaperInfo::new();
-
         let file_name = info.full_path
-            .as_ref()
-            .map_or_else(
-                || "No graphical env".to_owned(), 
-                |p| Path::from(p).pop().unwrap()
-            );
-
-        let full_path = info.full_path
-            .unwrap_or_else(|| "No graphical env".to_owned());
+            .last()
+            .map(String::from)
+            .unwrap_or(String::new());
 
         Self {
             file_name,
-            full_path
+            full_path: info.full_path
         }
     }
 

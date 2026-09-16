@@ -505,6 +505,14 @@ pub struct SplittedAnsiIter {
 }
 
 impl SplittedAnsiIter {
+    pub fn empty() -> Self {
+        Self {
+            buf: "",
+            ranges: Vec::new(),
+            index: 0
+        }
+    }
+
     pub fn new(s: &str, len: usize) -> Self {
         if s.trim().is_empty() {
             return Self { buf: "", ranges: Vec::new(), index: 0 };
@@ -593,6 +601,10 @@ impl Iterator for SplittedAnsiIter {
     type Item = &'static str;
 
     fn next(&mut self) -> Option<&'static str> {
+        if self.buf.is_empty() {
+            return None;
+        }
+        
         let r = self.ranges.get(self.index)?;
         self.index += 1;
         Some(&self.buf[r.clone()])

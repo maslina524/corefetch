@@ -4,6 +4,7 @@ use crate::{
     windows::encoding::{Utf16Len, utf16le_to_utf8},
     windows::link::SystemParametersInfoW,
     imp::error::{self, ErrorCode},
+    windows::path::Path,
     detect::wallpaper::WallpaperInfo,
     warning
 };
@@ -17,16 +18,16 @@ impl WallpaperInfo {
             Ok(p) => p,
             Err(e) => {
                 warning!("Failed to get full wallpaper path: {e}");
-                String::new()
+                Path::new()
             }
         };
 
         Self {
-            full_path: Some(full_path) 
+            full_path
         }
     }
     
-    fn full_path() -> error::Result<String> {
+    fn full_path() -> error::Result<Path> {
         let mut buf = [0u16; MAX_PATH];
 
         // SAFETY: Completely safe
@@ -43,6 +44,6 @@ impl WallpaperInfo {
         }
 
         let utf8 = utf16le_to_utf8(&buf, Utf16Len::NullTerminated)?;
-        Ok(utf8)
+        Ok(Path::from(utf8))
     }
 }

@@ -1,15 +1,18 @@
-use alloc::string::String;
-
-use crate::cfg_if;
+use crate::{
+    cfg_if, 
+    imp::path::Path
+};
 
 cfg_if! {
     if #[cfg(target_os = "windows")] {
         mod windows;
-    } else if #[cfg(any(target_os = "linux", target_os = "android"))] {
+    } else if #[cfg(target_os = "linux")] {
         mod linux;
+    } else if #[cfg(target_os = "android")] {
+        mod android;
     }
 }
 
 pub struct WallpaperInfo {
-    pub full_path: Option<String>
+    pub full_path: Path
 }

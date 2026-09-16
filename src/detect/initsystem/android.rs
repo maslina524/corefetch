@@ -17,7 +17,6 @@ use crate::{
 const PROP_VALUE_MAX: usize = 92;
 
 impl InitSystemInfo {
-    #[todo::todo("Too time-consuming to implement for every distribution and system")]
     pub fn new() -> Self {
         let (name, exe) = Self::name_and_exe();
         let mut c_version = [0u8; PROP_VALUE_MAX + 1];

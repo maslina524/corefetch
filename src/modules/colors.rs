@@ -41,7 +41,7 @@ impl Module for Colors {
         "colors"
     }
 
-    fn format(&self, _key: super::FormatValue, _format: super::FormatValue, map: Option<&BTreeMap<String, Value>>) -> String {
+    fn format(&self, _key: super::FormatValue, _format: super::FormatValue, map: Option<&BTreeMap<String, Value>>) -> Option<String> {
         let binding = BTreeMap::new();
         let map = map.unwrap_or(&binding);
 
@@ -79,7 +79,8 @@ impl Module for Colors {
             }
             ret.push_str("\x1b[0m\n");
         }
-        ret
+        
+        Some(ret)
     }
 }
 

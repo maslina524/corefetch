@@ -87,12 +87,17 @@ impl Path {
 
     pub fn pop(&mut self) -> Option<String> {
         let mut parts = self.parts();
-        if parts.len() <= 1 {
+        if parts.len() < 1 {
             return None;
         }
         let popped = parts.pop().map(String::from);
         self.inner = parts.join("/");
         popped
+    }
+
+    pub fn last(&'_ self) -> Option<&'_ str> {
+        let parts = self.parts();
+        parts.last().map(|s| *s)
     }
 
     pub fn join(&self, path: impl Into<Self>) -> Self {
@@ -165,6 +170,12 @@ impl core::fmt::Display for Path {
 impl core::fmt::Debug for Path {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "\"{}\"", self.inner)
+    }
+}
+
+impl Default for Path {
+    fn default() -> Self {
+        Path::new()
     }
 }
 

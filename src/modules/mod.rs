@@ -136,7 +136,7 @@ pub trait Module {
     fn key(&self) -> &'static str;
     fn title(&self) -> &'static str;
     fn string_name(&self) -> &'static str;
-    fn format(&self, key: FormatValue, format: FormatValue, map: Option<&BTreeMap<String, Value>>) -> String;
+    fn format(&self, key: FormatValue, format: FormatValue, map: Option<&BTreeMap<String, Value>>) -> Option<String>;
 }
 
 pub fn from_preset_module(s: &str) -> Option<&'static dyn Module> {
@@ -166,26 +166,28 @@ macro_rules! impl_display_for_module {
     ($name:ident) => {
         impl core::fmt::Display for $name {
             fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-                write!(
-                    f, "{}", self.format(
-                        $crate::modules::FormatValue::default(), 
-                        $crate::modules::FormatValue::default(), 
-                        None
-                    )
-                )
+                match self.format(
+                    $crate::modules::FormatValue::default(),
+                    $crate::modules::FormatValue::default(),
+                    None,
+                ) {
+                    Some(s) => f.write_str(&s),
+                    None => Ok(()),
+                }
             }
         }
     };
     ($name:ident < $lt:lifetime >) => {
         impl core::fmt::Display for $name<$lt> {
             fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-                write!(
-                    f, "{}", self.format(
-                        $crate::modules::FormatValue::default(), 
-                        $crate::modules::FormatValue::default(), 
-                        None
-                    )
-                )
+                match self.format(
+                    $crate::modules::FormatValue::default(),
+                    $crate::modules::FormatValue::default(),
+                    None,
+                ) {
+                    Some(s) => f.write_str(&s),
+                    None => Ok(()),
+                }
             }
         }
     };
@@ -196,18 +198,22 @@ macro_rules! format_for_module {
     ($name:ident, $($field:ident),*) => {
         fn format(
             &self,
-            key: super::FormatValue, 
-            format: super::FormatValue, 
-            _map: Option<&alloc::collections::BTreeMap<alloc::string::String, $crate::json::Value>>
-        ) -> alloc::string::String {
+            key: super::FormatValue,
+            format: super::FormatValue,
+            _map: Option<&alloc::collections::BTreeMap<alloc::string::String, $crate::json::Value>>,
+        ) -> Option<alloc::string::String> {
             let title_raw = format.format.unwrap_or(self.title());
-            let value_raw = if let Some(code) = title_raw.strip_prefix("lua:") {
+
+            let value_raw: alloc::string::String = if let Some(code) = title_raw.strip_prefix("lua:") {
                 #[allow(unused_mut)]
                 let mut vars = alloc::collections::BTreeMap::new();
 
                 $(
                     let key_str = stringify!($field).trim_start_matches("r#");
-                    vars.insert(alloc::borrow::ToOwned::to_owned(key_str), $crate::lua::AsLua::as_lua(&self.$field));
+                    vars.insert(
+                        alloc::borrow::ToOwned::to_owned(key_str),
+                        $crate::lua::AsLua::as_lua(&self.$field),
+                    );
                 )*
 
                 $crate::lua::LuaLib::get().exec(code, vars)
@@ -215,18 +221,41 @@ macro_rules! format_for_module {
                 alloc::borrow::ToOwned::to_owned(title_raw)
             };
 
+            let fields: &[(&str, alloc::string::String)] = &[$(
+                (
+                    stringify!($field),
+                    $crate::format_module!(@to_string &self.$field),
+                ),
+            )*];
+
+            let value_substituted = $crate::modules::replace_fields(value_raw, fields);
+
+            if value_substituted.is_empty() {
+                return None;
+            }
+
             let key_color = key.color.unwrap_or($crate::logo::LogoInfo::get().unwrap().color_keys);
-            let key_raw = key.format.unwrap_or(self.key());
-            
+            let key_raw   = key.format.unwrap_or(self.key());
+
+            if key_raw.is_empty() {
+                return Some(value_substituted);
+            }
 
             let separator = $crate::config::Config::get().get_display_separator();
 
-            let full_string = if key_raw.len() == 0 {
-                value_raw
-            } else {
-                $crate::format!("\x1b[{key_color};1m{key_raw}\x1b[0m{separator}{value_raw}")
-            };
-            $crate::format_module!(&full_string, self, $($field),*)
+            let mut full_string = alloc::string::String::with_capacity(
+                key_color.len() + key_raw.len() + separator.len()
+                    + value_substituted.len() + 8,
+            );
+            {
+                use alloc::fmt::Write as _;
+                let _ = write!(
+                    full_string,
+                    "\x1b[{key_color};1m{key_raw}\x1b[0m{separator}{value_substituted}"
+                );
+            }
+
+            Some(full_string)
         }
     };
 }

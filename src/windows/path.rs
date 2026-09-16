@@ -187,6 +187,12 @@ impl core::fmt::Debug for Path {
     }
 }
 
+impl Default for Path {
+    fn default() -> Self {
+        Path::new()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::windows::path::Path;
