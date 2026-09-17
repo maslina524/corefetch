@@ -1,13 +1,5 @@
 use std::{
-    fs,
-    env,
-    fmt::Write,
-    path::{Path, PathBuf},
-    process::Command,
-    str::FromStr,
-    io::Read,
-    sync::atomic::{AtomicUsize, Ordering},
-    collections::BTreeMap
+    collections::BTreeMap, env, fmt::Write, fs, io::Read, path::{Path, PathBuf}, process::Command, sync::atomic::{AtomicUsize, Ordering}
 };
 
 use chrono::{DateTime, FixedOffset};
@@ -18,11 +10,8 @@ use zlib_rs::{
     compress_slice,
 };
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
-use reqwest::{Client, Method, Request, Url};
 use serde_json::{Value, Map};
-use regex::Regex;
 use sha2::{Sha256, Digest};
-use walkdir::WalkDir;
 use termimad::MadSkin;
 
 use proc_macro2::{Ident, Span, TokenStream};
@@ -33,6 +22,18 @@ const VALID_CHARS: &[char] = &[
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
     'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '_'
 ];
+
+static HELP_RAW: &str = concat!(
+    "corefetch is a neofetch-like tool for beautiful system information display with flexible output customization\n",
+    "\n",
+    "**Usage: corefetch*** <?options>*\n",
+    "\n",
+    "**Commands:**\n",
+    "  -h, --help <?options>     \tPrint this message\n",
+    "  -v, --version <?options>  \tPrint corefetch version\n",
+    "  -l, --logo                \tCustom logo (name or file)\n",
+    "  -c, --config              \tCustom preset (http url or file)",
+);
 
 struct Commit {
     pub author: String,
@@ -82,10 +83,10 @@ impl Commit {
             .and_then(|output| String::from_utf8(output.stdout).ok())
             .expect("Failed to call Git shortstat");
 
-        let re = Regex::new(r"(\d+)").unwrap();
-        let nums: Vec<u64> = re
-            .find_iter(&numstat)
-            .filter_map(|m| m.as_str().parse().ok())
+        let nums: Vec<u64> = numstat
+            .split(|c: char| !c.is_ascii_digit())
+            .filter(|s| !s.is_empty())
+            .filter_map(|s| s.parse().ok())
             .collect();
 
         assert!(nums.len() >= 3, "Failed to call Git shortstat");
@@ -110,8 +111,8 @@ impl Commit {
         }
     }
 
-    pub async fn new_github() -> Self {
-        let response = Self::request().await;
+    pub fn new_github() -> Self {
+        let response = Self::request();
         let root = response.as_object().expect("Incorrect response data");
 
         let sha = get_string(root, "sha");
@@ -154,24 +155,23 @@ impl Commit {
         }
     }
 
-    async fn request() -> Value {
-        let req = Request::new(
-            Method::GET,
-            Url::from_str("https://api.github.com/repos/maslina524/corefetch/commits/main?per_page=1").unwrap(),
-        );
+    fn request() -> Value {
+        let resp = ureq::get(
+            "https://api.github.com/repos/maslina524/corefetch/commits/main?per_page=1",
+        )
+        .header("User-Agent", "corefetch-build/1.0")
+        .header("Accept", "application/vnd.github+json")
+        .call()
+        .expect("Failed to call Github Api");
 
-        let client = Client::builder()
-            .user_agent("corefetch-build/1.0")
-            .build()
-            .expect("Failed to build http client");
+        let status = resp.status();
+        assert!(status.is_success(), "GitHub API returned {status}");
 
-        let resp = client
-            .execute(req)
-            .await
-            .expect("Failed to call Github Api");
+        let string = resp.into_body().read_to_string()
+            .expect("Failed to get response from GitHub");
 
-        println!("{resp:#?}");
-        resp.json().await.expect("Failed to parse json response from GitHub")
+        serde_json::from_str(&string)
+            .expect("Failed to parse response from GitHub")
     }
 }
 
@@ -311,9 +311,15 @@ fn generate_logo_info(entry: &LogoEntry) -> TokenStream {
     }
 }
 
-#[tokio::main]
+fn walk(dir: &Path, f: &mut impl FnMut(&Path)) {
+    for e in fs::read_dir(dir).into_iter().flatten().flatten() {
+        let p = e.path();
+        if p.is_dir() { walk(&p, f); } else { f(&p); }
+    }
+}
+
 #[allow(clippy::too_many_lines)]
-async fn main() {
+fn main() {
     let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
     let target_arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap();
 
@@ -388,7 +394,7 @@ async fn main() {
         .output()
         .ok()
         .and_then(|output| String::from_utf8(output.stdout).ok())
-        .unwrap_or_else(|| "unknown".to_string());
+        .unwrap_or_else(|| "Unknown".to_string());
 
     if let Some(idx) = cargo_version.find('(') {
         cargo_version = cargo_version[..idx - 1].trim().to_string();
@@ -397,7 +403,7 @@ async fn main() {
 
     // ENV: Commit
     let commit = if !git_initialized() || github_actions() {
-        Commit::new_github().await
+        Commit::new_github()
     } else {
         Commit::new_git()
     };
@@ -435,15 +441,12 @@ async fn main() {
 
     // ENV: PROJECT_HASH
     let mut hasher = Sha256::new();
+    let mut files = Vec::new();
+    walk(Path::new("src"), &mut |p| files.push(p.to_path_buf()));
+    files.sort();
 
-    for entry in WalkDir::new("src")
-        .into_iter()
-        .filter_map(Result::ok)
-        .filter(|e| e.file_type().is_file())
-    {
-        let path = entry.path();
+    for path in files { 
         hasher.update(path.to_string_lossy().as_bytes());
-
         if let Ok(mut file) = fs::File::open(path) {
             let mut buffer = Vec::new();
             if file.read_to_end(&mut buffer).is_ok() {
@@ -503,12 +506,12 @@ async fn main() {
     println!("cargo:rerun-if-changed={}", json_path.display());
 
     fs::create_dir_all(&out_dir).expect("create OUT_DIR/logo");
-    generate(&json_path, &out_dir).expect("generate logo modules");
+    generate(&json_path, &out_dir).expect("Generate logo modules");
 
     // GENERATE HELP
     let skin = MadSkin::default();
-    let string = skin.text("Hello", None).to_string();
+    let string = skin.text(HELP_RAW, None).to_string();
 
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap()).join("help.txt");
-    fs::write(&out_dir, string).expect("create OUT_DIR/help.txt");
+    fs::write(&out_dir, string).expect("Create OUT_DIR/help.txt");
 }
