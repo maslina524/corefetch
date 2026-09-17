@@ -109,6 +109,11 @@ impl Path {
         popped
     }
 
+    pub fn last(&'_ self) -> Option<&'_ str> {
+        let parts = self.parts();
+        parts.last().map(|s| *s)
+    }
+
     pub fn join(&self, path: impl Into<Self>) -> Self {
         let mut parts = self.parts();
         let path = path.into();

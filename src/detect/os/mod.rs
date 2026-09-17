@@ -1,6 +1,14 @@
-use alloc::string::String;
+use alloc::{
+    string::String,
+    borrow::ToOwned
+};
 
-crate::cfg_if! {
+use crate::{
+    cfg_if,
+    format
+};
+
+cfg_if! {
     if #[cfg(target_os = "windows")] {
         mod windows;
     } else if #[cfg(target_os = "linux")] {

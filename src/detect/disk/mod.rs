@@ -18,7 +18,7 @@ cfg_if! {
 pub fn get_disks() -> Vec<Disk> {
     cfg_if! {
         if #[cfg(target_os = "windows")] {
-            Vec::new()
+            windows::get_disks_windows()
         } else if #[cfg(any(target_os = "linux", target_os = "android"))] {
             linux::get_disks_linux()
         }

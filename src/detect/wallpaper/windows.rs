@@ -1,5 +1,3 @@
-use alloc::string::String;
-
 use crate::{
     windows::encoding::{Utf16Len, utf16le_to_utf8},
     windows::link::SystemParametersInfoW,

@@ -90,7 +90,7 @@ impl OsInfo {
         }
     }
 
-    fn version(build: i32) -> &'static str {
+    pub fn version(build: i32) -> &'static str {
         match build {
             6002 => "Vista",
             7601 => "7",
