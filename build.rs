@@ -23,6 +23,7 @@ use serde_json::{Value, Map};
 use regex::Regex;
 use sha2::{Sha256, Digest};
 use walkdir::WalkDir;
+use termimad::MadSkin;
 
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::quote;
@@ -273,20 +274,12 @@ fn generate(input_json: &Path, out_dir: &Path) -> std::io::Result<()> {
 
 fn generate_module(letter: &str, entries: &[LogoEntry]) -> TokenStream {
     let static_name = Ident::new(&letter.to_ascii_uppercase(), Span::call_site());
-
     let logo_infos = entries.iter().map(generate_logo_info);
 
     quote! {
-        static #static_name: crate::sync::OnceLock<alloc::vec::Vec<crate::logo::LogoInfo>> = crate::sync::OnceLock::new();
-
-        pub fn get() -> &'static alloc::vec::Vec<crate::logo::LogoInfo> {
-            use crate::color;
-            #static_name.get_or_init(|| {
-                alloc::vec![
-                    #(#logo_infos),*
-                ]
-            })
-        }
+        pub static #static_name: &[crate::logo::LogoInfo] = &[
+            #(#logo_infos),*
+        ];
     }
 }
 
@@ -511,4 +504,11 @@ async fn main() {
 
     fs::create_dir_all(&out_dir).expect("create OUT_DIR/logo");
     generate(&json_path, &out_dir).expect("generate logo modules");
+
+    // GENERATE HELP
+    let skin = MadSkin::default();
+    let string = skin.text("Hello", None).to_string();
+
+    let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap()).join("help.txt");
+    fs::write(&out_dir, string).expect("create OUT_DIR/help.txt");
 }

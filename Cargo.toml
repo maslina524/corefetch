@@ -52,6 +52,7 @@ serde = { version = "1", features = ["derive"] }
 quote = "1"
 proc-macro2 = "1"
 syn = "3.0.5"
+termimad = "0.35.4"
 
 [workspace]
 members = ["todo", "doc"]

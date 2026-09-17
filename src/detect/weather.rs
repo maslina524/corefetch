@@ -66,27 +66,27 @@ impl WeatherInfo {
             return Self::default();
         }
 
-        let parts: Vec<&str> = raw.split(';').collect();
-        let condition_emoji = parts[0].trim();
-        let condition = parts[1].trim();
-        let condition_symbol = parts[2].trim();
-        let humidity = parts[3].trim();
-        let temperature_actual = parts[4].trim();
-        let temperature_feels = parts[5].trim();
-        let wind = parts[6].trim();
-        let location = parts[7].trim();
-        let moon_emoji = parts[8].trim();
-        let moon_day = parts[9].trim();
-        let precipitation = parts[10].trim();
-        let pressure = parts[11].trim();
-        let uv_index = parts[12].trim();
-        let dawn = parts[13].trim();
-        let sunrise = parts[14].trim();
-        let zenith = parts[15].trim();
-        let sunset = parts[16];
-        let dusk = parts[17].trim();
-        let time = parts[18].trim();
-        let timezone = parts[19].trim();
+        let mut parts = raw.splitn(20, ';');
+        let condition_emoji = parts.next().unwrap_or("");
+        let condition = parts.next().unwrap_or("");
+        let condition_symbol = parts.next().unwrap_or("");
+        let humidity = parts.next().unwrap_or("");
+        let temperature_actual = parts.next().unwrap_or("");
+        let temperature_feels = parts.next().unwrap_or("");
+        let wind = parts.next().unwrap_or("");
+        let location = parts.next().unwrap_or("");
+        let moon_emoji = parts.next().unwrap_or("");
+        let moon_day = parts.next().unwrap_or("");
+        let precipitation = parts.next().unwrap_or("");
+        let pressure = parts.next().unwrap_or("");
+        let uv_index = parts.next().unwrap_or("");
+        let dawn = parts.next().unwrap_or("");
+        let sunrise = parts.next().unwrap_or("");
+        let zenith = parts.next().unwrap_or("");
+        let sunset = parts.next().unwrap_or("");
+        let dusk = parts.next().unwrap_or("");
+        let time = parts.next().unwrap_or("");
+        let timezone = parts.next().unwrap_or("");
 
         Self {
             result: format!("{temperature_actual} — {condition} ({location})"),

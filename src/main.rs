@@ -203,59 +203,47 @@ pub fn exit(code: u32) -> ! {
 }
 
 fn get_config(args: &mut Iter<'_, String>) -> Config {
-    args.position(|a| a == "--config" || a == "-c").map_or_else(Config::default, |_| args.next().map_or_else(|| {
-            print_help(None);
-        }, |path| Url::new(path).map_or_else(|| { // FS Path
-                match Json::from_file(path) {
-                    Ok(c) => Config::from_json(&c),
-                    Err(e) => {
-                        warning!("Failed to parse the json config: {e}");
-                        Config::default()
-                    }
-                }
-            }, |url| { // Http Url
-                let response = Request::from_url(url).get();
-                if response.is_success() {
-                    match response.as_text() {
-                        Ok(t) => match Json::from_str(&t) {
-                            Ok(c) => Config::from_json(&c),
-                            Err(e) => {
-                                warning!("Failed to parse the json config: {e}");
-                                Config::default()
-                            }
-                        },
-                        Err(e) => {
-                            warning!("Failed to parse the response: {e}");
-                            Config::default()
-                        }
-                    }
-                } else {
-                    warning!("Failed to get preset from URL, Code: {}", response.code());
-                    Config::default()
-                }
-            })))
+    let Some(_) = args.position(|a| a == "--config" || a == "-c") else {
+        return Config::default();
+    };
+    let Some(path) = args.next() else {
+        print_help(None);
+    };
+
+    // URL path
+    if let Some(url) = Url::new(path) {
+        let response = Request::from_url(url).get();
+        if !response.is_success() {
+            warning!("Failed to get preset from URL, Code: {}", response.code());
+            return Config::default();
+        }
+        let Ok(t) = response.as_text() else {
+            warning!("Failed to parse the response");
+            return Config::default();
+        };
+        return match Json::from_str(&t) {
+            Ok(c) => Config::from_json(&c),
+            Err(e) => { warning!("Failed to parse the json config: {e}"); Config::default() }
+        };
+    }
+
+    // FS path
+    match Json::from_file(path) {
+        Ok(c) => Config::from_json(&c),
+        Err(e) => { warning!("Failed to parse the json config: {e}"); Config::default() }
+    }
 }
 
 fn get_logo_name_and_custom(val: &str) -> (String, Option<String>) {
-    let ready_val = val.to_lowercase().replace('_', " ");
     let id = crate::detect::os::get_id().to_lowercase();
     match fs::read_to_string(val) {
         Ok(s) => (id, Some(s)),
+        Err(ReadError::Code(c)) if c.is_file_not_found() => {
+            (val.to_lowercase().replace('_', " "), None)
+        }
         Err(e) => {
-            match e {
-                ReadError::Utf8(u) => {
-                    warning!("Failed to use logo from fs: {u}");
-                    (id, None)
-                }
-                ReadError::Code(c) => {
-                    if c.is_file_not_found() {
-                        (ready_val, None)
-                    } else {
-                        warning!("Failed to use logo from fs: {c}");
-                        (id, None)
-                    }
-                }
-            }
+            warning!("Failed to use logo from fs: {e}");
+            (id, None)
         }
     }
 }
@@ -323,17 +311,8 @@ fn print_help(theme: Option<&str>) -> ! {
         exit(0);
     }
 
-    let multi = multi_string!(
-        "corefetch is a neofetch-like tool for beautiful system information display with flexible output customization",
-        "",
-        "<underline><bold>Usage:<reset><bold> corefetch<reset><italic> <?options><reset>",
-        "",
-        "<underline><bold>Commands:<reset>",
-        "  -h, --help <?options> \tPrint this message",
-        "  -v, --version         \tPrint corefetch version",
-        "      --version-raw     \tPrint raw corefetch version (major.minor.patch)",
-    );
-    println!("{}", colored!(multi));
+    static HELP: &str = include_str!(concat!(core::env!("OUT_DIR"), "/help.txt"));
+    println!("{HELP}");
     
     exit(0)
 }

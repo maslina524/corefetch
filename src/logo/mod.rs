@@ -1,12 +1,10 @@
 use alloc::{
-    borrow::ToOwned,
     string::String,
     vec::Vec
 };
 
 use crate::{
     color,
-    format,
     sync::OnceLock,
     zlib,
     abort
@@ -15,9 +13,7 @@ use crate::{
 macro_rules! logo_mod {
     ($($letter:ident),* $(,)?) => {
         $(
-            pub mod $letter {
-                include!(concat!(env!("OUT_DIR"), "/logo/", stringify!($letter), ".rs"));
-            }
+            include!(concat!(env!("OUT_DIR"), "/logo/", stringify!($letter), ".rs"));
         )*
     };
 }
@@ -52,37 +48,37 @@ impl LogoInfo {
             };
 
             let stack = match first_char {
-                'a' | 'A' => a::get(),
-                'b' | 'B' => b::get(),
-                'c' | 'C' => c::get(),
-                'd' | 'D' => d::get(),
-                'e' | 'E' => e::get(),
-                'f' | 'F' => f::get(),
-                'g' | 'G' => g::get(),
-                'h' | 'H' => h::get(),
-                'i' | 'I' => i::get(),
-                'j' | 'J' => j::get(),
-                'k' | 'K' => k::get(),
-                'l' | 'L' => l::get(),
-                'm' | 'M' => m::get(),
-                'n' | 'N' => n::get(),
-                'o' | 'O' => o::get(),
-                'p' | 'P' => p::get(),
-                'q' | 'Q' => q::get(),
-                'r' | 'R' => r::get(),
-                's' | 'S' => s::get(),
-                't' | 'T' => t::get(),
-                'u' | 'U' => u::get(),
-                'v' | 'V' => v::get(),
-                'w' | 'W' => w::get(),
-                'x' | 'X' => x::get(),
-                'y' | 'Y' => y::get(),
-                'z' | 'Z' => z::get(),
+                'a' | 'A' => A,
+                'b' | 'B' => B,
+                'c' | 'C' => C,
+                'd' | 'D' => D,
+                'e' | 'E' => E,
+                'f' | 'F' => F,
+                'g' | 'G' => G,
+                'h' | 'H' => H,
+                'i' | 'I' => I,
+                'j' | 'J' => J,
+                'k' | 'K' => K,
+                'l' | 'L' => L,
+                'm' | 'M' => M,
+                'n' | 'N' => N,
+                'o' | 'O' => O,
+                'p' | 'P' => P,
+                'q' | 'Q' => Q,
+                'r' | 'R' => R,
+                's' | 'S' => S,
+                't' | 'T' => T,
+                'u' | 'U' => U,
+                'v' | 'V' => V,
+                'w' | 'W' => W,
+                'x' | 'X' => X,
+                'y' | 'Y' => Y,
+                'z' | 'Z' => Z,
                 _ => return UNKNOWN_PTR
             };
 
             for logo in stack {
-                if logo.names.contains(&name.to_lowercase().as_str())  {
+                if logo.names.iter().any(|n| n.eq_ignore_ascii_case(name)) {
                     return logo;
                 }
             }
@@ -101,49 +97,52 @@ impl LogoInfo {
             zlib::decompress(self.lines.to_vec(), &mut decompressed);
             String::from_utf8(decompressed).expect("Non Utf8 in logo")
         });
-        
-        let lines: Vec<String> = lines_string.lines().map(ToOwned::to_owned).collect();
+
         let mut ret = Vec::new();
-        let mut cur_code = self.colors.first()
-            .map(ToOwned::to_owned)
-            .unwrap_or_default();
-        for line in lines {
-            let mut ret_len = 0;
-            let mut ret_line = format!("\x1b[1;{cur_code}m");
+        let mut cur_code: &str = self.colors.first().copied().unwrap_or("");
+
+        for line in lines_string.lines() {
+            let mut ret_len = 0usize;
+            let mut ret_line = String::with_capacity(line.len() + 16);
+            ret_line.push_str("\x1b[1;");
+            ret_line.push_str(cur_code);
+            ret_line.push('m');
+
             let mut in_percent = false;
-            
             for ch in line.chars() {
                 if ch == '$' {
                     if in_percent {
                         ret_line.push('$');
                         ret_len += 1;
                         in_percent = false;
-                        continue;
+                    } else {
+                        in_percent = true;
                     }
-                    in_percent = true;
                     continue;
                 }
                 if in_percent {
-                    if let Some(i) = ch.to_digit(10) && i > 0 {
-                        let code = self.colors.get(i as usize - 1).unwrap_or(&"0");
-                        cur_code = code;
-                        ret_line.push_str(&format!("\x1b[1;{code}m"));
-                    } else {
-                        ret_line.push('$');
-                        ret_line.push(ch);
-                        ret_len += 2;
-                    }
                     in_percent = false;
+                    if let Some(i) = ch.to_digit(10) {
+                        if i > 0 {
+                            let code = self.colors.get(i as usize - 1).copied().unwrap_or("0");
+                            cur_code = code;
+                            ret_line.push_str("\x1b[1;");
+                            ret_line.push_str(code);
+                            ret_line.push('m');
+                            continue;
+                        }
+                    }
+                    ret_line.push('$');
+                    ret_line.push(ch);
+                    ret_len += 2;
                     continue;
                 }
                 ret_line.push(ch);
                 ret_len += 1;
             }
             ret_line.push_str("\x1b[0m");
-
             ret.push((ret_line, ret_len));
         }
-
         ret
     }
 }
