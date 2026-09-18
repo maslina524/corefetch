@@ -94,7 +94,7 @@ static ALLOCATOR: Allocator = Allocator;
 
 const MIN_OFFSET: usize = 24;
 
-// #[cfg(not(test))]
+#[cfg(not(test))]
 mod panic_impl {
     use core::panic::PanicInfo;
 
