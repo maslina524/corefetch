@@ -7,8 +7,8 @@ use alloc::{
 };
 
 use crate::windows::{
-    error::{self, ErrorCode},
-    link::{WideCharToMultiByte, MultiByteToWideChar}
+    error::{self, ErrorCode}, 
+    link::{MultiByteToWideChar, WideCharToMultiByte}
 };
 
 const CP_UTF8: u32 = 65001;
@@ -117,4 +117,18 @@ pub fn wide(src: impl Into<String>) -> error::Result<Vec<u16>> {
     let mut vec = utf8_to_utf16le(src)?;
     vec.push(0);
     Ok(vec)
+}
+
+pub fn wide_without_alloc(s: &str, buf: &mut [u16]) -> usize {
+    let mut i = 0;
+
+    for u in s.encode_utf16() {
+        if i >= buf.len().saturating_sub(1) {
+            break
+        }
+        buf[i] = u;
+        i += 1;
+    }
+
+    i
 }

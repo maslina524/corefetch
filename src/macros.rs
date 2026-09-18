@@ -11,7 +11,7 @@ macro_rules! todo_or_default {
 #[macro_export]
 macro_rules! info {
     ($($args:tt)*) => {{
-        $crate::print!("\x1b[1;{}minfo\x1b[0m: ", $crate::color::FG_BLUE);
+        $crate::print!("\x1b[1;{}mInfo\x1b[0m: ", $crate::color::FG_BLUE);
         $crate::println!($($args)*);
     }};
 }
@@ -20,10 +20,10 @@ macro_rules! info {
 macro_rules! warning {
     ($($args:tt)*) => {{
         #[cfg(debug_assertions)]
-        $crate::eprint!("\x1b[1;{}mwarning\x1b[0m:{}:{}: ", $crate::color::FG_YELLOW, file!(), line!());
+        $crate::eprint!("\x1b[1;{}mWarning\x1b[0m:{}:{}: ", $crate::color::FG_YELLOW, file!(), line!());
 
         #[cfg(not(debug_assertions))]
-        $crate::eprint!("\x1b[1;{}mwarning\x1b[0m: ", $crate::color::FG_YELLOW);
+        $crate::eprint!("\x1b[1;{}mWarning\x1b[0m: ", $crate::color::FG_YELLOW);
 
         $crate::eprintln!($($args)*);
     }};
@@ -32,39 +32,9 @@ macro_rules! warning {
 #[macro_export]
 macro_rules! abort {
     ($($args:tt)*) => {{
-        #[cfg(debug_assertions)]
-        $crate::eprint!("\x1b[1;{}mabort\x1b[0m:{}:{}: ", $crate::color::FG_RED, file!(), line!());
-
-        #[cfg(not(debug_assertions))]
-        $crate::eprint!("\x1b[1;{}mabort\x1b[0m: ", $crate::color::FG_RED);
-
-        $crate::eprintln!($($args)*);
-        $crate::exit(101)
+        $crate::eprintln!("\x1b[1;{}mProgram Aborted\x1b[0m", $crate::color::FG_RED);
+        panic!($($args)*);
     }};
-}
-
-#[macro_export]
-macro_rules! colored {
-    ($string:tt) => {{
-        $string
-            .replace("<bold>", "\x1b[1m")
-            .replace("<italic>", "\x1b[3m")
-            .replace("<underline>", "\x1b[4m")
-            .replace("<reset>", "\x1b[0m")
-    }};
-}
-
-#[macro_export]
-macro_rules! multi_string {
-    ($($s:literal),* $(,)?) => {{
-        const COUNT: usize = [$(multi_string!(@count $s)),*].len();
-        
-        let strings: [&str; COUNT] = [$($s),*];
-        
-        strings.join("\n")
-    }};
-    
-    (@count $s:literal) => { 1 };
 }
 
 #[cfg(target_os = "windows")]
@@ -260,23 +230,5 @@ mod tests {
     fn warning_test() {
         warning!("Example warn");
         warning!("Formatted msg: 2 + 2 = {}", 2 + 2);
-    }
-
-    #[test]
-    fn colored_test() {
-        let colored = colored!("<bold><italic>String<reset>");
-        let ansi = "\x1b[1m\x1b[3mString\x1b[0m";
-        assert_eq!(colored, ansi);
-    }
-
-    #[test]
-    fn multi_string_test() {
-        let multi = multi_string!(
-            "Multi",
-            "String",
-            "Test"
-        );
-        let string = "Multi\nString\nTest";
-        assert_eq!(multi, string);
     }
 }

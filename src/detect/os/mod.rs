@@ -41,8 +41,9 @@ pub fn get_id() -> String {
 #[cfg(target_os = "windows")]
 pub fn get_id() -> String {
     use crate::windows::env;
+    use alloc::borrow::ToOwned;
 
     let (_, _, build) = env::get_version();
     let version = OsInfo::version(build as i32).to_owned();
-    format!("Windows {version}")
+    crate::format!("Windows {version}")
 }

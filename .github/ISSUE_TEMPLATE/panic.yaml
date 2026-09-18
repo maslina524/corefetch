@@ -16,18 +16,18 @@ body:
       required: true
 
   - type: input
-    id: os
+    id: location
     attributes:
-      label: OS
-      placeholder: "Windows 11 / Ubuntu 24.04 / Android"
+      label: Location
+      placeholder: "file:line:column"
     validations:
-      required: true
+      required: false
 
-  - type: textarea
-    id: message
+  - type: input
+    id: target
     attributes:
-      label: Panic message
-      description: Program output on panic.
+      label: Target
+      placeholder: "Example: x86_64-linux-unknown"
     validations:
       required: true
 

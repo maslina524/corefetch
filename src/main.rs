@@ -94,18 +94,36 @@ static ALLOCATOR: Allocator = Allocator;
 
 const MIN_OFFSET: usize = 24;
 
-#[cfg(not(test))]
+// #[cfg(not(test))]
 mod panic_impl {
     use core::panic::PanicInfo;
 
-    use crate::{exit, eprintln};
+    use crate::{
+        exit,
+        eprintln,
+        format
+    };
 
     #[panic_handler]
     fn panic(info: &PanicInfo) -> ! {
-        if let Some(loc) = info.location() {
-            eprintln!("{loc}");
+        let msg = info.message().as_str().unwrap_or("Without message");
+
+        let location = info
+            .location()
+            .map(|l| format!("{}:{}:{}", l.file(), l.line(), l.column()));
+
+        if let Some(ref loc) = location {
+            eprintln!("\x1b[1m{loc}: {msg}\x1b[0m"); 
+        } else {
+            eprintln!("\x1b[1m{msg}\x1b[0m");
         }
-        eprintln!("{}", info.message());
+        
+        let link = format!(
+            "https://github.com/maslina524/corefetch/issues/new?template=panic.yaml&version={}&title={}&target={}&location={}",
+            env!("CARGO_PKG_VERSION"), msg, env!("TARGET"), location.unwrap_or_default()
+        );
+        eprintln!("Leave an Issue at this [\x1b]8;;{link}\x1b\\link\x1b]8;;\x1b\\]");
+        
         exit(101)
     }
 }

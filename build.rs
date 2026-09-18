@@ -77,7 +77,7 @@ impl Commit {
 
         let numstat = Command::new("git")
             .env("LC_ALL", "C")
-            .args(["log", "--format=", "--shortstat", "-1"])
+            .args(["log", "--shortstat", "-1"])
             .output()
             .ok()
             .and_then(|output| String::from_utf8(output.stdout).ok())
@@ -372,6 +372,10 @@ fn main() {
 
     println!("cargo:rerun-if-changed={}", trigger_file.display());
     println!("cargo:rerun-if-env-changed=BUILD_TIMESTAMP_{timestamp}");
+
+    // ENV: TARGET
+    let target = std::env::var("TARGET").unwrap(); 
+    println!("cargo:rustc-env=TARGET={target}");
 
     // ENV: TARGET_ARCH
     let target_arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap();
