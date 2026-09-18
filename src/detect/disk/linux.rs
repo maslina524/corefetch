@@ -2,17 +2,13 @@ use core::ffi::CStr;
 
 use alloc::{
     vec::Vec,
-    string::String
+    string::{String, ToString}
 };
 
 use crate::{
-    formats::{MemorySize, Percent}, 
-    linux::{
-        error::ErrorCode, 
-        libc::{Statvfs, getmntent, setmntent, statvfs}
-    }, 
-    modules::disk::Disk, 
-    warning
+    formats::{MemorySize, Percent}, linux::{
+        error::ErrorCode, libc::{Stat, Statvfs, getmntent, setmntent, stat, statvfs}
+    }, modules::disk::Disk, warning
 };
 
 const ST_RDONLY: u64 = 0b1;
@@ -68,28 +64,40 @@ pub fn get_disks_linux() -> Vec<Disk> {
 }
 
 fn process_mount(mount: &CStr, mount_from: &CStr, mount_fs: &CStr) -> Disk {
-    let filesystem = mount_fs.to_string_lossy().into_owned();
-    let mount_from = mount_from.to_string_lossy().into_owned();
-    let mountpoint = mount.to_string_lossy().into_owned();
+    let filesystem_str = mount_fs.to_string_lossy().into_owned();
+    let mount_from_str = mount_from.to_string_lossy().into_owned();
+    let mountpoint_str = mount.to_string_lossy().into_owned();
 
-    let mut stat = Statvfs::default();
-    let ret = statvfs(mount.as_ptr(), &raw mut stat);
+    let mut statv = Statvfs::default();
+    let ret = statvfs(mount.as_ptr(), &raw mut statv);
     if ret != 0 {
         warning!(
-            "statvfs({}) failed: {}",
-            mountpoint,
+            "Failed to call statvfs({}): {}",
+            mountpoint_str,
             ErrorCode::last()
         );
     }
 
-    let fr = if stat.f_frsize == 0 { stat.f_bsize } else { stat.f_frsize };
-    let total = stat.f_blocks.saturating_mul(fr);
+    let fr = if statv.f_frsize == 0 { statv.f_bsize } else { statv.f_frsize };
+    let total = statv.f_blocks.saturating_mul(fr);
 
-    let free = stat.f_bfree.saturating_mul(fr);
+    let free = statv.f_bfree.saturating_mul(fr);
     let used = total.saturating_sub(free);
     let percent = (used as f64 / total as f64).clamp(0.0, 1.0);
 
-    let is_readonly = stat.f_flag & ST_RDONLY != 0;
+    let is_readonly = statv.f_flag & ST_RDONLY != 0;
+
+    let mut st = Stat::default();
+    let ret = stat(mount_from.as_ptr(), &raw mut st);
+    if ret != 0 {
+        warning!(
+            "Failed to call stat({}): {}",
+            mount_from_str,
+            ErrorCode::last()
+        );
+    }
+
+    let create_time = st.st_ctime;
 
     Disk {
         size_used: MemorySize::from_bytes(used),
@@ -100,13 +108,14 @@ fn process_mount(mount: &CStr, mount_from: &CStr, mount_fs: &CStr) -> Disk {
         files_percentage: Percent::default(),
         is_external: false,
         is_hidden: false,
-        filesystem,
+        filesystem: filesystem_str,
         name: String::new(),
         is_readonly,
+        create_time: create_time.to_string(),
         size_percentage_bar: String::new(),
         files_percentage_bar: String::new(),
-        mountpoint,
-        mount_from,
+        mountpoint: mountpoint_str,
+        mount_from: mount_from_str,
         ..Default::default()
     }
     // Disk { 

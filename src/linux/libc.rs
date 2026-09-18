@@ -17,10 +17,8 @@ pub type Dir = *mut c_void;
 pub type c_size = usize;
 pub type c_ssize = isize;
 pub type c_mode = c_uint;
-pub type c_time = c_long; // i64
+pub type c_time = c_long;   // i64
 pub type c_clockid = c_int; // WORK ONLY IN LINUX
-pub type c_ino = usize;
-pub type c_off = isize;
 pub type c_uid = u32;
 pub type c_gid = u32;
 pub type c_pid = i32;
@@ -28,6 +26,28 @@ pub type c_socklen = c_uint;
 pub type c_sa_family = c_ushort;
 pub type c_fsblkcnt = c_ulong;
 pub type c_fsfilcnt = c_ulong;
+pub type c_dev = c_ulong;
+pub type c_nlink = c_ulong;
+pub type c_blksize = c_long;
+
+#[cfg(file_offset_bits_64)]
+pub type c_ino    = u64;
+#[cfg(file_offset_bits_64)]
+pub type c_off    = i64;
+#[cfg(file_offset_bits_64)]
+pub type c_blkcnt = i64;
+
+#[cfg(file_offset_bits_32)]
+pub type c_ino    = u32;
+#[cfg(file_offset_bits_32)]
+pub type c_off    = i32;
+#[cfg(file_offset_bits_32)]
+pub type c_blkcnt = i32;
+
+#[cfg(not(any(file_offset_bits_32, file_offset_bits_64)))]
+pub type c_ino = usize;
+#[cfg(not(any(file_offset_bits_32, file_offset_bits_64)))]
+pub type c_off = isize;
 
 #[cfg(target_arch = "x86_64")]
 const SYS_GETDENTS64: c_long = 217;
@@ -89,6 +109,7 @@ unsafe extern "C" {
     pub safe fn fgets(s: *mut c_char, size: c_int, stream: FileHandle) -> *mut c_char;
     pub safe fn uname(st: *mut Utsname) -> c_int;
     pub safe fn statvfs(path: *const c_char, buf: *mut Statvfs) -> c_int;
+    pub safe fn stat(pathname: *const c_char, statbuf: *mut Stat) -> c_int;
 }
 
 #[cfg(not(target_os = "android"))]
@@ -124,6 +145,60 @@ pub fn errno() -> i32 {
     unsafe { *__errno() }
     #[cfg(not(target_os = "android"))]
     unsafe { *__errno_location() }
+}
+
+#[repr(C)]
+#[derive(Default)]
+pub struct Stat {
+    #[cfg(file_offset_bits_64)]
+    pub st_ino: c_ino,
+    #[cfg(file_offset_bits_64)]
+    pub st_size: c_off,
+
+    // ---- 32-битный вариант, little-endian -----------------
+    #[cfg(all(file_offset_bits_32, target_endian = "little"))]
+    pub st_ino: c_ino,
+    #[cfg(all(file_offset_bits_32, target_endian = "little"))]
+    pub st_ino_hi: c_ino,
+    #[cfg(all(file_offset_bits_32, target_endian = "little"))]
+    pub st_size: c_off,
+    #[cfg(all(file_offset_bits_32, target_endian = "little"))]
+    pub st_size_hi: c_off,
+
+    #[cfg(all(file_offset_bits_32, target_endian = "big"))]
+    pub st_ino_hi: c_ino,
+    #[cfg(all(file_offset_bits_32, target_endian = "big"))]
+    pub st_ino: c_ino,
+    #[cfg(all(file_offset_bits_32, target_endian = "big"))]
+    pub st_size_hi: c_off,
+    #[cfg(all(file_offset_bits_32, target_endian = "big"))]
+    pub st_size: c_off,
+
+    pub st_dev:       c_dev,
+    pub st_rdev:      c_dev,
+    pub st_uid:       c_uid,
+    pub st_gid:       c_gid,
+    pub st_mtime:     c_time,
+    pub st_atime:     c_time,
+    pub st_ctime:     c_time,
+    pub st_mode:      c_mode,
+    pub st_nlink:     c_nlink,
+    pub st_blocksize: c_blksize,
+    pub st_nblocks:   c_int,
+    pub st_blksize:   c_blksize,
+
+    #[cfg(file_offset_bits_64)]
+    pub st_blocks: c_blkcnt,
+
+    #[cfg(all(file_offset_bits_32, target_endian = "little"))]
+    pub st_blocks: c_blkcnt,
+    #[cfg(all(file_offset_bits_32, target_endian = "little"))]
+    pub st_blocks_hi: c_blkcnt,
+
+    #[cfg(all(file_offset_bits_32, target_endian = "big"))]
+    pub st_blocks_hi: c_blkcnt,
+    #[cfg(all(file_offset_bits_32, target_endian = "big"))]
+    pub st_blocks: c_blkcnt,
 }
 
 #[repr(C)]

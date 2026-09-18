@@ -345,6 +345,19 @@ fn main() {
         _ => {}
     }
     
+    // File offset cfg
+    let offset_bits_64 = std::env::var("CARGO_CFG_TARGET_POINTER_WIDTH")
+        .map(|w| w == "64")
+        .unwrap_or(false);
+
+    if offset_bits_64 {
+        println!("cargo:rustc-cfg=file_offset_bits_64");
+    } else {
+        println!("cargo:rustc-cfg=file_offset_bits_32");
+    }
+    println!("cargo:rustc-check-cfg=cfg(file_offset_bits_64)");
+    println!("cargo:rustc-check-cfg=cfg(file_offset_bits_32)");
+
     // Bypasses caching, runs every time during compilation
     let timestamp = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
