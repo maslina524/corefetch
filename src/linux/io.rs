@@ -10,7 +10,7 @@ pub const fn stderr() -> isize {
     2
 }
 
-pub fn write(handle: isize, s: &str) {
+pub fn write(handle: isize, s: &[u8]) {
     libc::write(handle as c_int, s.as_ptr().cast(), s.len());
 }
 
@@ -23,9 +23,9 @@ mod tests {
 
     #[test]
     fn write_test() {
-        write(stdout(), "Hello World!\n");
-        write(stdout(), "Привет мир!\n");
-        write(stdout(), "👋👋👋\n");
+        write(stdout(), b"Hello World!\n");
+        write(stdout(), "Привет мир!\n".as_bytes());
+        write(stdout(), "👋👋👋\n".as_bytes());
     }
 
     #[test]

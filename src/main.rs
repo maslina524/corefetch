@@ -42,6 +42,8 @@ mod zlib;
 mod deflate;
 mod lua;
 mod url;
+mod kitty;
+mod base64;
 
 mod modules;
 mod logo;
@@ -74,13 +76,13 @@ use alloc::{
 
 use crate::{
     json::Json,
-    logo::LogoInfo, 
+    logo::{LogoInfo, CustomLogo}, 
     modules::{
         DocsVtable, FormatValue, Module, Version, Commit
     }, 
     imp::allocator::Allocator,
     imp::env,
-    imp::fs::{self, ReadError},
+    imp::fs,
     imp::http::Request, 
     config::{Config, ConfigModule},
     url::Url,
@@ -93,6 +95,7 @@ use crate::{
 static ALLOCATOR: Allocator = Allocator;
 
 const MIN_OFFSET: usize = 24;
+const IMAGE_WIDTH: usize = 40;
 
 #[cfg(not(test))]
 mod panic_impl {
@@ -252,16 +255,26 @@ fn get_config(args: &mut Iter<'_, String>) -> Config {
     }
 }
 
-fn get_logo_name_and_custom(val: &str) -> (String, Option<String>) {
-    let id = crate::detect::os::get_id().to_lowercase();
-    match fs::read_to_string(val) {
-        Ok(s) => (id, Some(s)),
-        Err(ReadError::Code(c)) if c.is_file_not_found() => {
-            (val.to_lowercase().replace('_', " "), None)
+fn get_logo_name_and_custom(val: &str) -> (String, CustomLogo) {
+    let id = crate::detect::os::get_id();
+    match fs::read(val) {
+        Ok(b) => if png::is_png(&b) {
+            (id, CustomLogo::Image(b))
+        } else {
+            if let Ok(s) = String::from_utf8(b) {
+                (id, CustomLogo::Ascii(s))
+            } else {
+                warning!("Failed to represent data as utf8");
+                (id, CustomLogo::None)
+            }
+        },
+        Err(e) if e.is_file_not_found() => {
+            warning!("Logo file not found: {e}");
+            (val.to_lowercase().replace('_', " "), CustomLogo::None)
         }
         Err(e) => {
             warning!("Failed to use logo from fs: {e}");
-            (id, None)
+            (id, CustomLogo::None)
         }
     }
 }
@@ -304,7 +317,7 @@ fn print_help(theme: Option<&str>) -> ! {
                 }
             },
             "example" => {
-                LogoInfo::new(&crate::detect::os::get_id().to_lowercase());
+                LogoInfo::new(&crate::detect::os::get_id());
                 Config::get_or_init(Config::default());
                 
                 if let Some(doc) = (vtable.example)() {
@@ -436,41 +449,76 @@ fn corefetch_main() -> i32 {
             get_logo_name_and_custom(val)
         })
     } else {
-        let id = crate::detect::os::get_id().to_lowercase();
-        (id, None)
+        let id = crate::detect::os::get_id();
+        (id, CustomLogo::None)
     };
 
-    // Build buffers
-    let (w, _) = env::terminal_size();
-    let logo_lines = LogoInfo::new(&logo_name).get_ready_logo_lines(custom);
-    let max_logo_len = max_line_len(&logo_lines);
-    let padding = Config::get().get_logo_padding();
-    let max_logo_len_padding = max_logo_len + padding.left + padding.right;
+    if let CustomLogo::Image(png_data) = &custom {
+        LogoInfo::new(&crate::detect::os::get_id());
 
-    let split_len = if max_logo_len_padding + MIN_OFFSET < w {
-        max_logo_len
-    } else {
-        w
-    };
+        let padding = Config::get().get_logo_padding();
+        let (w, _) = env::terminal_size();
+        let image_cols = IMAGE_WIDTH.min(w.saturating_sub(MIN_OFFSET + padding.left + padding.right));
 
-    let logo_buf = build_logo_buf(&logo_lines, max_logo_len);
-    let info_buf = build_info_buf(split_len);
-    let max_lines = logo_buf.len().max(info_buf.len());
+        if image_cols == 0 {
+            crate::kitty::print_png(png_data, Some(IMAGE_WIDTH), None, 0);
+            let info_buf = build_info_buf(w);
+            for line in info_buf {
+                println!("{line}\x1b[0m");
+            }
+        } else {
+            for _ in 0..padding.top {
+                println!();
+            }
+            print!("{}", " ".repeat(padding.left));
 
-    // Print buffers
-    if max_logo_len_padding + MIN_OFFSET < w {
-        let empty_logo_line = " ".repeat(max_logo_len_padding);
-        for i in 0..max_lines {
-            let logo_line = logo_buf.get(i).map_or(empty_logo_line.as_str(), String::as_str);
-            let info_line = info_buf.get(i).map_or("", |s| *s);
-            println!("{logo_line}{info_line}\x1b[0m");
+            let max_len_line = w.saturating_sub(image_cols + padding.left + padding.right);
+            let info_buf = build_info_buf(max_len_line);
+
+            crate::kitty::print_png(png_data, Some(image_cols), None, 0);
+
+            let move_right = image_cols + padding.right;
+            for info_line in info_buf {
+                print!("\x1b[{}C", move_right);
+                println!("{info_line}\x1b[0m");
+            }
+
+            for _ in 0..padding.bottom {
+                println!();
+            }
         }
     } else {
-        for line in logo_buf {
-            println!("{line}\x1b[0m");
-        }
-        for line in info_buf {
-            println!("{line}\x1b[0m");
+        let logo_lines = LogoInfo::new(&logo_name).get_ready_logo_lines(custom);
+        let max_logo_len = max_line_len(&logo_lines);
+        let padding = Config::get().get_logo_padding();
+        let max_logo_len_padding = max_logo_len + padding.left + padding.right;
+
+        let (w, _) = env::terminal_size();
+        let split_len = if max_logo_len_padding + MIN_OFFSET < w {
+            max_logo_len
+        } else {
+            w
+        };
+
+        let logo_buf = build_logo_buf(&logo_lines, max_logo_len);
+        let info_buf = build_info_buf(split_len);
+        let max_lines = logo_buf.len().max(info_buf.len());
+
+        // Print buffers
+        if max_logo_len_padding + MIN_OFFSET < w {
+            let empty_logo_line = " ".repeat(max_logo_len_padding);
+            for i in 0..max_lines {
+                let logo_line = logo_buf.get(i).map_or(empty_logo_line.as_str(), String::as_str);
+                let info_line = info_buf.get(i).map_or("", |s| *s);
+                println!("{logo_line}{info_line}\x1b[0m");
+            }
+        } else {
+            for line in logo_buf {
+                println!("{line}\x1b[0m");
+            }
+            for line in info_buf {
+                println!("{line}\x1b[0m");
+            }
         }
     }
 

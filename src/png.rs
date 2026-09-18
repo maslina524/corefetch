@@ -236,6 +236,10 @@ fn extract_pixel_bytes(row: &[u8], x: usize, color_type: ColorType, depth: u8) -
     }
 }
 
+pub fn is_png(content: &[u8]) -> bool {
+    &content[..PNG_SIG.len()] == PNG_SIG
+}
+
 #[derive(Debug)]
 pub struct Png {
     image: Image,

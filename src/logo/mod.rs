@@ -32,6 +32,12 @@ static UNKNOWN_PTR: &LogoInfo = &LogoInfo {
 
 static LOGO_INFO: OnceLock<&'static LogoInfo> = OnceLock::new();
 
+pub enum CustomLogo {
+    None,
+    Ascii(String),
+    Image(Vec<u8>)
+}
+
 pub struct LogoInfo {
     pub names: &'static [&'static str],
     pub lines: &'static [u8],
@@ -91,12 +97,16 @@ impl LogoInfo {
         LOGO_INFO.get().map(|v| &**v)
     }
 
-    pub fn get_ready_logo_lines(&self, string: Option<String>) -> Vec<(String, usize)> {
-        let lines_string = string.unwrap_or_else(|| {
-            let mut decompressed = Vec::new();
-            zlib::decompress(self.lines.to_vec(), &mut decompressed);
-            String::from_utf8(decompressed).expect("Non Utf8 in logo")
-        });
+    pub fn get_ready_logo_lines(&self, logo: CustomLogo) -> Vec<(String, usize)> {
+        let lines_string = match logo {
+            CustomLogo::None => {
+                let mut decompressed = Vec::new();
+                zlib::decompress(self.lines.to_vec(), &mut decompressed);
+                String::from_utf8(decompressed).expect("Non Utf8 in logo")
+            },
+            CustomLogo::Ascii(s) => s,
+            CustomLogo::Image(_) => return Vec::new(),
+        };
 
         let mut ret = Vec::new();
         let mut cur_code: &str = self.colors.first().copied().unwrap_or("");
