@@ -1,0 +1,40 @@
+name: Panic Report
+description: The program panicked or was aborted
+title: "[Panic]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: "Thank you for helping improve corefetch!"
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      placeholder: "0.3.0"
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: OS
+      placeholder: "Windows 11 / Ubuntu 24.04 / Android"
+    validations:
+      required: true
+
+  - type: textarea
+    id: message
+    attributes:
+      label: Panic message
+      description: Program output on panic.
+    validations:
+      required: true
+
+  - type: textarea
+    id: comment
+    attributes:
+      label: Additional comment
+      description: Describe what could have caused the error.
+    validations:
+      required: false
