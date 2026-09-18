@@ -1,15 +1,21 @@
 use core::ffi::CStr;
 
-use alloc::vec::Vec;
+use alloc::{
+    vec::Vec,
+    string::String
+};
 
 use crate::{
-    modules::disk::Disk, 
+    formats::{MemorySize, Percent}, 
     linux::{
         error::ErrorCode, 
-        libc::{getmntent, setmntent}
+        libc::{Statvfs, getmntent, setmntent, statvfs}
     }, 
+    modules::disk::Disk, 
     warning
 };
+
+const ST_RDONLY: u64 = 0b1;
 
 static SKIP_TYPES: [&CStr; 25] = [
     c"proc", c"sysfs", c"tmpfs", c"devtmpfs", c"devpts",
@@ -66,10 +72,49 @@ fn process_mount(mount: &CStr, mount_from: &CStr, mount_fs: &CStr) -> Disk {
     let mount_from = mount_from.to_string_lossy().into_owned();
     let mountpoint = mount.to_string_lossy().into_owned();
 
+    let mut stat = Statvfs::default();
+    let ret = statvfs(mount.as_ptr(), &raw mut stat);
+    if ret != 0 {
+        warning!(
+            "statvfs({}) failed: {}",
+            mountpoint,
+            ErrorCode::last()
+        );
+    }
+
+    let fr = if stat.f_frsize == 0 { stat.f_bsize } else { stat.f_frsize };
+    let total = stat.f_blocks.saturating_mul(fr);
+
+    let free = stat.f_bfree.saturating_mul(fr);
+    let used = total.saturating_sub(free);
+    let percent = (used as f64 / total as f64).clamp(0.0, 1.0);
+
+    let is_readonly = stat.f_flag & ST_RDONLY != 0;
+
     Disk {
+        size_used: MemorySize::from_bytes(used),
+        size_total: MemorySize::from_bytes(total),
+        size_percentage: Percent::new((percent * 100.0) as u8),
+        files_used: 0, 
+        files_total: 0,
+        files_percentage: Percent::default(),
+        is_external: false,
+        is_hidden: false,
         filesystem,
-        mount_from,
+        name: String::new(),
+        is_readonly,
+        size_percentage_bar: String::new(),
+        files_percentage_bar: String::new(),
         mountpoint,
+        mount_from,
         ..Default::default()
     }
+    // Disk { 
+    //     create_time: (),
+    //     days: (), 
+    //     hours: (), 
+    //     minutes: (), 
+    //     seconds: (), 
+    //     milliseconds: ()
+    // }
 }

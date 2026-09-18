@@ -9,7 +9,7 @@ use doc::Docs;
 use crate::{
     detect::disk::get_disks, 
     format_for_module, 
-    formats::Percent, 
+    formats::{MemorySize, Percent}, 
     impl_display_for_module, 
     json::Value, 
     modules::Module, 
@@ -59,11 +59,11 @@ impl Module for DiskList {
 
 #[derive(Debug, Clone, Default, Docs)]
 pub struct Disk {
-    pub size_used: String,
-    pub size_total: String,
+    pub size_used: MemorySize,
+    pub size_total: MemorySize,
     pub size_percentage: Percent,
-    pub files_used: String,
-    pub files_total: String,
+    pub files_used: usize,
+    pub files_total: usize,
     pub files_percentage: Percent,
     pub is_external: bool,
     pub is_hidden: bool,

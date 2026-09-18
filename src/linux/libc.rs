@@ -26,6 +26,8 @@ pub type c_gid = u32;
 pub type c_pid = i32;
 pub type c_socklen = c_uint;
 pub type c_sa_family = c_ushort;
+pub type c_fsblkcnt = c_ulong;
+pub type c_fsfilcnt = c_ulong;
 
 #[cfg(target_arch = "x86_64")]
 const SYS_GETDENTS64: c_long = 217;
@@ -86,6 +88,7 @@ unsafe extern "C" {
     pub safe fn pclose(stream: FileHandle) -> c_int;
     pub safe fn fgets(s: *mut c_char, size: c_int, stream: FileHandle) -> *mut c_char;
     pub safe fn uname(st: *mut Utsname) -> c_int;
+    pub safe fn statvfs(path: *const c_char, buf: *mut Statvfs) -> c_int;
 }
 
 #[cfg(not(target_os = "android"))]
@@ -121,6 +124,22 @@ pub fn errno() -> i32 {
     unsafe { *__errno() }
     #[cfg(not(target_os = "android"))]
     unsafe { *__errno_location() }
+}
+
+#[repr(C)]
+#[derive(Default)]
+pub struct Statvfs {
+    pub f_bsize: c_ulong,
+    pub f_frsize: c_ulong,
+    pub f_blocks: c_fsblkcnt,
+    pub f_bfree: c_fsblkcnt,
+    pub f_bavail: c_fsblkcnt,
+    pub f_files: c_fsfilcnt,
+    pub f_ffree: c_fsfilcnt,
+    pub f_favail: c_fsfilcnt,    
+    pub f_fsid: c_ulong,
+    pub f_flag: c_ulong,
+    pub f_namemax: c_ulong,
 }
 
 #[repr(C)]

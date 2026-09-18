@@ -1,12 +1,6 @@
-use alloc::{
-    string::String,
-    borrow::ToOwned
-};
+use alloc::string::String;
 
-use crate::{
-    cfg_if,
-    format
-};
+use crate::cfg_if;
 
 cfg_if! {
     if #[cfg(target_os = "windows")] {
