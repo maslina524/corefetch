@@ -32,7 +32,7 @@ pub fn stderr() -> isize {
     })
 }
 
-pub fn write(handle: isize, s: &str) {
+pub fn write(handle: isize, s: &[u8]) {
     if IS_UTF8.compare_exchange(false, true, Ordering::Relaxed, Ordering::Relaxed).is_ok() {
         // SAFETY: The function always receives a valid constant from the documentation,
         // and possible errors are checked
@@ -65,9 +65,9 @@ mod tests {
 
     #[test]
     fn write_test() {
-        write(stdout(), "Hello World!\n");
-        write(stdout(), "Привет мир!\n");
-        write(stdout(), "👋👋👋\n");
+        write(stdout(), b"Hello World!\n");
+        write(stdout(), "Привет мир!\n".as_bytes());
+        write(stdout(), "👋👋👋\n".as_bytes());
     }
 
     #[test]

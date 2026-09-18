@@ -63,9 +63,6 @@ impl Commit {
             .split(|c: char| !c.is_ascii_digit())
             .filter(|s| !s.is_empty())
             .filter_map(|s| s.parse::<usize>().ok());
-
-        println!("cargo:warning=Raw: {numstat_raw}");
-        println!("cargo:warning=Nums: {:?}", nums.clone().collect::<Vec<usize>>());
         
         let files = nums.next().expect("Failed to call Git shortstat");
         let added = nums.next().expect("Failed to call Git shortstat");
@@ -599,7 +596,6 @@ mod setup {
     }
 }
 
-#[allow(clippy::too_many_lines)]
 fn main() {
     setup::build_bypass();
     setup::lua_and_libc();

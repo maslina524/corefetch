@@ -461,7 +461,8 @@ fn corefetch_main() -> i32 {
         let image_cols = IMAGE_WIDTH.min(w.saturating_sub(MIN_OFFSET + padding.left + padding.right));
 
         if image_cols == 0 {
-            crate::kitty::print_png(png_data, Some(IMAGE_WIDTH), None, 0);
+            let fallback_cols = w.min(IMAGE_WIDTH).max(1);
+            crate::kitty::print_png(png_data, Some(fallback_cols), None, 0);
             let info_buf = build_info_buf(w);
             for line in info_buf {
                 println!("{line}\x1b[0m");
@@ -472,8 +473,7 @@ fn corefetch_main() -> i32 {
             }
             print!("{}", " ".repeat(padding.left));
 
-            let max_len_line = w.saturating_sub(image_cols + padding.left + padding.right);
-            let info_buf = build_info_buf(max_len_line);
+            let info_buf = build_info_buf(image_cols);
 
             crate::kitty::print_png(png_data, Some(image_cols), None, 0);
 
