@@ -110,6 +110,7 @@ unsafe extern "C" {
     pub safe fn uname(st: *mut Utsname) -> c_int;
     pub safe fn statvfs(path: *const c_char, buf: *mut Statvfs) -> c_int;
     pub safe fn stat(pathname: *const c_char, statbuf: *mut Stat) -> c_int;
+    pub safe fn strftime(s: *mut c_char, max: c_size, format: *const c_char, tm: *const Tm) -> c_size;
 }
 
 #[cfg(not(target_os = "android"))]
@@ -150,55 +151,21 @@ pub fn errno() -> i32 {
 #[repr(C)]
 #[derive(Default)]
 pub struct Stat {
-    #[cfg(file_offset_bits_64)]
+    pub st_dev: c_dev,
     pub st_ino: c_ino,
-    #[cfg(file_offset_bits_64)]
+    pub st_nlink: c_nlink,
+    pub st_mode: c_mode,
+    pub st_uid: c_uid,
+    pub st_gid: c_gid,
+    pub __pad0: c_int,
+    pub st_rdev: c_dev,
     pub st_size: c_off,
-
-    // ---- 32-битный вариант, little-endian -----------------
-    #[cfg(all(file_offset_bits_32, target_endian = "little"))]
-    pub st_ino: c_ino,
-    #[cfg(all(file_offset_bits_32, target_endian = "little"))]
-    pub st_ino_hi: c_ino,
-    #[cfg(all(file_offset_bits_32, target_endian = "little"))]
-    pub st_size: c_off,
-    #[cfg(all(file_offset_bits_32, target_endian = "little"))]
-    pub st_size_hi: c_off,
-
-    #[cfg(all(file_offset_bits_32, target_endian = "big"))]
-    pub st_ino_hi: c_ino,
-    #[cfg(all(file_offset_bits_32, target_endian = "big"))]
-    pub st_ino: c_ino,
-    #[cfg(all(file_offset_bits_32, target_endian = "big"))]
-    pub st_size_hi: c_off,
-    #[cfg(all(file_offset_bits_32, target_endian = "big"))]
-    pub st_size: c_off,
-
-    pub st_dev:       c_dev,
-    pub st_rdev:      c_dev,
-    pub st_uid:       c_uid,
-    pub st_gid:       c_gid,
-    pub st_mtime:     c_time,
-    pub st_atime:     c_time,
-    pub st_ctime:     c_time,
-    pub st_mode:      c_mode,
-    pub st_nlink:     c_nlink,
-    pub st_blocksize: c_blksize,
-    pub st_nblocks:   c_int,
-    pub st_blksize:   c_blksize,
-
-    #[cfg(file_offset_bits_64)]
+    pub st_blksize: c_blksize,
     pub st_blocks: c_blkcnt,
-
-    #[cfg(all(file_offset_bits_32, target_endian = "little"))]
-    pub st_blocks: c_blkcnt,
-    #[cfg(all(file_offset_bits_32, target_endian = "little"))]
-    pub st_blocks_hi: c_blkcnt,
-
-    #[cfg(all(file_offset_bits_32, target_endian = "big"))]
-    pub st_blocks_hi: c_blkcnt,
-    #[cfg(all(file_offset_bits_32, target_endian = "big"))]
-    pub st_blocks: c_blkcnt,
+    pub st_atime: Timespec,
+    pub st_mtime: Timespec,
+    pub st_ctime: Timespec,
+    __glibc_reserved: [c_long; 3],
 }
 
 #[repr(C)]
@@ -211,10 +178,11 @@ pub struct Statvfs {
     pub f_bavail: c_fsblkcnt,
     pub f_files: c_fsfilcnt,
     pub f_ffree: c_fsfilcnt,
-    pub f_favail: c_fsfilcnt,    
+    pub f_favail: c_fsfilcnt,
     pub f_fsid: c_ulong,
     pub f_flag: c_ulong,
     pub f_namemax: c_ulong,
+    __f_spare: [c_uint; 6],
 }
 
 #[repr(C)]

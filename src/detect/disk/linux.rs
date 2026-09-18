@@ -1,14 +1,20 @@
-use core::ffi::CStr;
+use core::ffi::{CStr, c_char};
 
 use alloc::{
     vec::Vec,
-    string::{String, ToString}
+    string::String
 };
 
 use crate::{
-    formats::{MemorySize, Percent}, linux::{
-        error::ErrorCode, libc::{Stat, Statvfs, getmntent, setmntent, stat, statvfs}
-    }, modules::disk::Disk, warning
+    formats::{MemorySize, Percent}, 
+    linux::{
+        error::ErrorCode, 
+        libc::{
+            Stat, Statvfs, Tm, getmntent, localtime_r, setmntent, stat, statvfs, strftime
+        }
+    }, 
+    modules::disk::Disk, 
+    warning
 };
 
 const ST_RDONLY: u64 = 0b1;
@@ -97,7 +103,22 @@ fn process_mount(mount: &CStr, mount_from: &CStr, mount_fs: &CStr) -> Disk {
         );
     }
 
-    let create_time = st.st_ctime;
+    let mut tm = Tm::default();
+    let res = localtime_r(&raw const st.st_ctime.tv_sec, &raw mut tm);
+    if res.is_null() {
+        warning!("localtime_r failed for {}", mount_from_str);
+    }
+
+    let mut buf = [c_char::default(); 64 + 1];
+    strftime(
+        buf.as_mut_ptr(),
+        64,
+        c"%Y-%m-%d %H:%M:%S".as_ptr(),
+        &raw const tm,
+    );
+    let create_time = unsafe { CStr::from_ptr(buf.as_ptr()) }
+        .to_string_lossy()
+        .into_owned();
 
     Disk {
         size_used: MemorySize::from_bytes(used),
@@ -111,7 +132,7 @@ fn process_mount(mount: &CStr, mount_from: &CStr, mount_fs: &CStr) -> Disk {
         filesystem: filesystem_str,
         name: String::new(),
         is_readonly,
-        create_time: create_time.to_string(),
+        create_time,
         size_percentage_bar: String::new(),
         files_percentage_bar: String::new(),
         mountpoint: mountpoint_str,
