@@ -1,4 +1,4 @@
-use core::ffi::{CStr, c_char};
+use core::ffi::CStr;
 
 use alloc::{
     vec::Vec,
@@ -6,18 +6,20 @@ use alloc::{
 };
 
 use crate::{
-    formats::{MemorySize, Percent}, 
-    linux::{
+    formats::{MemorySize, Percent, Time}, linux::{
         error::ErrorCode, 
         libc::{
-            Stat, Statvfs, Tm, getmntent, localtime_r, setmntent, stat, statvfs, strftime
+            Stat, Statvfs, Statx, getmntent, setmntent, stat, statvfs, statx
         }
-    }, 
-    modules::disk::Disk, 
-    warning
+    }, modules::disk::Disk, warning
 };
 
 const ST_RDONLY: u64 = 0b1;
+const STATX_BTIME: u32 = 0x0800;
+
+const DAY_SEC: u64 = 60 * 60 * 24;
+const HOUR_SEC: u64 = 60 * 60;
+const MIN_SEC: u64 = 60;
 
 static SKIP_TYPES: [&CStr; 25] = [
     c"proc", c"sysfs", c"tmpfs", c"devtmpfs", c"devpts",
@@ -103,22 +105,13 @@ fn process_mount(mount: &CStr, mount_from: &CStr, mount_fs: &CStr) -> Disk {
         );
     }
 
-    let mut tm = Tm::default();
-    let res = localtime_r(&raw const st.st_ctime.tv_sec, &raw mut tm);
-    if res.is_null() {
-        warning!("localtime_r failed for {}", mount_from_str);
-    }
-
-    let mut buf = [c_char::default(); 64 + 1];
-    strftime(
-        buf.as_mut_ptr(),
-        64,
-        c"%Y-%m-%d %H:%M:%S".as_ptr(),
-        &raw const tm,
-    );
-    let create_time = unsafe { CStr::from_ptr(buf.as_ptr()) }
-        .to_string_lossy()
-        .into_owned();
+    let mut stx = Statx::default();
+    let ret = statx(0, mount, 0, STATX_BTIME, &raw mut stx);
+    let ct_int = if ret == 0 && (stx.stx_mask & STATX_BTIME) == STATX_BTIME && stx.stx_btime.tv_sec > 685065600 {
+        stx.stx_btime.tv_sec
+    } else {
+        0
+    };
 
     Disk {
         size_used: MemorySize::from_bytes(used),
@@ -132,19 +125,15 @@ fn process_mount(mount: &CStr, mount_from: &CStr, mount_fs: &CStr) -> Disk {
         filesystem: filesystem_str,
         name: String::new(),
         is_readonly,
-        create_time,
+        create_time: Time::new(ct_int),
         size_percentage_bar: String::new(),
         files_percentage_bar: String::new(),
+        days: (ct_int / DAY_SEC) as u32,
+        hours: (ct_int / HOUR_SEC) as u8,
+        minutes: (ct_int / MIN_SEC) as u8,
+        seconds: (ct_int % MIN_SEC) as u8,
+        milliseconds: 0,
         mountpoint: mountpoint_str,
-        mount_from: mount_from_str,
-        ..Default::default()
+        mount_from: mount_from_str
     }
-    // Disk { 
-    //     create_time: (),
-    //     days: (), 
-    //     hours: (), 
-    //     minutes: (), 
-    //     seconds: (), 
-    //     milliseconds: ()
-    // }
 }
