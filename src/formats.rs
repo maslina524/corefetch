@@ -22,7 +22,8 @@ use crate::{
         BG_LIGHT_MAGENTA, FG_CYAN, FG_LIGHT_CYAN, BG_CYAN, BG_LIGHT_CYAN, FG_WHITE,
         FG_LIGHT_WHITE, BG_WHITE, BG_LIGHT_WHITE, BG_DEFAULT, FG_DEFAULT
     },
-    config::Config
+    config::Config,
+    imp
 };
 
 #[derive(Copy, Clone, PartialEq, Eq)]
@@ -305,6 +306,30 @@ impl core::fmt::Display for Temperature {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         let val = Config::get().format_temperature(*self);
         write!(f, "{val}")
+    }
+}
+
+#[derive(Debug, Clone, Copy, Default)]
+pub struct Time(u64);
+
+impl Time {
+    pub fn new(time: u64) -> Self {
+        Self(time)
+    }
+}
+
+impl From<Time> for f64 {
+    #[allow(clippy::cast_precision_loss)]
+    fn from(val: Time) -> Self {
+        val.0 as f64
+    }
+}
+
+impl core::fmt::Display for Time {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        let string = imp::env::format_timestamp(self.0, None);
+        crate::warning!("Format Timestamp: {} -> {}", self.0, string);
+        write!(f, "{string}")
     }
 }
 

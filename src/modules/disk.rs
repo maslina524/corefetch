@@ -9,7 +9,7 @@ use doc::Docs;
 use crate::{
     detect::disk::get_disks, 
     format_for_module, 
-    formats::{MemorySize, Percent}, 
+    formats::{MemorySize, Percent, Time}, 
     impl_display_for_module, 
     json::Value, 
     modules::Module, 
@@ -70,7 +70,7 @@ pub struct Disk {
     pub filesystem: String,
     pub name: String,
     pub is_readonly: bool,
-    pub create_time: String,
+    pub create_time: Time,
     pub size_percentage_bar: String,
     pub files_percentage_bar: String,
     pub days: u32,

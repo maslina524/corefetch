@@ -7,7 +7,7 @@
     reason = "C type"
 )]
 
-use core::ffi::{c_char, c_int, c_long, c_uchar, c_uint, c_ulong, c_ushort, c_void};
+use core::ffi::{CStr, c_char, c_int, c_long, c_uchar, c_uint, c_ulong, c_ushort, c_void};
 
 use crate::sync::OnceLock;
 
@@ -51,9 +51,13 @@ pub type c_off = isize;
 
 #[cfg(target_arch = "x86_64")]
 const SYS_GETDENTS64: c_long = 217;
-
 #[cfg(target_arch = "aarch64")]
 const SYS_GETDENTS64: c_long = 61;
+
+#[cfg(target_arch = "x86_64")]
+const SYS_STATX: c_long = 332;
+#[cfg(target_arch = "aarch64")]
+const SYS_GETDENTS64: c_long = 291;
 
 #[link(name = "c")]
 unsafe extern "C" {
@@ -111,6 +115,7 @@ unsafe extern "C" {
     pub safe fn statvfs(path: *const c_char, buf: *mut Statvfs) -> c_int;
     pub safe fn stat(pathname: *const c_char, statbuf: *mut Stat) -> c_int;
     pub safe fn strftime(s: *mut c_char, max: c_size, format: *const c_char, tm: *const Tm) -> c_size;
+    pub safe fn gmtime(timep: *const c_time) -> *mut Tm;
 }
 
 #[cfg(not(target_os = "android"))]
@@ -131,6 +136,10 @@ pub fn getdents64(fd: c_int, dirp: *mut c_void, count: c_size) -> c_ssize {
     syscall(SYS_GETDENTS64, fd, dirp, count) as c_ssize
 }
 
+pub fn statx(dfd: i32, filename: &CStr, flags: u32, mask: u32, buffer: *mut Statx) -> c_ssize {
+    syscall(SYS_STATX, dfd, filename.as_ptr(), flags, mask, buffer) as c_ssize
+}
+
 static SYSINFO: OnceLock<Sysinfo> = OnceLock::new();
 
 pub fn get_sysinfo() -> &'static Sysinfo {
@@ -146,6 +155,46 @@ pub fn errno() -> i32 {
     unsafe { *__errno() }
     #[cfg(not(target_os = "android"))]
     unsafe { *__errno_location() }
+}
+
+#[repr(C)]
+#[derive(Default)]
+pub struct Statx {
+    pub stx_mask: u32,
+    pub stx_blksize: u32,
+    pub stx_attributes: u64,
+    pub stx_nlink: u32,
+    pub stx_uid: u32,
+    pub stx_gid: u32,
+    pub stx_mode: u16,
+    pub stx_ino: u64,
+    pub stx_size: u64,
+    pub stx_blocks: u64,
+    pub stx_attributes_mask: u64,
+    pub stx_atime: StatxTimestamp,
+    pub stx_btime: StatxTimestamp,
+    pub stx_ctime: StatxTimestamp,
+    pub stx_mtime: StatxTimestamp,
+    pub stx_rdev_major: u32,
+    pub stx_rdev_minor: u32,
+    pub stx_dev_major: u32,
+    pub stx_dev_minor: u32,
+    pub stx_mnt_id: u64,
+    pub stx_dio_mem_align: u32,
+    pub stx_dio_offset_align: u32, 
+    pub stx_subvol: u64,
+    pub stx_atomic_write_unit_min: u32,
+    pub stx_atomic_write_unit_max: u32,
+    pub stx_atomic_write_segments_max: u32,    
+    pub stx_dio_read_offset_align: u32,    
+    pub stx_atomic_write_unit_max_opt: u32
+}
+
+#[repr(C)]
+#[derive(Default)]
+pub struct StatxTimestamp {
+    pub tv_sec: u64,
+    pub tv_nsec: u32,
 }
 
 #[repr(C)]

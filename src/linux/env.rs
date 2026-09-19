@@ -1,19 +1,26 @@
-use core::{ffi::CStr, slice};
+use core::{
+    ffi::{CStr, c_char},
+    slice
+};
 
 use alloc::{
+    ffi::CString, 
     string::{String, ToString}, 
     vec::Vec
 };
 
 use crate::{
-    linux::libc::{
-        Timespec, clock_gettime, getenv, ioctl, Winsize
-    },
-    linux::fs,
-    ARGS,
-    format,
-    warning,
-    abort
+    ARGS, 
+    abort, 
+    format, 
+    linux::{
+        fs, 
+        libc::{
+            Timespec, Winsize, clock_gettime, getenv, 
+            gmtime, ioctl, localtime, strftime
+        }
+    }, 
+    warning
 };
 
 const TIOCGWINSZ: u64 = 0x5413;
@@ -152,6 +159,45 @@ pub fn terminal_size() -> (usize, usize) {
     } else {
         (cols, lines)
     }
+}
+
+pub fn format_timestamp(time: u64, format: Option<&str>) -> String {
+    fn into_cstring(format: Option<&str>, defaut: CString) -> CString {
+        format
+            .and_then(|s| CString::new(s).ok())
+            .unwrap_or_else(|| {
+                warning!("Nul byte error in timestamp format");
+                defaut
+            })
+    }
+    
+    let mut info;
+    let mut buf = [c_char::default(); 128 + 1];
+    
+    info = localtime((&raw const time).cast());
+    if !info.is_null() {
+        let c_format = into_cstring(format, c"%Y-%m-%d %H:%M:%S".into());
+        strftime(buf.as_mut_ptr(), 128, c_format.as_ptr(), info);
+
+        // SAFETY: Libc always returns correct cstring
+        return unsafe { CStr::from_ptr(buf.as_ptr()) }
+            .to_string_lossy()
+            .into_owned()
+    }
+    
+    info = gmtime((&raw const time).cast());
+    if !info.is_null() {
+        let c_format = into_cstring(format, c"%Y-%m-%d %H:%M:%S UTC".into());
+        strftime(buf.as_mut_ptr(), 128, c_format.as_ptr(), info);
+        
+        // SAFETY: Libc always returns correct cstring
+        return unsafe { CStr::from_ptr(buf.as_ptr()) }
+            .to_string_lossy()
+            .into_owned()
+    }
+
+    warning!("Failed to format timestamp");
+    time.to_string()
 }
 
 #[cfg(test)]
