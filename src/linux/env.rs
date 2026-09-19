@@ -163,12 +163,14 @@ pub fn terminal_size() -> (usize, usize) {
 
 pub fn format_timestamp(time: u64, format: Option<&str>) -> String {
     fn into_cstring(format: Option<&str>, defaut: CString) -> CString {
-        format
-            .and_then(|s| CString::new(s).ok())
-            .unwrap_or_else(|| {
-                warning!("Nul byte error in timestamp format");
+        if let Some(f) = format {
+            CString::new(f).unwrap_or_else(|e| {
+                warning!("Nul byte error in timestamp format: {e}");
                 defaut
             })
+        } else {
+            defaut
+        }
     }
     
     let mut info;

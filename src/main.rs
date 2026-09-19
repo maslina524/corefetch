@@ -385,25 +385,27 @@ static ARGS: OnceLock<Vec<String>> = OnceLock::new();
 #[cfg(any(target_os = "linux", target_os = "android"))]
 use core::ffi::c_char;
 
-// ANDROID BUILD:
-// rustup toolchain install nightly
-// rustup component add rust-src --toolchain nightly
-// rustup target add aarch64-linux-android --toolchain nightly
+/* 
+ANDROID BUILD:
+rustup toolchain install nightly
+rustup component add rust-src --toolchain nightly
+rustup target add aarch64-linux-android --toolchain nightly
 
-// cd ~
-// wget https://dl.google.com/android/repository/android-ndk-r27c-linux.zip
-// unzip android-ndk-r27c-linux.zip
-// ~/android-ndk-r27c/ndk-build --version
+cd ~
+wget https://dl.google.com/android/repository/android-ndk-r27c-linux.zip
+unzip android-ndk-r27c-linux.zip
+~/android-ndk-r27c/ndk-build --version
 
-// export ANDROID_NDK_HOME=$HOME/android-ndk-r27c
-// export ANDROID_NDK_ROOT=$ANDROID_NDK_HOME
-// export ANDROID_PLATFORM=24
-// export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
+export ANDROID_NDK_HOME=$HOME/android-ndk-r27c
+export ANDROID_NDK_ROOT=$ANDROID_NDK_HOME
+export ANDROID_PLATFORM=24
+export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
 
-// cargo ndk -t arm64-v8a --platform 24 build --release
+cargo ndk -t arm64-v8a --platform 24 build --release
 
-// WINDOWS & LINUX
-// cargo build --release
+WINDOWS & LINUX
+cargo build --release
+*/
 
 // #[cfg(not(test))]
 #[allow(

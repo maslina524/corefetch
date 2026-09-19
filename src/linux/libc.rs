@@ -57,7 +57,7 @@ const SYS_GETDENTS64: c_long = 61;
 #[cfg(target_arch = "x86_64")]
 const SYS_STATX: c_long = 332;
 #[cfg(target_arch = "aarch64")]
-const SYS_GETDENTS64: c_long = 291;
+const SYS_STATX: c_long = 291;
 
 #[link(name = "c")]
 unsafe extern "C" {
@@ -113,7 +113,6 @@ unsafe extern "C" {
     pub safe fn fgets(s: *mut c_char, size: c_int, stream: FileHandle) -> *mut c_char;
     pub safe fn uname(st: *mut Utsname) -> c_int;
     pub safe fn statvfs(path: *const c_char, buf: *mut Statvfs) -> c_int;
-    pub safe fn stat(pathname: *const c_char, statbuf: *mut Stat) -> c_int;
     pub safe fn strftime(s: *mut c_char, max: c_size, format: *const c_char, tm: *const Tm) -> c_size;
     pub safe fn gmtime(timep: *const c_time) -> *mut Tm;
 }
@@ -167,6 +166,7 @@ pub struct Statx {
     pub stx_uid: u32,
     pub stx_gid: u32,
     pub stx_mode: u16,
+    pub __spare0: u16,
     pub stx_ino: u64,
     pub stx_size: u64,
     pub stx_blocks: u64,
@@ -181,13 +181,15 @@ pub struct Statx {
     pub stx_dev_minor: u32,
     pub stx_mnt_id: u64,
     pub stx_dio_mem_align: u32,
-    pub stx_dio_offset_align: u32, 
+    pub stx_dio_offset_align: u32,
     pub stx_subvol: u64,
     pub stx_atomic_write_unit_min: u32,
     pub stx_atomic_write_unit_max: u32,
-    pub stx_atomic_write_segments_max: u32,    
-    pub stx_dio_read_offset_align: u32,    
-    pub stx_atomic_write_unit_max_opt: u32
+    pub stx_atomic_write_segments_max: u32,
+    pub stx_dio_read_offset_align: u32,
+    pub stx_atomic_write_unit_max_opt: u32,
+    pub __spare1: u32,
+    pub __spare2: [u64; 8],
 }
 
 #[repr(C)]
@@ -195,26 +197,6 @@ pub struct Statx {
 pub struct StatxTimestamp {
     pub tv_sec: u64,
     pub tv_nsec: u32,
-}
-
-#[repr(C)]
-#[derive(Default)]
-pub struct Stat {
-    pub st_dev: c_dev,
-    pub st_ino: c_ino,
-    pub st_nlink: c_nlink,
-    pub st_mode: c_mode,
-    pub st_uid: c_uid,
-    pub st_gid: c_gid,
-    pub __pad0: c_int,
-    pub st_rdev: c_dev,
-    pub st_size: c_off,
-    pub st_blksize: c_blksize,
-    pub st_blocks: c_blkcnt,
-    pub st_atime: Timespec,
-    pub st_mtime: Timespec,
-    pub st_ctime: Timespec,
-    __glibc_reserved: [c_long; 3],
 }
 
 #[repr(C)]

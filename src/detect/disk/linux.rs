@@ -9,7 +9,7 @@ use crate::{
     formats::{MemorySize, Percent, Time}, linux::{
         error::ErrorCode, 
         libc::{
-            Stat, Statvfs, Statx, getmntent, setmntent, stat, statvfs, statx
+            Statvfs, Statx, getmntent, setmntent, statvfs, statx
         }
     }, modules::disk::Disk, warning
 };
@@ -30,14 +30,42 @@ static SKIP_TYPES: [&CStr; 25] = [
     c"squashfs", c"ramfs", c"fuse.gvfsd-fuse", c"fuse.portal"
 ];
 
+#[cfg(not(target_os = "android"))]
 static SKIP_DIRS: [&CStr; 9] = [
     c"/proc", c"/sys", c"/dev", c"/run", c"/tmp",
     c"/var/lib/docker", c"/var/lib/containers",
     c"/snap", c"/boot/efi"
 ];
 
-fn is_skipped(typ: &CStr) -> bool {
-    SKIP_TYPES.contains(&typ) || SKIP_DIRS.contains(&typ)
+#[cfg(target_os = "android")]
+static SKIP_DIRS: [&CStr; 33] = [
+    c"/proc", c"/sys", c"/dev", c"/run", c"/tmp",
+    c"/var/lib/docker", c"/var/lib/containers",
+    c"/snap", c"/boot/efi",
+
+    // Termux
+    c"/system", c"/vendor", c"/product", c"/odm",
+    c"/metadata", c"/apex", c"/mnt",
+    c"/data", c"/cache", c"/efs", c"/persist",
+    c"/firmware", c"/bt_firmware", c"/dsp",
+    c"/config", c"/acct", c"/patch_hn", c"/cust",
+    c"/version", c"/preload", c"/preas", c"/preavs",
+    c"/bootstrap", c"/log",
+];
+
+fn is_skipped(typ: &CStr, mount: &CStr) -> bool {
+    let m = mount.to_bytes();
+    if SKIP_DIRS
+        .iter()
+        .any(|v| {
+            let v = v.to_bytes();
+            !v.is_empty() && m.windows(v.len()).any(|w| w == v)
+        })
+    {
+        return true;
+    }
+    
+    SKIP_TYPES.contains(&typ)
 }
 
 pub fn get_disks_linux() -> Vec<Disk> {
@@ -57,7 +85,8 @@ pub fn get_disks_linux() -> Vec<Disk> {
 
         let data = unsafe { &*ent };
         let fs_cstr = unsafe { CStr::from_ptr(data.mnt_typeL) };
-        if is_skipped(fs_cstr) {
+        let mount_cstr = unsafe { CStr::from_ptr(data.mnt_dirL) };
+        if is_skipped(fs_cstr, mount_cstr) {
             continue;
         }
         
@@ -94,16 +123,6 @@ fn process_mount(mount: &CStr, mount_from: &CStr, mount_fs: &CStr) -> Disk {
     let percent = (used as f64 / total as f64).clamp(0.0, 1.0);
 
     let is_readonly = statv.f_flag & ST_RDONLY != 0;
-
-    let mut st = Stat::default();
-    let ret = stat(mount_from.as_ptr(), &raw mut st);
-    if ret != 0 {
-        warning!(
-            "Failed to call stat({}): {}",
-            mount_from_str,
-            ErrorCode::last()
-        );
-    }
 
     let mut stx = Statx::default();
     let ret = statx(0, mount, 0, STATX_BTIME, &raw mut stx);

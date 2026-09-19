@@ -328,7 +328,6 @@ impl From<Time> for f64 {
 impl core::fmt::Display for Time {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         let string = imp::env::format_timestamp(self.0, None);
-        crate::warning!("Format Timestamp: {} -> {}", self.0, string);
         write!(f, "{string}")
     }
 }

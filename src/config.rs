@@ -188,9 +188,9 @@ impl Config {
     pub fn format_percent(&self, percent: Percent) -> String {
         let val = percent.get();
         let color = match val {
-            i if (0..50).contains(&i) => self.display.percent.green.as_str(),
-            i if (50..75).contains(&i) => self.display.percent.yellow.as_str(),
-            i if (75..100).contains(&i) => self.display.percent.red.as_str(),
+            i if (0..=50).contains(&i) => self.display.percent.green.as_str(),
+            i if (50..=75).contains(&i) => self.display.percent.yellow.as_str(),
+            i if (75..=100).contains(&i) => self.display.percent.red.as_str(),
             _ => "0"
         };
 
