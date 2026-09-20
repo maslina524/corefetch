@@ -8,148 +8,120 @@ use alloc::{
 
 use crate::{
     format, 
-    formats::{Percent, Temperature},
-    warning, 
-    imp::env, 
-    imp::fs::{self, Access, File}, 
-    imp::http::Request, 
-    imp::path::Path
+    formats::{Percent, Temperature}, 
+    imp::{
+        env, 
+        fs::{self, Access, File}, 
+        http::Request, 
+        path::Path
+    }, 
+    leak::ConcatStr, 
+    modules::weather::Weather, 
+    warning
 };
 
 const WTTR_URL: &str = "http://wttr.in/?lang=en&format=%c;%C;%x;%h;%t;%f;%w;%l;%m;%M;%p;%P;%u;%D;%S;%z;%s;%d;%T;%Z";
 
-#[derive(Default)]
-pub struct WeatherInfo {
-    pub result: String,
-    pub condition_emoji: String,
-    pub condition: String,
-    pub condition_symbol: String,
-    pub humidity: Percent,
-    pub temperature_actual: Temperature,
-    pub temperature_feels: Temperature,
-    pub wind: String,
-    pub location: String,
-    pub moon_emoji: String,
-    pub moon_day: u8,
-    pub precipitation: String,
-    pub pressure: String,
-    pub uv_index: u8,
-    pub dawn: String,
-    pub sunrise: String,
-    pub zenith: String,
-    pub sunset: String,
-    pub dusk: String,
-    pub time: String,
-    pub timezone: String
-}
-
-impl WeatherInfo {
-    pub fn new() -> Self {
-        let cur_hour = env::timestamp_hours();
-        let raw = if let Some((hours, data)) = Self::read_cache() {
-            if cur_hour == hours {
-                data
-            } else {
-                Self::request().map_or_else(String::new, |data| {
-                    Self::set_cache(cur_hour, &data);
-                    data
-                })
-            }
+pub fn get() -> Weather {
+    let cur_hour = env::timestamp_hours();
+    let raw_string = if let Some((hours, data)) = read_cache() {
+        if cur_hour == hours {
+            data
         } else {
-            Self::request().map_or_else(String::new, |data| {
-                Self::set_cache(cur_hour, &data);
+            request().map_or_else(String::new, |data| {
+                set_cache(cur_hour, &data);
                 data
             })
-        };
-
-        if raw.is_empty() {
-            return Self::default();
         }
-
-        let mut parts = raw.splitn(20, ';');
-        let condition_emoji = parts.next().unwrap_or("");
-        let condition = parts.next().unwrap_or("");
-        let condition_symbol = parts.next().unwrap_or("");
-        let humidity = parts.next().unwrap_or("");
-        let temperature_actual = parts.next().unwrap_or("");
-        let temperature_feels = parts.next().unwrap_or("");
-        let wind = parts.next().unwrap_or("");
-        let location = parts.next().unwrap_or("");
-        let moon_emoji = parts.next().unwrap_or("");
-        let moon_day = parts.next().unwrap_or("");
-        let precipitation = parts.next().unwrap_or("");
-        let pressure = parts.next().unwrap_or("");
-        let uv_index = parts.next().unwrap_or("");
-        let dawn = parts.next().unwrap_or("");
-        let sunrise = parts.next().unwrap_or("");
-        let zenith = parts.next().unwrap_or("");
-        let sunset = parts.next().unwrap_or("");
-        let dusk = parts.next().unwrap_or("");
-        let time = parts.next().unwrap_or("");
-        let timezone = parts.next().unwrap_or("");
-
-        Self {
-            result: format!("{temperature_actual} — {condition} ({location})"),
-            condition_emoji: condition_emoji.to_owned(),
-            condition: condition.to_owned(), 
-            condition_symbol: condition_symbol.to_owned(), 
-            humidity: Percent::from_str(humidity).expect("Unreachable"), 
-            temperature_actual: Temperature::from_str(temperature_actual).expect("Unreachable"), 
-            temperature_feels: Temperature::from_str(temperature_feels).expect("Unreachable"), 
-            wind: wind.to_owned(), 
-            location: location.to_owned(), 
-            moon_emoji: moon_emoji.to_owned(), 
-            moon_day: moon_day
-                .parse::<u8>()
-                .expect("Strange response from wttr.is"), 
-            precipitation: precipitation.to_owned(), 
-            pressure: pressure.to_owned(), 
-            uv_index: uv_index
-                .parse::<u8>()
-                .expect("Strange response from wttr.is"), 
-            dawn: dawn.to_owned(), 
-            sunrise: sunrise.to_owned(), 
-            zenith: zenith.to_owned(), 
-            sunset: sunset.to_owned(), 
-            dusk: dusk.to_owned(), 
-            time: time.to_owned(), 
-            timezone: timezone.to_owned() 
-        }
+    } else {
+        request().map_or_else(String::new, |data| {
+            set_cache(cur_hour, &data);
+            data
+        })
+    };
+    if raw_string.is_empty() {
+        return Weather::default();
     }
+    let raw: &'static str = String::leak(raw_string);
+    let mut parts = raw.splitn(20, ';');
+    let condition_emoji = parts.next().unwrap_or("");
+    let condition = parts.next().unwrap_or("");
+    let condition_symbol = parts.next().unwrap_or("");
+    let humidity = parts.next().unwrap_or("");
+    let temperature_actual = parts.next().unwrap_or("");
+    let temperature_feels = parts.next().unwrap_or("");
+    let wind = parts.next().unwrap_or("");
+    let location = parts.next().unwrap_or("");
+    let moon_emoji = parts.next().unwrap_or("");
+    let moon_day = parts.next().unwrap_or("");
+    let precipitation = parts.next().unwrap_or("");
+    let pressure = parts.next().unwrap_or("");
+    let uv_index = parts.next().unwrap_or("");
+    let dawn = parts.next().unwrap_or("");
+    let sunrise = parts.next().unwrap_or("");
+    let zenith = parts.next().unwrap_or("");
+    let sunset = parts.next().unwrap_or("");
+    let dusk = parts.next().unwrap_or("");
+    let time = parts.next().unwrap_or("");
+    let timezone = parts.next().unwrap_or("");
 
-    fn request() -> Option<String> {
-        let response = Request::new(WTTR_URL).unwrap().get();
-        if response.is_success() {
-            Some(response.as_text().unwrap())
-        } else {
-            warning!("Wttr.in (weather) response code: {}", response.code());
-            None
-        }
+    Weather {
+        result: ConcatStr::new([temperature_actual, " — ", condition, " (", location, ")"]),
+        condition_emoji,
+        condition, 
+        condition_symbol, 
+        humidity: Percent::from_str(humidity).expect("Unreachable"), 
+        temperature_actual: Temperature::from_str(temperature_actual).expect("Unreachable"), 
+        temperature_feels: Temperature::from_str(temperature_feels).expect("Unreachable"), 
+        wind, 
+        location, 
+        moon_emoji, 
+        moon_day: moon_day
+            .parse::<u8>()
+            .expect("Strange response from wttr.is"), 
+        precipitation, 
+        pressure, 
+        uv_index: uv_index
+            .parse::<u8>()
+            .expect("Strange response from wttr.is"), 
+        dawn, 
+        sunrise, 
+        zenith, 
+        sunset, 
+        dusk, 
+        time, 
+        timezone
     }
+}
 
-    fn read_cache() -> Option<(u64, String)> {
-        let path = Path::cache().join("weather");
-        let string = fs::read_to_string(path).ok()?;
-        let parts: Vec<&str> = string.splitn(2, '\n').collect();
-        if parts.len() != 2 {
-            return None
-        }
-        let hours = parts[0].parse::<u64>().ok()?;
-        let data = parts[1].to_owned();
-        Some((hours, data))
+fn request() -> Option<String> {
+    let response = Request::new(WTTR_URL).unwrap().get();
+    if response.is_success() {
+        Some(response.as_text().unwrap())
+    } else {
+        warning!("Wttr.in (weather) response code: {}", response.code());
+        None
     }
-
-    fn set_cache(hour: u64, data: &str) -> Option<()> {
-        let path_dir = Path::cache();
-        if let Err(e) = fs::create_dirs(&path_dir) {
-            warning!("Failed to create {path_dir}: {e}");
-        }
-
-        let path = path_dir.join("weather");
-        let file = File::create_always(path, Access::Write).ok()?;
-        let formatted = format!("{hour}\n{data}");
-        file.write(formatted).ok()?;
-
-        Some(())
+}
+fn read_cache() -> Option<(u64, String)> {
+    let path = Path::cache().join("weather");
+    let string = fs::read_to_string(path).ok()?;
+    let parts: Vec<&str> = string.splitn(2, '\n').collect();
+    if parts.len() != 2 {
+        return None
     }
+    let hours = parts[0].parse::<u64>().ok()?;
+    let data = parts[1].to_owned();
+    Some((hours, data))
+}
+fn set_cache(hour: u64, data: &str) -> Option<()> {
+    let path_dir = Path::cache();
+    if let Err(e) = fs::create_dirs(&path_dir) {
+        warning!("Failed to create {path_dir}: {e}");
+    }
+    let path = path_dir.join("weather");
+    let file = File::create_always(path, Access::Write).ok()?;
+    let formatted = format!("{hour}\n{data}");
+    file.write(formatted).ok()?;
+    Some(())
 }

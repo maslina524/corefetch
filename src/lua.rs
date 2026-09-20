@@ -7,6 +7,7 @@ use alloc::{
     collections::BTreeMap
 };
 
+use crate::leak::ConcatStr;
 use crate::{
     info,
     abort,
@@ -151,7 +152,7 @@ macro_rules! impl_as_lua_as_f64 {
 impl_as_lua_debug_string!(
     String, &str, str, char,
     crate::detect::gpu::GpuType,
-    crate::imp::path::Path
+    crate::imp::path::Path,
 );
 impl_as_lua_to_string!(
     crate::detect::datetime::AmPm
@@ -174,7 +175,14 @@ impl AsLua for bool {
         #[allow(clippy::cast_precision_loss)]
         LuaType::Boolean(*self)
     }
-    const LUA_TYPE: &'static str = "bollean";
+    const LUA_TYPE: &'static str = "boolean";
+}
+impl<const N: usize> AsLua for ConcatStr<N> {
+    fn as_lua(&self) -> LuaType {
+        #[allow(clippy::cast_precision_loss)]
+        LuaType::String(format!("{self:?}"))
+    }
+    const LUA_TYPE: &'static str = "string";
 }
 
 impl core::fmt::Debug for LuaType {

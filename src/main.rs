@@ -44,6 +44,7 @@ mod lua;
 mod url;
 mod kitty;
 mod base64;
+mod leak;
 
 mod modules;
 mod logo;
