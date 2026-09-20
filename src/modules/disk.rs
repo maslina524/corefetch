@@ -22,6 +22,12 @@ pub struct DiskList {
     pub list: Vec<Disk>
 }
 
+impl DiskList {
+    pub fn first_owned(self) -> Disk {
+        self.list.first().cloned().unwrap_or_default()
+    }
+}
+
 impl Module for DiskList {
     fn new() -> Self {
         Self {

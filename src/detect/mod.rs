@@ -11,3 +11,4 @@ pub mod uptime;
 pub mod initsystem;
 pub mod os;
 pub mod disk;
+pub mod publicip;
