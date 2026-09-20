@@ -1,45 +1,46 @@
-use core::{
-    cmp::Ordering, 
-    fmt::Write, 
-    str::FromStr,
-    ops::Range
-};
+use core::{cmp::Ordering, fmt::Write, ops::Range, str::FromStr};
 
 use alloc::{
-    borrow::{Cow, ToOwned}, 
+    borrow::{Cow, ToOwned},
     string::String,
-    vec::Vec
+    vec::Vec,
 };
 
 // Why does clippy think this variant is better than `colors::*`?
 use crate::{
     color::{
-        MODE_RESET, MODE_BOLD, MODE_DIM, MODE_ITALIC, MODE_UNDERLINE, MODE_BLINK, MODE_INVERSE,
-        MODE_HIDDEN, MODE_STRIKETHROUGH, FG_BLACK, FG_LIGHT_BLACK, BG_BLACK, BG_LIGHT_BLACK,
-        FG_RED, FG_LIGHT_RED, BG_RED, BG_LIGHT_RED, FG_GREEN, FG_LIGHT_GREEN, BG_GREEN,
-        BG_LIGHT_GREEN, FG_YELLOW, FG_LIGHT_YELLOW, BG_YELLOW, BG_LIGHT_YELLOW, FG_BLUE,
-        FG_LIGHT_BLUE, BG_BLUE, BG_LIGHT_BLUE, FG_MAGENTA, FG_LIGHT_MAGENTA, BG_MAGENTA,
-        BG_LIGHT_MAGENTA, FG_CYAN, FG_LIGHT_CYAN, BG_CYAN, BG_LIGHT_CYAN, FG_WHITE,
-        FG_LIGHT_WHITE, BG_WHITE, BG_LIGHT_WHITE, BG_DEFAULT, FG_DEFAULT
+        BG_BLACK, BG_BLUE, BG_CYAN, BG_DEFAULT, BG_GREEN, BG_LIGHT_BLACK, BG_LIGHT_BLUE,
+        BG_LIGHT_CYAN, BG_LIGHT_GREEN, BG_LIGHT_MAGENTA, BG_LIGHT_RED, BG_LIGHT_WHITE,
+        BG_LIGHT_YELLOW, BG_MAGENTA, BG_RED, BG_WHITE, BG_YELLOW, FG_BLACK, FG_BLUE, FG_CYAN,
+        FG_DEFAULT, FG_GREEN, FG_LIGHT_BLACK, FG_LIGHT_BLUE, FG_LIGHT_CYAN, FG_LIGHT_GREEN,
+        FG_LIGHT_MAGENTA, FG_LIGHT_RED, FG_LIGHT_WHITE, FG_LIGHT_YELLOW, FG_MAGENTA, FG_RED,
+        FG_WHITE, FG_YELLOW, MODE_BLINK, MODE_BOLD, MODE_DIM, MODE_HIDDEN, MODE_INVERSE,
+        MODE_ITALIC, MODE_RESET, MODE_STRIKETHROUGH, MODE_UNDERLINE,
     },
     config::Config,
-    imp
+    imp,
 };
 
 #[derive(Copy, Clone, PartialEq, Eq)]
-pub enum ColorPlan { FG, BG }
+pub enum ColorPlan {
+    FG,
+    BG,
+}
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Frequency {
     Hz(u16),
     MHz(f32),
-    GHz(f32)
+    GHz(f32),
 }
 
 impl Frequency {
     pub fn from_hz(hz: u64) -> Self {
         let mut divisions = 0;
-        #[allow(clippy::cast_precision_loss, reason = "Mantissa is 52 bits, 2^52 = a lot")]
+        #[allow(
+            clippy::cast_precision_loss,
+            reason = "Mantissa is 52 bits, 2^52 = a lot"
+        )]
         let mut f_hz = hz as f64;
 
         while f_hz >= 1000.0 && divisions < 2 {
@@ -51,7 +52,7 @@ impl Frequency {
             0 => Self::Hz(hz as u16),
             1 => Self::MHz(f_hz as f32),
             2 => Self::GHz(f_hz as f32),
-            _ => unreachable!()
+            _ => unreachable!(),
         }
     }
 
@@ -81,8 +82,8 @@ impl core::fmt::Display for Frequency {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
             Self::Hz(b) => write!(f, "{b} Hz"),
-            Self::MHz(b)   => write!(f, "{b:.02} MHz"),
-            Self::GHz(b)   => write!(f, "{b:.02} GHz"),
+            Self::MHz(b) => write!(f, "{b:.02} MHz"),
+            Self::GHz(b) => write!(f, "{b:.02} GHz"),
         }
     }
 }
@@ -92,13 +93,16 @@ pub enum MemorySize {
     Byte(u16),
     Kb(f32),
     Mb(f32),
-    Gb(f32)
+    Gb(f32),
 }
 
 impl MemorySize {
     pub fn from_bytes(bytes: u64) -> Self {
         let mut divisions = 0;
-        #[allow(clippy::cast_precision_loss, reason = "Mantissa is 52 bits, 2^52 = 4 petabytes")]
+        #[allow(
+            clippy::cast_precision_loss,
+            reason = "Mantissa is 52 bits, 2^52 = 4 petabytes"
+        )]
         let mut f_bytes = bytes as f64;
 
         while f_bytes >= 1024.0 && divisions < 3 {
@@ -111,7 +115,7 @@ impl MemorySize {
             1 => Self::Kb(f_bytes as f32),
             2 => Self::Mb(f_bytes as f32),
             3 => Self::Gb(f_bytes as f32),
-            _ => unreachable!()
+            _ => unreachable!(),
         }
     }
 
@@ -120,7 +124,7 @@ impl MemorySize {
             Self::Byte(b) => b as u64,
             Self::Kb(b) => (b * 1024.0) as u64,
             Self::Mb(b) => (b * 1024.0 * 1024.0) as u64,
-            Self::Gb(b) => (b * 1024.0 * 1024.0 * 1024.0) as u64
+            Self::Gb(b) => (b * 1024.0 * 1024.0 * 1024.0) as u64,
         }
     }
 
@@ -129,7 +133,7 @@ impl MemorySize {
             Self::Byte(b) => b as f64 / 1024.0,
             Self::Kb(b) => b as f64,
             Self::Mb(b) => (b * 1024.0) as f64,
-            Self::Gb(b) => (b * 1024.0 * 1024.0) as f64
+            Self::Gb(b) => (b * 1024.0 * 1024.0) as f64,
         }
     }
 }
@@ -151,9 +155,9 @@ impl core::fmt::Display for MemorySize {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
             Self::Byte(b) => write!(f, "{b} Bytes"),
-            Self::Kb(b)   => write!(f, "{b:.02} Kb"),
-            Self::Mb(b)   => write!(f, "{b:.02} Mb"),
-            Self::Gb(b)   => write!(f, "{b:.02} Gb"),
+            Self::Kb(b) => write!(f, "{b:.02} Kb"),
+            Self::Mb(b) => write!(f, "{b:.02} Mb"),
+            Self::Gb(b) => write!(f, "{b:.02} Gb"),
         }
     }
 }
@@ -191,8 +195,7 @@ impl Percent {
 impl FromStr for Percent {
     type Err = ();
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        s
-            .trim()
+        s.trim()
             .trim_end_matches('%')
             .parse::<u8>()
             .map_err(|_| ())
@@ -224,41 +227,41 @@ pub enum Temperature {
 impl Temperature {
     pub const fn get(self) -> f32 {
         match self {
-            Self::Celsius(t) | Self::Fahrenheit(t) | Self::Kelvin(t) => t
+            Self::Celsius(t) | Self::Fahrenheit(t) | Self::Kelvin(t) => t,
         }
     }
 
     pub const fn symbol(self) -> char {
         match self {
-            Self::Celsius(_)    => 'C',
+            Self::Celsius(_) => 'C',
             Self::Fahrenheit(_) => 'F',
-            Self::Kelvin(_)     => 'K'
+            Self::Kelvin(_) => 'K',
         }
     }
 
     pub const fn as_celsius(self) -> Self {
         let temp = match self {
-            Self::Celsius(t)    => t,
+            Self::Celsius(t) => t,
             Self::Fahrenheit(t) => (t - 32.0) * 5.0 / 9.0,
-            Self::Kelvin(t)     => t - 273.15
+            Self::Kelvin(t) => t - 273.15,
         };
         Self::Celsius(temp)
     }
 
     pub const fn as_fahrenheit(self) -> Self {
         let temp = match self {
-            Self::Celsius(t)    => (t * 9.0 / 5.0) + 32.0,
+            Self::Celsius(t) => (t * 9.0 / 5.0) + 32.0,
             Self::Fahrenheit(t) => t,
-            Self::Kelvin(t)     => (t - 273.15) * 9.0 / 5.0 + 32.0
+            Self::Kelvin(t) => (t - 273.15) * 9.0 / 5.0 + 32.0,
         };
         Self::Fahrenheit(temp)
     }
 
     pub const fn as_kelvin(self) -> Self {
         let temp = match self {
-            Self::Celsius(t)    => t + 273.15,
+            Self::Celsius(t) => t + 273.15,
             Self::Fahrenheit(t) => (t - 32.0) * 5.0 / 9.0 + 273.15,
-            Self::Kelvin(t)     => t
+            Self::Kelvin(t) => t,
         };
         Self::Kelvin(temp)
     }
@@ -342,7 +345,7 @@ impl<'a> StringFormatter<'a> {
     pub const fn new(ptr: &'a mut String) -> Self {
         Self(ptr)
     }
-    
+
     pub fn write_fmt(&mut self, args: core::fmt::Arguments) -> core::fmt::Result {
         core::fmt::Write::write_fmt(self, args)
     }
@@ -377,10 +380,7 @@ pub fn expand_unicode(s: &str) -> String {
     let mut pos = 0;
 
     while pos < chars.len() {
-        if pos + 6 <= chars.len()
-            && chars[pos] == '\\'
-            && chars[pos + 1] == 'u'
-        {
+        if pos + 6 <= chars.len() && chars[pos] == '\\' && chars[pos + 1] == 'u' {
             let hex: String = chars[pos + 2..pos + 6].iter().collect();
             if let Ok(num) = u32::from_str_radix(&hex, 16) {
                 if let Some(ch) = char::from_u32(num) {
@@ -406,7 +406,7 @@ pub fn expand_rust_unicode(s: &str) -> String {
             && chars[pos] == '\\'
             && chars[pos + 1] == 'u'
             && chars[pos + 2] == '{'
-        {   
+        {
             pos += 3;
             let mut hex = String::new();
             while pos < chars.len() && chars[pos] != '}' {
@@ -417,7 +417,7 @@ pub fn expand_rust_unicode(s: &str) -> String {
 
             if let Ok(num) = u32::from_str_radix(&hex, 16)
                 && let Some(ch) = char::from_u32(num)
-            {   
+            {
                 ret.push(ch);
             }
             continue;
@@ -459,60 +459,66 @@ pub fn format_color(s: &str, plan: ColorPlan) -> String {
     // Supported named prefixes:
     // reset_, bright_, dim_, italic_, underline_,
     // blink_, inverse_, hidden_, strike_, light_
-    add_prefix!(prefixes, ret, "reset",     MODE_RESET);
-    add_prefix!(prefixes, ret, "bold",      MODE_BOLD);
-    add_prefix!(prefixes, ret, "dim",       MODE_DIM);
-    add_prefix!(prefixes, ret, "italic",    MODE_ITALIC);
+    add_prefix!(prefixes, ret, "reset", MODE_RESET);
+    add_prefix!(prefixes, ret, "bold", MODE_BOLD);
+    add_prefix!(prefixes, ret, "dim", MODE_DIM);
+    add_prefix!(prefixes, ret, "italic", MODE_ITALIC);
     add_prefix!(prefixes, ret, "underline", MODE_UNDERLINE);
-    add_prefix!(prefixes, ret, "blink",     MODE_BLINK);
-    add_prefix!(prefixes, ret, "inverse",   MODE_INVERSE);
-    add_prefix!(prefixes, ret, "hidden",    MODE_HIDDEN);
-    add_prefix!(prefixes, ret, "strike",    MODE_STRIKETHROUGH);
+    add_prefix!(prefixes, ret, "blink", MODE_BLINK);
+    add_prefix!(prefixes, ret, "inverse", MODE_INVERSE);
+    add_prefix!(prefixes, ret, "hidden", MODE_HIDDEN);
+    add_prefix!(prefixes, ret, "strike", MODE_STRIKETHROUGH);
 
     let is_light = prefixes.contains(&"light");
     let color_str = match (color, is_light, plan) {
         // Black
         ("black", false, ColorPlan::FG) => FG_BLACK,
-        ("black", true,  ColorPlan::FG) => FG_LIGHT_BLACK,
+        ("black", true, ColorPlan::FG) => FG_LIGHT_BLACK,
         ("black", false, ColorPlan::BG) => BG_BLACK,
-        ("black", true,  ColorPlan::BG) => BG_LIGHT_BLACK,
+        ("black", true, ColorPlan::BG) => BG_LIGHT_BLACK,
         // Red
         ("red", false, ColorPlan::FG) => FG_RED,
-        ("red", true,  ColorPlan::FG) => FG_LIGHT_RED,
+        ("red", true, ColorPlan::FG) => FG_LIGHT_RED,
         ("red", false, ColorPlan::BG) => BG_RED,
-        ("red", true,  ColorPlan::BG) => BG_LIGHT_RED,
+        ("red", true, ColorPlan::BG) => BG_LIGHT_RED,
         // Green
         ("green", false, ColorPlan::FG) => FG_GREEN,
-        ("green", true,  ColorPlan::FG) => FG_LIGHT_GREEN,
+        ("green", true, ColorPlan::FG) => FG_LIGHT_GREEN,
         ("green", false, ColorPlan::BG) => BG_GREEN,
-        ("green", true,  ColorPlan::BG) => BG_LIGHT_GREEN,
+        ("green", true, ColorPlan::BG) => BG_LIGHT_GREEN,
         // Yellow
         ("yellow", false, ColorPlan::FG) => FG_YELLOW,
-        ("yellow", true,  ColorPlan::FG) => FG_LIGHT_YELLOW,
+        ("yellow", true, ColorPlan::FG) => FG_LIGHT_YELLOW,
         ("yellow", false, ColorPlan::BG) => BG_YELLOW,
-        ("yellow", true,  ColorPlan::BG) => BG_LIGHT_YELLOW,
+        ("yellow", true, ColorPlan::BG) => BG_LIGHT_YELLOW,
         // Blue
         ("blue", false, ColorPlan::FG) => FG_BLUE,
-        ("blue", true,  ColorPlan::FG) => FG_LIGHT_BLUE,
+        ("blue", true, ColorPlan::FG) => FG_LIGHT_BLUE,
         ("blue", false, ColorPlan::BG) => BG_BLUE,
-        ("blue", true,  ColorPlan::BG) => BG_LIGHT_BLUE,
+        ("blue", true, ColorPlan::BG) => BG_LIGHT_BLUE,
         // Magenta
         ("magenta", false, ColorPlan::FG) => FG_MAGENTA,
-        ("magenta", true,  ColorPlan::FG) => FG_LIGHT_MAGENTA,
+        ("magenta", true, ColorPlan::FG) => FG_LIGHT_MAGENTA,
         ("magenta", false, ColorPlan::BG) => BG_MAGENTA,
-        ("magenta", true,  ColorPlan::BG) => BG_LIGHT_MAGENTA,
+        ("magenta", true, ColorPlan::BG) => BG_LIGHT_MAGENTA,
         // Cyan
         ("cyan", false, ColorPlan::FG) => FG_CYAN,
-        ("cyan", true,  ColorPlan::FG) => FG_LIGHT_CYAN,
+        ("cyan", true, ColorPlan::FG) => FG_LIGHT_CYAN,
         ("cyan", false, ColorPlan::BG) => BG_CYAN,
-        ("cyan", true,  ColorPlan::BG) => BG_LIGHT_CYAN,
+        ("cyan", true, ColorPlan::BG) => BG_LIGHT_CYAN,
         // White
         ("white", false, ColorPlan::FG) => FG_WHITE,
-        ("white", true,  ColorPlan::FG) => FG_LIGHT_WHITE,
+        ("white", true, ColorPlan::FG) => FG_LIGHT_WHITE,
         ("white", false, ColorPlan::BG) => BG_WHITE,
-        ("white", true,  ColorPlan::BG) => BG_LIGHT_WHITE,
+        ("white", true, ColorPlan::BG) => BG_LIGHT_WHITE,
         // Unknown color -> default
-        _ => if plan == ColorPlan::BG { BG_DEFAULT } else { FG_DEFAULT },
+        _ => {
+            if plan == ColorPlan::BG {
+                BG_DEFAULT
+            } else {
+                FG_DEFAULT
+            }
+        }
     };
     ret.push(color_str);
 
@@ -531,13 +537,17 @@ impl SplittedAnsiIter {
         Self {
             buf: "",
             ranges: Vec::new(),
-            index: 0
+            index: 0,
         }
     }
 
     pub fn new(s: &str, len: usize) -> Self {
         if s.trim().is_empty() {
-            return Self { buf: "", ranges: Vec::new(), index: 0 };
+            return Self {
+                buf: "",
+                ranges: Vec::new(),
+                index: 0,
+            };
         }
 
         let mut buf = String::with_capacity(s.len() + 32);
@@ -562,7 +572,7 @@ impl SplittedAnsiIter {
                 }
                 continue;
             }
-            
+
             if ch == '\n' {
                 if current_ansi != "\x1b[0m" {
                     buf.push_str("\x1b[0m");
@@ -626,7 +636,7 @@ impl Iterator for SplittedAnsiIter {
         if self.buf.is_empty() {
             return None;
         }
-        
+
         let r = self.ranges.get(self.index)?;
         self.index += 1;
         Some(&self.buf[r.clone()])
@@ -661,14 +671,18 @@ pub fn snake_to_camel_ascii(s: &str) -> String {
             transition = false;
             continue;
         }
-        
+
         ret.push(ch);
     }
 
     ret
 }
 
-pub fn lazy_replace<'b>(s: &'b str, key: &'b str, value_fn: impl FnOnce() -> String) -> Cow<'b, str> {
+pub fn lazy_replace<'b>(
+    s: &'b str,
+    key: &'b str,
+    value_fn: impl FnOnce() -> String,
+) -> Cow<'b, str> {
     if s.contains(key) {
         Cow::Owned(s.replace(key, &value_fn()))
     } else {
@@ -699,16 +713,14 @@ macro_rules! formatln {
 
 #[cfg(test)]
 mod tests {
-    use crate::formats::{
-        MemorySize, 
-        expand_rust_unicode, 
-        expand_unicode, 
-        SplittedAnsiIter
-    };
+    use crate::formats::{MemorySize, SplittedAnsiIter, expand_rust_unicode, expand_unicode};
 
     #[test]
     fn test_conversion() {
-        println!("{}", expand_unicode(r"\u001b[31m \u001b[32m \u001b[33m \u001b[34m \u001b[0m"));
+        println!(
+            "{}",
+            expand_unicode(r"\u001b[31m \u001b[32m \u001b[33m \u001b[34m \u001b[0m")
+        );
     }
 
     #[test]
@@ -718,10 +730,10 @@ mod tests {
 
     #[test]
     fn from_bytes_test() {
-        assert_eq!(MemorySize::from_bytes(512).to_string(),           "512 Bytes");
-        assert_eq!(MemorySize::from_bytes(1024).to_string(),          "1.00 Kb");
-        assert_eq!(MemorySize::from_bytes(1536).to_string(),          "1.50 Kb");
-        assert_eq!(MemorySize::from_bytes(536_870_912).to_string(),   "512.00 Mb");
+        assert_eq!(MemorySize::from_bytes(512).to_string(), "512 Bytes");
+        assert_eq!(MemorySize::from_bytes(1024).to_string(), "1.00 Kb");
+        assert_eq!(MemorySize::from_bytes(1536).to_string(), "1.50 Kb");
+        assert_eq!(MemorySize::from_bytes(536_870_912).to_string(), "512.00 Mb");
         assert_eq!(MemorySize::from_bytes(2_147_483_648).to_string(), "2.00 Gb");
     }
 
@@ -729,21 +741,20 @@ mod tests {
     fn split_by_len_test() {
         let s = "HelloHelloHello";
         let lines = SplittedAnsiIter::new(s, 5).collect::<Vec<&str>>();
-        assert_eq!(lines, vec![
-            "Hello",
-            "Hello",
-            "Hello"
-        ]);
+        assert_eq!(lines, vec!["Hello", "Hello", "Hello"]);
     }
 
     #[test]
     fn split_by_len_ansi_test() {
         let s = "\x1b[31mHelloHelloHello\x1b[0m";
         let lines = SplittedAnsiIter::new(s, 5).collect::<Vec<&str>>();
-        assert_eq!(lines, vec![
-            "\x1b[31mHello\x1b[0m",
-            "\x1b[31mHello\x1b[0m",
-            "\x1b[31mHello\x1b[0m"
-        ]);
+        assert_eq!(
+            lines,
+            vec![
+                "\x1b[31mHello\x1b[0m",
+                "\x1b[31mHello\x1b[0m",
+                "\x1b[31mHello\x1b[0m"
+            ]
+        );
     }
 }

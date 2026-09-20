@@ -83,14 +83,19 @@ pub fn get_disks_linux() -> Vec<Disk> {
             break;
         }
 
+        // SAFETY: Checked for a null pointer
         let data = unsafe { &*ent };
+        // SAFETY: Libc is guaranteed to return a valid c string
         let fs_cstr = unsafe { CStr::from_ptr(data.mnt_typeL) };
+        // SAFETY: Libc is guaranteed to return a valid c string
         let mount_cstr = unsafe { CStr::from_ptr(data.mnt_dirL) };
         if is_skipped(fs_cstr, mount_cstr) {
             continue;
         }
         
+        // SAFETY: Libc is guaranteed to return a valid c string
         let mount_from_cstr = unsafe { CStr::from_ptr(data.mnt_fsnameL) };
+        // SAFETY: Libc is guaranteed to return a valid c string
         let mount_cstr = unsafe { CStr::from_ptr(data.mnt_dirL) };
 
         let disk = process_mount(mount_cstr, mount_from_cstr, fs_cstr);
@@ -120,13 +125,14 @@ fn process_mount(mount: &CStr, mount_from: &CStr, mount_fs: &CStr) -> Disk {
 
     let free = statv.f_bfree.saturating_mul(fr);
     let used = total.saturating_sub(free);
+    #[allow(clippy::cast_precision_loss)]
     let percent = (used as f64 / total as f64).clamp(0.0, 1.0);
 
     let is_readonly = statv.f_flag & ST_RDONLY != 0;
 
     let mut stx = Statx::default();
     let ret = statx(0, mount, 0, STATX_BTIME, &raw mut stx);
-    let ct_int = if ret == 0 && (stx.stx_mask & STATX_BTIME) == STATX_BTIME && stx.stx_btime.tv_sec > 685065600 {
+    let ct_int = if ret == 0 && (stx.stx_mask & STATX_BTIME) == STATX_BTIME && stx.stx_btime.tv_sec > 685_065_600 {
         stx.stx_btime.tv_sec
     } else {
         0

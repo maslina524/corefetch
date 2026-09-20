@@ -151,8 +151,10 @@ pub fn get_sysinfo() -> &'static Sysinfo {
 
 pub fn errno() -> i32 {
     #[cfg(target_os = "android")]
+    // SAFETY: Libc is guaranteed to return a valid pointer
     unsafe { *__errno() }
     #[cfg(not(target_os = "android"))]
+    // SAFETY: Libc is guaranteed to return a valid pointer
     unsafe { *__errno_location() }
 }
 

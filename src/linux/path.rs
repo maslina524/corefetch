@@ -30,7 +30,7 @@ impl Path {
         if ptr.is_null() {
             abort!("Failed to get HOME");
         }
-        // SAFETY: libs are guaranteed to store a valid cstr
+        // SAFETY: Libs are guaranteed to store a valid cstr
         let c_str = unsafe { CStr::from_ptr(ptr) };
         let string = c_str.to_string_lossy().into_owned();
         Self::from(string)
@@ -87,7 +87,7 @@ impl Path {
 
     pub fn pop(&mut self) -> Option<String> {
         let mut parts = self.parts();
-        if parts.len() < 1 {
+        if parts.is_empty() {
             return None;
         }
         let popped = parts.pop().map(String::from);
@@ -97,7 +97,7 @@ impl Path {
 
     pub fn last(&'_ self) -> Option<&'_ str> {
         let parts = self.parts();
-        parts.last().map(|s| *s)
+        parts.last().copied()
     }
 
     pub fn join(&self, path: impl Into<Self>) -> Self {
@@ -175,7 +175,7 @@ impl core::fmt::Debug for Path {
 
 impl Default for Path {
     fn default() -> Self {
-        Path::new()
+        Self::new()
     }
 }
 

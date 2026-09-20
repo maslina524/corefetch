@@ -44,7 +44,7 @@ impl DatetimeInfo {
         let timezone_name = if info.tm_zone.is_null() {
             "Unknown".to_owned()
         } else {
-            // SAFETY: libs are guaranteed to store a valid cstr
+            // SAFETY: Libs are guaranteed to store a valid cstr
             let tz_c_str = unsafe { CStr::from_ptr(info.tm_zone) };
             tz_c_str.to_string_lossy().into_owned()
         };

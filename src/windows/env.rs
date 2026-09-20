@@ -233,7 +233,7 @@ pub fn find_pid_by_name(name: &str) -> u32 {
     let first = unsafe { Process32First(snapshot, &raw mut pe) };
     if first != 0 {
         loop {
-            // SAFETY: 
+            // SAFETY: Libc is guaranteed to return a valid c string
             let proc_name = unsafe { CStr::from_ptr(pe.szExeFile.as_ptr()) };
             if proc_name.to_bytes() == name.as_bytes() {
                 pid = pe.th32ProcessID;

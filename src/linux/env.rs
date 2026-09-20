@@ -128,7 +128,7 @@ pub fn terminal_size() -> (usize, usize) {
         if ptr.is_null() {
             return None;
         }
-        // SAFETY: libs are guaranteed to store a valid cstr
+        // SAFETY: Libs are guaranteed to store a valid cstr
         let cstr = unsafe { CStr::from_ptr(ptr) };
         let bytes = cstr.to_bytes();
         if bytes.is_empty() {
