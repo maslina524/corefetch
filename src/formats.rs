@@ -39,8 +39,7 @@ pub enum Frequency {
 impl Frequency {
     pub fn from_hz(hz: u64) -> Self {
         let mut divisions = 0;
-        #[allow(clippy::cast_precision_loss)]
-        // ^^ Mantissa is 52 bits, 2^52 = a lot
+        #[allow(clippy::cast_precision_loss, reason = "Mantissa is 52 bits, 2^52 = a lot")]
         let mut f_hz = hz as f64;
 
         while f_hz >= 1000.0 && divisions < 2 {
@@ -99,8 +98,7 @@ pub enum MemorySize {
 impl MemorySize {
     pub fn from_bytes(bytes: u64) -> Self {
         let mut divisions = 0;
-        #[allow(clippy::cast_precision_loss)]
-        // ^^ Mantissa is 52 bits, 2^52 = 4 petabytes
+        #[allow(clippy::cast_precision_loss, reason = "Mantissa is 52 bits, 2^52 = 4 petabytes")]
         let mut f_bytes = bytes as f64;
 
         while f_bytes >= 1024.0 && divisions < 3 {

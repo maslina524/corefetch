@@ -31,8 +31,7 @@ impl UptimeInfo {
 
         let years = (days / 365) as u16;
 
-        #[allow(clippy::cast_precision_loss)]
-        // ^^ 16_777_216 years is more than enough
+        #[allow(clippy::cast_precision_loss, reason = "16_777_216 years is more than enough")]
         let years_fraction = (days as f32) / 365.0;
 
         let boot_time = Self::boot_time(ms);

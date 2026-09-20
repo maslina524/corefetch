@@ -18,9 +18,9 @@ use crate::{
 };
 
 const EPOCH_DIFF              : u64               = 116_444_736_000_000_000;
+const EPOCH_DIFF_SECS         : u64               = 11_644_473_600;
 const INVALID_HANDLE          : *mut c_void       = (-1isize).cast_unsigned() as *mut c_void;
 
-const EPOCH_DIFF_SECS         : u64               = 11_644_473_600;
 const TICKS_PER_SEC           : u64               = 10_000_000;
 const LOCALE_NAME_USER_DEFAULT: *const u16        = ptr::null();
 const DEFAULT_DATE_FMT        : [u16; 11]         = w!("dd.MM.yyyy");

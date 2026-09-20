@@ -98,3 +98,7 @@ FileTimeToSystemTime
 GetDateFormatEx
 GetTimeFormatEx
 GetLogicalDrives
+GetDiskFreeSpaceExA
+GetFileAttributesA
+GetDriveTypeA
+GetVolumeInformationA

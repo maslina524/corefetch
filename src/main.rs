@@ -443,8 +443,7 @@ fn corefetch_main() -> i32 {
     Config::get_or_init(config);
 
     // Logo init
-    #[allow(clippy::option_if_let_else)]
-    // ^^ Clippy suggests a variant that would require an extra heap allocation
+    #[allow(clippy::option_if_let_else, reason = "Clippy suggests a variant that would require an extra heap allocation")]
     let (logo_name, custom) = if let Some(pos) = args.iter().position(|a| a == "--logo" || a == "-l") {
         args.get(pos + 1).map_or_else(|| print_help(None), |val| {
             get_logo_name_and_custom(val)

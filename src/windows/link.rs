@@ -39,7 +39,10 @@ link!("kernel32" "system" fn GetCurrentDirectoryW(nbufferlength : u32, lpbuffer 
 link!("kernel32" "system" fn GetCurrentProcess() -> HANDLE);
 link!("kernel32" "system" fn GetCurrentProcessId() -> u32);
 link!("kernel32" "system" fn GetDateFormatEx(lplocalename : PCWSTR, dwflags : ENUM_DATE_FORMATS_FLAGS, lpdate : *const SYSTEMTIME, lpformat : PCWSTR, lpdatestr : PWSTR, cchdate : i32, lpcalendar : PCWSTR) -> i32);
+link!("kernel32" "system" fn GetDiskFreeSpaceExA(lpdirectoryname : PCSTR, lpfreebytesavailabletocaller : *mut u64, lptotalnumberofbytes : *mut u64, lptotalnumberoffreebytes : *mut u64) -> BOOL);
+link!("kernel32" "system" fn GetDriveTypeA(lprootpathname : PCSTR) -> u32);
 link!("kernel32" "system" fn GetDynamicTimeZoneInformation(ptimezoneinformation : *mut DYNAMIC_TIME_ZONE_INFORMATION) -> u32);
+link!("kernel32" "system" fn GetFileAttributesA(lpfilename : PCSTR) -> u32);
 link!("kernel32" "system" fn GetFileSizeEx(hfile : HANDLE, lpfilesize : *mut i64) -> BOOL);
 link!("version" "system" fn GetFileVersionInfoSizeW(lptstrfilename : PCWSTR, lpdwhandle : *mut u32) -> u32);
 link!("version" "system" fn GetFileVersionInfoW(lptstrfilename : PCWSTR, dwhandle : u32, dwlen : u32, lpdata : *mut core::ffi::c_void) -> BOOL);
@@ -62,6 +65,7 @@ link!("kernel32" "system" fn GetTimeZoneInformation(lptimezoneinformation : *mut
 link!("advapi32" "system" fn GetTokenInformation(tokenhandle : HANDLE, tokeninformationclass : TOKEN_INFORMATION_CLASS, tokeninformation : *mut core::ffi::c_void, tokeninformationlength : u32, returnlength : *mut u32) -> BOOL);
 link!("secur32" "system" fn GetUserNameExW(nameformat : EXTENDED_NAME_FORMAT, lpnamebuffer : PWSTR, nsize : *mut u32) -> bool);
 link!("advapi32" "system" fn GetUserNameW(lpbuffer : PWSTR, pcbbuffer : *mut u32) -> BOOL);
+link!("kernel32" "system" fn GetVolumeInformationA(lprootpathname : PCSTR, lpvolumenamebuffer : PSTR, nvolumenamesize : u32, lpvolumeserialnumber : *mut u32, lpmaximumcomponentlength : *mut u32, lpfilesystemflags : *mut u32, lpfilesystemnamebuffer : PSTR, nfilesystemnamesize : u32) -> BOOL);
 link!("kernel32" "system" fn GlobalMemoryStatusEx(lpbuffer : *mut MEMORYSTATUSEX) -> BOOL);
 link!("kernel32" "system" fn HeapAlloc(hheap : HANDLE, dwflags : HEAP_FLAGS, dwbytes : usize) -> *mut core::ffi::c_void);
 link!("kernel32" "system" fn HeapFree(hheap : HANDLE, dwflags : HEAP_FLAGS, lpmem : *const core::ffi::c_void) -> BOOL);
