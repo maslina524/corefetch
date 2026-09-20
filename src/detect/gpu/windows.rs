@@ -43,7 +43,7 @@ impl GpuInfo {
             vendor: Self::vendor_name(desc.VendorId),
             name,
             device_id: desc.DeviceId,
-            driver,
+            driver: driver.leak(),
             temperature: Self::temperature(desc.VendorId),
             typ: GpuType::get_old(desc.VendorId, memory_total),
             memory_total,

@@ -26,8 +26,8 @@ pub struct OsInfo {
 }
 
 #[cfg(target_os = "android")]
-pub fn get_id() -> String {
-    alloc::borrow::ToOwned::to_owned("android")
+pub fn get_id() -> &'static str {
+    "android"
 }
 
 #[cfg(target_os = "linux")]
@@ -39,11 +39,11 @@ pub fn get_id() -> &'static str {
 }
 
 #[cfg(target_os = "windows")]
-pub fn get_id() -> String {
+pub fn get_id() -> &'static str {
     use crate::windows::env;
     use alloc::borrow::ToOwned;
 
     let (_, _, build) = env::get_version();
     let version = OsInfo::version(build as i32).to_owned();
-    crate::format!("Windows {version}")
+    crate::format!("Windows {version}").leak()
 }

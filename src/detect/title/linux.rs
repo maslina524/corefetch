@@ -1,24 +1,24 @@
-use core::ffi::{CStr, c_char};
+use core::ffi::{c_char, CStr};
 
 use alloc::{
     string::{String, ToString},
-    vec
+    vec,
 };
 
 use crate::{
     abort,
-    warning,
+    detect::title::TitleInfo,
     format,
-    logo::LogoInfo,
-    detect::title::TitleInfo, 
-    imp::libc::{getpwuid, getuid, gethostname, getpid, getcwd},
-    imp::path::Path,
     imp::fs,
-    linux::error::ErrorCode
+    imp::libc::{getcwd, gethostname, getpid, getpwuid, getuid},
+    imp::path::Path,
+    linux::error::ErrorCode,
+    logo::LogoInfo,
+    warning,
 };
 
 const HOST_NAME_MAX: usize = 64;
-const PATH_MAX     : usize = 4096;
+const PATH_MAX: usize = 4096;
 
 impl TitleInfo {
     pub fn new() -> Self {
@@ -55,17 +55,18 @@ impl TitleInfo {
 
         let cwd = Self::cwd();
 
-        Self { 
-            user_name, 
-            host_name, 
-            home_dir, 
-            exe_path, 
-            user_shell, 
+        Self {
+            user_name,
+            host_name,
+            home_dir,
+            exe_path,
+            user_shell,
             user_name_colored,
-            host_name_colored, 
-            full_user_name: String::new(), 
-            user_id, 
-            pid, cwd 
+            host_name_colored,
+            full_user_name: String::new(),
+            user_id,
+            pid,
+            cwd,
         }
     }
 
@@ -107,10 +108,10 @@ impl TitleInfo {
     fn exe_path() -> Path {
         let Some(path_string) = fs::read_link("/proc/self/exe", PATH_MAX) else {
             warning!("Failed to get exe path");
-            return Path::new()
+            return Path::new();
         };
         Path::from(path_string)
-    } 
+    }
 }
 
 #[cfg(test)]
@@ -130,5 +131,4 @@ mod tests {
         let cwd = TitleInfo::host_name();
         println!("{cwd}");
     }
-
 }

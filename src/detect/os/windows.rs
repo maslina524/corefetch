@@ -1,6 +1,6 @@
 use alloc::{
     borrow::ToOwned,
-    string::{String, ToString}
+    string::ToString
 };
 
 use crate::{
@@ -17,11 +17,11 @@ impl OsInfo {
 
         let (_, _, build) = env::get_version();
         let version = Self::version(build as i32).to_owned();
-        let codename = Self::codename(build as i32).to_owned();
+        let codename = Self::codename(build as i32).to_owned().leak();
 
         let value = env::current_version().read("ProductName").unwrap_or(RegValue::None);
 
-        let mut variant = value
+        let variant = value
             .as_string()
             .unwrap_or("")
             .to_owned();
@@ -30,20 +30,20 @@ impl OsInfo {
             .rfind(' ')
             .unwrap_or(0);
         
-        variant = variant[idx + 1..].to_string();
-        let id = format!("{name} {version}");
+        let variant = variant[idx + 1..].to_string().leak();
+        let id = format!("{name} {version}").leak();
         let nerd = Self::nerd(&version);
 
         Self { 
             sysname,
-            name,
-            id: id.clone(),
+            name: name.leak(),
+            id,
             id_like: id,
             version: version.clone(),
             version_id: version,
             codename,
             variant,
-            variant_id: String::new(),
+            variant_id: "",
             nerd
         }
     }

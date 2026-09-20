@@ -37,7 +37,7 @@ impl CpuInfo {
         let code_name = Self::code_name(&vendor, family, model);
 
         Self {
-            name: Self::name(&cpu_regedit_handle),
+            name: Self::name(&cpu_regedit_handle).leak(),
             vendor,
             numa_nodes: Self::numa_nodes_count(),
             physical_cores: Self::physical_cores_count(&logical_info),
