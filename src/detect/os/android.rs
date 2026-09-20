@@ -18,11 +18,8 @@ const SYSNAME: &str = "Linux";
 
 impl OsInfo {
     pub fn new() -> Self {
-        let name = "Android".to_owned();
-        let codename = String::new();
-        let variant = String::new();
-        let variant_id = String::new();
-        let id = "android".to_owned();
+        let name = "Android";
+        let id = "android";
 
         let mut c_version = [0u8; PROP_VALUE_MAX + 1];
         __system_property_get(c"ro.build.version.release".as_ptr(), c_version.as_mut_ptr());
@@ -34,13 +31,13 @@ impl OsInfo {
         Self { 
             sysname: SYSNAME,
             name,
-            id: id.clone(),
+            id,
             id_like: id,
             version: version.clone(),
             version_id: version,
-            codename,
-            variant,
-            variant_id,
+            codename: "",
+            variant: "",
+            variant_id: "",
             nerd: '\u{f17b}'
         }
     }

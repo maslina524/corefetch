@@ -21,14 +21,15 @@ impl GpuInfo {
 
         let mut c_egl = [0u8; PROP_VALUE_MAX + 1];
         __system_property_get(c"ro.hardware.egl".as_ptr(), c_egl.as_mut_ptr());
-        let egl = unsafe { CStr::from_ptr(c_egl.as_ptr().cast()) }
+        let egl: &'static str = unsafe { CStr::from_ptr(c_egl.as_ptr().cast()) }
             .to_string_lossy()
-            .into_owned();
+            .into_owned()
+            .leak();
         
         let mut c_platform = [0u8; PROP_VALUE_MAX + 1];
         __system_property_get(c"ro.board.platform".as_ptr(), c_platform.as_mut_ptr());
 
-        let (vendor, vendor_id) = match egl.as_str() {
+        let (vendor, vendor_id) = match egl {
             "adreno"  => ("Qualcomm",    0x5143),
             "mali"    => ("ARM",         0x13B5),
             "powervr" => ("Imagination", 0x1010),

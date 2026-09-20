@@ -1,9 +1,6 @@
 use core::ffi::CStr;
 
-use alloc::{
-    vec::Vec,
-    borrow::ToOwned
-};
+use alloc::vec::Vec;
 
 use crate::{
     abort, 
@@ -13,7 +10,7 @@ use crate::{
     linux::{
         fs,
         libc::__system_property_get,
-        parser::{LinuxInfo, parse_range_notation}, 
+        parser::parse_range_notation, 
         path::Path
     }, 
     warning
@@ -27,7 +24,7 @@ impl CpuInfo {
         __system_property_get(c"ro.soc.model".as_ptr(), c_tech.as_mut_ptr());
         let tech = unsafe { CStr::from_ptr(c_tech.as_ptr().cast()) };
 
-        let name = Self::tech_to_name(tech.to_bytes()).to_owned();
+        let name = Self::tech_to_name(tech.to_bytes());
         let logical_cores = Self::logical_cores_count();
 
         let vendor = Self::vendor();
