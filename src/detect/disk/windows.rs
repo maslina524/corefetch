@@ -31,6 +31,7 @@ fn process_disk(letter: char) -> Disk {
     let mut free = 0;
     let mut total = 0;
     let mut avaible = 0;
+    // SAFETY: Completely safe
     let ret = unsafe {
         GetDiskFreeSpaceExA(
             mp_cstr.as_ptr(), 
@@ -46,7 +47,10 @@ fn process_disk(letter: char) -> Disk {
     #[allow(clippy::cast_precision_loss, reason = "Mantissa is 52 bits, 2^52 = 4 petabytes")]
     let percent = (used as f64 / total as f64).clamp(0.0, 1.0);
 
-    let attr = unsafe { GetFileAttributesA(mp_cstr.as_ptr()) };
+    // SAFETY: Completely safe
+    let attr = unsafe { 
+        GetFileAttributesA(mp_cstr.as_ptr()) 
+    };
     let is_hidden = if attr == INVALID_FILE_ATTRIBUTES {
         warning!("Failed to determine whether {mountpoint} is hidden or not: {}", ErrorCode::last());
         false
@@ -54,10 +58,12 @@ fn process_disk(letter: char) -> Disk {
         attr & FILE_ATTRIBUTE_HIDDEN != 0
     };
 
+    // SAFETY: Completely safe
     let is_external = unsafe { GetDriveTypeA(mp_cstr.as_ptr()) } == DRIVE_REMOVABLE;
 
     let mut name_buf = [0u8; 256 + 1];
     let mut fs_buf = [0u8; 64 + 1];
+    // SAFETY: Completely safe
     let ret = unsafe {
         GetVolumeInformationA(
             mp_cstr.as_ptr(), 

@@ -2,7 +2,8 @@ use core::{
     ffi::{c_void, CStr},
     ptr,
     mem,
-    slice
+    slice,
+    fmt::Write
 };
 
 use alloc::{
@@ -12,9 +13,25 @@ use alloc::{
 };
 
 use crate::{
-    ARGS, format, sync::OnceLock, w, warning, windows::{encoding::wide, error::{self, ErrorCode}, fs::{Access, File}, link::{
-        CONSOLE_SCREEN_BUFFER_INFO, CloseHandle, CommandLineToArgvW, CreateToolhelp32Snapshot, EnumProcesses, FILETIME, FileTimeToLocalFileTime, FileTimeToSystemTime, GetCommandLineW, GetConsoleScreenBufferInfo, GetDateFormatEx, GetFileVersionInfoSizeW, GetFileVersionInfoW, GetSystemTimeAsFileTime, GetTimeFormatEx, OSVERSIONINFOW, PROCESSENTRY32, Process32First, Process32Next, RtlGetVersion, SYSTEMTIME, VerQueryValueW
-    }, path::Path, regedit::{self, Hkey, Regedit}}
+    ARGS, 
+    format, 
+    sync::OnceLock, 
+    w, 
+    warning, 
+    windows::{
+        encoding::wide, 
+        error::{self, ErrorCode}, 
+        fs::{Access, File}, 
+        link::{
+            CONSOLE_SCREEN_BUFFER_INFO, CloseHandle, CommandLineToArgvW, CreateToolhelp32Snapshot, 
+            EnumProcesses, FILETIME, FileTimeToLocalFileTime, FileTimeToSystemTime, GetCommandLineW, 
+            GetConsoleScreenBufferInfo, GetFileVersionInfoSizeW, GetFileVersionInfoW, 
+            GetSystemTimeAsFileTime, OSVERSIONINFOW, PROCESSENTRY32, Process32First, 
+            Process32Next, RtlGetVersion, SYSTEMTIME, VerQueryValueW
+        }, 
+        path::Path, 
+        regedit::{self, Hkey, Regedit}
+    }
 };
 
 const EPOCH_DIFF              : u64               = 116_444_736_000_000_000;
@@ -293,10 +310,15 @@ pub fn get_file_product_version(path: impl Into<Path>) -> error::Result<String> 
 }
 
 pub fn format_timestamp(time: u64, format: Option<&str>) -> String {
-    let ticks = (time + EPOCH_DIFF_SECS).saturating_mul(TICKS_PER_SEC);
+    let Some(ticks) = time
+        .checked_add(EPOCH_DIFF_SECS)
+        .and_then(|s| s.checked_mul(TICKS_PER_SEC)) else {
+            warning!("timestamp overflow: {}", time);
+            return time.to_string();
+        };
 
     let ft_utc = FILETIME {
-        dwLowDateTime:  ticks as u32,
+        dwLowDateTime:  (ticks & 0xFFFF_FFFF) as u32,
         dwHighDateTime: (ticks >> 32) as u32,
     };
 
@@ -308,68 +330,82 @@ pub fn format_timestamp(time: u64, format: Option<&str>) -> String {
         FileTimeToLocalFileTime(&raw const ft_utc, &raw mut ft_local) 
     };
     if ret == 0 {
-        warning!("FileTimeToLocalFileTime failed");
+        warning!("Failed to call FileTimeToLocalFileTime: {}", ErrorCode::last());
         return time.to_string();
     }
 
     // SAFETY: Completely safe
-    let ret= unsafe { 
+    let ret = unsafe { 
         FileTimeToSystemTime(&raw const ft_local, &raw mut st) 
     };
     if ret == 0 {
-        warning!("FileTimeToSystemTime failed");
+        warning!("Failed to call FileTimeToSystemTime: {}", ErrorCode::last());
         return time.to_string();
     }
 
-    let custom_date: Option<Vec<u16>> = match format {
-        Some(f) => if let Ok(v) = wide(f) { Some(v) } else {
-            warning!("Failed to encode date format as UTF-16");
-            return time.to_string();
-        },
-        None => None,
-    };
+    format_system_time(&st, format.unwrap_or("%Y-%m-%d %H:%M:%S"))
+}
 
-    let date_fmt = custom_date
-        .as_ref()
-        .map_or_else(|| DEFAULT_DATE_FMT.as_ptr(), Vec::as_ptr);
+fn format_system_time(st: &SYSTEMTIME, fmt: &str) -> String {
+    let mut out = String::with_capacity(fmt.len() + 16);
+    let mut chars = fmt.chars();
 
-    let mut buf = [0u16; 128];
+    while let Some(c) = chars.next() {
+        if c != '%' {
+            out.push(c);
+            continue;
+        }
 
-    // SAFETY: Completely safe
-    let n = unsafe {
-        GetDateFormatEx(
-            LOCALE_NAME_USER_DEFAULT,
-            0,
-            &raw const st,
-            date_fmt,
-            buf.as_mut_ptr(),
-            buf.len() as i32,
-            ptr::null(),
-        )
-    };
+        let Some(spec) = chars.next() else {
+            out.push('%');
+            break;
+        };
 
-    if n == 0 {
-        warning!("GetDateFormatEx failed");
-        return time.to_string();
+        match spec {
+            'Y' => { let _ = write!(out, "{:04}", st.wYear); }
+            'y' => { let _ = write!(out, "{:02}", st.wYear % 100); }
+            'm' => { let _ = write!(out, "{:02}", st.wMonth); }
+            'd' => { let _ = write!(out, "{:02}", st.wDay); }
+            'e' => { let _ = write!(out, "{:2}",  st.wDay); }
+            'j' => { let _ = write!(out, "{:03}", day_of_year(st)); }
+
+            'H' => { let _ = write!(out, "{:02}", st.wHour); }
+            'I' => {
+                let h = st.wHour % 12;
+                let h = if h == 0 { 12 } else { h };
+                let _ = write!(out, "{h:02}");
+            }
+            'M' => { let _ = write!(out, "{:02}", st.wMinute); }
+            'S' => { let _ = write!(out, "{:02}", st.wSecond); }
+            'f' => { let _ = write!(out, "{:03}", st.wMilliseconds); }
+
+            '%' => out.push('%'),
+            other => {
+                out.push('%');
+                out.push(other);
+            }
+        }
     }
 
-    let sep = (n as usize) - 1;
-    buf[sep] = b' ' as u16;
+    out
+}
 
-    // SAFETY: Completely safe
-    unsafe {
-        GetTimeFormatEx(
-            LOCALE_NAME_USER_DEFAULT,
-            0,
-            &raw const st,
-            TIME_FMT.as_ptr(),
-            buf.as_mut_ptr().add(sep),
-            (buf.len() - sep) as i32,
-        )
-    };
+#[inline]
+fn month_idx(st: &SYSTEMTIME) -> usize {
+    (st.wMonth.saturating_sub(1) as usize).min(11)
+}
 
-    let len = buf.iter().position(|&c| c == 0).unwrap_or(buf.len());
-    String::from_utf16_lossy(&buf[..len])
+fn day_of_year(st: &SYSTEMTIME) -> u16 {
+    const CUM: [u16; 12] = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+    let mut d = CUM[month_idx(st)];
+    if st.wMonth > 2 && is_leap_year(st.wYear) {
+        d += 1;
+    }
+    d + st.wDay
+}
+
+const fn is_leap_year(year: u16) -> bool {
+    (year.is_multiple_of(4) && !year.is_multiple_of(100)) || year.is_multiple_of(400)
 }
 
 #[cfg(test)]
