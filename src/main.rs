@@ -65,8 +65,9 @@ cfg_if! {
 extern crate alloc;
 
 use core::{
-    ffi::c_int, 
-    slice::Iter
+    ffi::c_int,
+    slice::Iter,
+    env
 };
 
 use alloc::{
@@ -94,8 +95,10 @@ use crate::{
 #[global_allocator]
 static ALLOCATOR: Allocator = Allocator;
 
-const MIN_OFFSET: usize = 24;
-const IMAGE_SIZE: usize = 40;
+static HELP     : &str      = include_str!(concat!(env!("OUT_DIR"), "/help.txt"));
+
+const MIN_OFFSET: usize     = 24;
+const IMAGE_SIZE: usize     = 40;
 
 #[cfg(not(test))]
 mod panic_impl {
@@ -183,11 +186,10 @@ fn get_module_lines(preset_module: &ConfigModule, max_len_line: usize) -> Option
             },
             Some(&preset_module.map)
         );
-        if let Some(s) = string {
-            SplittedAnsiIter::new(&s, max_len_line)
-        } else {
-            SplittedAnsiIter::empty()
-        }
+        string.map_or_else(
+            SplittedAnsiIter::empty, 
+            |s| SplittedAnsiIter::new(&s, max_len_line)
+        )
     })
 }
 
@@ -260,13 +262,11 @@ fn get_logo_name_and_custom(val: &str) -> (String, CustomLogo) {
     match fs::read(val) {
         Ok(b) => if png::is_png(&b) {
             (id, CustomLogo::Image(b))
+        } else if let Ok(s) = String::from_utf8(b) {
+            (id, CustomLogo::Ascii(s))
         } else {
-            if let Ok(s) = String::from_utf8(b) {
-                (id, CustomLogo::Ascii(s))
-            } else {
-                warning!("Failed to represent data as utf8");
-                (id, CustomLogo::None)
-            }
+            warning!("Failed to represent data as utf8");
+            (id, CustomLogo::None)
         },
         Err(e) if e.is_file_not_found() => {
             warning!("Logo file not found: {e}");
@@ -342,7 +342,6 @@ fn print_help(theme: Option<&str>) -> ! {
         exit(0);
     }
 
-    static HELP: &str = include_str!(concat!(core::env!("OUT_DIR"), "/help.txt"));
     println!("{HELP}");
     
     exit(0)

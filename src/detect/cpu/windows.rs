@@ -191,7 +191,7 @@ mod tests {
     #[test]
     fn base_freq_test() {
         let info = CpuInfo::new();
-        assert!(info.base_freq != Frequency::default());
+        assert_ne!(info.base_freq, Frequency::default());
     }
 
     #[test]

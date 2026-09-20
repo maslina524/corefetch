@@ -3,7 +3,7 @@ use alloc::string::String;
 pub fn encode(input: &[u8]) -> String {
     const TBL: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-    let mut out = String::with_capacity((input.len() + 2) / 3 * 4);
+    let mut out = String::with_capacity(input.len().div_ceil(3) * 4);
     let mut i = 0usize;
 
     while i + 3 <= input.len() {

@@ -82,12 +82,13 @@ pub struct Disk {
     pub mount_from: String
 }
 
+#[allow(clippy::unused_self)]
 impl Disk {
-    fn title(&self) -> &'static str {
+    const fn title(&self) -> &'static str {
         "{size-used} / {size-total} ({size-percentage}) - {filesystem}"
     }
 
-    fn key(&self) -> &'static str {
+    const fn key(&self) -> &'static str {
         "Disk ({mountpoint})"
     }
 

@@ -27,8 +27,7 @@ impl Module for Wallpaper {
         let info = WallpaperInfo::new();
         let file_name = info.full_path
             .last()
-            .map(String::from)
-            .unwrap_or(String::new());
+            .map_or(String::new(),String::from);
 
         Self {
             file_name,

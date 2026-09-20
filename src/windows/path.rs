@@ -111,7 +111,7 @@ impl Path {
 
     pub fn last(&'_ self) -> Option<&'_ str> {
         let parts = self.parts();
-        parts.last().map(|s| *s)
+        parts.last().copied()
     }
 
     pub fn join(&self, path: impl Into<Self>) -> Self {
@@ -194,7 +194,7 @@ impl core::fmt::Debug for Path {
 
 impl Default for Path {
     fn default() -> Self {
-        Path::new()
+        Self::new()
     }
 }
 

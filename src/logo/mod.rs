@@ -132,15 +132,16 @@ impl LogoInfo {
                 }
                 if in_percent {
                     in_percent = false;
-                    if let Some(i) = ch.to_digit(10) {
-                        if i > 0 {
-                            let code = self.colors.get(i as usize - 1).copied().unwrap_or("0");
-                            cur_code = code;
-                            ret_line.push_str("\x1b[1;");
-                            ret_line.push_str(code);
-                            ret_line.push('m');
-                            continue;
-                        }
+                    if let Some(i) = ch.to_digit(10) && i > 0 {
+                        let code = self.colors
+                            .get(i as usize - 1)
+                            .copied()
+                            .unwrap_or("0");
+                        cur_code = code;
+                        ret_line.push_str("\x1b[1;");
+                        ret_line.push_str(code);
+                        ret_line.push('m');
+                        continue;
                     }
                     ret_line.push('$');
                     ret_line.push(ch);

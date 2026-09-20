@@ -97,3 +97,4 @@ FileTimeToLocalFileTime
 FileTimeToSystemTime
 GetDateFormatEx
 GetTimeFormatEx
+GetLogicalDrives

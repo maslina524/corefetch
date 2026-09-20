@@ -313,7 +313,7 @@ impl core::fmt::Display for Temperature {
 pub struct Time(u64);
 
 impl Time {
-    pub fn new(time: u64) -> Self {
+    pub const fn new(time: u64) -> Self {
         Self(time)
     }
 }
@@ -321,7 +321,7 @@ impl Time {
 impl From<Time> for f64 {
     #[allow(clippy::cast_precision_loss)]
     fn from(val: Time) -> Self {
-        val.0 as f64
+        val.0 as Self
     }
 }
 
@@ -529,7 +529,7 @@ pub struct SplittedAnsiIter {
 }
 
 impl SplittedAnsiIter {
-    pub fn empty() -> Self {
+    pub const fn empty() -> Self {
         Self {
             buf: "",
             ranges: Vec::new(),
@@ -612,11 +612,11 @@ impl SplittedAnsiIter {
         }
     }
 
-    pub fn len(&self) -> usize {
+    pub const fn len(&self) -> usize {
         self.ranges.len()
     }
 
-    pub fn is_empty(&self) -> bool {
+    pub const fn is_empty(&self) -> bool {
         self.ranges.is_empty()
     }
 }

@@ -303,33 +303,35 @@ pub fn format_timestamp(time: u64, format: Option<&str>) -> String {
     let mut ft_local = FILETIME::default();
     let mut st = SYSTEMTIME::default();
 
-    let ok = unsafe { FileTimeToLocalFileTime(&ft_utc, &mut ft_local) };
-    if ok == 0 {
+    // SAFETY: Completely safe
+    let ret = unsafe { 
+        FileTimeToLocalFileTime(&raw const ft_utc, &raw mut ft_local) 
+    };
+    if ret == 0 {
         warning!("FileTimeToLocalFileTime failed");
         return time.to_string();
     }
 
-    let ok = unsafe { FileTimeToSystemTime(&ft_local, &mut st) };
-    if ok == 0 {
+    // SAFETY: Completely safe
+    let ret= unsafe { 
+        FileTimeToSystemTime(&raw const ft_local, &raw mut st) 
+    };
+    if ret == 0 {
         warning!("FileTimeToSystemTime failed");
         return time.to_string();
     }
 
     let custom_date: Option<Vec<u16>> = match format {
-        Some(f) => match wide(f) {
-            Ok(v)  => Some(v),
-            Err(_) => {
-                warning!("Failed to encode date format as UTF-16");
-                return time.to_string();
-            }
+        Some(f) => if let Ok(v) = wide(f) { Some(v) } else {
+            warning!("Failed to encode date format as UTF-16");
+            return time.to_string();
         },
         None => None,
     };
 
-    let date_fmt = match &custom_date {
-        Some(v) => v.as_ptr(),
-        None    => DEFAULT_DATE_FMT.as_ptr(),
-    };
+    let date_fmt = custom_date
+        .as_ref()
+        .map_or_else(|| DEFAULT_DATE_FMT.as_ptr(), Vec::as_ptr);
 
     let mut buf = [0u16; 128];
 
@@ -338,7 +340,7 @@ pub fn format_timestamp(time: u64, format: Option<&str>) -> String {
         GetDateFormatEx(
             LOCALE_NAME_USER_DEFAULT,
             0,
-            &st,
+            &raw const st,
             date_fmt,
             buf.as_mut_ptr(),
             buf.len() as i32,
@@ -354,11 +356,12 @@ pub fn format_timestamp(time: u64, format: Option<&str>) -> String {
     let sep = (n as usize) - 1;
     buf[sep] = b' ' as u16;
 
+    // SAFETY: Completely safe
     unsafe {
         GetTimeFormatEx(
             LOCALE_NAME_USER_DEFAULT,
             0,
-            &st,
+            &raw const st,
             TIME_FMT.as_ptr(),
             buf.as_mut_ptr().add(sep),
             (buf.len() - sep) as i32,

@@ -46,6 +46,7 @@ link!("version" "system" fn GetFileVersionInfoW(lptstrfilename : PCWSTR, dwhandl
 link!("kernel32" "system" fn GetLastError() -> WIN32_ERROR);
 link!("kernel32" "system" fn GetLocalTime(lpsystemtime : *mut SYSTEMTIME));
 link!("kernel32" "system" fn GetLocaleInfoEx(lplocalename : PCWSTR, lctype : u32, lplcdata : PWSTR, cchdata : i32) -> i32);
+link!("kernel32" "system" fn GetLogicalDrives() -> u32);
 link!("kernel32" "system" fn GetLogicalProcessorInformation(buffer : *mut SYSTEM_LOGICAL_PROCESSOR_INFORMATION, returnedlength : *mut u32) -> BOOL);
 link!("kernel32" "system" fn GetNumaHighestNodeNumber(highestnodenumber : *mut u32) -> BOOL);
 link!("kernel32" "system" fn GetProcAddress(hmodule : HMODULE, lpprocname : PCSTR) -> FARPROC);
