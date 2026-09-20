@@ -95,7 +95,7 @@ use crate::{
 static ALLOCATOR: Allocator = Allocator;
 
 const MIN_OFFSET: usize = 24;
-const IMAGE_WIDTH: usize = 40;
+const IMAGE_SIZE: usize = 40;
 
 #[cfg(not(test))]
 mod panic_impl {
@@ -460,35 +460,37 @@ fn corefetch_main() -> i32 {
 
         let padding = Config::get().get_logo_padding();
         let (w, _) = env::terminal_size();
-        let image_cols = IMAGE_WIDTH.min(w.saturating_sub(MIN_OFFSET + padding.left + padding.right));
+        let max_logo_len_padding = IMAGE_SIZE + padding.left + padding.right;
 
-        if image_cols == 0 {
-            let fallback_cols = w.min(IMAGE_WIDTH).max(1);
-            crate::kitty::print_png(png_data, Some(fallback_cols), None, 0);
-            let info_buf = build_info_buf(w);
+        let empty_logo_line = " ".repeat(max_logo_len_padding);
+        let info_buf = build_info_buf(w);
+
+        let lines_printed: usize;
+
+        if max_logo_len_padding + MIN_OFFSET < w {
+            lines_printed = IMAGE_SIZE.max(info_buf.len());
+
+            for i in 0..IMAGE_SIZE.max(info_buf.len()) {
+                let info_line = info_buf.get(i).map_or("", |s| *s);
+                println!("{empty_logo_line}{info_line}\x1b[0m");
+            }
+        } else {
+            lines_printed = IMAGE_SIZE + info_buf.len();
+
+            for _ in 0..IMAGE_SIZE {
+                println!("{empty_logo_line}");
+            }
             for line in info_buf {
                 println!("{line}\x1b[0m");
             }
-        } else {
-            for _ in 0..padding.top {
-                println!();
-            }
-            print!("{}", " ".repeat(padding.left));
-
-            let info_buf = build_info_buf(image_cols);
-
-            crate::kitty::print_png(png_data, Some(image_cols), None, 0);
-
-            let move_right = image_cols + padding.right;
-            for info_line in info_buf {
-                print!("\x1b[{}C", move_right);
-                println!("{info_line}\x1b[0m");
-            }
-
-            for _ in 0..padding.bottom {
-                println!();
-            }
         }
+
+        print!(
+            "\x1b7\x1b[{lines_printed}A\x1b[{}C",
+            padding.left
+        );
+        crate::kitty::print_png(png_data, Some(IMAGE_SIZE), None, 0);
+        print!("\x1b8");
     } else {
         let logo_lines = LogoInfo::new(&logo_name).get_ready_logo_lines(custom);
         let max_logo_len = max_line_len(&logo_lines);
