@@ -23,7 +23,7 @@ crate::cfg_if! {
 
 #[derive(Default)]
 pub struct CpuInfo {
-    pub name: String,
+    pub name: &'static str,
     pub vendor: String,
     pub numa_nodes: usize,
     pub physical_cores: usize,

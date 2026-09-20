@@ -19,7 +19,7 @@ pub struct Gpu {
     #[doc = "Name"]
     pub name: String,
     #[doc = "Driver"]
-    pub driver: String,
+    pub driver: &'static str,
     #[doc = "Temperature"]
     pub temperature: Temperature,
     #[doc = "Core count"]

@@ -73,6 +73,7 @@ use core::{
 
 use alloc::{
     string::String,
+    borrow::ToOwned,
     vec::Vec
 };
 
@@ -259,7 +260,7 @@ fn get_config(args: &mut Iter<'_, String>) -> Config {
 }
 
 fn get_logo_name_and_custom(val: &str) -> (String, CustomLogo) {
-    let id = crate::detect::os::get_id();
+    let id = crate::detect::os::get_id().to_owned();
     match fs::read(val) {
         Ok(b) => if png::is_png(&b) {
             (id, CustomLogo::Image(b))
@@ -318,7 +319,7 @@ fn print_help(theme: Option<&str>) -> ! {
                 }
             },
             "example" => {
-                LogoInfo::new(&crate::detect::os::get_id());
+                LogoInfo::new(crate::detect::os::get_id());
                 Config::get_or_init(Config::default());
                 
                 if let Some(doc) = (vtable.example)() {
@@ -450,12 +451,12 @@ fn corefetch_main() -> i32 {
             get_logo_name_and_custom(val)
         })
     } else {
-        let id = crate::detect::os::get_id();
+        let id = crate::detect::os::get_id().to_owned();
         (id, CustomLogo::None)
     };
 
     if let CustomLogo::Image(png_data) = &custom {
-        LogoInfo::new(&crate::detect::os::get_id());
+        LogoInfo::new(crate::detect::os::get_id());
 
         let padding = Config::get().get_logo_padding();
         let (w, _) = env::terminal_size();

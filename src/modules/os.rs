@@ -18,23 +18,23 @@ pub struct Os {
     #[doc = "Name of the kernel"]
     pub sysname: &'static str,
     #[doc = "Name"]
-    pub name: String,
+    pub name: &'static str,
     #[doc = "Pretty name, if available"]
     pub pretty_name: String,
     #[doc = "ID"]
-    pub id: String,
+    pub id: &'static str,
     #[doc = "ID like"]
-    pub id_like: String,
+    pub id_like: &'static str,
     #[doc = "Variant"]
-    pub variant: String,
+    pub variant: &'static str,
     #[doc = "Variant ID"]
-    pub variant_id: String,
+    pub variant_id: &'static str,
     #[doc = "Version"]
     pub version: String,
     #[doc = "Version ID"]
     pub version_id: String,
     #[doc = "Version codename"]
-    pub codename: String,
+    pub codename: &'static str,
     #[doc = "Build ID"]
     pub build_id: String,
     #[doc = "Architecture"]

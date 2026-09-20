@@ -15,20 +15,20 @@ impl OsInfo {
     pub fn new() -> Self {
         let os_release = LinuxInfo::parse_os_release().unwrap();
 
-        let name = os_release.get_default("NAME", &"Unknown".to_owned());
-        let codename = os_release.get_default("VERSION_CODENAME", &String::new());
-        let variant = os_release.get_default("VARIANT", &String::new());
-        let variant_id = os_release.get_default("VARIANT_ID", &String::new());
-        let id = os_release.get_default("ID", &"Unknown");
-        let version = Self::get_version(&id).unwrap_or_else(|| {
-            os_release.get_default("VERSION_ID", &"Unknown")
+        let name = os_release.get_default("NAME", "Unknown");
+        let codename = os_release.get_default("VERSION_CODENAME", "");
+        let variant = os_release.get_default("VARIANT", "");
+        let variant_id = os_release.get_default("VARIANT_ID", "");
+        let id = os_release.get_default("ID", "Unknown");
+        let version = Self::get_version(id).unwrap_or_else(|| {
+            os_release.get_default("VERSION_ID", "Unknown").to_owned()
         });
-        let nerd = Self::nerd(&id);
+        let nerd = Self::nerd(id);
 
         Self { 
             sysname: SYSNAME,
             name,
-            id: id.clone(),
+            id,
             id_like: id,
             version: version.clone(),
             version_id: version,

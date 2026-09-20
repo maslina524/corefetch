@@ -14,14 +14,14 @@ cfg_if! {
 
 pub struct OsInfo {
     pub sysname: &'static str,
-    pub name: String,
-    pub id: String,
-    pub id_like: String,
+    pub name: &'static str,
+    pub id: &'static str,
+    pub id_like: &'static str,
     pub version: String,
     pub version_id: String,
-    pub codename: String,
-    pub variant: String,
-    pub variant_id: String,
+    pub codename: &'static str,
+    pub variant: &'static str,
+    pub variant_id: &'static str,
     pub nerd: char
 }
 
@@ -31,11 +31,11 @@ pub fn get_id() -> String {
 }
 
 #[cfg(target_os = "linux")]
-pub fn get_id() -> String {
+pub fn get_id() -> &'static str {
     use crate::linux::parser::LinuxInfo;
 
     let os_release = LinuxInfo::parse_os_release().unwrap();
-    os_release.get_default("ID", &"Unknown")
+    os_release.get_default("ID", "Unknown")
 }
 
 #[cfg(target_os = "windows")]

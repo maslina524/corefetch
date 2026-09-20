@@ -22,7 +22,7 @@ impl GpuInfo {
 
         let vendor_id = Self::vendor_id(&pci_address);
         let device_id = Self::device_id(&pci_address);
-        let driver = Self::driver(&pci_address).unwrap_or(String::new());
+        let driver = Self::driver(&pci_address).unwrap_or("");
         let memory_total = Self::memory_total();
 
         Self { 
@@ -57,7 +57,7 @@ impl GpuInfo {
             .unwrap_or(0)
     }
 
-    fn driver(pci_address: &str) -> Option<String> {
+    fn driver(pci_address: &str) -> Option<&'static str> {
         let path = format!("/sys/bus/pci/devices/{pci_address}/uevent");
         let parsed = match LinuxInfo::parse_file(&path, '=') {
             Ok(c) => c,

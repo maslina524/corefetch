@@ -15,7 +15,7 @@ static CPU: OnceLock<Cpu> = OnceLock::new();
 #[derive(Debug, Docs)]
 pub struct Cpu {
     #[doc = "Name"]
-    pub name: String,
+    pub name: &'static str,
     #[doc = "Vendor"]
     pub vendor: String,
     #[doc = "Physical core count"]
