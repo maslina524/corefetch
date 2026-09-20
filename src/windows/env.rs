@@ -6,33 +6,27 @@ use core::{
 };
 
 use alloc::{
-    string::String,
+    string::{String, ToString},
     vec::Vec,
     vec
 };
 
 use crate::{
-    sync::OnceLock,
-    windows::error::{self, ErrorCode},
-    windows::fs::{Access, File},
-    windows::path::Path,
-    windows::encoding::wide,
-    windows::link::{
-        CONSOLE_SCREEN_BUFFER_INFO, CloseHandle, CommandLineToArgvW, CreateToolhelp32Snapshot, 
-        EnumProcesses, FILETIME, GetCommandLineW, GetConsoleScreenBufferInfo, 
-        GetSystemTimeAsFileTime, OSVERSIONINFOW, PROCESSENTRY32, Process32First, 
-        Process32Next, RtlGetVersion, VerQueryValueW, GetFileVersionInfoW, GetFileVersionInfoSizeW
-    }, 
-    windows::regedit::{self, Hkey, Regedit},
-    ARGS,
-    format
+    ARGS, format, sync::OnceLock, w, warning, windows::{encoding::wide, error::{self, ErrorCode}, fs::{Access, File}, link::{
+        CONSOLE_SCREEN_BUFFER_INFO, CloseHandle, CommandLineToArgvW, CreateToolhelp32Snapshot, EnumProcesses, FILETIME, FileTimeToLocalFileTime, FileTimeToSystemTime, GetCommandLineW, GetConsoleScreenBufferInfo, GetDateFormatEx, GetFileVersionInfoSizeW, GetFileVersionInfoW, GetSystemTimeAsFileTime, GetTimeFormatEx, OSVERSIONINFOW, PROCESSENTRY32, Process32First, Process32Next, RtlGetVersion, SYSTEMTIME, VerQueryValueW
+    }, path::Path, regedit::{self, Hkey, Regedit}}
 };
 
-const EPOCH_DIFF           : u64               = 116_444_736_000_000_000;
-const INVALID_HANDLE       : *mut c_void       = (-1isize).cast_unsigned() as *mut c_void;
+const EPOCH_DIFF              : u64               = 116_444_736_000_000_000;
+const INVALID_HANDLE          : *mut c_void       = (-1isize).cast_unsigned() as *mut c_void;
 
-static TERMINAL_HANDLE     : OnceLock<isize>   = OnceLock::new();
-static CURRENT_VERSION     : OnceLock<Regedit> = OnceLock::new();
+const EPOCH_DIFF_SECS         : u64               = 11_644_473_600;
+const TICKS_PER_SEC           : u64               = 10_000_000;
+const LOCALE_NAME_USER_DEFAULT: *const u16        = ptr::null();
+const DEFAULT_DATE_FMT        : [u16; 11]         = w!("dd.MM.yyyy");
+const TIME_FMT                : [u16; 9]          = w!("HH:mm:ss");
+static TERMINAL_HANDLE        : OnceLock<isize>   = OnceLock::new();
+static CURRENT_VERSION        : OnceLock<Regedit> = OnceLock::new();
 
 #[repr(C)]
 #[derive(Default, Debug)]
@@ -296,6 +290,83 @@ pub fn get_file_product_version(path: impl Into<Path>) -> error::Result<String> 
     let rev = info.dwProductVersionLS & 0xFFFF;
 
     Ok(format!("{major}.{minor}.{build}.{rev}"))
+}
+
+pub fn format_timestamp(time: u64, format: Option<&str>) -> String {
+    let ticks = (time + EPOCH_DIFF_SECS).saturating_mul(TICKS_PER_SEC);
+
+    let ft_utc = FILETIME {
+        dwLowDateTime:  ticks as u32,
+        dwHighDateTime: (ticks >> 32) as u32,
+    };
+
+    let mut ft_local = FILETIME::default();
+    let mut st = SYSTEMTIME::default();
+
+    let ok = unsafe { FileTimeToLocalFileTime(&ft_utc, &mut ft_local) };
+    if ok == 0 {
+        warning!("FileTimeToLocalFileTime failed");
+        return time.to_string();
+    }
+
+    let ok = unsafe { FileTimeToSystemTime(&ft_local, &mut st) };
+    if ok == 0 {
+        warning!("FileTimeToSystemTime failed");
+        return time.to_string();
+    }
+
+    let custom_date: Option<Vec<u16>> = match format {
+        Some(f) => match wide(f) {
+            Ok(v)  => Some(v),
+            Err(_) => {
+                warning!("Failed to encode date format as UTF-16");
+                return time.to_string();
+            }
+        },
+        None => None,
+    };
+
+    let date_fmt = match &custom_date {
+        Some(v) => v.as_ptr(),
+        None    => DEFAULT_DATE_FMT.as_ptr(),
+    };
+
+    let mut buf = [0u16; 128];
+
+    // SAFETY: Completely safe
+    let n = unsafe {
+        GetDateFormatEx(
+            LOCALE_NAME_USER_DEFAULT,
+            0,
+            &st,
+            date_fmt,
+            buf.as_mut_ptr(),
+            buf.len() as i32,
+            ptr::null(),
+        )
+    };
+
+    if n == 0 {
+        warning!("GetDateFormatEx failed");
+        return time.to_string();
+    }
+
+    let sep = (n as usize) - 1;
+    buf[sep] = b' ' as u16;
+
+    unsafe {
+        GetTimeFormatEx(
+            LOCALE_NAME_USER_DEFAULT,
+            0,
+            &st,
+            TIME_FMT.as_ptr(),
+            buf.as_mut_ptr().add(sep),
+            (buf.len() - sep) as i32,
+        )
+    };
+
+    let len = buf.iter().position(|&c| c == 0).unwrap_or(buf.len());
+    String::from_utf16_lossy(&buf[..len])
 }
 
 #[cfg(test)]

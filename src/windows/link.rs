@@ -38,6 +38,7 @@ link!("kernel32" "system" fn GetConsoleScreenBufferInfo(hconsoleoutput : HANDLE,
 link!("kernel32" "system" fn GetCurrentDirectoryW(nbufferlength : u32, lpbuffer : PWSTR) -> u32);
 link!("kernel32" "system" fn GetCurrentProcess() -> HANDLE);
 link!("kernel32" "system" fn GetCurrentProcessId() -> u32);
+link!("kernel32" "system" fn GetDateFormatEx(lplocalename : PCWSTR, dwflags : ENUM_DATE_FORMATS_FLAGS, lpdate : *const SYSTEMTIME, lpformat : PCWSTR, lpdatestr : PWSTR, cchdate : i32, lpcalendar : PCWSTR) -> i32);
 link!("kernel32" "system" fn GetDynamicTimeZoneInformation(ptimezoneinformation : *mut DYNAMIC_TIME_ZONE_INFORMATION) -> u32);
 link!("kernel32" "system" fn GetFileSizeEx(hfile : HANDLE, lpfilesize : *mut i64) -> BOOL);
 link!("version" "system" fn GetFileVersionInfoSizeW(lptstrfilename : PCWSTR, lpdwhandle : *mut u32) -> u32);
@@ -55,6 +56,7 @@ link!("kernel32" "system" fn GetStdHandle(nstdhandle : STD_HANDLE) -> HANDLE);
 link!("kernel32" "system" fn GetSystemInfo(lpsysteminfo : *mut SYSTEM_INFO));
 link!("kernel32" "system" fn GetSystemTimeAsFileTime(lpsystemtimeasfiletime : *mut FILETIME));
 link!("kernel32" "system" fn GetTickCount64() -> u64);
+link!("kernel32" "system" fn GetTimeFormatEx(lplocalename : PCWSTR, dwflags : TIME_FORMAT_FLAGS, lptime : *const SYSTEMTIME, lpformat : PCWSTR, lptimestr : PWSTR, cchtime : i32) -> i32);
 link!("kernel32" "system" fn GetTimeZoneInformation(lptimezoneinformation : *mut TIME_ZONE_INFORMATION) -> u32);
 link!("advapi32" "system" fn GetTokenInformation(tokenhandle : HANDLE, tokeninformationclass : TOKEN_INFORMATION_CLASS, tokeninformation : *mut core::ffi::c_void, tokeninformationlength : u32, returnlength : *mut u32) -> BOOL);
 link!("secur32" "system" fn GetUserNameExW(nameformat : EXTENDED_NAME_FORMAT, lpnamebuffer : PWSTR, nsize : *mut u32) -> bool);
@@ -162,6 +164,7 @@ impl Default for DYNAMIC_TIME_ZONE_INFORMATION {
 		unsafe { core::mem::zeroed() }
     }
 }
+pub type ENUM_DATE_FORMATS_FLAGS = u32;
 pub type EXTENDED_NAME_FORMAT = i32;
 pub type FARPROC = Option<unsafe extern "system" fn() -> isize>;
 #[repr(C)]
@@ -519,6 +522,7 @@ pub struct SYSTEM_LOGICAL_PROCESSOR_INFORMATION_0_0 {
 }
 pub type SYSTEM_PARAMETERS_INFO_ACTION = u32;
 pub type SYSTEM_PARAMETERS_INFO_UPDATE_FLAGS = u32;
+pub type TIME_FORMAT_FLAGS = u32;
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct TIME_ZONE_INFORMATION {

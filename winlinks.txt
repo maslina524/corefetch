@@ -93,3 +93,7 @@ GetFileVersionInfoSizeW
 GetRawInputDeviceInfoW
 GetRawInputDeviceList
 LoadLibraryW
+FileTimeToLocalFileTime
+FileTimeToSystemTime
+GetDateFormatEx
+GetTimeFormatEx

@@ -224,6 +224,30 @@ macro_rules! dbg {
     ($($val:expr),+ $(,)?, $flag:ident) => {};
 }
 
+#[macro_export]
+macro_rules! w {
+    ($s:literal) => {{
+        const fn to_utf16<const N: usize>(s: &str) -> [u16; N] {
+            let bytes = s.as_bytes();
+            let mut out = [0u16; N];
+            let mut i = 0;
+            let mut o = 0;
+            while i < bytes.len() {
+                let b = bytes[i];
+                if b < 0x80 {
+                    out[o] = b as u16;
+                    i += 1;
+                }
+                o += 1;
+            }
+            out[o] = 0;
+            out
+        }
+        const fn count(s: &str) -> usize { s.as_bytes().len() + 1 }
+        to_utf16::<{ count($s) }>($s)
+    }};
+}
+
 #[cfg(test)]
 mod tests {
     #[test]
