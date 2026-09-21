@@ -544,12 +544,8 @@ impl SplittedAnsiIter {
     }
 
     pub fn new(s: &str, len: usize) -> Self {
-        if s.trim().is_empty() {
-            return Self {
-                buf: "",
-                ranges: Vec::new(),
-                index: 0,
-            };
+        if s.is_empty() {
+            return Self::empty();
         }
 
         let mut buf = String::with_capacity(s.len() + 32);
@@ -608,12 +604,10 @@ impl SplittedAnsiIter {
             }
         }
 
-        if build_len > 0 {
-            if current_ansi != "\x1b[0m" {
-                buf.push_str("\x1b[0m");
-            }
-            ranges.push(chunk_start..buf.len());
+        if current_ansi != "\x1b[0m" {
+            buf.push_str("\x1b[0m");
         }
+        ranges.push(chunk_start..buf.len());
 
         Self {
             buf: String::leak(buf),
@@ -635,10 +629,6 @@ impl Iterator for SplittedAnsiIter {
     type Item = &'static str;
 
     fn next(&mut self) -> Option<&'static str> {
-        if self.buf.is_empty() {
-            return None;
-        }
-
         let r = self.ranges.get(self.index)?;
         self.index += 1;
         Some(&self.buf[r.clone()])
@@ -758,5 +748,12 @@ mod tests {
                 "\x1b[31mHello\x1b[0m"
             ]
         );
+    }
+
+    #[test]
+    fn split_by_len_ansi_newline_test() {
+        let s = "\n";
+        let lines = SplittedAnsiIter::new(s, 999).collect::<Vec<&str>>();
+        assert_ne!(lines, [] as [&str; 0]);
     }
 }
