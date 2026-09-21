@@ -97,10 +97,11 @@ use crate::{
 #[global_allocator]
 static ALLOCATOR: Allocator = Allocator;
 
-static HELP     : &str      = include_str!(concat!(env!("OUT_DIR"), "/help.txt"));
+static HELP_STRING      : &str  = include_str!(concat!(env!("OUT_DIR"), "/help.txt"));
 
-const MIN_OFFSET: usize     = 24;
-const IMAGE_SIZE: usize     = 40;
+const MIN_OFFSET        : usize = 24;
+const IMAGE_SIZE        : usize = 40;
+const ALLOC_REP_BAR_SIZE: usize = 48;
 
 #[cfg(not(test))]
 mod panic_impl {
@@ -344,7 +345,7 @@ fn print_help(theme: Option<&str>) -> ! {
         exit(0);
     }
 
-    println!("{HELP}");
+    println!("{HELP_STRING}");
     
     exit(0)
 }
@@ -539,15 +540,38 @@ fn corefetch_main() -> i32 {
     let _ = env::close_terminal_handle();
     NvidiaLib::drop_nvidia();
 
+    #[allow(clippy::cast_precision_loss)]
     if args.iter().any(|a| a == "--alloc-report")  {
         let rep = AllocationReport::get();
-        let alloc = rep.alloc;
-        let realloc = rep.realloc;
-        let dealloc = rep.dealloc;
-        let total = alloc + realloc + dealloc;
+        let total = rep.alloc + rep.dealloc + rep.realloc;
 
-        println!("\nAllocation Report:");
-        println!("Alloc: {alloc} Realloc: {realloc} Dealloc: {dealloc} Total: {total}");
+        println!();
+        println!("\x1b[1mAllocation Report\x1b[0m");
+        println!("Total: {total}");
+
+        let total_float = total as f32;
+        let bar_size_float = ALLOC_REP_BAR_SIZE as f32;
+        let mut cur_bar_size = 0;
+        
+        let alloc_per = rep.alloc as f32 / total_float;
+        let alloc_len = (bar_size_float * alloc_per) as usize;
+        cur_bar_size += alloc_len;
+
+        let realloc_per = rep.realloc as f32 / total_float;
+        let realloc_len = (bar_size_float * realloc_per) as usize;
+        cur_bar_size += realloc_len;
+
+        let dealloc_len = ALLOC_REP_BAR_SIZE - cur_bar_size;
+
+        print!("\x1b[{};1m{}", color::FG_YELLOW, "=".repeat(alloc_len));
+        print!("\x1b[{};1m{}", color::FG_CYAN, "=".repeat(realloc_len));
+        println!("\x1b[{};1m{}\x1b[0m", color::FG_LIGHT_MAGENTA, "=".repeat(dealloc_len));
+        println!(
+            "\x1b[{}mAlloc: {}   \x1b[{}mRealloc: {}   \x1b[{}mDealloc: {}\x1b[0m",
+            color::FG_YELLOW, rep.alloc, 
+            color::FG_CYAN, rep.realloc, 
+            color::FG_LIGHT_MAGENTA, rep.dealloc
+        );
     }
 
     0
