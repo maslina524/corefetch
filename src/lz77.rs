@@ -24,8 +24,9 @@ impl core::fmt::Display for Lz77Error {
 impl Error for Lz77Error {}
 
 pub fn decompress(bytes: Vec<u8>) -> Result<Vec<u8>, Lz77Error> {
+    let cap = bytes.len();
     let mut iter = bytes.into_iter();
-    let mut dictionary = Vec::new();
+    let mut dictionary = Vec::with_capacity(cap);
 
     while let Ok(offset) = get_control_bytes(&mut iter) {
         match offset {

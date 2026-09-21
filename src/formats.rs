@@ -408,7 +408,7 @@ pub fn expand_rust_unicode(s: &str) -> String {
             && chars[pos + 2] == '{'
         {
             pos += 3;
-            let mut hex = String::new();
+            let mut hex = String::with_capacity(8);
             while pos < chars.len() && chars[pos] != '}' {
                 hex.push(chars[pos]);
                 pos += 1;
@@ -459,15 +459,17 @@ pub fn format_color(s: &str, plan: ColorPlan) -> String {
     // Supported named prefixes:
     // reset_, bright_, dim_, italic_, underline_,
     // blink_, inverse_, hidden_, strike_, light_
-    add_prefix!(prefixes, ret, "reset", MODE_RESET);
-    add_prefix!(prefixes, ret, "bold", MODE_BOLD);
-    add_prefix!(prefixes, ret, "dim", MODE_DIM);
-    add_prefix!(prefixes, ret, "italic", MODE_ITALIC);
-    add_prefix!(prefixes, ret, "underline", MODE_UNDERLINE);
-    add_prefix!(prefixes, ret, "blink", MODE_BLINK);
-    add_prefix!(prefixes, ret, "inverse", MODE_INVERSE);
-    add_prefix!(prefixes, ret, "hidden", MODE_HIDDEN);
-    add_prefix!(prefixes, ret, "strike", MODE_STRIKETHROUGH);
+    if !prefixes.is_empty() {
+        add_prefix!(prefixes, ret, "reset", MODE_RESET);
+        add_prefix!(prefixes, ret, "bold", MODE_BOLD);
+        add_prefix!(prefixes, ret, "dim", MODE_DIM);
+        add_prefix!(prefixes, ret, "italic", MODE_ITALIC);
+        add_prefix!(prefixes, ret, "underline", MODE_UNDERLINE);
+        add_prefix!(prefixes, ret, "blink", MODE_BLINK);
+        add_prefix!(prefixes, ret, "inverse", MODE_INVERSE);
+        add_prefix!(prefixes, ret, "hidden", MODE_HIDDEN);
+        add_prefix!(prefixes, ret, "strike", MODE_STRIKETHROUGH);
+    }
 
     let is_light = prefixes.contains(&"light");
     let color_str = match (color, is_light, plan) {
@@ -551,7 +553,7 @@ impl SplittedAnsiIter {
         }
 
         let mut buf = String::with_capacity(s.len() + 32);
-        let mut ranges: Vec<Range<usize>> = Vec::new();
+        let mut ranges: Vec<Range<usize>> = Vec::with_capacity(8); // Random cap value
 
         let mut build_len = 0;
         let mut chunk_start = 0;
@@ -693,7 +695,7 @@ pub fn lazy_replace<'b>(
 #[macro_export]
 macro_rules! format {
     ($($tt:tt)*) => {{
-        let mut string = alloc::string::String::new();
+        let mut string = alloc::string::String::with_capacity(16);
         let mut formatter = $crate::formats::StringFormatter::new(&mut string);
         let _ = formatter.write_fmt(format_args!($($tt)*));
         string
@@ -703,7 +705,7 @@ macro_rules! format {
 #[macro_export]
 macro_rules! formatln {
     ($($tt:tt)*) => {{
-        let mut string = alloc::string::String::new();
+        let mut string = alloc::string::String::with_capacity(16);
         let mut formatter = $crate::formats::StringFormatter::new(&mut string);
         let _ = formatter.write_fmt(format_args!($($tt)*));
         let _ = formatter.write_nl();

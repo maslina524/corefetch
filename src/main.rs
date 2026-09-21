@@ -149,7 +149,7 @@ fn max_line_len(lines: &Vec<(String, usize)>) -> usize {
 fn build_logo_buf(lines: &Vec<(String, usize)>, max_len: usize) -> Vec<String> {
     let padding = Config::get().get_logo_padding();
     let max_len_padding = max_len + padding.left + padding.right;
-    let mut ret = Vec::new();
+    let mut ret = Vec::with_capacity(lines.len() + padding.top + padding.bottom);
 
     let (w, _) = env::terminal_size();
     if w < max_len_padding {
@@ -203,7 +203,7 @@ fn build_info_buf(max_len: usize) -> Vec<&'static str> {
     } else {
         w
     };
-    let mut ret = Vec::new();
+    let mut ret = Vec::with_capacity(40);
     let preset = Config::get();
 
     for module in preset.modules() {

@@ -179,7 +179,7 @@ pub fn args_init() -> Vec<String> {
         )
     };
 
-    let mut ret = Vec::new();
+    let mut ret = Vec::with_capacity(argv_count as usize);
     for i in 0..argv_count {
         // SAFETY: Moving strictly within the allocated memory by WinAPI
         let start_ptr = unsafe { *argv_ptrs.add(i as usize) };

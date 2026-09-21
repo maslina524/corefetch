@@ -53,10 +53,11 @@ impl Path {
     }
 
     fn clear(mut self) -> Self {
+        let cap = self.inner.len();
         let is_absolute = self.inner.starts_with('/');
         self.inner = self.inner.replace('\\', "/");
         let parts: Vec<&str> = self.inner.split('/').filter(|x| !x.is_empty()).collect();
-        let mut new_inner = String::new();
+        let mut new_inner = String::with_capacity(cap + 8);
         
         if is_absolute {
             new_inner.push('/');

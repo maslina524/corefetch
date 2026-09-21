@@ -109,7 +109,8 @@ impl Request {
             abort!("Failed to connect to host");
         }
 
-        let mut req = String::new();
+        let cap = 23 + 17 + 1 + method.len() + self.url.path.len() + full_domain.len() + 5;
+        let mut req = String::with_capacity(cap);
         req.push_str(method);
         req.push(' ');
         req.push_str(&self.url.path);
@@ -129,7 +130,7 @@ impl Request {
             abort!("Send failed");
         }
 
-        let mut response_data = Vec::new();
+        let mut response_data = Vec::with_capacity(BUF_SIZE);
         let mut buffer = [0u8; BUF_SIZE];
         loop {
             let n = recv(sockfd, buffer.as_mut_ptr().cast(), buffer.len(), 0);

@@ -258,7 +258,7 @@ impl Png {
         let ihdr = Ihdr::new(&mut iter)?;
         // crate::println!("IHDR: {:?}", ihdr);
 
-        let mut idat_data: Vec<u8> = Vec::new();
+        let mut idat_data: Vec<u8> = Vec::with_capacity(8 * 1024);
         loop {
             let chunk = Chunk::new(&mut iter)?;
             // crate::println!("{}: {:?}", str::from_utf8(&chunk.name).unwrap(), chunk.data);

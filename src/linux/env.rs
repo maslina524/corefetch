@@ -27,7 +27,7 @@ const TIOCGWINSZ: u64 = 0x5413;
 
 #[allow(clippy::similar_names, reason = "that's what they're called in C, i don't give a fuck about clippy")]
 pub fn args_init(argc: usize, argv: *const *const u8) -> Vec<String> {
-    let mut ret = Vec::new();
+    let mut ret = Vec::with_capacity(argc);
     for i in 0..argc {
         // SAFETY: Moving strictly within the allocated memory by Linux
         let start_ptr = unsafe { *argv.add(i) };

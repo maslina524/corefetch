@@ -132,7 +132,7 @@ fn build_dynamic_trees(stream: &mut Stream) -> Result<(HuffmanTree, HuffmanTree)
 
 pub fn decode(input: &[u8]) -> Result<Vec<u8>, DeflateError> {
     let mut stream = Stream::new(input.to_vec());
-    let mut output = Vec::new();
+    let mut output = Vec::with_capacity(input.len());
 
     loop {
         let bfinal = stream.read_bit();

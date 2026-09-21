@@ -240,10 +240,12 @@ impl Regedit {
                 let u16_slice = unsafe {
                     let len = buf.len() / 2;
                     core::slice::from_raw_parts(buf.as_ptr().cast(), len)
-                };
-                let mut strings = Vec::new();
+                }; 
+
+                let u16_slice_len = u16_slice.len();
+                let mut strings = Vec::with_capacity(u16_slice_len);
                 let mut start = 0;
-                while start < u16_slice.len() {
+                while start < u16_slice_len {
                     let end = u16_slice[start..]
                         .iter()
                         .position(|&c| c == 0)

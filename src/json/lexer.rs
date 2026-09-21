@@ -58,7 +58,7 @@ impl TokenStream {
     fn read_string(&mut self) -> Token {
         // skip opening quote
         self.pos += 1;
-        let mut ret = String::new();
+        let mut ret = String::with_capacity(24);
  
         while self.pos < self.chars.len() && self.chars[self.pos] != '"' {
             let ch = self.chars[self.pos];
@@ -104,7 +104,7 @@ impl TokenStream {
     }
 
     fn read_number(&mut self) -> Token {
-        let mut ret = String::new();
+        let mut ret = String::with_capacity(8);
         
         loop {
             let ch = self.chars[self.pos];

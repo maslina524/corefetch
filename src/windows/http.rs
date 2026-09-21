@@ -63,7 +63,8 @@ impl Request {
         };
         if session.is_null() { ErrorCode::last().panic(); }
 
-        let mut hostname = String::new();
+        let cap = self.url.domain.len() + self.url.tld.len() + 16;
+        let mut hostname = String::with_capacity(cap);
         if !self.url.subdomains.is_empty() {
             hostname.push_str(&self.url.subdomains.join("."));
             hostname.push('.');
@@ -169,7 +170,7 @@ impl Request {
         };
         if query == 0 {  ErrorCode::last().panic(); }
 
-        let mut buf = Vec::new();
+        let mut buf = Vec::with_capacity(4096);
         let mut read = 0;
         loop {
             let mut chunk = [0u8; 4096];

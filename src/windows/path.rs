@@ -76,7 +76,7 @@ impl Path {
             .replace('\\', "/")
             .split('/')
             .filter(|x| !x.is_empty())
-            .fold(String::new(), |mut acc, s| {
+            .fold(String::with_capacity(self.inner.len() + 16), |mut acc, s| {
                 if !acc.is_empty() {
                     acc.push('/');
                 }

@@ -100,7 +100,7 @@ impl LogoInfo {
     pub fn get_ready_logo_lines(&self, logo: CustomLogo) -> Vec<(String, usize)> {
         let lines_string = match logo {
             CustomLogo::None => {
-                let mut decompressed = Vec::new();
+                let mut decompressed = Vec::with_capacity(self.lines.len());
                 zlib::decompress(self.lines.to_vec(), &mut decompressed);
                 String::from_utf8(decompressed).expect("Non Utf8 in logo")
             },
@@ -108,7 +108,8 @@ impl LogoInfo {
             CustomLogo::Image(_) => return Vec::new(),
         };
 
-        let mut ret = Vec::new();
+        let lines_count = lines_string.chars().filter(|c| *c == ' ').count() + 1;
+        let mut ret = Vec::with_capacity(lines_count);
         let mut cur_code: &str = self.colors.first().copied().unwrap_or("");
 
         for line in lines_string.lines() {

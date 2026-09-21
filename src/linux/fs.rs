@@ -131,7 +131,7 @@ impl File {
 
     pub fn read(&self) -> error::Result<Vec<u8>> {
         rewind(self.0);
-        let mut buf = Vec::new();
+        let mut buf = Vec::with_capacity(4096);
         let mut chunk = [0u8; 4096];
 
         loop {
@@ -246,7 +246,7 @@ pub fn read_dir_all(path: impl Into<Path>) -> error::Result<Vec<Item>> {
         return Err(ErrorCode::last());
     }
 
-    let mut items = Vec::new();
+    let mut items = Vec::with_capacity(20);
     let mut buf = vec![0u8; BUF_SIZE];
 
     loop {
