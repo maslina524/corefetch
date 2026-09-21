@@ -1,23 +1,21 @@
-use core::ffi::{c_void, c_char, c_int, CStr};
-use core::ptr;
+use core::{
+    ffi::{c_void, c_char, c_int, CStr},
+    ptr
+};
 
 use alloc::{
     string::String,
     ffi::CString,
+    borrow::Cow,
     collections::BTreeMap
 };
 
-use crate::leak::ConcatStr;
 use crate::{
-    info,
-    abort,
-    format,
-    cfg_if,
-    imp::http::Request,
-    imp::fs::{self, File, Access},
-    imp::path::Path,
-    sync::OnceLock,
-    formats::{snake_to_camel_ascii, expand_rust_unicode}
+    abort, cfg_if, format, formats::{expand_rust_unicode, snake_to_camel_ascii}, imp::{
+        fs::{self, Access, File, ReadError}, 
+        http::Request, 
+        path::Path
+    }, info, leak::ConcatStr, sync::OnceLock, warning, 
 };
 
 cfg_if! {
@@ -191,6 +189,24 @@ impl core::fmt::Debug for LuaType {
             Self::String(v) => write!(f, "{v}"),
             Self::Number(v)    => write!(f, "{v}"),
             Self::Boolean(v)  => write!(f, "{v}")
+        }
+    }
+}
+
+pub fn open_lua_file(code: &str) -> Cow<'_, str> {
+    match fs::read_to_string(code.trim()) {
+        Ok(c) => Cow::Owned(c),
+        Err(e) => match e {
+            ReadError::Code(e) => if e.is_file_not_found() {
+                Cow::Borrowed(code)
+            } else {
+                warning!("Failed to open file: {e}");
+                Cow::Owned(String::new())
+            },
+            ReadError::Utf8(e) => {
+                warning!("Failed to open the file as Utf8: {e}");
+                Cow::Owned(String::new())
+            }
         }
     }
 }

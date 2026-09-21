@@ -213,6 +213,8 @@ macro_rules! format_for_module {
             let title_raw = format.format.unwrap_or(self.title());
 
             let value_raw: alloc::string::String = if let Some(code) = title_raw.strip_prefix("lua:") {
+                let code = $crate::lua::open_lua_file(code).into_owned();
+
                 #[allow(unused_mut)]
                 let mut vars = alloc::collections::BTreeMap::new();
 
@@ -224,7 +226,7 @@ macro_rules! format_for_module {
                     );
                 )*
 
-                $crate::lua::LuaLib::get().exec(code, vars)
+                $crate::lua::LuaLib::get().exec(&code, vars)
             } else {
                 alloc::borrow::ToOwned::to_owned(title_raw)
             };
