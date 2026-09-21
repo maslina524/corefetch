@@ -83,7 +83,7 @@ use crate::{
     modules::{
         DocsVtable, FormatValue, Module, Version, Commit
     }, 
-    imp::allocator::Allocator,
+    imp::allocator::{Allocator, AllocationReport},
     imp::env,
     imp::fs,
     imp::http::Request, 
@@ -538,6 +538,17 @@ fn corefetch_main() -> i32 {
     #[cfg(target_os = "windows")]
     let _ = env::close_terminal_handle();
     NvidiaLib::drop_nvidia();
+
+    if args.iter().any(|a| a == "--alloc-report")  {
+        let rep = AllocationReport::get();
+        let alloc = rep.alloc;
+        let realloc = rep.realloc;
+        let dealloc = rep.dealloc;
+        let total = alloc + realloc + dealloc;
+
+        println!("\nAllocation Report:");
+        println!("Alloc: {alloc} Realloc: {realloc} Dealloc: {dealloc} Total: {total}");
+    }
 
     0
 }

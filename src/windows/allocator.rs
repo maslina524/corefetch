@@ -1,6 +1,7 @@
 use core::{
-    ffi::c_void,
-    alloc::{GlobalAlloc, Layout}
+    alloc::{GlobalAlloc, Layout}, 
+    ffi::c_void, 
+    sync::atomic::{AtomicUsize, Ordering}
 };
 
 use crate::{
@@ -10,7 +11,10 @@ use crate::{
 
 const HEAP_ZERO_MEMORY: u32 = 0x08;
 
-static HEAP_HANDLE: OnceLock<usize> = OnceLock::new();
+static HEAP_HANDLE    : OnceLock<usize> = OnceLock::new();
+static ALLOC_COUNTER  : AtomicUsize     = AtomicUsize::new(0);
+static REALLOC_COUNTER: AtomicUsize     = AtomicUsize::new(0);
+static DEALLOC_COUNTER: AtomicUsize     = AtomicUsize::new(0);
 
 fn get_heap_handle() -> *mut c_void {
     // SAFETY: The `GetProcessHeap` function takes no arguments and
@@ -32,15 +36,16 @@ unsafe impl GlobalAlloc for Allocator {
         // receives a valid handle from `GetProcessHeap`;
         // if the OS fails to allocate memory, it
         // returns NULL which is checked in the block
-        unsafe {
-            let ptr = HeapAlloc(
+        let ptr = unsafe {
+            HeapAlloc(
                 handle, 
                 0, 
                 layout.size()
-            );
-            assert!(!ptr.is_null(), "`HeapAlloc` error!");
-            ptr.cast::<u8>()
-        }
+            )
+        };
+        assert!(!ptr.is_null(), "`HeapAlloc` error!");
+        ALLOC_COUNTER.fetch_add(1, Ordering::Relaxed);
+        ptr.cast::<u8>()
     }
 
     unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
@@ -50,14 +55,15 @@ unsafe impl GlobalAlloc for Allocator {
         // the pointer passed to `HeapFree` may be NULL;
         // if the OS fails to free the memory, it
         // returns FALSE which is checked in the same block
-        unsafe {
-            let ret = HeapFree(
+        let ret = unsafe {
+            HeapFree(
                 handle, 
                 0, 
                 ptr.cast::<c_void>()
-            );
-            assert!(ret != 0, "`HeapFree` error!");
-        }
+            )
+        };
+        assert!(ret != 0, "`HeapFree` error!");
+        DEALLOC_COUNTER.fetch_add(1, Ordering::Relaxed);
     }
 
     unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
@@ -67,15 +73,16 @@ unsafe impl GlobalAlloc for Allocator {
         // receives a valid handle from `GetProcessHeap`;
         // if the OS fails to allocate memory, it
         // returns NULL which is checked in the block
-        unsafe {
-            let ptr = HeapAlloc(
+        let ptr = unsafe {
+            HeapAlloc(
                 handle, 
                 HEAP_ZERO_MEMORY, 
                 layout.size()
-            );
-            assert!(!ptr.is_null(), "`HeapAlloc` error!");
-            ptr.cast::<u8>()
-        }
+            )
+        };
+        assert!(!ptr.is_null(), "`HeapAlloc` error!");
+        ALLOC_COUNTER.fetch_add(1, Ordering::Relaxed);
+        ptr.cast::<u8>()
     }
 
     unsafe fn realloc(&self, ptr: *mut u8, _layout: Layout, new_size: usize) -> *mut u8 {
@@ -84,15 +91,32 @@ unsafe impl GlobalAlloc for Allocator {
         // SAFETY: When passing a null pointer, 
         // the function will behave like `HeapAlloc`; 
         // the returned pointer is checked
-        unsafe {
-            let new_ptr = HeapReAlloc(
+        let new_ptr = unsafe {
+            HeapReAlloc(
                 handle, 
                 0, 
                 ptr.cast(), 
                 new_size
-            );
-            assert!(!new_ptr.is_null(), "`HeapReAlloc` error!");
-            new_ptr.cast::<u8>()
-        }
+            )
+        };
+        REALLOC_COUNTER.fetch_add(1, Ordering::Relaxed);
+        assert!(!new_ptr.is_null(), "`HeapReAlloc` error!");
+        new_ptr.cast::<u8>()
+    }
+}
+
+pub struct AllocationReport {
+    pub alloc: usize,
+    pub realloc: usize,
+    pub dealloc: usize
+}
+
+impl AllocationReport {
+    pub fn get() -> Self {
+        let alloc = ALLOC_COUNTER.load(Ordering::Relaxed);
+        let realloc = REALLOC_COUNTER.load(Ordering::Relaxed);
+        let dealloc = DEALLOC_COUNTER.load(Ordering::Relaxed);
+
+        Self { alloc, realloc, dealloc }
     }
 }
