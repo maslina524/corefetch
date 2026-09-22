@@ -101,7 +101,7 @@ static HELP_STRING      : &str  = include_str!(concat!(env!("OUT_DIR"), "/help.t
 
 const MIN_OFFSET        : usize = 24;
 const IMAGE_SIZE        : usize = 40;
-const ALLOC_REP_BAR_SIZE: usize = 48;
+const ALLOC_REP_BAR_SIZE: u128  = 48;
 
 #[cfg(not(test))]
 mod panic_impl {
@@ -137,7 +137,7 @@ mod panic_impl {
     }
 }
 
-fn max_line_len(lines: &Vec<(String, usize)>) -> usize {
+fn max_line_len(lines: &[(String, usize)]) -> usize {
     let mut ret = 0;
     for (_, len) in lines {
         if *len > ret {
@@ -147,7 +147,7 @@ fn max_line_len(lines: &Vec<(String, usize)>) -> usize {
     ret
 }
 
-fn build_logo_buf(lines: &Vec<(String, usize)>, max_len: usize) -> Vec<String> {
+fn build_logo_buf(lines: &[(String, usize)], max_len: usize) -> Vec<String> {
     let padding = Config::get().get_logo_padding();
     let max_len_padding = max_len + padding.left + padding.right;
     let mut ret = Vec::with_capacity(lines.len() + padding.top + padding.bottom);
@@ -356,6 +356,7 @@ fn print_help(theme: Option<&str>) -> ! {
     exit(0)
 }
 
+#[cold]
 fn print_version(method: Option<&str>) -> ! {
     let ver = Version::new();
     match method {
@@ -386,6 +387,54 @@ fn print_version(method: Option<&str>) -> ! {
         _ => eprintln!("Unknown method for version, supported: raw, dbg, extended")
     }
     exit(0)
+}
+
+#[cold]
+#[inline(never)]
+fn print_alloc_report() {
+    let rep = AllocationReport::get();
+    let total = rep.alloc + rep.dealloc + rep.realloc;
+
+    println!();
+    println!("\x1b[1mAllocation Report\x1b[0m");
+    println!("Total: {total}");
+
+    let total_u = total as u128;
+
+    let mut alloc_len   = ((rep.alloc as u128) * ALLOC_REP_BAR_SIZE) / total_u;
+    let mut realloc_len = ((rep.realloc as u128) * ALLOC_REP_BAR_SIZE) / total_u;
+    if alloc_len + realloc_len > ALLOC_REP_BAR_SIZE {
+        alloc_len = ALLOC_REP_BAR_SIZE;
+        realloc_len = 0;
+    }
+    let dealloc_len = ALLOC_REP_BAR_SIZE - alloc_len - realloc_len;
+
+    let alloc_len   = alloc_len   as usize;
+    let realloc_len = realloc_len as usize;
+    let dealloc_len = dealloc_len as usize;
+
+    let mut bar = String::with_capacity(ALLOC_REP_BAR_SIZE as usize + 32);
+    bar.push_str("\x1b[");
+    bar.push_str(color::FG_YELLOW);
+    bar.push_str(";1m");
+    bar.extend(core::iter::repeat_n('=', alloc_len));
+    bar.push_str("\x1b[");
+    bar.push_str(color::FG_CYAN);
+    bar.push_str(";1m");
+    bar.extend(core::iter::repeat_n('=', realloc_len));
+    bar.push_str("\x1b[");
+    bar.push_str(color::FG_LIGHT_MAGENTA);
+    bar.push_str(";1m");
+    bar.extend(core::iter::repeat_n('=', dealloc_len));
+    bar.push_str("\x1b[0m");
+    println!("{bar}");
+
+    println!(
+        "\x1b[{}mAlloc: {}   \x1b[{}mRealloc: {}   \x1b[{}mDealloc: {}\x1b[0m",
+        color::FG_YELLOW, rep.alloc,
+        color::FG_CYAN, rep.realloc,
+        color::FG_LIGHT_MAGENTA, rep.dealloc
+    );
 }
 
 static ARGS: OnceLock<Vec<String>> = OnceLock::new();
@@ -533,6 +582,10 @@ fn corefetch_main() -> i32 {
         }
     }
 
+    if args.iter().any(|a| a == "--alloc-report") {
+        print_alloc_report();
+    }
+
     if args.iter().any(|a| a == "--wait" || a == "-w")  {
         loop {
             // SAFETY: Just a nop
@@ -545,40 +598,6 @@ fn corefetch_main() -> i32 {
     #[cfg(target_os = "windows")]
     let _ = env::close_terminal_handle();
     NvidiaLib::drop_nvidia();
-
-    #[allow(clippy::cast_precision_loss)]
-    if args.iter().any(|a| a == "--alloc-report")  {
-        let rep = AllocationReport::get();
-        let total = rep.alloc + rep.dealloc + rep.realloc;
-
-        println!();
-        println!("\x1b[1mAllocation Report\x1b[0m");
-        println!("Total: {total}");
-
-        let total_float = total as f32;
-        let bar_size_float = ALLOC_REP_BAR_SIZE as f32;
-        let mut cur_bar_size = 0;
-        
-        let alloc_per = rep.alloc as f32 / total_float;
-        let alloc_len = (bar_size_float * alloc_per) as usize;
-        cur_bar_size += alloc_len;
-
-        let realloc_per = rep.realloc as f32 / total_float;
-        let realloc_len = (bar_size_float * realloc_per) as usize;
-        cur_bar_size += realloc_len;
-
-        let dealloc_len = ALLOC_REP_BAR_SIZE - cur_bar_size;
-
-        print!("\x1b[{};1m{}", color::FG_YELLOW, "=".repeat(alloc_len));
-        print!("\x1b[{};1m{}", color::FG_CYAN, "=".repeat(realloc_len));
-        println!("\x1b[{};1m{}\x1b[0m", color::FG_LIGHT_MAGENTA, "=".repeat(dealloc_len));
-        println!(
-            "\x1b[{}mAlloc: {}   \x1b[{}mRealloc: {}   \x1b[{}mDealloc: {}\x1b[0m",
-            color::FG_YELLOW, rep.alloc, 
-            color::FG_CYAN, rep.realloc, 
-            color::FG_LIGHT_MAGENTA, rep.dealloc
-        );
-    }
 
     0
 }

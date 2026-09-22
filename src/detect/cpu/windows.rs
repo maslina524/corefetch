@@ -95,7 +95,7 @@ impl CpuInfo {
         highest as usize + 1
     }
 
-    fn physical_cores_count(buf: &Vec<LogicalInfo>) -> usize {
+    fn physical_cores_count(buf: &[LogicalInfo]) -> usize {
         let mut physical = 0;
         for info in buf {
             if info.Relationship == 0 {
@@ -106,7 +106,7 @@ impl CpuInfo {
         physical
     }
 
-    fn logical_cores_count(buf: &Vec<LogicalInfo>) -> usize {
+    fn logical_cores_count(buf: &[LogicalInfo]) -> usize {
         let mut logical = 0;
         for info in buf {
             if info.Relationship == 0 {
