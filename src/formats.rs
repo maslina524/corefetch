@@ -119,6 +119,22 @@ impl MemorySize {
         }
     }
 
+    pub fn from_kilobytes(mut kilobytes: f64) -> Self {
+        let mut divisions = 1;
+
+        while kilobytes >= 1024.0 && divisions < 3 {
+            kilobytes /= 1024.0;
+            divisions += 1;
+        }
+
+        match divisions {
+            1 => Self::Kb(kilobytes as f32),
+            2 => Self::Mb(kilobytes as f32),
+            3 => Self::Gb(kilobytes as f32),
+            _ => unreachable!(),
+        }
+    }
+
     pub fn as_bytes(self) -> u64 {
         match self {
             Self::Byte(b) => b as u64,

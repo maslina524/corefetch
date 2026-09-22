@@ -23,6 +23,10 @@ impl LinuxInfo {
         Self::parse_file("/proc/cpuinfo", ':')
     }
 
+    pub fn parse_mem_info() -> Result<Self, fs::ReadError> {
+        Self::parse_file("/proc/meminfo", ':')
+    }
+
     pub fn parse_file(path: impl Into<Path>, split: char) -> Result<Self, fs::ReadError> {
         let string = fs::read_to_string(path)?;
         Ok(Self::parse(string, split))
