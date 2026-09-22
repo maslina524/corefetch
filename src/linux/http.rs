@@ -11,9 +11,13 @@ use alloc::{
 
 use crate::{
     abort,
-    linux::libc::{
-        AddrInfo, close, connect, freeaddrinfo, getaddrinfo, recv, send, socket
-    }, 
+    linux::{
+        libc::{
+            AddrInfo, close, connect, freeaddrinfo, 
+            getaddrinfo, recv, send, socket
+        },
+        error::ErrorCode
+    },
     url::{Response, Url},
     format
 };
@@ -40,11 +44,11 @@ impl Request {
         Self { url }
     }
 
-    pub fn get(self) -> Response {
+    pub fn get(self) -> Result<Response, ErrorCode> {
         self.send("GET")
     }
 
-    fn send(self, method: &str) -> Response {
+    fn send(self, method: &str) -> Result<Response, ErrorCode> {
         // crate::println!("Url: {:#?}", self.url);
         let full_domain = if self.url.subdomains.is_empty() {
             format!("{}.{}", self.url.domain, self.url.tld)
@@ -76,7 +80,8 @@ impl Request {
             &raw mut result,
         );
         if ret != 0 {
-            abort!("getaddrinfo failed, url: `{}`", self.url);
+            let err = ErrorCode::new(ret.abs());
+            return Err(err);
         }
 
         let mut sockfd: c_int = -1;
@@ -146,6 +151,6 @@ impl Request {
 
         close(sockfd);
 
-        Response::from_raw(&response_data)
+        Ok(Response::from_raw(&response_data))
     }
 }

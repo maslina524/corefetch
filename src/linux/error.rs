@@ -30,13 +30,13 @@ impl ErrorCode {
     #[cold]
     #[track_caller]
     pub fn panic(&self) -> ! {
-        abort!("LibC: {self}")
+        abort!("Libc: {self}")
     }
 
     #[cold]
     #[track_caller]
     pub fn panic_code(&self) -> ! {
-        abort!("LibC: Code {}", self.0)
+        abort!("Libc: Code {}", self.0)
     }
 
     pub const fn is_file_not_found(&self) -> bool {

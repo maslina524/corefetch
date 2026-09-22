@@ -84,7 +84,7 @@ impl Request {
             let err = ErrorCode::last();
             // SAFETY: Completely safe
             unsafe { WinHttpCloseHandle(session) };
-            err.panic();
+            return Err(err);
         }
 
         let method = wide(method).unwrap();
@@ -110,10 +110,11 @@ impl Request {
         if req.is_null() {
             let err = ErrorCode::last();
             // SAFETY: Completely safe
-            unsafe { WinHttpCloseHandle(conn) };
-            // SAFETY: Completely safe
-            unsafe { WinHttpCloseHandle(session) };
-            err.panic();
+            unsafe { 
+                WinHttpCloseHandle(conn);
+                WinHttpCloseHandle(session);
+            }
+            return Err(err);
         }
         
         // SAFETY: Just a WinAPI function, the return value is checked
@@ -130,16 +131,13 @@ impl Request {
         };
         if send == 0 {
             let err = ErrorCode::last();
-            if err.code() == 12029 {
-                return Err(err);
-            }
             // SAFETY: Completely safe
             unsafe { 
-                WinHttpCloseHandle( req);
+                WinHttpCloseHandle(req);
                 WinHttpCloseHandle(conn);
                 WinHttpCloseHandle(session);
             };
-            err.panic_code();
+            return Err(err);
         }
         
         // SAFETY: Just a WinAPI function, the return value is checked
@@ -157,7 +155,7 @@ impl Request {
                 WinHttpCloseHandle(conn);
                 WinHttpCloseHandle(session);
             };
-            err.panic();
+            return Err(err);
         }
 
         let mut status_code: u32 = 0;
@@ -173,7 +171,7 @@ impl Request {
                 ptr::null_mut(),
             )
         };
-        if query == 0 {  ErrorCode::last().panic(); }
+        if query == 0 { return Err(ErrorCode::last()); }
 
         let mut buf = Vec::with_capacity(4096);
         let mut read = 0;
