@@ -115,7 +115,7 @@ mod panic_impl {
 
     #[panic_handler]
     fn panic(info: &PanicInfo) -> ! {
-        let msg = info.message().as_str().unwrap_or("Without message");
+        let msg = format!("{}", info.message());
 
         let location = info
             .location()
@@ -238,7 +238,13 @@ fn get_config(args: &mut Iter<'_, String>) -> Config {
 
     // URL path
     if let Some(url) = Url::new(path) {
-        let response = Request::from_url(url).get();
+        let response = match Request::from_url(url).get() {
+            Ok(r) => r,
+            Err(e) => {
+                warning!("Failed to connect to server (config): {}", e.code());
+                return Config::default()
+            }
+        };
         if !response.is_success() {
             warning!("Failed to get preset from URL, Code: {}", response.code());
             return Config::default();

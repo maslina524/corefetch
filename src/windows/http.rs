@@ -9,13 +9,15 @@ use alloc::{
 };
 
 use crate::{
-    windows::error::ErrorCode,
-    windows::link::{
-        WinHttpOpen, WinHttpConnect, WinHttpCloseHandle, WinHttpOpenRequest,
-        WinHttpSendRequest, WinHttpReceiveResponse, WinHttpQueryHeaders, WinHttpReadData
-    },
-    windows::encoding::wide,
-    url::{Url, Response}
+    url::{Response, Url},
+    windows::{
+        encoding::wide, 
+        error::ErrorCode, link::{
+            WinHttpCloseHandle, WinHttpConnect, WinHttpOpen, WinHttpOpenRequest, 
+            WinHttpQueryHeaders, WinHttpReadData, WinHttpReceiveResponse, WinHttpSendRequest
+        
+        }
+    }
 };
 
 const WINHTTP_ACCESS_TYPE_DEFAULT_PROXY: u32               = 0;
@@ -45,11 +47,11 @@ impl Request {
         Self { url }
     }
 
-    pub fn get(self) -> Response {
+    pub fn get(self) -> Result<Response, ErrorCode> {
         self.send("GET")
     }
 
-    fn send(self, method: &str) -> Response {
+    fn send(self, method: &str) -> Result<Response, ErrorCode> {
         // SAFETY: Parameters are fully correct, return value is checked
         let session = unsafe {
             let header = wide("UserAgent/1.0").unwrap();
@@ -128,6 +130,9 @@ impl Request {
         };
         if send == 0 {
             let err = ErrorCode::last();
+            if err.code() == 12029 {
+                return Err(err);
+            }
             // SAFETY: Completely safe
             unsafe { 
                 WinHttpCloseHandle( req);
@@ -196,7 +201,7 @@ impl Request {
             WinHttpCloseHandle(session);
         }
 
-        Response::new(status_code as u16, buf)
+        Ok(Response::new(status_code as u16, buf))
     }
 }
 
@@ -209,7 +214,7 @@ mod tests {
     #[test]
     fn example_response_test() {
         let url = "http://wttr.in/?format=%c;%C;%x;%h;%t;%f;%H;%L;%w;%l;%m;%M;%p;%P;%e;%u;%D;%S;%z;%s;%d;%T;%Z";
-        let response = Request::new(url).unwrap().get();
+        let response = Request::new(url).unwrap().get().expect("Failed");
         println!("Response code: {}", response.code());
 
         let string = String::from_utf8(response.into_content()).unwrap();

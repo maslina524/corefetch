@@ -95,7 +95,13 @@ pub fn get() -> Weather {
 }
 
 fn request() -> Option<String> {
-    let response = Request::new(WTTR_URL).unwrap().get();
+    let response = match Request::new(WTTR_URL).unwrap().get() {
+        Ok(r) => r,
+        Err(e) => {
+            warning!("Failed to connect to server (weather): {}", e.code());
+            return None
+        }
+    };
     if response.is_success() {
         Some(response.as_text().unwrap())
     } else {

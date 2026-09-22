@@ -403,7 +403,10 @@ pub fn get_lua_path() -> Path {
     if !path.exists() {
         info!("Downloading lua dll");
 
-        let resp = Request::new(LUA_DOWNLOAD_URL).unwrap().get();
+        let resp = match Request::new(LUA_DOWNLOAD_URL).unwrap().get() {
+            Ok(r) => r,
+            Err(e) => abort!("Failet to connect to server (lua path): {}", e.code())
+        };
         if !resp.is_success() {
             abort!("Failed to download `lua55.dll`: {}", resp.code());
         }

@@ -1,13 +1,23 @@
 use alloc::string::String;
 
 use crate::{
-    format, imp::http::Request, json::Json, modules::publicip::PublicIP, warning
+    format, 
+    imp::http::Request, 
+    json::Json, 
+    modules::publicip::PublicIP, 
+    warning
 };
 
 const PUBLICIP_URL: &str = "http://ip-api.com/json/";
 
 pub fn get() -> PublicIP {
-    let response = Request::new(PUBLICIP_URL).unwrap().get();
+    let response = match Request::new(PUBLICIP_URL).unwrap().get() {
+        Ok(r) => r,
+        Err(e) => {
+            warning!("Failed to connect to server (publicip): {}", e.code());
+            return PublicIP::default();
+        }
+    };
     let text = if response.is_success() {
         response.as_text().unwrap()
     } else {
