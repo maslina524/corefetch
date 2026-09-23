@@ -1,6 +1,16 @@
-use alloc::{string::String, vec::Vec};
+use alloc::{
+    string::String, 
+    vec::Vec
+};
 
-use crate::{abort, color, formats::char_width, sync::OnceLock, zlib};
+use crate::{
+    abort, 
+    color, 
+    formats::char_width, 
+    image::Image, 
+    sync::OnceLock, 
+    zlib
+};
 
 macro_rules! logo_mod {
     ($($letter:ident),* $(,)?) => {
@@ -29,7 +39,7 @@ pub enum UILogo {
     None,
     Preset,
     Ascii(String),
-    Image(Vec<u8>),
+    Image(Image),
 }
 
 pub struct LogoInfo {

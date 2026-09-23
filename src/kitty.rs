@@ -1,17 +1,19 @@
-use alloc::string::String;
-
 use crate::{
-    format,
     base64,
-    imp::io::{stdout, write}
+    format,
+    image::Image,
+    imp::io::{stdout, write},
 };
 
 const CHUNK: usize = 4096;
 
-pub fn print_png(png: &[u8], cols: Option<usize>, rows: Option<usize>, image_id: u32) {
-    let b64 = base64::encode(png);
+pub fn print_image(image: &Image, cols: Option<usize>, rows: Option<usize>, image_id: u32) {
+    let (w, h) = image.get_size();
 
-    let mut ctrl = String::from("a=T,f=100,C=1");
+    let raw = image.as_rgba_bytes();
+    let b64 = base64::encode(&raw);
+
+    let mut ctrl = format!("a=T,f=32,s={},v={},C=1", w, h);
     if image_id != 0 {
         ctrl.push_str(&format!(",i={}", image_id));
     }
@@ -21,7 +23,7 @@ pub fn print_png(png: &[u8], cols: Option<usize>, rows: Option<usize>, image_id:
     if let Some(r) = rows {
         ctrl.push_str(&format!(",r={}", r));
     }
-    
+
     let bytes = b64.as_bytes();
 
     let mut first = true;

@@ -62,18 +62,12 @@ use core::{env, ffi::c_int, slice::Iter};
 use alloc::{borrow::ToOwned, string::String, vec::Vec};
 
 use crate::{
-    config::{Config, ConfigModule},
-    formats::SplittedAnsiIter,
-    imp::allocator::{AllocationReport, Allocator},
-    imp::env,
-    imp::fs,
-    imp::http::Request,
-    json::Json,
-    logo::{LogoInfo, UILogo},
-    modules::{Commit, DocsVtable, FormatValue, Module, Version},
-    nvidia::NvidiaLib,
-    sync::OnceLock,
-    url::Url,
+    config::{Config, ConfigModule}, formats::SplittedAnsiIter, image::Image, imp::{
+        allocator::{AllocationReport, Allocator}, 
+        env, 
+        fs, 
+        http::Request
+    }, json::Json, logo::{LogoInfo, UILogo}, modules::{Commit, DocsVtable, FormatValue, Module, Version}, nvidia::NvidiaLib, png::Png, sync::OnceLock, url::Url,
 };
 
 #[global_allocator]
@@ -83,6 +77,7 @@ static HELP_STRING: &str = include_str!(concat!(env!("OUT_DIR"), "/help.txt"));
 
 const MIN_OFFSET: usize = 24;
 const IMAGE_SIZE: usize = 40;
+const CELL_ASPECT: f64 = 2.0;
 const ALLOC_REP_BAR_SIZE: u128 = 48;
 
 #[cfg(not(test))]
@@ -257,7 +252,14 @@ fn get_logo_name_and_custom(val: &str) -> (String, UILogo) {
     match fs::read(val) {
         Ok(b) => {
             if png::is_png(&b) {
-                (id, UILogo::Image(b))
+                match Png::decode(&b) {
+                    Ok(p) => (id, UILogo::Image(p.into_image())),
+                    Err(e) => {
+                        warning!("Failed to parse png: {e}");
+                        (id, UILogo::Preset)
+                    }
+                }
+                
             } else if let Ok(s) = String::from_utf8(b) {
                 (id, UILogo::Ascii(s))
             } else {
@@ -443,34 +445,49 @@ fn print_none() {
     }
 }
 
-fn print_image(png_bytes: &[u8]) {
+#[allow(clippy::cast_precision_loss)]
+fn print_image(image: &Image) {
     LogoInfo::new(crate::detect::os::get_id());
 
     let padding = Config::get().get_logo_padding();
-    let (w, _) = env::terminal_size();
+    let (w, term_h) = env::terminal_size();
 
-    let max_logo_len_padding = IMAGE_SIZE + padding.left + padding.right;
+    let (img_w, img_h) = image.size();
+
+    let mut cols = IMAGE_SIZE;
+    let mut height = (img_h as f64 / img_w as f64 * cols as f64 / CELL_ASPECT) as usize;
+
+    let max_h = term_h.saturating_sub(padding.top + padding.bottom).max(1);
+    if height > max_h {
+        let scale = max_h as f64 / height as f64;
+        cols = ((cols as f64 * scale) as usize).max(1);
+        height = max_h;
+    }
+
+    let max_logo_len_padding = cols + padding.left + padding.right;
     let empty_logo_line = " ".repeat(max_logo_len_padding);
     let info_buf = build_info_buf(w);
-    let lines_printed: usize;
+    let lines_printed;
 
     if max_logo_len_padding + MIN_OFFSET < w {
-        lines_printed = IMAGE_SIZE.max(info_buf.len());
-        for i in 0..IMAGE_SIZE.max(info_buf.len()) {
+        lines_printed = height.max(info_buf.len());
+        for i in 0..lines_printed {
             let info_line = info_buf.get(i).map_or("", |s| *s);
             println!("{empty_logo_line}{info_line}\x1b[0m");
         }
     } else {
-        lines_printed = IMAGE_SIZE + info_buf.len();
-        for _ in 0..IMAGE_SIZE {
+        lines_printed = height + info_buf.len();
+        for _ in 0..height {
             println!("{empty_logo_line}");
         }
         for line in info_buf {
             println!("{line}\x1b[0m");
         }
     }
+
     print!("\x1b7\x1b[{lines_printed}A\x1b[{}C", padding.left);
-    crate::kitty::print_png(png_bytes, Some(IMAGE_SIZE), None, 0);
+
+    crate::kitty::print_image(image, Some(cols), Some(height), 0);
     print!("\x1b8");
 }
 
@@ -608,7 +625,7 @@ fn corefetch_main() -> i32 {
         UILogo::None => print_none(),
         UILogo::Preset => print_base(&logo_name),
         UILogo::Ascii(s) => print_ascii(s),
-        UILogo::Image(b) => print_image(&b),
+        UILogo::Image(i) => print_image(&i),
     }
 
     if args.iter().any(|a| a == "--alloc-report") {

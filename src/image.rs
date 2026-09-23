@@ -171,4 +171,12 @@ impl Image {
     pub const fn get_size(&self) -> (usize, usize) {
         (self.w, self.h)
     }
+
+    pub fn as_rgba_bytes(&self) -> Vec<u8> {
+        let mut out = Vec::with_capacity(self.w * self.h * 4);
+        for p in &self.data {
+            out.extend_from_slice(&[p.0, p.1, p.2, p.3]);
+        }
+        out
+    }
 }

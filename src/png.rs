@@ -306,6 +306,10 @@ impl Png {
     pub const fn as_image(&self) -> &Image {
         &self.image
     }
+
+    pub fn into_image(self) -> Image {
+        self.image
+    }
 }
 
 #[cfg(test)]
