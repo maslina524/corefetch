@@ -4,10 +4,7 @@ use alloc::{
 };
 
 use crate::{
-    color,
-    sync::OnceLock,
-    zlib,
-    abort
+    abort, color, formats::char_width, sync::OnceLock, zlib
 };
 
 macro_rules! logo_mod {
@@ -150,7 +147,7 @@ impl LogoInfo {
                     continue;
                 }
                 ret_line.push(ch);
-                ret_len += 1;
+                ret_len += char_width(ch);
             }
             ret_line.push_str("\x1b[0m");
             ret.push((ret_line, ret_len));

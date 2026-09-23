@@ -2901,6 +2901,18 @@
       ]
     },
     {
+      "color_keys": "color::FG_GREEN",
+      "color_title": "color::FG_YELLOW",
+      "colors": [
+        "color::FG_GREEN"
+      ],
+      "lines": "/temp/k/kitty.txt",
+      "names": [
+        "kitty",
+        "kitty-term"
+      ]
+    },
+    {
       "color_keys": "color::FG_BLUE",
       "color_title": "color::FG_DEFAULT",
       "colors": [

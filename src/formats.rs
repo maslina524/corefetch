@@ -371,6 +371,57 @@ impl<'a> StringFormatter<'a> {
     }
 }
 
+pub fn char_width(c: char) -> usize {
+    let cp = c as u32;
+
+    if cp == 0
+        || cp < 0x20
+        || (0x7F..0xA0).contains(&cp)
+        || (0x200B..=0x200F).contains(&cp)
+        || (0x2028..=0x202E).contains(&cp)
+        || (0x2060..=0x206F).contains(&cp)
+        || cp == 0xFEFF
+    {
+        return 0;
+    }
+
+    if (0x0300..=0x036F).contains(&cp)
+        || (0x1AB0..=0x1AFF).contains(&cp)
+        || (0x1DC0..=0x1DFF).contains(&cp)
+        || (0x20D0..=0x20FF).contains(&cp)
+        || (0xFE20..=0xFE2F).contains(&cp)
+    {
+        return 0;
+    }
+
+    if is_wide(cp) {
+        return 2;
+    }
+
+    1
+}
+
+const fn is_wide(cp: u32) -> bool {
+    matches!(cp,
+        0x1100..=0x115F   // Hangul Jamo
+        | 0x2E80..=0x303E // CJK Radicals, Kangxi, CJK Symbols
+        | 0x3041..=0x33FF // Hiragana, Katakana, Bopomofo, CJK Compat
+        | 0x3400..=0x4DBF // CJK Ext A
+        | 0x4E00..=0x9FFF // CJK Unified
+        | 0xA000..=0xA4CF // Yi
+        | 0xAC00..=0xD7A3 // Hangul Syllables
+        | 0xF900..=0xFAFF // CJK Compat Ideographs
+        | 0xFE10..=0xFE19 // Vertical forms
+        | 0xFE30..=0xFE6F // CJK Compat Forms
+        | 0xFF00..=0xFF60 // Fullwidth Forms
+        | 0xFFE0..=0xFFE6 // Fullwidth signs
+        | 0x1F300..=0x1F64F // Emoji
+        | 0x1F900..=0x1F9FF
+        | 0x20000..=0x2FFFD
+        | 0x30000..=0x3FFFD
+    )
+}
+
 pub fn visible_len(s: &str) -> usize {
     let mut count = 0;
     let mut skip = false;
@@ -385,7 +436,7 @@ pub fn visible_len(s: &str) -> usize {
             skip = true;
             continue;
         }
-        count += 1;
+        count += char_width(ch);
     }
     count
 }

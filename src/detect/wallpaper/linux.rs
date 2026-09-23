@@ -19,11 +19,7 @@ impl WallpaperInfo {
         let full_path = Self::xdg()
             .and_then(|s| Self::call(&s.trim().to_lowercase()))
             .map(|s| {
-                if let Some(stripped) = s.strip_prefix("file://") {
-                    Path::from(stripped)
-                } else {
-                    Path::from(s)
-                }
+                Path::from(s.trim().trim_start_matches("file://"))
             })
             .unwrap_or_default();
 
