@@ -600,25 +600,22 @@ fn corefetch_main() -> i32 {
     Config::get_or_init(config);
 
     // Logo init
-    #[allow(
-        clippy::option_if_let_else,
-        reason = "Clippy suggests a variant that would require an extra heap allocation"
-    )]
+    let name_raw = args.iter()
+        .position(|a| a == "--logo" || a == "-l")
+        .and_then(|pos| args.get(pos + 1).cloned())
+        .or_else(|| Config::get().get_logo_name());
+
     let (logo_name, custom) =
-        if let Some(pos) = args.iter().position(|a| a == "--logo" || a == "-l") {
-            let name = args.get(pos + 1);
-            if let Some(n) = name
-                && n == "null"
-            {
+        name_raw.map_or_else(|| {
+            let id = crate::detect::os::get_id().to_owned();
+            (id, UILogo::Preset)
+        }, |name| if name == "null" {
                 let id = crate::detect::os::get_id().to_owned();
                 (id, UILogo::None)
             } else {
-                name.map_or_else(|| print_help(None), |val| get_logo_name_and_custom(val))
+                get_logo_name_and_custom(&name)
             }
-        } else {
-            let id = crate::detect::os::get_id().to_owned();
-            (id, UILogo::Preset)
-        };
+        );
     
     // Print logo and info
     match custom {

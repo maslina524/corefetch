@@ -120,18 +120,38 @@ impl Config {
         });
 
         // Logo
-        let logo = json
-            .get_object("logo")
-            .and_then(|logo_obj| logo_obj.get_object("padding"))
-            .map_or_else(ConfigLogo::default, |padding| ConfigLogo {
-                padding: ConfigPadding {
-                    top: padding.get_number("top").unwrap_or(0.0) as usize,
-                    bottom: padding.get_number("bottom").unwrap_or(2.0) as usize,
-                    right: padding.get_number("right").unwrap_or(3.0) as usize,
-                    left: padding.get_number("left").unwrap_or(0.0) as usize,
+        #[allow(clippy::option_if_let_else)]
+        let logo = if let Some(logo_val) = json.get("logo") {
+            if let Some(obj) = logo_val.as_object() {
+                let padding = obj.get_object("padding").map_or_else(ConfigPadding::default, |p| 
+                    ConfigPadding {
+                        top: p.get_number("top").unwrap_or(0.0) as usize,
+                        bottom: p.get_number("bottom").unwrap_or(2.0) as usize,
+                        right: p.get_number("right").unwrap_or(3.0) as usize,
+                        left: p.get_number("left").unwrap_or(0.0) as usize,
+                    }
+                );
+
+                ConfigLogo {
+                    typ: None,
+                    padding
                 }
+            } else if let Some(typ) = logo_val.as_string() {
+                ConfigLogo {
+                    typ: Some(typ.clone()),
+                    padding: ConfigPadding::default()
+                }
+            } else if logo_val.is_null() {
+                ConfigLogo {
+                    typ: Some("null".to_owned()),
+                    padding: ConfigPadding::default()
+                }
+            } else {
+                ConfigLogo::default()
             }
-        );
+        } else {
+            ConfigLogo::default()
+        };
 
         Self {
             modules,
@@ -212,6 +232,10 @@ impl Config {
         };
 
         format!("\x1b[{color}m{}°{}\x1b[0m", val.get(), val.symbol())
+    }
+
+    pub fn get_logo_name(&self) -> Option<String> {
+        self.logo.typ.clone()
     }
 }
 
@@ -365,5 +389,6 @@ impl Default for ConfigTemperature {
 
 #[derive(Default, Debug)]
 pub struct ConfigLogo {
+    pub typ: Option<String>,
     pub padding: ConfigPadding
 }
