@@ -1,11 +1,6 @@
-use alloc::{
-    string::String,
-    vec::Vec
-};
+use alloc::{string::String, vec::Vec};
 
-use crate::{
-    abort, color, formats::char_width, sync::OnceLock, zlib
-};
+use crate::{abort, color, formats::char_width, sync::OnceLock, zlib};
 
 macro_rules! logo_mod {
     ($($letter:ident),* $(,)?) => {
@@ -15,24 +10,26 @@ macro_rules! logo_mod {
     };
 }
 
-logo_mod!(a, b, c, d, e, f, g, h, i, j, k, l, m,
-          n, o, p, q, r, s, t, u, v, w, x, y, z);
+logo_mod!(
+    a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
+);
 
 const UNKNOWN: &[u8] = include_bytes!(concat!(env!("LOGO_OUT_DIR"), "/temp/_/unknown.txt"));
 static UNKNOWN_PTR: &LogoInfo = &LogoInfo {
-    names: &[], 
-    lines: UNKNOWN, 
-    colors: &[], 
-    color_keys: color::FG_DEFAULT, 
-    color_title: color::FG_DEFAULT
+    names: &[],
+    lines: UNKNOWN,
+    colors: &[],
+    color_keys: color::FG_DEFAULT,
+    color_title: color::FG_DEFAULT,
 };
 
 static LOGO_INFO: OnceLock<&'static LogoInfo> = OnceLock::new();
 
-pub enum CustomLogo {
+pub enum UILogo {
     None,
+    Preset,
     Ascii(String),
-    Image(Vec<u8>)
+    Image(Vec<u8>),
 }
 
 pub struct LogoInfo {
@@ -40,7 +37,7 @@ pub struct LogoInfo {
     pub lines: &'static [u8],
     pub colors: &'static [&'static str],
     pub color_keys: &'static str,
-    pub color_title: &'static str
+    pub color_title: &'static str,
 }
 
 impl LogoInfo {
@@ -77,7 +74,7 @@ impl LogoInfo {
                 'x' | 'X' => X,
                 'y' | 'Y' => Y,
                 'z' | 'Z' => Z,
-                _ => return UNKNOWN_PTR
+                _ => return UNKNOWN_PTR,
             };
 
             for logo in stack {
@@ -94,15 +91,15 @@ impl LogoInfo {
         LOGO_INFO.get().map(|v| &**v)
     }
 
-    pub fn get_ready_logo_lines(&self, logo: CustomLogo) -> Vec<(String, usize)> {
+    pub fn get_ready_logo_lines(&self, logo: UILogo) -> Vec<(String, usize)> {
         let lines_string = match logo {
-            CustomLogo::None => {
+            UILogo::Preset => {
                 let mut decompressed = Vec::with_capacity(self.lines.len());
                 zlib::decompress(self.lines.to_vec(), &mut decompressed);
                 String::from_utf8(decompressed).expect("Non Utf8 in logo")
-            },
-            CustomLogo::Ascii(s) => s,
-            CustomLogo::Image(_) => return Vec::new(),
+            }
+            UILogo::Ascii(s) => s,
+            _ => return Vec::new(),
         };
 
         let lines_count = lines_string.chars().filter(|c| *c == ' ').count() + 1;
@@ -130,11 +127,10 @@ impl LogoInfo {
                 }
                 if in_percent {
                     in_percent = false;
-                    if let Some(i) = ch.to_digit(10) && i > 0 {
-                        let code = self.colors
-                            .get(i as usize - 1)
-                            .copied()
-                            .unwrap_or("0");
+                    if let Some(i) = ch.to_digit(10)
+                        && i > 0
+                    {
+                        let code = self.colors.get(i as usize - 1).copied().unwrap_or("0");
                         cur_code = code;
                         ret_line.push_str("\x1b[1;");
                         ret_line.push_str(code);

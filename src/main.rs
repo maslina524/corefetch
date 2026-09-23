@@ -1,17 +1,9 @@
 #![cfg_attr(not(test), no_std)]
 #![cfg_attr(not(test), no_main)]
-#![deny(
-    clippy::all,
-    clippy::pedantic,
-    clippy::nursery,
-    clippy::cargo
-)]
-#![warn(
-    clippy::missing_safety_doc,
-    clippy::undocumented_unsafe_blocks
-)]
+#![deny(clippy::all, clippy::pedantic, clippy::nursery, clippy::cargo)]
+#![warn(clippy::missing_safety_doc, clippy::undocumented_unsafe_blocks)]
 #![allow(
-    dead_code, 
+    dead_code,
     reason = "A lot of code is made \"for the future\"; all unused code will be removed by release"
 )]
 #![allow(
@@ -27,29 +19,29 @@
 )]
 #![allow(clippy::cargo_common_metadata)]
 
-mod sync;
-mod macros;
-mod formats;
-mod crc32;
-mod config;
-mod color;
-mod nvidia;
-mod image;
-mod png;
-mod lz77;
-mod huffman;
-mod zlib;
-mod deflate;
-mod lua;
-mod url;
-mod kitty;
 mod base64;
+mod color;
+mod config;
+mod crc32;
+mod deflate;
+mod formats;
+mod huffman;
+mod image;
+mod kitty;
 mod leak;
+mod lua;
+mod lz77;
+mod macros;
+mod nvidia;
+mod png;
+mod sync;
+mod url;
+mod zlib;
 
-mod modules;
-mod logo;
 mod detect;
 mod json;
+mod logo;
+mod modules;
 
 cfg_if! {
     if #[cfg(target_os = "windows")] {
@@ -65,53 +57,39 @@ cfg_if! {
 
 extern crate alloc;
 
-use core::{
-    ffi::c_int,
-    slice::Iter,
-    env
-};
+use core::{env, ffi::c_int, slice::Iter};
 
-use alloc::{
-    string::String,
-    borrow::ToOwned,
-    vec::Vec
-};
+use alloc::{borrow::ToOwned, string::String, vec::Vec};
 
 use crate::{
-    json::Json,
-    logo::{LogoInfo, CustomLogo}, 
-    modules::{
-        DocsVtable, FormatValue, Module, Version, Commit
-    }, 
-    imp::allocator::{Allocator, AllocationReport},
+    config::{Config, ConfigModule},
+    formats::SplittedAnsiIter,
+    imp::allocator::{AllocationReport, Allocator},
     imp::env,
     imp::fs,
-    imp::http::Request, 
-    config::{Config, ConfigModule},
-    url::Url,
-    formats::SplittedAnsiIter,
+    imp::http::Request,
+    json::Json,
+    logo::{LogoInfo, UILogo},
+    modules::{Commit, DocsVtable, FormatValue, Module, Version},
     nvidia::NvidiaLib,
-    sync::OnceLock
+    sync::OnceLock,
+    url::Url,
 };
 
 #[global_allocator]
 static ALLOCATOR: Allocator = Allocator;
 
-static HELP_STRING      : &str  = include_str!(concat!(env!("OUT_DIR"), "/help.txt"));
+static HELP_STRING: &str = include_str!(concat!(env!("OUT_DIR"), "/help.txt"));
 
-const MIN_OFFSET        : usize = 24;
-const IMAGE_SIZE        : usize = 40;
-const ALLOC_REP_BAR_SIZE: u128  = 48;
+const MIN_OFFSET: usize = 24;
+const IMAGE_SIZE: usize = 40;
+const ALLOC_REP_BAR_SIZE: u128 = 48;
 
 #[cfg(not(test))]
 mod panic_impl {
     use core::panic::PanicInfo;
 
-    use crate::{
-        exit,
-        eprintln,
-        format
-    };
+    use crate::{eprintln, exit, format};
 
     #[panic_handler]
     fn panic(info: &PanicInfo) -> ! {
@@ -122,17 +100,20 @@ mod panic_impl {
             .map(|l| format!("{}:{}:{}", l.file(), l.line(), l.column()));
 
         if let Some(ref loc) = location {
-            eprintln!("\x1b[1m{loc}: {msg}\x1b[0m"); 
+            eprintln!("\x1b[1m{loc}: {msg}\x1b[0m");
         } else {
             eprintln!("\x1b[1m{msg}\x1b[0m");
         }
-        
+
         let link = format!(
             "https://github.com/maslina524/corefetch/issues/new?template=panic.yaml&version={}&title={}&target={}&location={}",
-            env!("CARGO_PKG_VERSION"), msg, env!("TARGET"), location.unwrap_or_default()
+            env!("CARGO_PKG_VERSION"),
+            msg,
+            env!("TARGET"),
+            location.unwrap_or_default()
         );
         eprintln!("Leave an Issue at this [\x1b]8;;{link}\x1b\\link\x1b]8;;\x1b\\]");
-        
+
         exit(101)
     }
 }
@@ -156,7 +137,7 @@ fn build_logo_buf(lines: &[(String, usize)], max_len: usize) -> Vec<String> {
     if w < max_len_padding {
         return Vec::new();
     }
-    
+
     for _ in 0..padding.top {
         ret.push(" ".repeat(max_len_padding));
     }
@@ -180,19 +161,18 @@ fn get_module_lines(preset_module: &ConfigModule, max_len_line: usize) -> Option
     modules::from_preset_module(&preset_module.typ).map(|module| {
         let string = module.format(
             FormatValue {
-                format: preset_module.key.as_deref(), 
-                color: preset_module.key_color.as_deref()
-            }, 
-            FormatValue {
-                format: preset_module.format.as_deref(), 
-                color: None
+                format: preset_module.key.as_deref(),
+                color: preset_module.key_color.as_deref(),
             },
-            Some(&preset_module.map)
+            FormatValue {
+                format: preset_module.format.as_deref(),
+                color: None,
+            },
+            Some(&preset_module.map),
         );
-        string.map_or_else(
-            SplittedAnsiIter::empty, 
-            |s| SplittedAnsiIter::new(&s, max_len_line)
-        )
+        string.map_or_else(SplittedAnsiIter::empty, |s| {
+            SplittedAnsiIter::new(&s, max_len_line)
+        })
     })
 }
 
@@ -242,7 +222,7 @@ fn get_config(args: &mut Iter<'_, String>) -> Config {
             Ok(r) => r,
             Err(e) => {
                 warning!("Failed to connect to server (config): {}", e.code());
-                return Config::default()
+                return Config::default();
             }
         };
         if !response.is_success() {
@@ -255,35 +235,40 @@ fn get_config(args: &mut Iter<'_, String>) -> Config {
         };
         return match Json::from_str(&t) {
             Ok(c) => Config::from_json(&c),
-            Err(e) => { warning!("Failed to parse the json config: {e}"); Config::default() }
+            Err(e) => {
+                warning!("Failed to parse the json config: {e}");
+                Config::default()
+            }
         };
     }
 
     // FS path
     match Json::from_file(path) {
         Ok(c) => Config::from_json(&c),
-        Err(e) => { warning!("Failed to parse the json config: {e}"); Config::default() }
+        Err(e) => {
+            warning!("Failed to parse the json config: {e}");
+            Config::default()
+        }
     }
 }
 
-fn get_logo_name_and_custom(val: &str) -> (String, CustomLogo) {
+fn get_logo_name_and_custom(val: &str) -> (String, UILogo) {
     let id = crate::detect::os::get_id().to_owned();
     match fs::read(val) {
-        Ok(b) => if png::is_png(&b) {
-            (id, CustomLogo::Image(b))
-        } else if let Ok(s) = String::from_utf8(b) {
-            (id, CustomLogo::Ascii(s))
-        } else {
-            warning!("Failed to represent data as utf8");
-            (id, CustomLogo::None)
-        },
-        Err(e) if e.is_file_not_found() => {
-            warning!("Logo file not found: {e}");
-            (val.to_lowercase().replace('_', " "), CustomLogo::None)
+        Ok(b) => {
+            if png::is_png(&b) {
+                (id, UILogo::Image(b))
+            } else if let Ok(s) = String::from_utf8(b) {
+                (id, UILogo::Ascii(s))
+            } else {
+                warning!("Failed to represent data as utf8");
+                (id, UILogo::Preset)
+            }
         }
+        Err(e) if e.is_file_not_found() => (val.to_lowercase().replace('_', " "), UILogo::Preset),
         Err(e) => {
             warning!("Failed to use logo from fs: {e}");
-            (id, CustomLogo::None)
+            (id, UILogo::Preset)
         }
     }
 }
@@ -305,12 +290,17 @@ fn print_help(theme: Option<&str>) -> ! {
                     );
                     println!("The following variables are passed:");
                     for i in doc {
-                        println!("{:>24} : {:<4} : {}", i.name, i.second, i.desc.unwrap_or("Empty"));
+                        println!(
+                            "{:>24} : {:<4} : {}",
+                            i.name,
+                            i.second,
+                            i.desc.unwrap_or("Empty")
+                        );
                     }
                 } else {
                     println!("Module `{ident}` doesn't support output formatting");
                 }
-            },
+            }
             "lua" => {
                 if let Some(doc) = (vtable.lua)() {
                     println!(
@@ -319,16 +309,21 @@ fn print_help(theme: Option<&str>) -> ! {
                     );
                     println!("The following variables are passed:");
                     for i in doc {
-                        println!("{:>24} : {:<6} : {}", i.name, i.second, i.desc.unwrap_or("Empty"));
+                        println!(
+                            "{:>24} : {:<6} : {}",
+                            i.name,
+                            i.second,
+                            i.desc.unwrap_or("Empty")
+                        );
                     }
                 } else {
                     println!("Module `{ident}` doesn't support lua");
                 }
-            },
+            }
             "example" => {
                 LogoInfo::new(crate::detect::os::get_id());
                 Config::get_or_init(Config::default());
-                
+
                 if let Some(doc) = (vtable.example)() {
                     // println!(
                     //     "# In config file: {{ \"type\": \"{ident}\", \"format\": \"lua: return (...).{}\" }}",
@@ -341,18 +336,18 @@ fn print_help(theme: Option<&str>) -> ! {
                 } else {
                     println!("Module `{ident}` doesn't have variables");
                 }
-            },
+            }
             _ => {
                 println!("Incorrect action");
                 exit(1);
             }
         }
-        
+
         exit(0);
     }
 
     println!("{HELP_STRING}");
-    
+
     exit(0)
 }
 
@@ -360,31 +355,28 @@ fn print_help(theme: Option<&str>) -> ! {
 fn print_version(method: Option<&str>) -> ! {
     let ver = Version::new();
     match method {
-        None             => println!("{} {} ({})", ver.project_name, ver.version, ver.arch),
-        Some("raw")      => println!("{}", ver.version),
-        Some("dbg")      => println!("{ver:#?}"),
-        Some("hash")     => println!("{}", ver.hash),
+        None => println!("{} {} ({})", ver.project_name, ver.version, ver.arch),
+        Some("raw") => println!("{}", ver.version),
+        Some("dbg") => println!("{ver:#?}"),
+        Some("hash") => println!("{}", ver.hash),
         Some("extended") => {
             let typ = match ver.build_type {
                 "release" => "\x1b[32mrelease\x1b[0m",
                 "debug" => "\x1b[33mdebug\x1b[0m",
-                _ => unreachable!()
+                _ => unreachable!(),
             };
             let com = Commit::new();
             println!(
-                "\x1b[1m{} {} ({}) {typ} [\x1b]8;;{}\x1b\\link\x1b]8;;\x1b\\]", 
+                "\x1b[1m{} {} ({}) {typ} [\x1b]8;;{}\x1b\\link\x1b]8;;\x1b\\]",
                 ver.project_name, ver.version, ver.arch, ver.release_link
             );
+            println!("    {}, {}", ver.compiler, ver.package_manager);
             println!(
-                "    {}, {}", 
-                ver.compiler, ver.package_manager
-            );
-            println!(
-                "    {} <{}> ({})", 
+                "    {} <{}> ({})",
                 com.message, com.date_small, com.sha_short
             );
-        },
-        _ => eprintln!("Unknown method for version, supported: raw, dbg, extended")
+        }
+        _ => eprintln!("Unknown method for version, supported: raw, dbg, extended"),
     }
     exit(0)
 }
@@ -401,7 +393,7 @@ fn print_alloc_report() {
 
     let total_u = total as u128;
 
-    let mut alloc_len   = ((rep.alloc as u128) * ALLOC_REP_BAR_SIZE) / total_u;
+    let mut alloc_len = ((rep.alloc as u128) * ALLOC_REP_BAR_SIZE) / total_u;
     let mut realloc_len = ((rep.realloc as u128) * ALLOC_REP_BAR_SIZE) / total_u;
     if alloc_len + realloc_len > ALLOC_REP_BAR_SIZE {
         alloc_len = ALLOC_REP_BAR_SIZE;
@@ -409,7 +401,7 @@ fn print_alloc_report() {
     }
     let dealloc_len = ALLOC_REP_BAR_SIZE - alloc_len - realloc_len;
 
-    let alloc_len   = alloc_len   as usize;
+    let alloc_len = alloc_len as usize;
     let realloc_len = realloc_len as usize;
     let dealloc_len = dealloc_len as usize;
 
@@ -431,10 +423,100 @@ fn print_alloc_report() {
 
     println!(
         "\x1b[{}mAlloc: {}   \x1b[{}mRealloc: {}   \x1b[{}mDealloc: {}\x1b[0m",
-        color::FG_YELLOW, rep.alloc,
-        color::FG_CYAN, rep.realloc,
-        color::FG_LIGHT_MAGENTA, rep.dealloc
+        color::FG_YELLOW,
+        rep.alloc,
+        color::FG_CYAN,
+        rep.realloc,
+        color::FG_LIGHT_MAGENTA,
+        rep.dealloc
     );
+}
+
+fn print_none() {
+    LogoInfo::new(crate::detect::os::get_id());
+
+    let (w, _) = env::terminal_size();
+    let info_lines = build_info_buf(w);
+
+    for line in info_lines {
+        println!("{line}\x1b[0m");
+    }
+}
+
+fn print_image(png_bytes: &[u8]) {
+    LogoInfo::new(crate::detect::os::get_id());
+
+    let padding = Config::get().get_logo_padding();
+    let (w, _) = env::terminal_size();
+
+    let max_logo_len_padding = IMAGE_SIZE + padding.left + padding.right;
+    let empty_logo_line = " ".repeat(max_logo_len_padding);
+    let info_buf = build_info_buf(w);
+    let lines_printed: usize;
+
+    if max_logo_len_padding + MIN_OFFSET < w {
+        lines_printed = IMAGE_SIZE.max(info_buf.len());
+        for i in 0..IMAGE_SIZE.max(info_buf.len()) {
+            let info_line = info_buf.get(i).map_or("", |s| *s);
+            println!("{empty_logo_line}{info_line}\x1b[0m");
+        }
+    } else {
+        lines_printed = IMAGE_SIZE + info_buf.len();
+        for _ in 0..IMAGE_SIZE {
+            println!("{empty_logo_line}");
+        }
+        for line in info_buf {
+            println!("{line}\x1b[0m");
+        }
+    }
+    print!("\x1b7\x1b[{lines_printed}A\x1b[{}C", padding.left);
+    crate::kitty::print_png(png_bytes, Some(IMAGE_SIZE), None, 0);
+    print!("\x1b8");
+}
+
+fn print_base(logo_name: &str) {
+    let logo = LogoInfo::new(logo_name);
+    just_print_logo_and_info(&logo.get_ready_logo_lines(UILogo::Preset));
+}
+
+fn print_ascii(ascii: String) {
+    let logo = LogoInfo::new(crate::detect::os::get_id());
+    just_print_logo_and_info(&logo.get_ready_logo_lines(UILogo::Ascii(ascii)));
+}
+
+fn just_print_logo_and_info(logo_lines: &[(String, usize)]) {
+    let max_logo_len = max_line_len(logo_lines);
+    let padding = Config::get().get_logo_padding();
+    let max_logo_len_padding = max_logo_len + padding.left + padding.right;
+    let (w, _) = env::terminal_size();
+    let split_len = if max_logo_len_padding + MIN_OFFSET < w {
+        max_logo_len
+    } else {
+        w
+    };
+    let logo_buf = build_logo_buf(logo_lines, max_logo_len);
+    let info_buf = build_info_buf(split_len);
+    let max_lines = logo_buf.len().max(info_buf.len());
+
+    // Print buffers
+    if max_logo_len_padding + MIN_OFFSET < w {
+        let empty_logo_line = " ".repeat(max_logo_len_padding);
+        for i in 0..max_lines {
+            let logo_line = logo_buf
+                .get(i)
+                .map_or(empty_logo_line.as_str(), String::as_str);
+
+            let info_line = info_buf.get(i).map_or("", |s| *s);
+            println!("{logo_line}{info_line}\x1b[0m");
+        }
+    } else {
+        for line in logo_buf {
+            println!("{line}\x1b[0m");
+        }
+        for line in info_buf {
+            println!("{line}\x1b[0m");
+        }
+    }
 }
 
 static ARGS: OnceLock<Vec<String>> = OnceLock::new();
@@ -442,7 +524,7 @@ static ARGS: OnceLock<Vec<String>> = OnceLock::new();
 #[cfg(any(target_os = "linux", target_os = "android"))]
 use core::ffi::c_char;
 
-/* 
+/*
 ANDROID BUILD:
 rustup toolchain install nightly
 rustup component add rust-src --toolchain nightly
@@ -466,7 +548,7 @@ cargo build --release
 
 // #[cfg(not(test))]
 #[allow(
-    clippy::similar_names, 
+    clippy::similar_names,
     reason = "that's what they're called in C, i don't give a fuck about clippy"
 )]
 #[cfg(any(target_os = "linux", target_os = "android"))]
@@ -486,7 +568,7 @@ extern "C" fn main() -> c_int {
 
 fn corefetch_main() -> i32 {
     let args = env::args();
-    
+
     // Commands
     if let Some(pos) = args.iter().position(|a| a == "--help" || a == "-h") {
         print_help(args.get(pos + 1).map(String::as_str))
@@ -501,92 +583,39 @@ fn corefetch_main() -> i32 {
     Config::get_or_init(config);
 
     // Logo init
-    #[allow(clippy::option_if_let_else, reason = "Clippy suggests a variant that would require an extra heap allocation")]
-    let (logo_name, custom) = if let Some(pos) = args.iter().position(|a| a == "--logo" || a == "-l") {
-        args.get(pos + 1).map_or_else(|| print_help(None), |val| {
-            get_logo_name_and_custom(val)
-        })
-    } else {
-        let id = crate::detect::os::get_id().to_owned();
-        (id, CustomLogo::None)
-    };
-
-    if let CustomLogo::Image(png_data) = &custom {
-        LogoInfo::new(crate::detect::os::get_id());
-
-        let padding = Config::get().get_logo_padding();
-        let (w, _) = env::terminal_size();
-        let max_logo_len_padding = IMAGE_SIZE + padding.left + padding.right;
-
-        let empty_logo_line = " ".repeat(max_logo_len_padding);
-        let info_buf = build_info_buf(w);
-
-        let lines_printed: usize;
-
-        if max_logo_len_padding + MIN_OFFSET < w {
-            lines_printed = IMAGE_SIZE.max(info_buf.len());
-
-            for i in 0..IMAGE_SIZE.max(info_buf.len()) {
-                let info_line = info_buf.get(i).map_or("", |s| *s);
-                println!("{empty_logo_line}{info_line}\x1b[0m");
+    #[allow(
+        clippy::option_if_let_else,
+        reason = "Clippy suggests a variant that would require an extra heap allocation"
+    )]
+    let (logo_name, custom) =
+        if let Some(pos) = args.iter().position(|a| a == "--logo" || a == "-l") {
+            let name = args.get(pos + 1);
+            if let Some(n) = name
+                && n == "null"
+            {
+                let id = crate::detect::os::get_id().to_owned();
+                (id, UILogo::None)
+            } else {
+                name.map_or_else(|| print_help(None), |val| get_logo_name_and_custom(val))
             }
         } else {
-            lines_printed = IMAGE_SIZE + info_buf.len();
-
-            for _ in 0..IMAGE_SIZE {
-                println!("{empty_logo_line}");
-            }
-            for line in info_buf {
-                println!("{line}\x1b[0m");
-            }
-        }
-
-        print!(
-            "\x1b7\x1b[{lines_printed}A\x1b[{}C",
-            padding.left
-        );
-        crate::kitty::print_png(png_data, Some(IMAGE_SIZE), None, 0);
-        print!("\x1b8");
-    } else {
-        let logo_lines = LogoInfo::new(&logo_name).get_ready_logo_lines(custom);
-        let max_logo_len = max_line_len(&logo_lines);
-        let padding = Config::get().get_logo_padding();
-        let max_logo_len_padding = max_logo_len + padding.left + padding.right;
-
-        let (w, _) = env::terminal_size();
-        let split_len = if max_logo_len_padding + MIN_OFFSET < w {
-            max_logo_len
-        } else {
-            w
+            let id = crate::detect::os::get_id().to_owned();
+            (id, UILogo::Preset)
         };
-
-        let logo_buf = build_logo_buf(&logo_lines, max_logo_len);
-        let info_buf = build_info_buf(split_len);
-        let max_lines = logo_buf.len().max(info_buf.len());
-
-        // Print buffers
-        if max_logo_len_padding + MIN_OFFSET < w {
-            let empty_logo_line = " ".repeat(max_logo_len_padding);
-            for i in 0..max_lines {
-                let logo_line = logo_buf.get(i).map_or(empty_logo_line.as_str(), String::as_str);
-                let info_line = info_buf.get(i).map_or("", |s| *s);
-                println!("{logo_line}{info_line}\x1b[0m");
-            }
-        } else {
-            for line in logo_buf {
-                println!("{line}\x1b[0m");
-            }
-            for line in info_buf {
-                println!("{line}\x1b[0m");
-            }
-        }
+    
+    // Print logo and info
+    match custom {
+        UILogo::None => print_none(),
+        UILogo::Preset => print_base(&logo_name),
+        UILogo::Ascii(s) => print_ascii(s),
+        UILogo::Image(b) => print_image(&b),
     }
 
     if args.iter().any(|a| a == "--alloc-report") {
         print_alloc_report();
     }
 
-    if args.iter().any(|a| a == "--wait" || a == "-w")  {
+    if args.iter().any(|a| a == "--wait" || a == "-w") {
         loop {
             // SAFETY: Just a nop
             unsafe { core::arch::asm!("nop") };
