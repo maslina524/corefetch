@@ -24,10 +24,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: ${{ matrix.os == 'ubuntu-latest' && 'nightly' || 'stable' }}
+          toolchain: nightly
           targets: ${{ matrix.target }}
           components: rust-src
 
@@ -51,21 +53,19 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-${{ matrix.target }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: ${{ runner.os }}-${{ matrix.target }}-cargo-
+          key: ${{ runner.os }}-${{ matrix.target }}-cargo-${{ hashFiles('**/Cargo.lock') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.target }}-cargo-
 
       - name: Build (desktop)
         if: "!contains(matrix.target, 'android')"
-        run: |
-          rustup component add rust-src --toolchain nightly-x86_64-pc-windows-msvc
-          cargo build --release --target ${{ matrix.target }}
+        run: cargo build --release --target ${{ matrix.target }}
 
       - name: Build (Android arm64)
         if: contains(matrix.target, 'android')
         env:
           ANDROID_PLATFORM: "24"
-        run: |
-          cargo ndk -t arm64-v8a --platform 24 build --release
+        run: cargo ndk -t arm64-v8a --platform 24 build --release
 
       - name: Rename binary
         shell: bash

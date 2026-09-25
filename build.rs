@@ -1,12 +1,5 @@
-use std::{
-    collections::HashMap, 
-    fs, 
-    path::Path, 
-    process::Command
-};
+use std::{collections::HashMap, fs, path::Path, process::Command};
 
-use chrono::{DateTime, FixedOffset};
-use serde_json::{Value, Map};
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::quote;
 use serde::Deserialize;
@@ -26,7 +19,7 @@ pub struct Commit {
 }
 
 impl Commit {
-    pub fn new_git() -> Self {
+    pub fn new() -> Self {
         let log = Command::new("git")
             .env("LC_ALL", "C")
             .args([
@@ -41,7 +34,10 @@ impl Commit {
             .expect("Failed to call Git log");
 
         let log_parts: Vec<&str> = log.split('\n').collect();
-        assert!(log_parts.len() >= 6, "Failed to call Git log: {log_parts:?}");
+        assert!(
+            log_parts.len() >= 6,
+            "Failed to call Git log: {log_parts:?}"
+        );
 
         let author = log_parts[0].to_owned();
         let email = log_parts[1].to_owned();
@@ -53,7 +49,10 @@ impl Commit {
 
         let numstat_raw = Command::new("git")
             .env("LC_ALL", "C")
-            .args(["log", "--shortstat", "-1", "--format="])
+            .args([
+                "log", "--shortstat", "-1",
+                "--first-parent", "-m", "--format=",
+            ])
             .output()
             .ok()
             .and_then(|output| String::from_utf8(output.stdout).ok())
@@ -63,10 +62,10 @@ impl Commit {
             .split(|c: char| !c.is_ascii_digit())
             .filter(|s| !s.is_empty())
             .filter_map(|s| s.parse::<usize>().ok());
-        
-        let files = nums.next().expect("Failed to call Git shortstat");
-        let added = nums.next().expect("Failed to call Git shortstat");
-        let deleted = nums.next().expect("Failed to call Git shortstat");
+
+        let files = nums.next().unwrap_or(0);
+        let added = nums.next().unwrap_or(0);
+        let deleted = nums.next().unwrap_or(0);
         let total = added + deleted;
 
         Self {
@@ -83,100 +82,12 @@ impl Commit {
             total,
         }
     }
+}
 
-    pub fn new_github() -> Self {
-        let response = Self::request();
-        let root = response.as_object().expect("Incorrect response data");
-
-        let sha = get_string(root, "sha");
-        let sha_small = sha[..7].to_owned();
-
-        let commit_obj = get_object(root, "commit");
-        let message = get_string(&commit_obj, "message");
-
-        let author_obj = get_object(&commit_obj, "author");
-        let author = get_string(&author_obj, "name");
-        let email = get_string(&author_obj, "email");
-
-        let date_raw = get_string(&author_obj, "date");
-        let dt: DateTime<FixedOffset> = DateTime::parse_from_rfc3339(&date_raw)
-            .expect("Incorrect date format");
-
-        let date = dt.format("%b %d %Y, %H:%M:%S").to_string();
-        let date_small = dt.format("%b %d %Y").to_string();
-
-        let stats_obj = get_object(root, "stats");
-        let added = get_usize(&stats_obj, "additions");
-        let deleted = get_usize(&stats_obj, "deletions");
-        let total = get_usize(&stats_obj, "total");
-
-        let files_array = get_array(root, "files");
-        let files = files_array.len();
-
-        Self {
-            author,
-            email,
-            date,
-            date_small,
-            sha,
-            sha_small,
-            message,
-            files,
-            added,
-            deleted,
-            total,
-        }
+impl Default for Commit {
+    fn default() -> Self {
+        Self::new()
     }
-
-    fn request() -> Value {
-        let resp = ureq::get(
-            "https://api.github.com/repos/maslina524/corefetch/commits/main?per_page=1",
-        )
-        .header("User-Agent", "corefetch-build/1.0")
-        .header("Accept", "application/vnd.github+json")
-        .call()
-        .expect("Failed to call Github Api");
-
-        let status = resp.status();
-        assert!(status.is_success(), "GitHub API returned {status}");
-
-        let string = resp.into_body().read_to_string()
-            .expect("Failed to get response from GitHub");
-
-        serde_json::from_str(&string)
-            .expect("Failed to parse response from GitHub")
-    }
-}
-
-fn get_object(obj: &Map<String, Value>, key: &str) -> Map<String, Value> {
-    obj.get(key)
-        .unwrap_or_else(|| panic!("Key `{key}` not found"))
-        .as_object()
-        .expect("Incorrect response data")
-        .clone()
-}
-
-fn get_array(obj: &Map<String, Value>, key: &str) -> Vec<Value> {
-    obj.get(key)
-        .unwrap_or_else(|| panic!("Key `{key}` not found"))
-        .as_array()
-        .expect("Incorrect response data")
-        .clone()
-}
-
-fn get_string(obj: &Map<String, Value>, key: &str) -> String {
-    obj.get(key)
-        .unwrap_or_else(|| panic!("Key `{key}` not found"))
-        .as_str()
-        .expect("Incorrect response data")
-        .to_owned()
-}
-
-fn get_usize(obj: &Map<String, Value>, key: &str) -> usize {
-    obj.get(key)
-        .unwrap_or_else(|| panic!("Key `{key}` not found"))
-        .as_u64()
-        .expect("Incorrect response data") as usize
 }
 
 #[derive(Deserialize)]
@@ -221,10 +132,8 @@ fn generate_logo_info(entry: &LogoEntry) -> TokenStream {
         .map(|c| syn::parse_str::<syn::Path>(c).expect("bad color path"))
         .collect();
 
-    let color_keys: syn::Path =
-        syn::parse_str(&entry.color_keys).expect("bad color_keys path");
-    let color_title: syn::Path =
-        syn::parse_str(&entry.color_title).expect("bad color_title path");
+    let color_keys: syn::Path = syn::parse_str(&entry.color_keys).expect("bad color_keys path");
+    let color_title: syn::Path = syn::parse_str(&entry.color_title).expect("bad color_title path");
 
     quote! {
         crate::logo::LogoInfo {
@@ -239,14 +148,9 @@ fn generate_logo_info(entry: &LogoEntry) -> TokenStream {
     }
 }
 
-
-
 mod setup {
     pub fn build_bypass() {
-        use std::{
-            path::PathBuf,
-            time::SystemTime
-        };
+        use std::{path::PathBuf, time::SystemTime};
 
         let timestamp = SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
@@ -265,7 +169,7 @@ mod setup {
 
     pub fn lua_and_libc() {
         use std::env;
-        
+
         let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
         let target_arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap();
 
@@ -281,8 +185,8 @@ mod setup {
                 println!("cargo:rustc-cfg=lua54");
             }
             ("android", "aarch64") => {
-                let lua_dir = env::var("LUA_ANDROID_LIB_DIR")
-                    .unwrap_or("bin/android-aarch64".to_owned());
+                let lua_dir =
+                    env::var("LUA_ANDROID_LIB_DIR").unwrap_or("bin/android-aarch64".to_owned());
                 println!("cargo:rustc-link-search=native={lua_dir}");
                 println!("cargo:rustc-link-lib=static=lua5.4");
                 println!("cargo:rustc-link-arg=-Wl,--no-as-needed");
@@ -296,7 +200,7 @@ mod setup {
                 println!("cargo:rustc-link-search=native=bin/windows");
                 println!("cargo:rustc-link-lib=static=lua55");
 
-                // FIXME: This just suppresses the error rather than solving it, 
+                // FIXME: This just suppresses the error rather than solving it,
                 // in the future Lua should be built manually for the linker that Rust uses
                 println!("cargo:rustc-link-arg=/NODEFAULTLIB:LIBCMT");
 
@@ -322,24 +226,17 @@ mod setup {
 
     pub fn compress_logos() -> (usize, usize) {
         use std::{
+            path::PathBuf,
             sync::atomic::{AtomicUsize, Ordering},
-            path::PathBuf
         };
 
-        use zlib_rs::{
-            ReturnCode,
-            DeflateConfig,
-            compress_bound,
-            compress_slice,
-        };
+        use zlib_rs::{DeflateConfig, ReturnCode, compress_bound, compress_slice};
 
-        use rayon::iter::{
-            IntoParallelRefIterator, ParallelIterator
-        };
-        
+        use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
+
         static VALID_CHARS: &[char] = &[
-            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
-            'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '_'
+            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
+            'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '_',
         ];
 
         let raw_bytes_len = AtomicUsize::new(0);
@@ -362,11 +259,17 @@ mod setup {
             raw_bytes_len.fetch_add(content.len(), Ordering::Relaxed);
 
             let mut compressed_buf = vec![0u8; compress_bound(content.len())];
-            let (compressed, rc) = compress_slice(&mut compressed_buf, &content, DeflateConfig::default());
+            let (compressed, rc) =
+                compress_slice(&mut compressed_buf, &content, DeflateConfig::default());
             encoded_bytes_len.fetch_add(compressed.len(), Ordering::Relaxed);
             assert_eq!(rc, ReturnCode::Ok);
 
-            let letter = path.parent().and_then(|p| p.file_name()).unwrap().to_str().unwrap();
+            let letter = path
+                .parent()
+                .and_then(|p| p.file_name())
+                .unwrap()
+                .to_str()
+                .unwrap();
             let dest_dir = out_dir.join("temp").join(letter);
             std::fs::create_dir_all(&dest_dir).ok();
             let dest_path = dest_dir.join(path.file_name().unwrap());
@@ -396,7 +299,7 @@ mod setup {
         use std::path::PathBuf;
 
         use termimad::MadSkin;
-        
+
         static HELP_RAW: &str = concat!(
             "corefetch is a neofetch-like tool for beautiful system information display with flexible output customization\n",
             "\n",
@@ -418,7 +321,7 @@ mod setup {
 
     pub mod env {
         pub fn target() {
-            let target = std::env::var("TARGET").unwrap(); 
+            let target = std::env::var("TARGET").unwrap();
             println!("cargo:rustc-env=TARGET={target}");
         }
 
@@ -433,8 +336,10 @@ mod setup {
             println!("cargo:rustc-env=TARGET_ARCH={target_arch}");
         }
 
-        pub fn build_time(){
-            let build_time = chrono::Local::now().format("%b %d %Y, %H:%M:%S").to_string();
+        pub fn build_time() {
+            let build_time = chrono::Local::now()
+                .format("%b %d %Y, %H:%M:%S")
+                .to_string();
             println!("cargo:rustc-env=COMPILE_TIME={build_time}");
         }
 
@@ -472,27 +377,12 @@ mod setup {
         }
 
         pub fn commit() {
-            fn git_initialized() -> bool {
-                use std::process::Command;
+            println!("cargo:rerun-if-env-changed=GITHUB_SHA");
+            println!("cargo:rerun-if-env-changed=GITHUB_REF_NAME");
+            println!("cargo:rerun-if-env-changed=GITHUB_HEAD_REF");
 
-                Command::new("git")
-                    .args(["rev-parse", "--is-inside-work-tree"])
-                    .output()
-                    .ok()
-                    .and_then(|o| String::from_utf8(o.stdout).ok())
-                    .is_some_and(|s| s.trim() == "true")
-            }
+            let commit = crate::Commit::new();
 
-            fn github_actions() -> bool {
-                std::env::var("GITHUB_ACTIONS")
-                    .is_ok_and(|s| s.trim() == "true")
-            }
-
-            let commit = if !git_initialized() || github_actions() {
-                crate::Commit::new_github()
-            } else {
-                crate::Commit::new_git()
-            };
             println!("cargo:rustc-env=COMMIT_AUTHOR={}", commit.author);
             println!("cargo:rustc-env=COMMIT_EMAIL={}", commit.email);
             println!("cargo:rustc-env=COMMIT_DATE={}", commit.date);
@@ -509,23 +399,24 @@ mod setup {
         pub fn libc_version(target_os: &str) {
             #[cfg(target_os = "linux")]
             fn get_libc_version() -> String {
-                use std::{
-                    path::PathBuf,
-                    process::Command
-                };
-            
+                use std::{path::PathBuf, process::Command};
+
                 let out_dir = PathBuf::from(std::env::var("OUT_DIR").unwrap());
                 let c_file = out_dir.join("version.c");
                 let exe = out_dir.join("version");
 
-                std::fs::write(&c_file, r#"
+                std::fs::write(
+                    &c_file,
+                    r#"
                     #include <stdio.h>
 
                     int main() {
                         printf("%d.%d\n", __GLIBC__, __GLIBC_MINOR__);
                         return 0;
                     }
-                "#).unwrap();
+                "#,
+                )
+                .unwrap();
 
                 let status = Command::new("gcc")
                     .arg(&c_file)
@@ -535,19 +426,17 @@ mod setup {
                     .expect("failed to compile C program");
 
                 assert!(status.success(), "Compilation failed");
-                
-                let output = Command::new(&exe)
-                    .output()
-                    .expect("failed to run program");
+
+                let output = Command::new(&exe).output().expect("failed to run program");
 
                 String::from_utf8(output.stdout).unwrap().trim().to_string()
             }
 
             let ver = match target_os {
                 #[cfg(target_os = "linux")]
-                "linux"   => get_libc_version(),
+                "linux" => get_libc_version(),
                 "android" => "bionic".to_string(),
-                _         => String::new(),
+                _ => String::new(),
             };
             println!("cargo:rustc-env=LIBC_VERSION={ver}");
         }
@@ -565,7 +454,9 @@ mod setup {
                 let mut stack = vec![dir.to_path_buf()];
 
                 while let Some(current) = stack.pop() {
-                    let Ok(entries) = fs::read_dir(&current) else { continue };
+                    let Ok(entries) = fs::read_dir(&current) else {
+                        continue;
+                    };
                     for entry in entries.flatten() {
                         let path = entry.path();
                         if path.is_dir() {
@@ -628,7 +519,10 @@ fn main() {
 
     // Check is nightly
     let is_nightly = ver.contains("nightly") || ver.contains("dev");
-    assert!(is_nightly, "\x1b[31;1mTo compile and work with the corefetch source code, the nightly version of the compiler is required\x1b[0m");
+    assert!(
+        is_nightly,
+        "\x1b[31;1mTo compile and work with the corefetch source code, the nightly version of the compiler is required\x1b[0m"
+    );
 
     let (raw, encoded) = setup::compress_logos();
     #[allow(clippy::cast_precision_loss)]
