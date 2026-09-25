@@ -8,12 +8,11 @@
 [![No deps](https://img.shields.io/badge/Fully-no%20deps-green?style=for-the-badge&logo=data:image/svg%2bxml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIGZpbGw9IiNmZmZmZmYiIHdpZHRoPSI4MDBweCIgaGVpZ2h0PSI4MDBweCIgdmlld0JveD0iMCAwIDE5MjAgMTkyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjEzLjMzMyA5NjBjMC0xNjcuMzYgNTYtMzIxLjcwNyAxNDkuNDQtNDQ2LjRMMTQwNi40IDE1NTcuMjI3Yy0xMjQuNjkzIDkzLjQ0LTI3OS4wNCAxNDkuNDQtNDQ2LjQgMTQ5LjQ0LTQxMS42MjcgMC03NDYuNjY3LTMzNS4wNC03NDYuNjY3LTc0Ni42NjdtMTQ5My4zMzQgMGMwIDE2Ny4zNi01NiAzMjEuNzA3LTE0OS40NCA0NDYuNEw1MTMuNiAzNjIuNzczYzEyNC42OTMtOTMuNDQgMjc5LjA0LTE0OS40NCA0NDYuNC0xNDkuNDQgNDExLjYyNyAwIDc0Ni42NjcgMzM1LjA0IDc0Ni42NjcgNzQ2LjY2N005NjAgMEM0MjkuNzYgMCAwIDQyOS43NiAwIDk2MHM0MjkuNzYgOTYwIDk2MCA5NjAgOTYwLTQyOS43NiA5NjAtOTYwUzE0OTAuMjQgMCA5NjAgMCIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+)](https://github.com/maslina524/corefetch/blob/main/Cargo.toml)
 [![Ru README](https://img.shields.io/badge/Ru-README-red?style=for-the-badge&logo=readme&logoColor=ffffff)](README-ru.md)
 
-**Corefetch** это neofetch-подобная утилита для красивого вывода информации о вашей системе с гибкой кастомизацией, написанная полностью на Rust с атрибутом `#![no_std]` и без зависимостей в таргете, кроме стандартного `alloc`. Полностью совместимая с [fastfetch](https://github.com/fastfetch-cli/fastfetch)
+**Corefetch** это neofetch-подобная утилита для красивого вывода информации о вашей системе с гибкой кастомизацией, написанная полностью на Rust с атрибутом `#![no_std]` и без зависимостей в таргете, кроме стандартного `alloc`
 
 > [!WARNING]
 >
-> Не все функции могут работать корректно на разных системах, в частности из-за сложности тестирования, 
-> если вы заметите ошибку, пожалуйста, напишите Issue или предложите свое исправление.
+> Проект тестируется на Windows 11 (x86_64), Debian 13.7 (x86_64) и Android 16 (aarch64)
 
 <table>
   <tr>
@@ -34,9 +33,27 @@
 
 Полностью написанный на чистом Rust с `#![no_std]` и без сторонних зависимостей в таргете. Создан с соблюдением строгих [clippy](https://github.com/rust-lang/rust-clippy) линтов.
 
-На данный момент создается только под Linux и Windows
+Разрабатывается только под Linux, Windows и Android.
+
+## Сравнение
+
+| Особенность           | Fastfetch | Corefetch             |
+| --------------------- | --------- | --------------------- |
+| Зависимости в таргете | Есть      | Нет                   |
+| Размер бинарника      | ~10Мб     | ~800Кб (вместе с lua) |
+| Android               | Тяжело    | Готовый бинарник      |
+
+Corefetch is also compatible with Fastfetch configs.
 
 ## Установка
+
+Corefetch доступен на x86_64-pc-windows-msvc, x86_64-unknown-linux-gnu и aarch64-linux-android, если здесь нет вашей ОС или архитектуры, оставьте запрос в Issue.
+
+### Готовый бинарник
+
+Перейдите в Releases и скачайте готовый бинарник для вашей ос и архитектуры, никакие дополнительные зависимости для работы программы не требуются
+
+### Сборка из исходников
 
 Сборка из исходников, если у вас установлен `cargo`:
 
