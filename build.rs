@@ -277,6 +277,8 @@ mod setup {
                 println!("cargo:rustc-link-lib=dylib=m");
                 println!("cargo:rustc-link-arg=-pthread");
                 println!("cargo:rustc-link-arg=-lc");
+
+                println!("cargo:rustc-cfg=lua54");
             }
             ("android", "aarch64") => {
                 let lua_dir = env::var("LUA_ANDROID_LIB_DIR")
@@ -287,10 +289,18 @@ mod setup {
                 println!("cargo:rustc-link-arg=-lc");
                 println!("cargo:rustc-link-lib=dylib=m");
                 println!("cargo:rustc-link-lib=dylib=dl");
+
+                println!("cargo:rustc-cfg=lua54");
             }
             ("windows", _) => {
                 println!("cargo:rustc-link-search=native=bin/windows");
                 println!("cargo:rustc-link-lib=static=lua55");
+
+                // FIXME: This just suppresses the error rather than solving it, 
+                // in the future Lua should be built manually for the linker that Rust uses
+                println!("cargo:rustc-link-arg=/NODEFAULTLIB:LIBCMT");
+
+                println!("cargo:rustc-cfg=lua5_5");
             }
             _ => {}
         }

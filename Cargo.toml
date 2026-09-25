@@ -54,3 +54,10 @@ ureq = "3.4.2"
 [workspace]
 members = ["todo", "doc"]
 resolver = "2"
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = [
+        'cfg(lua5_5)', 'cfg(lua5_4)',
+        'cfg(file_offset_bits_64)', 'cfg(file_offset_bits_32)',
+    ] 
+}

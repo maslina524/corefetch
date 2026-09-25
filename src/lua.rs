@@ -1,26 +1,17 @@
 use core::{
-    ffi::{c_void, c_char, c_int, CStr},
-    ptr
+    ffi::{CStr, c_char, c_int, c_void},
+    ptr,
 };
 
-use alloc::{
-    string::String,
-    ffi::CString,
-    borrow::Cow,
-    collections::BTreeMap
-};
+use alloc::{borrow::Cow, collections::BTreeMap, ffi::CString, string::String};
 
 use crate::{
-    abort, 
-    cfg_if, 
-    format, 
-    formats::{
-        expand_rust_unicode, snake_to_camel_ascii
-    }, 
-    imp::fs::{self, ReadError}, 
-    leak::ConcatStr, 
-    sync::OnceLock, 
-    warning, 
+    abort, cfg_if, format,
+    formats::{expand_rust_unicode, snake_to_camel_ascii},
+    imp::fs::{self, ReadError},
+    leak::ConcatStr,
+    sync::OnceLock,
+    warning,
 };
 
 cfg_if! {
@@ -57,7 +48,8 @@ pub type lua_pcallk = unsafe extern "C" fn(
 #[allow(non_camel_case_types)]
 pub type lua_close = unsafe extern "C" fn(state: *mut lua_State);
 #[allow(non_camel_case_types)]
-pub type lua_tolstring = unsafe extern "C" fn(state: *mut lua_State, idx: c_int, len: *mut usize) -> *const c_char;
+pub type lua_tolstring =
+    unsafe extern "C" fn(state: *mut lua_State, idx: c_int, len: *mut usize) -> *const c_char;
 #[allow(non_camel_case_types)]
 pub type lua_settop = unsafe extern "C" fn(state: *mut lua_State, idx: c_int);
 
@@ -76,9 +68,9 @@ unsafe extern "C" {
     unsafe fn lua_tolstring(state: *mut lua_State, idx: c_int, len: *mut usize) -> *const c_char;
     unsafe fn lua_settop(state: *mut lua_State, idx: c_int);
 
-    #[cfg(any(target_os = "linux", target_os = "android"))]
+    #[cfg(lua5_4)]
     unsafe fn luaL_openlibs(state: *mut lua_State);
-    #[cfg(target_os = "windows")]
+    #[cfg(lua5_5)]
     unsafe fn luaL_openselectedlibs(state: *mut lua_State, mask: c_int);
 }
 
@@ -87,7 +79,7 @@ static LUA: OnceLock<LuaLib> = OnceLock::new();
 pub enum LuaType {
     String(String),
     Number(f64),
-    Boolean(bool)
+    Boolean(bool),
 }
 
 pub trait AsLua {
@@ -153,13 +145,14 @@ macro_rules! impl_as_lua_as_f64 {
 }
 
 impl_as_lua_debug_string!(
-    String, &str, str, char,
+    String,
+    &str,
+    str,
+    char,
     crate::detect::gpu::GpuType,
     crate::imp::path::Path,
 );
-impl_as_lua_to_string!(
-    crate::detect::datetime::AmPm
-);
+impl_as_lua_to_string!(crate::detect::datetime::AmPm);
 
 impl_as_lua_into_f64!(
     crate::formats::Temperature,
@@ -169,9 +162,7 @@ impl_as_lua_into_f64!(
     crate::formats::Time
 );
 impl_as_lua_as_f64!(
-    usize, u8, u16, u32, u64, u128,
-    isize, i8, i16, i32, i64, i128,
-    f32, f64,
+    usize, u8, u16, u32, u64, u128, isize, i8, i16, i32, i64, i128, f32, f64,
 );
 impl AsLua for bool {
     fn as_lua(&self) -> LuaType {
@@ -192,8 +183,8 @@ impl core::fmt::Debug for LuaType {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
             Self::String(v) => write!(f, "{v}"),
-            Self::Number(v)    => write!(f, "{v}"),
-            Self::Boolean(v)  => write!(f, "{v}")
+            Self::Number(v) => write!(f, "{v}"),
+            Self::Boolean(v) => write!(f, "{v}"),
         }
     }
 }
@@ -202,17 +193,19 @@ pub fn open_lua_file(code: &str) -> Cow<'_, str> {
     match fs::read_to_string(code.trim()) {
         Ok(c) => Cow::Owned(c),
         Err(e) => match e {
-            ReadError::Code(e) => if e.is_file_not_found() {
-                Cow::Borrowed(code)
-            } else {
-                warning!("Failed to open file: {e}");
-                Cow::Owned(String::new())
-            },
+            ReadError::Code(e) => {
+                if e.is_file_not_found() {
+                    Cow::Borrowed(code)
+                } else {
+                    warning!("Failed to open file: {e}");
+                    Cow::Owned(String::new())
+                }
+            }
             ReadError::Utf8(e) => {
                 warning!("Failed to open the file as Utf8: {e}");
                 Cow::Owned(String::new())
             }
-        }
+        },
     }
 }
 
@@ -222,10 +215,10 @@ pub struct LuaLib {
     pcall: lua_pcallk,
     close: lua_close,
     to_lstring: lua_tolstring,
-    #[cfg(any(target_os = "linux", target_os = "android"))]
+    #[cfg(lua5_4)]
     open_libs: luaL_openlibs,
-    #[cfg(target_os = "windows")]
-    open_selected_libs: luaL_openselectedlibs
+    #[cfg(lua5_5)]
+    open_selected_libs: luaL_openselectedlibs,
 }
 
 // SAFETY: The structure is not thread-safe; however we never mutate its fields,
@@ -245,19 +238,17 @@ impl LuaLib {
             pcall: lua_pcallk,
             close: lua_close,
             to_lstring: lua_tolstring,
-            #[cfg(any(target_os = "linux", target_os = "android"))]
+            #[cfg(lua5_4)]
             open_libs: luaL_openlibs,
-            #[cfg(target_os = "windows")]
+            #[cfg(lua5_5)]
             open_selected_libs: luaL_openselectedlibs,
         }
     }
 
     pub fn exec(&self, code: &str, vars: BTreeMap<String, LuaType>) -> String {
         let code = code.trim();
-        let mut ret = String::with_capacity(
-            128 + code.len() + vars.len() * 16
-        );
-        
+        let mut ret = String::with_capacity(128 + code.len() + vars.len() * 16);
+
         ret.push_str("local module_data = {\n");
         for (k, v) in vars {
             ret.push_str("    ");
@@ -266,12 +257,12 @@ impl LuaLib {
             ret.push_str(&format!("{:?}", v));
             ret.push_str(",\n");
         }
-        
+
         ret.push_str("}\n\nlocal user_code = function(...)\n    ");
         ret.push_str(code);
         ret.push_str("\nend\n\nreturn user_code(module_data)");
         ret = expand_rust_unicode(&ret);
-        
+
         // crate::println!("{ret}");
         self.exec_without_vars(&ret)
     }
@@ -283,15 +274,18 @@ impl LuaLib {
             abort!("Failed to create new Lua state");
         }
 
-        
-        #[cfg(any(target_os = "linux", target_os = "android"))]
+        #[cfg(lua5_4)]
         // SAFETY: Completely safe
-        unsafe { (self.open_libs)(state) };
+        unsafe {
+            (self.open_libs)(state)
+        };
 
-        #[cfg(target_os = "windows")]
+        #[cfg(lua5_5)]
         // SAFETY: `luaL_openselectedlibs` takes a valid state and opens all
         // standard libraries (mask = -1 means all)
-        unsafe { (self.open_selected_libs)(state, -1) }
+        unsafe {
+            (self.open_selected_libs)(state, -1);
+        }
 
         let c_code = CString::new(code).expect("Lua code contains NUL bytes");
 
@@ -314,7 +308,7 @@ impl LuaLib {
             unsafe { (self.close)(state) };
             abort!("Lua compilation error: {}", err_msg);
         }
-        
+
         // SAFETY: Call the compiled function with 0 arguments and expect 1 result
         // The last argument is a continuation function pointer (NULL)
         let pcall_err = unsafe { (self.pcall)(state, 0, 1, 0, 0, None) };
