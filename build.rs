@@ -288,6 +288,10 @@ mod setup {
                 println!("cargo:rustc-link-lib=dylib=m");
                 println!("cargo:rustc-link-lib=dylib=dl");
             }
+            ("windows", _) => {
+                println!("cargo:rustc-link-search=native=bin/windows");
+                println!("cargo:rustc-link-lib=static=lua55");
+            }
             _ => {}
         }
     }

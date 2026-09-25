@@ -11,18 +11,22 @@ use alloc::{
 };
 
 use crate::{
-    abort, cfg_if, format, formats::{expand_rust_unicode, snake_to_camel_ascii}, imp::{
-        fs::{self, Access, File, ReadError}, 
-        http::Request, 
-        path::Path
-    }, info, leak::ConcatStr, sync::OnceLock, warning, 
+    abort, 
+    cfg_if, 
+    format, 
+    formats::{
+        expand_rust_unicode, snake_to_camel_ascii
+    }, 
+    imp::fs::{self, ReadError}, 
+    leak::ConcatStr, 
+    sync::OnceLock, 
+    warning, 
 };
 
 cfg_if! {
     if #[cfg(target_os = "windows")] {
         use crate::{
-            windows::link::{FreeLibrary, HMODULE, LoadLibraryW},
-            get_fn
+            windows::link::HMODULE,
         };
 
         type ApiBaseFn = unsafe extern "system" fn() -> isize;
@@ -57,10 +61,8 @@ pub type lua_tolstring = unsafe extern "C" fn(state: *mut lua_State, idx: c_int,
 #[allow(non_camel_case_types)]
 pub type lua_settop = unsafe extern "C" fn(state: *mut lua_State, idx: c_int);
 
-#[cfg(any(target_os = "linux", target_os = "android"))]
 unsafe extern "C" {
     unsafe fn luaL_newstate() -> *mut lua_State;
-    unsafe fn luaL_openlibs(state: *mut lua_State);
     unsafe fn luaL_loadstring(state: *mut lua_State, s: *const c_char) -> c_int;
     unsafe fn lua_pcallk(
         state: *mut lua_State,
@@ -73,11 +75,14 @@ unsafe extern "C" {
     unsafe fn lua_close(state: *mut lua_State);
     unsafe fn lua_tolstring(state: *mut lua_State, idx: c_int, len: *mut usize) -> *const c_char;
     unsafe fn lua_settop(state: *mut lua_State, idx: c_int);
+
+    #[cfg(any(target_os = "linux", target_os = "android"))]
+    unsafe fn luaL_openlibs(state: *mut lua_State);
+    #[cfg(target_os = "windows")]
+    unsafe fn luaL_openselectedlibs(state: *mut lua_State, mask: c_int);
 }
 
 static LUA: OnceLock<LuaLib> = OnceLock::new();
-
-const LUA_DOWNLOAD_URL: &str = "http://raw.githubusercontent.com/maslina524/corefetch/refs/heads/main/bin/lua55.dll";
 
 pub enum LuaType {
     String(String),
@@ -212,17 +217,15 @@ pub fn open_lua_file(code: &str) -> Cow<'_, str> {
 }
 
 pub struct LuaLib {
-    #[cfg(target_os = "windows")]
-    handle: LibHandle,
     new_state: luaL_newstate,
-    #[cfg(any(target_os = "linux", target_os = "android"))]
-    open_libs: luaL_openlibs,
-    #[cfg(target_os = "windows")]
-    open_selected_libs: luaL_openselectedlibs,
     load_string: luaL_loadstring,
     pcall: lua_pcallk,
     close: lua_close,
     to_lstring: lua_tolstring,
+    #[cfg(any(target_os = "linux", target_os = "android"))]
+    open_libs: luaL_openlibs,
+    #[cfg(target_os = "windows")]
+    open_selected_libs: luaL_openselectedlibs
 }
 
 // SAFETY: The structure is not thread-safe; however we never mutate its fields,
@@ -232,54 +235,20 @@ unsafe impl Sync for LuaLib {}
 
 impl LuaLib {
     pub fn get() -> &'static Self {
-        LUA.get_or_init(|| {
-            cfg_if! {
-                if #[cfg(target_os = "windows")] {
-                    Self::new_dynamic()
-                } else if #[cfg(any(target_os = "linux", target_os = "android"))] {
-                    Self::new_static()
-                }
-            }
-        })
+        LUA.get_or_init(Self::new_static)
     }
 
-    #[cfg(any(target_os = "linux", target_os = "android"))]
     pub fn new_static() -> Self {
         Self {
             new_state: luaL_newstate,
-            open_libs: luaL_openlibs,
             load_string: luaL_loadstring,
             pcall: lua_pcallk,
             close: lua_close,
             to_lstring: lua_tolstring,
-        }
-    }
-
-    #[cfg(target_os = "windows")]
-    pub fn new_dynamic() -> Self {
-        let lib = load();
-
-        // SAFETY: `transmute` fully complies with the documentation
-        let new_state = unsafe { get_fn!(lib, c"luaL_newstate", luaL_newstate) };
-        // SAFETY: `transmute` fully complies with the documentation
-        let open_selected_libs = unsafe { get_fn!(lib, c"luaL_openselectedlibs", luaL_openselectedlibs) };
-        // SAFETY: `transmute` fully complies with the documentation
-        let load_string = unsafe { get_fn!(lib, c"luaL_loadstring", luaL_loadstring) };
-        // SAFETY: `transmute` fully complies with the documentation
-        let pcall = unsafe { get_fn!(lib, c"lua_pcallk", lua_pcallk) };
-        // SAFETY: `transmute` fully complies with the documentation
-        let close = unsafe { get_fn!(lib, c"lua_close", lua_close) };
-        // SAFETY: `transmute` fully complies with the documentation
-        let to_lstring = unsafe { get_fn!(lib, c"lua_tolstring", lua_tolstring) };
-
-        Self {
-            handle: lib,
-            new_state,
-            open_selected_libs,
-            load_string,
-            pcall,
-            close,
-            to_lstring,
+            #[cfg(any(target_os = "linux", target_os = "android"))]
+            open_libs: luaL_openlibs,
+            #[cfg(target_os = "windows")]
+            open_selected_libs: luaL_openselectedlibs,
         }
     }
 
@@ -383,83 +352,11 @@ impl LuaLib {
 
         result_string
     }
-
-    #[cfg(target_os = "windows")]
-    pub fn drop_lua() {
-        if let Some(lib) = LUA.get() {
-            unload(lib.handle);
-        }
-    }
-
-    #[cfg(any(target_os = "linux", target_os = "android"))]
-    pub const fn drop_lua() {
-        /* Doing nothing since this is a static library */
-    }
-}
-
-pub fn get_lua_path() -> Path {
-    let dir = Path::corefetch().join("bin");
-    let path = dir.join("lua55.dll");
-    if !path.exists() {
-        info!("Downloading lua dll");
-
-        let resp = match Request::new(LUA_DOWNLOAD_URL).unwrap().get() {
-            Ok(r) => r,
-            Err(e) => abort!("Failet to connect to server (lua path): {}", e.code())
-        };
-        if !resp.is_success() {
-            abort!("Failed to download `lua55.dll`: {}", resp.code());
-        }
-
-        if let Err(e) = fs::create_dirs(dir) {
-            abort!("Failed to create directory for `lua55.dll`: {e}");
-        }
-
-        let content = resp.into_content();
-        let file = match File::create_always(&path, Access::Write) {
-            Ok(f) => f,
-            Err(e) => abort!("Failed to create file `lua55.dll`: {e}")
-        };
-        
-        if let Err(e) = file.write(content) {
-            abort!("Failed to write data to `lua55.dll`: {e}");
-        }
-    }
-
-    path
-}
-
-#[cfg(target_os = "windows")]
-fn load() -> LibHandle {
-    // SAFETY: `as_wide_str` returns a null‑terminated wide string,
-    // which is safe to pass to `LoadLibraryW`
-    let lib = unsafe {
-        let path = get_lua_path().as_wide_str().unwrap();
-        LoadLibraryW(path.as_ptr())
-    };
-    if lib.is_null() {
-        abort!("Failed to load lua55.dll");
-    }
-    lib
-}
-
-#[cfg(target_os = "windows")]
-fn unload(lib: LibHandle) {
-    // SAFETY: The handle is guaranteed to be valid because it was
-    // loaded once and never unloaded before this call
-    unsafe { FreeLibrary(lib) };
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::lua::{LuaLib, get_lua_path};
-
-    #[test]
-    fn get_lua_path_test() {
-        let path = get_lua_path();
-        println!("{path}");
-        assert!(path.exists());
-    }
+    use crate::lua::LuaLib;
 
     #[test]
     fn exec_lua_code_test() {
