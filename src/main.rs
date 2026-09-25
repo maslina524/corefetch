@@ -571,7 +571,7 @@ cargo build --release
 #[cfg(any(target_os = "linux", target_os = "android"))]
 #[unsafe(no_mangle)]
 extern "C" fn main(argc: c_int, argv: *const *const c_char) -> c_int {
-    ARGS.set(|| imp::env::args_init(argc as usize, argv.cast()));
+    let _ = ARGS.set(imp::env::args_init(argc as usize, argv.cast()));
     corefetch_main() as c_int
 }
 
@@ -579,7 +579,7 @@ extern "C" fn main(argc: c_int, argv: *const *const c_char) -> c_int {
 #[cfg(target_os = "windows")]
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
-    ARGS.set(imp::env::args_init);
+    let _ = ARGS.set(imp::env::args_init());
     corefetch_main() as c_int
 }
 

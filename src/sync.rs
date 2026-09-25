@@ -4,6 +4,8 @@ use core::{
     sync::atomic::{AtomicU8, Ordering}
 };
 
+use crate::abort;
+
 const INCOMPLETE  : u8 = 0;
 const INITIALIZING: u8 = 1;
 const READY       : u8 = 2;
@@ -60,9 +62,20 @@ impl<T> OnceLock<T> {
         }
     }
 
-    pub fn set(&self, f: impl FnOnce() -> T) -> Option<&T> {
+    pub fn get_or_abort(&self, msg: &str) -> &T {
         if self.state.load(Ordering::Acquire) == READY {
-            return None;
+            // SAFETY: The value in `MaybeUninit` is guaranteed to be initialized
+            unsafe { (&*self.value.get()).assume_init_ref() }
+        } else {
+            abort!("{}", msg);
+        }
+    }
+
+    pub fn set(&self, val: T) -> Result<&T, &T> {
+        if self.state.load(Ordering::Acquire) == READY {
+            // SAFETY: The value in `MaybeUninit` is guaranteed to be initialized
+            let val = unsafe { (&*self.value.get()).assume_init_ref() };
+            return Err(val);
         }
 
         if self
@@ -70,19 +83,20 @@ impl<T> OnceLock<T> {
             .compare_exchange(INCOMPLETE, INITIALIZING, Ordering::AcqRel, Ordering::Acquire)
             .is_ok()
         {   
-            let value = f();
-
             // SAFETY: Completely safe
-            unsafe {
-                (*self.value.get()).write(value);
-            }
+            let writted = unsafe {
+                (*self.value.get()).write(val)
+            };
             self.state.store(READY, Ordering::Release);
-            self.get()
+            Ok(writted)
         } else {
             while self.state.load(Ordering::Acquire) != READY {
                 core::hint::spin_loop();
             }
-            None
+
+            // SAFETY: The value in `MaybeUninit` is guaranteed to be initialized
+            let val = unsafe { (&*self.value.get()).assume_init_ref() };
+            Err(val)
         }
     }
 }
