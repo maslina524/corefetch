@@ -1,7 +1,6 @@
 use alloc::{
     string::String,
-    collections::BTreeMap,
-    vec
+    collections::BTreeMap
 };
 use doc::Docs;
 
@@ -13,7 +12,9 @@ use crate::{
     json::Value
 };
 
-static COLORS: OnceLock<Colors> = OnceLock::new();
+static COLORS        : OnceLock<Colors> = OnceLock::new();
+static RANGE_BLOCK   : &[usize]         = &[30, 90];
+static RANGE_NO_BLOCK: &[usize]         = &[30];
 
 #[derive(Debug, Docs)]
 pub struct Colors;
@@ -65,14 +66,15 @@ impl Module for Colors {
         };
 
         let ranges = if symbol_map == "block" {
-            vec![30, 90]
+            RANGE_BLOCK
         } else {
-            vec![30]
+            RANGE_NO_BLOCK
         };
 
         let mut ret = String::with_capacity(8 * (symbol.len() + 5) * ranges.len());
         
         for r in ranges {
+            let r = *r;
             ret.push_str(&padding_left);
             for i in r..=r + 7 {
                 ret.push_str(&format!("\x1b[{i}m{symbol}"));

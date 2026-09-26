@@ -174,8 +174,7 @@ impl Regedit {
             return Err(ErrorCode::last());
         }
         
-        let size_usize = size as usize;
-        let mut buf = vec![0u8; size_usize];
+        let mut buf = vec![0u8; size as usize];
 
         // SAFETY: Completely safe
         unsafe {

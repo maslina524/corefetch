@@ -7,7 +7,7 @@ use crate::{
     imp::parser::LinuxInfo,
     imp::fs,
     detect::os::OsInfo,
-    leak::ConcatStr
+    superstr::ConcatStr
 };
 
 const SYSNAME: &str = "Linux";

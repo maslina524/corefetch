@@ -176,7 +176,7 @@ impl Config {
         None
     }
 
-    pub const fn modules(&self) -> &Vec<ConfigModule> {
+    pub const fn modules(&self) -> &[ConfigModule] {
         self.modules.as_inner()
     }
 
@@ -250,8 +250,8 @@ impl ConfigModuleArray {
         self.inner
     }
 
-    pub const fn as_inner(&self) -> &Vec<ConfigModule> {
-        &self.inner
+    pub const fn as_inner(&self) -> &[ConfigModule] {
+        self.inner.as_slice()
     }
 }
 

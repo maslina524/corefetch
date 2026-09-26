@@ -247,7 +247,7 @@ pub fn read_dir_all(path: impl Into<Path>) -> error::Result<Vec<Item>> {
     }
 
     let mut items = Vec::with_capacity(20);
-    let mut buf = vec![0u8; BUF_SIZE];
+    let mut buf = [0u8; BUF_SIZE];
 
     loop {
         let n = getdents64(fd, buf.as_mut_ptr().cast(), BUF_SIZE);

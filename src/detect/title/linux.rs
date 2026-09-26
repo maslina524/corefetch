@@ -1,9 +1,6 @@
 use core::ffi::{c_char, CStr};
 
-use alloc::{
-    string::{String, ToString},
-    vec,
-};
+use alloc::string::{String, ToString};
 
 use crate::{
     abort,
@@ -71,7 +68,7 @@ impl TitleInfo {
     }
 
     fn cwd() -> Path {
-        let mut buf = vec![0i8; PATH_MAX];
+        let mut buf = [0i8; PATH_MAX];
         let ret = getcwd(buf.as_mut_ptr().cast(), PATH_MAX);
         if ret.is_null() {
             warning!("Failed to call `getcwd`");

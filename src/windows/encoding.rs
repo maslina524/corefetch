@@ -48,8 +48,7 @@ pub fn utf16le_to_utf8(
         return Err(ErrorCode::last()) 
     }
 
-    let size_usize = size as usize;
-    let mut buf = vec![0u8; size_usize];
+    let mut buf = vec![0u8; size as usize];
 
     // SAFETY: Just a WinAPI function, the return value is checked
     let ret = unsafe {

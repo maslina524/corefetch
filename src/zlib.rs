@@ -1,7 +1,4 @@
-use alloc::{
-    vec::Vec,
-    vec
-};
+use alloc::vec::Vec;
 
 use crate::{
     abort,
@@ -35,7 +32,7 @@ pub fn inflate_block_fixed_huffman(stream: &mut Stream, inflated: &mut Vec<u8>) 
     let alphabet: Vec<u32> = (0..288).collect();
     let literal_len_tree = HuffmanTree::from_alphabet_and_bl_list(&alphabet, &bl_list);
 
-    bl_list = vec![5; 30];
+    let bl_list = [5; 30];
     let alphabet_dist: Vec<u32> = (0..30).collect();
     let distance_tree = HuffmanTree::from_alphabet_and_bl_list(&alphabet_dist, &bl_list);
 
@@ -76,7 +73,7 @@ pub fn decode_trees(stream: &mut Stream) -> (HuffmanTree, HuffmanTree) {
     let hdist = stream.read_bits(5) + 1;
     let hclen = stream.read_bits(4) + 4;
 
-    let mut code_len_bl_list = vec![0; 19];
+    let mut code_len_bl_list = [0; 19];
     for i in 0..hclen {
         code_len_bl_list[CODE_LEN_CODES_ORDER[i as usize] as usize] = stream.read_bits(3) as u8;
     }
