@@ -28,7 +28,7 @@ mod formats;
 mod huffman;
 mod image;
 mod kitty;
-mod leak;
+mod superstr;
 mod lua;
 mod lz77;
 mod macros;
@@ -65,6 +65,7 @@ use core::{
 
 use alloc::{
     string::String,
+    boxed::Box,
     vec::Vec
 };
 
@@ -267,8 +268,8 @@ fn get_config(args: &mut Iter<'_, String>) -> Config {
     }
 }
 
-fn get_logo_name_and_custom(val: &str) -> (String, UILogo) {
-    let id = os::get_id();
+fn get_logo_name_and_custom(val: &str) -> (Box<str>, UILogo) {
+    let id = os::get_id().as_boxed_str();
     match fs::read(val) {
         Ok(b) => {
             if png::is_png(&b) {
@@ -287,7 +288,10 @@ fn get_logo_name_and_custom(val: &str) -> (String, UILogo) {
                 (id, UILogo::Preset)
             }
         }
-        Err(e) if e.is_file_not_found() => (val.to_lowercase().replace('_', " "), UILogo::Preset),
+        Err(e) if e.is_file_not_found() => (
+            val.to_lowercase().replace('_', " ").into_boxed_str(), 
+            UILogo::Preset
+        ),
         Err(e) => {
             warning!("Failed to use logo from fs: {e}");
             (id, UILogo::Preset)
@@ -343,7 +347,8 @@ fn print_help(theme: Option<&str>) -> ! {
                 }
             }
             "example" => {
-                LogoInfo::new(os::get_id().as_str());
+                let id = os::get_id().as_boxed_str();
+                LogoInfo::new(&id);
                 Config::get_or_init(Config::default());
 
                 if let Some(doc) = (vtable.example)() {
@@ -458,7 +463,8 @@ fn print_alloc_report() {
 }
 
 fn print_none() {
-    LogoInfo::new(os::get_id().as_str());
+    let id = os::get_id().as_boxed_str();
+    LogoInfo::new(&id);
 
     let (w, _) = env::terminal_size();
     let info_lines = build_info_buf(w);
@@ -470,7 +476,8 @@ fn print_none() {
 
 #[allow(clippy::cast_precision_loss)]
 fn print_image(image: &Image) {
-    LogoInfo::new(os::get_id().as_str());
+    let id = os::get_id().as_boxed_str();
+    LogoInfo::new(&id);
 
     let padding = Config::get().get_logo_padding();
     let (w, term_h) = env::terminal_size();
@@ -520,8 +527,8 @@ fn print_base(logo_name: &str) {
 }
 
 fn print_ascii(ascii: String) {
-    let id = os::get_id();
-    let logo = LogoInfo::new(id.as_str());
+    let id = os::get_id().as_boxed_str();
+    let logo = LogoInfo::new(&id);
     just_print_logo_and_info(&logo.get_ready_logo_lines(UILogo::Ascii(ascii)));
 }
 
@@ -631,10 +638,10 @@ fn corefetch_main() -> i32 {
 
     let (logo_name, custom) =
         name_raw.map_or_else(|| {
-            let id = crate::detect::os::get_id();
+            let id = crate::detect::os::get_id().as_boxed_str();
             (id, UILogo::Preset)
         }, |name| if name == "null" {
-                let id = crate::detect::os::get_id();
+                let id = crate::detect::os::get_id().as_boxed_str();
                 (id, UILogo::None)
             } else {
                 get_logo_name_and_custom(&name)

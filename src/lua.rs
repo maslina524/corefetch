@@ -9,7 +9,7 @@ use crate::{
     abort, cfg_if, format,
     formats::{expand_rust_unicode, snake_to_camel_ascii},
     imp::fs::{self, ReadError},
-    leak::ConcatStr,
+    superstr::ConcatStr,
     sync::OnceLock,
     warning,
 };

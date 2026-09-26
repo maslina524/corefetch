@@ -3,7 +3,7 @@ use alloc::{
     borrow::Cow
 };
 
-use crate::cfg_if;
+use crate::{cfg_if, superstr::ConcatStr};
 
 cfg_if! {
     if #[cfg(target_os = "windows")] {
@@ -18,8 +18,8 @@ cfg_if! {
 pub struct OsInfo {
     pub sysname: &'static str,
     pub name: &'static str,
-    pub id: String,
-    pub id_like: String,
+    pub id: ConcatStr<2>,
+    pub id_like: ConcatStr<2>,
     pub version: String,
     pub version_id: String,
     pub codename: Cow<'static, str>,
@@ -29,29 +29,27 @@ pub struct OsInfo {
 }
 
 #[cfg(target_os = "android")]
-pub fn get_id() -> String {
-    use alloc::borrow::ToOwned;
-
-    "android".to_owned()
+pub fn get_id() -> ConcatStr<2> {
+    ConcatStr::new(["android", ""])
 }
 
 #[cfg(target_os = "linux")]
-pub fn get_id() -> String {
-    use alloc::borrow::ToOwned;
+pub fn get_id() -> ConcatStr<2> {
     use crate::linux::parser::LinuxInfo;
 
     let os_release = LinuxInfo::parse_os_release().unwrap();
-    os_release.get_default("ID", "Unknown").to_owned()
+    let id = os_release.get_default("ID", "Unknown");
+    ConcatStr::new([id, ""])
 }
 
 #[cfg(target_os = "windows")]
-pub fn get_id() -> String {
+pub fn get_id() -> ConcatStr<2> {
     use crate::{
         windows::env,
-        format
+        superstr::ConcatStr
     };
 
     let (_, _, build) = env::get_version();
     let version = OsInfo::version(build as i32);
-    format!("Windows {version}")
+    ConcatStr::<2>::new(["Windows ", version])
 }

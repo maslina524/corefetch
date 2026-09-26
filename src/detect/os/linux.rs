@@ -6,7 +6,8 @@ use alloc::{
 use crate::{
     imp::parser::LinuxInfo,
     imp::fs,
-    detect::os::OsInfo
+    detect::os::OsInfo,
+    leak::ConcatStr
 };
 
 const SYSNAME: &str = "Linux";
@@ -28,8 +29,8 @@ impl OsInfo {
         Self { 
             sysname: SYSNAME,
             name,
-            id: id.to_owned(),
-            id_like: id.to_owned(),
+            id: ConcatStr::new([id, ""]),
+            id_like: ConcatStr::new([id, ""]),
             version: version.clone(),
             version_id: version,
             codename: Cow::Borrowed(codename),

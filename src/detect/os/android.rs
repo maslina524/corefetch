@@ -10,7 +10,7 @@ use crate::{
         fs,
         libc::__system_property_get
     },
-    detect::os::OsInfo
+    detect::os::{OsInfo, get_id}
 };
 
 const PROP_VALUE_MAX: usize = 92;
@@ -30,8 +30,8 @@ impl OsInfo {
         Self { 
             sysname: SYSNAME,
             name: NAME,
-            id: ID.to_owned(),
-            id_like: ID.to_owned(),
+            id: get_id(),
+            id_like: get_id(),
             version: version.clone(),
             version_id: version,
             codename: Cow::Borrowed(""),

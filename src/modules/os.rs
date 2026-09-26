@@ -7,7 +7,8 @@ use crate::{
     detect::os::OsInfo, 
     format, 
     format_for_module, 
-    impl_display_for_module,
+    impl_display_for_module, 
+    superstr::ConcatStr, 
     logo::LogoInfo, 
     modules::Module, 
     sync::OnceLock
@@ -24,9 +25,9 @@ pub struct Os {
     #[doc = "Pretty name, if available"]
     pub pretty_name: String,
     #[doc = "ID"]
-    pub id: String,
+    pub id: ConcatStr<2>,
     #[doc = "ID like"]
-    pub id_like: String,
+    pub id_like: ConcatStr<2>,
     #[doc = "Variant"]
     pub variant: Cow<'static, str>,
     #[doc = "Variant ID"]
