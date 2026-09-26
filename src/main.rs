@@ -391,7 +391,7 @@ fn print_alloc_report() {
 
     println!();
     println!("\x1b[1mAllocation Report\x1b[0m");
-    println!("Total: {total}");
+    println!("Total Ops: {total}");
 
     let total_u = total as u128;
 
@@ -424,7 +424,7 @@ fn print_alloc_report() {
     println!("{bar}");
 
     println!(
-        "\x1b[{}mAlloc: {}   \x1b[{}mRealloc: {}   \x1b[{}mDealloc: {}\x1b[0m",
+        "\x1b[{}mAlloc: {}   \x1b[{}mRealloc: {}   \x1b[{}mDealloc: {}\x1b[0m\n",
         color::FG_YELLOW,
         rep.alloc,
         color::FG_CYAN,
@@ -432,6 +432,9 @@ fn print_alloc_report() {
         color::FG_LIGHT_MAGENTA,
         rep.dealloc
     );
+
+    println!("Total Bytes:");
+    println!("Allocated: {}     Deallocated: {}", rep.alloc_total, rep.dealloc_total);
 }
 
 fn print_none() {

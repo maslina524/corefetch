@@ -49,7 +49,6 @@ quote = "1"
 proc-macro2 = "1"
 syn = "3.0.5"
 termimad = "0.35.4"
-ureq = "3.4.2"
 
 [workspace]
 members = ["todo", "doc"]

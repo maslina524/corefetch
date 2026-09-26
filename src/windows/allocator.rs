@@ -11,10 +11,14 @@ use crate::{
 
 const HEAP_ZERO_MEMORY: u32 = 0x08;
 
-static HEAP_HANDLE    : OnceLock<usize> = OnceLock::new();
-static ALLOC_COUNTER  : AtomicUsize     = AtomicUsize::new(0);
-static REALLOC_COUNTER: AtomicUsize     = AtomicUsize::new(0);
-static DEALLOC_COUNTER: AtomicUsize     = AtomicUsize::new(0);
+static HEAP_HANDLE      : OnceLock<usize> = OnceLock::new();
+
+static ALLOC_COUNTER    : AtomicUsize     = AtomicUsize::new(0);
+static REALLOC_COUNTER  : AtomicUsize     = AtomicUsize::new(0);
+static DEALLOC_COUNTER  : AtomicUsize     = AtomicUsize::new(0);
+
+static ALLOCATED_TOTAL  : AtomicUsize     = AtomicUsize::new(0);
+static DEALLOCATED_TOTAL: AtomicUsize     = AtomicUsize::new(0);
 
 fn get_heap_handle() -> *mut c_void {
     // SAFETY: The `GetProcessHeap` function takes no arguments and
@@ -45,10 +49,11 @@ unsafe impl GlobalAlloc for Allocator {
         };
         assert!(!ptr.is_null(), "`HeapAlloc` error!");
         ALLOC_COUNTER.fetch_add(1, Ordering::Relaxed);
+        ALLOCATED_TOTAL.fetch_add(layout.size(), Ordering::Relaxed);
         ptr.cast::<u8>()
     }
 
-    unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
+    unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
         let handle = get_heap_handle();
 
         // SAFETY: According to the documentation,
@@ -64,6 +69,7 @@ unsafe impl GlobalAlloc for Allocator {
         };
         assert!(ret != 0, "`HeapFree` error!");
         DEALLOC_COUNTER.fetch_add(1, Ordering::Relaxed);
+        DEALLOCATED_TOTAL.fetch_add(layout.size(), Ordering::Relaxed);
     }
 
     unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
@@ -82,25 +88,28 @@ unsafe impl GlobalAlloc for Allocator {
         };
         assert!(!ptr.is_null(), "`HeapAlloc` error!");
         ALLOC_COUNTER.fetch_add(1, Ordering::Relaxed);
+        ALLOCATED_TOTAL.fetch_add(layout.size(), Ordering::Relaxed);
         ptr.cast::<u8>()
     }
 
-    unsafe fn realloc(&self, ptr: *mut u8, _layout: Layout, new_size: usize) -> *mut u8 {
+    unsafe fn realloc(&self, ptr: *mut u8, layout: Layout, new_size: usize) -> *mut u8 {
         let handle = get_heap_handle();
 
-        // SAFETY: When passing a null pointer, 
-        // the function will behave like `HeapAlloc`; 
-        // the returned pointer is checked
+        // SAFETY: ...
         let new_ptr = unsafe {
-            HeapReAlloc(
-                handle, 
-                0, 
-                ptr.cast(), 
-                new_size
-            )
+            HeapReAlloc(handle, 0, ptr.cast(), new_size)
         };
-        REALLOC_COUNTER.fetch_add(1, Ordering::Relaxed);
         assert!(!new_ptr.is_null(), "`HeapReAlloc` error!");
+
+        REALLOC_COUNTER.fetch_add(1, Ordering::Relaxed);
+
+        let old_size = layout.size();
+        if new_size > old_size {
+            ALLOCATED_TOTAL.fetch_add(new_size - old_size, Ordering::Relaxed);
+        } else {
+            DEALLOCATED_TOTAL.fetch_add(old_size - new_size, Ordering::Relaxed);
+        }
+
         new_ptr.cast::<u8>()
     }
 }
@@ -108,7 +117,9 @@ unsafe impl GlobalAlloc for Allocator {
 pub struct AllocationReport {
     pub alloc: usize,
     pub realloc: usize,
-    pub dealloc: usize
+    pub dealloc: usize,
+    pub alloc_total: usize,
+    pub dealloc_total: usize,
 }
 
 impl AllocationReport {
@@ -117,6 +128,9 @@ impl AllocationReport {
         let realloc = REALLOC_COUNTER.load(Ordering::Relaxed);
         let dealloc = DEALLOC_COUNTER.load(Ordering::Relaxed);
 
-        Self { alloc, realloc, dealloc }
+        let alloc_total = ALLOCATED_TOTAL.load(Ordering::Relaxed);
+        let dealloc_total = DEALLOCATED_TOTAL.load(Ordering::Relaxed);
+
+        Self { alloc, realloc, dealloc, alloc_total, dealloc_total }
     }
 }
