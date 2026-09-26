@@ -2,8 +2,8 @@
 use core::arch::x86_64::{__cpuid, __cpuid_count, _xgetbv};
 
 use alloc::{
-    string::String,
-    borrow::ToOwned
+    borrow::{Cow, ToOwned}, 
+    string::String
 };
 
 use crate::{
@@ -23,7 +23,7 @@ crate::cfg_if! {
 
 #[derive(Default)]
 pub struct CpuInfo {
-    pub name: &'static str,
+    pub name: Cow<'static, str>,
     pub vendor: String,
     pub numa_nodes: usize,
     pub physical_cores: usize,

@@ -1,4 +1,4 @@
-use alloc::string::String;
+use alloc::{borrow::Cow, string::String};
 use doc::Docs;
 
 use crate::{
@@ -15,7 +15,7 @@ static CPU: OnceLock<Cpu> = OnceLock::new();
 #[derive(Debug, Docs)]
 pub struct Cpu {
     #[doc = "Name"]
-    pub name: &'static str,
+    pub name: Cow<'static, str>,
     #[doc = "Vendor"]
     pub vendor: String,
     #[doc = "Physical core count"]

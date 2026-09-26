@@ -151,6 +151,7 @@ impl_as_lua_debug_string!(
     char,
     crate::detect::gpu::GpuType,
     crate::imp::path::Path,
+    alloc::borrow::Cow<'static, str>
 );
 impl_as_lua_to_string!(crate::detect::datetime::AmPm);
 

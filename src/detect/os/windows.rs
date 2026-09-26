@@ -1,13 +1,12 @@
 use alloc::{
-    borrow::ToOwned,
-    string::ToString
+    borrow::{Cow, ToOwned},
+    string::String,
 };
 
 use crate::{
-    detect::os::OsInfo,
+    detect::os::{OsInfo, get_id},
     imp::env,
     imp::regedit::RegValue,
-    format
 };
 
 impl OsInfo {
@@ -17,34 +16,32 @@ impl OsInfo {
 
         let (_, _, build) = env::get_version();
         let version = Self::version(build as i32).to_owned();
-        let codename = Self::codename(build as i32).to_owned().leak();
+        let codename = Self::codename(build as i32);
 
-        let value = env::current_version().read("ProductName").unwrap_or(RegValue::None);
+        let value = env::current_version()
+            .read("ProductName")
+            .unwrap_or(RegValue::None);
 
         let variant = value
             .as_string()
-            .unwrap_or("")
-            .to_owned();
+            .map_or_else(String::new, ToOwned::to_owned);
 
-        let idx = variant
-            .rfind(' ')
-            .unwrap_or(0);
-        
-        let variant = variant[idx + 1..].to_string().leak();
-        let id = format!("{name} {version}").leak();
+        let idx = variant.rfind(' ').unwrap_or(0);
+
+        let variant = variant[idx + 1..].to_owned();
         let nerd = Self::nerd(&version);
 
-        Self { 
+        Self {
             sysname,
             name: name.leak(),
-            id,
-            id_like: id,
+            id: get_id(),
+            id_like: get_id(),
             version: version.clone(),
             version_id: version,
-            codename,
-            variant,
-            variant_id: "",
-            nerd
+            codename: Cow::Borrowed(codename),
+            variant: Cow::Owned(variant),
+            variant_id: Cow::Borrowed(""),
+            nerd,
         }
     }
 
@@ -86,7 +83,7 @@ impl OsInfo {
             26100 => "24H2",
             26200 => "25H2",
             28000 => "26H1",
-            _ => ""
+            _ => "",
         }
     }
 
@@ -98,7 +95,7 @@ impl OsInfo {
             9600 => "8.1",
             _ if (10240..22000).contains(&build) => "10",
             _ if (22000..=28000).contains(&build) => "11",
-            _ => "Unknown"
+            _ => "Unknown",
         }
     }
 }

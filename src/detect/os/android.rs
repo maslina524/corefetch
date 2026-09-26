@@ -1,7 +1,7 @@
 use core::ffi::CStr;
 
 use alloc::{
-    borrow::ToOwned,
+    borrow::{ToOwned, Cow},
     string::String
 };
 
@@ -14,13 +14,12 @@ use crate::{
 };
 
 const PROP_VALUE_MAX: usize = 92;
-const SYSNAME: &str = "Linux";
+const SYSNAME       : &str  = "Linux";
+const NAME          : &str  = "Android";
+const ID            : &str  = "android";
 
 impl OsInfo {
     pub fn new() -> Self {
-        let name = "Android";
-        let id = "android";
-
         let mut c_version = [0u8; PROP_VALUE_MAX + 1];
         __system_property_get(c"ro.build.version.release".as_ptr(), c_version.as_mut_ptr());
         let version = CStr::from_bytes_until_nul(&c_version)
@@ -30,14 +29,14 @@ impl OsInfo {
 
         Self { 
             sysname: SYSNAME,
-            name,
-            id,
-            id_like: id,
+            name: NAME,
+            id: ID.to_owned(),
+            id_like: ID.to_owned(),
             version: version.clone(),
             version_id: version,
-            codename: "",
-            variant: "",
-            variant_id: "",
+            codename: Cow::Borrowed(""),
+            variant: Cow::Borrowed(""),
+            variant_id: Cow::Borrowed(""),
             nerd: '\u{f17b}'
         }
     }

@@ -85,7 +85,7 @@ pub struct GpuInfo {
     pub vendor: &'static str,
     pub name: String,
     pub device_id: u32,
-    pub driver: &'static str,
+    pub driver: String,
     pub temperature: Temperature,
     pub typ: GpuType,
     pub memory_total: MemorySize,

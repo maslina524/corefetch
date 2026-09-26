@@ -1,5 +1,5 @@
 use alloc::{
-    borrow::ToOwned,
+    borrow::{ToOwned, Cow},
     string::String
 };
 
@@ -28,13 +28,13 @@ impl OsInfo {
         Self { 
             sysname: SYSNAME,
             name,
-            id,
-            id_like: id,
+            id: id.to_owned(),
+            id_like: id.to_owned(),
             version: version.clone(),
             version_id: version,
-            codename,
-            variant,
-            variant_id,
+            codename: Cow::Borrowed(codename),
+            variant: Cow::Borrowed(variant),
+            variant_id: Cow::Borrowed(variant_id),
             nerd
         }
     }

@@ -1,6 +1,8 @@
 use alloc::string::String;
 use doc::Docs;
 
+use alloc::borrow::Cow;
+
 use crate::{
     detect::os::OsInfo, 
     format, 
@@ -22,19 +24,19 @@ pub struct Os {
     #[doc = "Pretty name, if available"]
     pub pretty_name: String,
     #[doc = "ID"]
-    pub id: &'static str,
+    pub id: String,
     #[doc = "ID like"]
-    pub id_like: &'static str,
+    pub id_like: String,
     #[doc = "Variant"]
-    pub variant: &'static str,
+    pub variant: Cow<'static, str>,
     #[doc = "Variant ID"]
-    pub variant_id: &'static str,
+    pub variant_id: Cow<'static, str>,
     #[doc = "Version"]
     pub version: String,
     #[doc = "Version ID"]
     pub version_id: String,
     #[doc = "Version codename"]
-    pub codename: &'static str,
+    pub codename: Cow<'static, str>,
     #[doc = "Build ID"]
     pub build_id: String,
     #[doc = "Architecture"]

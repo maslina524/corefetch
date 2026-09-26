@@ -57,17 +57,37 @@ cfg_if! {
 
 extern crate alloc;
 
-use core::{env, ffi::c_int, slice::Iter};
+use core::{
+    env, 
+    ffi::c_int, 
+    slice::Iter
+};
 
-use alloc::{borrow::ToOwned, string::String, vec::Vec};
+use alloc::{
+    string::String,
+    vec::Vec
+};
 
 use crate::{
-    config::{Config, ConfigModule}, formats::SplittedAnsiIter, image::Image, imp::{
+    config::{Config, ConfigModule}, 
+    formats::SplittedAnsiIter, 
+    image::Image, 
+    detect::os,
+    imp::{
         allocator::{AllocationReport, Allocator}, 
         env, 
         fs, 
         http::Request
-    }, json::Json, logo::{LogoInfo, UILogo}, modules::{Commit, DocsVtable, FormatValue, Module, Version}, nvidia::NvidiaLib, png::Png, sync::OnceLock, url::Url,
+    }, 
+    json::Json, 
+    logo::{LogoInfo, UILogo},
+    modules::{
+        Commit, DocsVtable, FormatValue, Module, Version
+    }, 
+    nvidia::NvidiaLib, 
+    png::Png, 
+    sync::OnceLock, 
+    url::Url,
 };
 
 #[global_allocator]
@@ -248,7 +268,7 @@ fn get_config(args: &mut Iter<'_, String>) -> Config {
 }
 
 fn get_logo_name_and_custom(val: &str) -> (String, UILogo) {
-    let id = crate::detect::os::get_id().to_owned();
+    let id = os::get_id();
     match fs::read(val) {
         Ok(b) => {
             if png::is_png(&b) {
@@ -323,7 +343,7 @@ fn print_help(theme: Option<&str>) -> ! {
                 }
             }
             "example" => {
-                LogoInfo::new(crate::detect::os::get_id());
+                LogoInfo::new(os::get_id().as_str());
                 Config::get_or_init(Config::default());
 
                 if let Some(doc) = (vtable.example)() {
@@ -438,7 +458,7 @@ fn print_alloc_report() {
 }
 
 fn print_none() {
-    LogoInfo::new(crate::detect::os::get_id());
+    LogoInfo::new(os::get_id().as_str());
 
     let (w, _) = env::terminal_size();
     let info_lines = build_info_buf(w);
@@ -450,7 +470,7 @@ fn print_none() {
 
 #[allow(clippy::cast_precision_loss)]
 fn print_image(image: &Image) {
-    LogoInfo::new(crate::detect::os::get_id());
+    LogoInfo::new(os::get_id().as_str());
 
     let padding = Config::get().get_logo_padding();
     let (w, term_h) = env::terminal_size();
@@ -500,7 +520,8 @@ fn print_base(logo_name: &str) {
 }
 
 fn print_ascii(ascii: String) {
-    let logo = LogoInfo::new(crate::detect::os::get_id());
+    let id = os::get_id();
+    let logo = LogoInfo::new(id.as_str());
     just_print_logo_and_info(&logo.get_ready_logo_lines(UILogo::Ascii(ascii)));
 }
 
@@ -610,10 +631,10 @@ fn corefetch_main() -> i32 {
 
     let (logo_name, custom) =
         name_raw.map_or_else(|| {
-            let id = crate::detect::os::get_id().to_owned();
+            let id = crate::detect::os::get_id();
             (id, UILogo::Preset)
         }, |name| if name == "null" {
-                let id = crate::detect::os::get_id().to_owned();
+                let id = crate::detect::os::get_id();
                 (id, UILogo::None)
             } else {
                 get_logo_name_and_custom(&name)
