@@ -1,6 +1,9 @@
 use core::{
     alloc::{GlobalAlloc, Layout},
-    sync::atomic::{AtomicUsize, Ordering}
+    sync::atomic::{
+        AtomicUsize, 
+        Ordering::{Release, Relaxed}
+    }
 };
 
 use crate::imp::libc::{malloc, calloc, free, realloc};
@@ -14,6 +17,23 @@ static DEALLOC_COUNTER  : AtomicUsize = AtomicUsize::new(0);
 static ALLOCATED_TOTAL  : AtomicUsize = AtomicUsize::new(0);
 static DEALLOCATED_TOTAL: AtomicUsize = AtomicUsize::new(0);
 
+static CURRENT_ALLOCATED: AtomicUsize = AtomicUsize::new(0);
+static MAX_IN_RUNTIME   : AtomicUsize = AtomicUsize::new(0);
+
+fn allocated(size: usize) {
+    ALLOCATED_TOTAL.fetch_add(size, Relaxed);
+    CURRENT_ALLOCATED.fetch_add(size, Relaxed);
+    let cur = CURRENT_ALLOCATED.load(Relaxed);
+    if cur > MAX_IN_RUNTIME.load(Relaxed) {
+        MAX_IN_RUNTIME.store(cur, Release);
+    }
+}
+
+fn deallocated(size: usize) {
+    DEALLOCATED_TOTAL.fetch_add(size, Relaxed);
+    CURRENT_ALLOCATED.fetch_sub(size, Relaxed);
+}
+
 // SAFETY: All unsafe code has SAFETY comments
 unsafe impl GlobalAlloc for Allocator {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
@@ -23,8 +43,9 @@ unsafe impl GlobalAlloc for Allocator {
             malloc(layout.size())
         };
         assert!(!ptr.is_null(), "`malloc` error!");
-        ALLOC_COUNTER.fetch_add(1, Ordering::Relaxed);
-        ALLOCATED_TOTAL.fetch_add(layout.size(), Ordering::Relaxed);
+        ALLOC_COUNTER.fetch_add(1, Relaxed);
+        allocated(layout.size());
+
         ptr.cast::<u8>()
     }
 
@@ -32,8 +53,8 @@ unsafe impl GlobalAlloc for Allocator {
         // SAFETY: According to the documentation,
         // the pointer passed to `free` may be NULL (check `man 3 free``);
         unsafe { free(ptr.cast()) };
-        DEALLOC_COUNTER.fetch_add(1, Ordering::Relaxed);
-        DEALLOCATED_TOTAL.fetch_add(layout.size(), Ordering::Relaxed);
+        DEALLOC_COUNTER.fetch_add(1, Relaxed);
+        deallocated(layout.size());
     }
 
     unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
@@ -48,8 +69,9 @@ unsafe impl GlobalAlloc for Allocator {
             )
         };
         assert!(!ptr.is_null(), "`calloc` error!");
-        ALLOC_COUNTER.fetch_add(1, Ordering::Relaxed);
-        ALLOCATED_TOTAL.fetch_add(layout.size(), Ordering::Relaxed);
+        ALLOC_COUNTER.fetch_add(1, Relaxed);
+        allocated(layout.size());
+
         ptr.cast::<u8>()
     }
 
@@ -64,13 +86,13 @@ unsafe impl GlobalAlloc for Allocator {
             )
         };
         assert!(!new_ptr.is_null(), "`realloc` error!");
-        REALLOC_COUNTER.fetch_add(1, Ordering::Relaxed);
+        REALLOC_COUNTER.fetch_add(1, Relaxed);
         
         let old_size = layout.size();
         if new_size > old_size {
-            ALLOCATED_TOTAL.fetch_add(new_size - old_size, Ordering::Relaxed);
+            allocated(new_size - old_size);
         } else {
-            DEALLOCATED_TOTAL.fetch_add(old_size - new_size, Ordering::Relaxed);
+            allocated(old_size - new_size);
         }
         
         new_ptr.cast::<u8>()
@@ -83,17 +105,20 @@ pub struct AllocationReport {
     pub dealloc: usize,
     pub alloc_total: usize,
     pub dealloc_total: usize,
+    pub max_in_runtime: usize
 }
 
 impl AllocationReport {
     pub fn get() -> Self {
-        let alloc = ALLOC_COUNTER.load(Ordering::Relaxed);
-        let realloc = REALLOC_COUNTER.load(Ordering::Relaxed);
-        let dealloc = DEALLOC_COUNTER.load(Ordering::Relaxed);
+        let alloc = ALLOC_COUNTER.load(Relaxed);
+        let realloc = REALLOC_COUNTER.load(Relaxed);
+        let dealloc = DEALLOC_COUNTER.load(Relaxed);
 
-        let alloc_total = ALLOCATED_TOTAL.load(Ordering::Relaxed);
-        let dealloc_total = DEALLOCATED_TOTAL.load(Ordering::Relaxed);
+        let alloc_total = ALLOCATED_TOTAL.load(Relaxed);
+        let dealloc_total = DEALLOCATED_TOTAL.load(Relaxed);
 
-        Self { alloc, realloc, dealloc, alloc_total, dealloc_total }
+        let max_in_runtime = MAX_IN_RUNTIME.load(Relaxed);
+
+        Self { alloc, realloc, dealloc, alloc_total, dealloc_total, max_in_runtime }
     }
 }

@@ -99,7 +99,7 @@ static HELP_STRING: &str = include_str!(concat!(env!("OUT_DIR"), "/help.txt"));
 const MIN_OFFSET: usize = 24;
 const IMAGE_SIZE: usize = 40;
 const CELL_ASPECT: f64 = 2.0;
-const ALLOC_REP_BAR_SIZE: u128 = 48;
+const ALLOC_REP_BAR_SIZE: u128 = 64;
 
 #[cfg(not(test))]
 mod panic_impl {
@@ -432,21 +432,12 @@ fn print_alloc_report() {
     let realloc_len = realloc_len as usize;
     let dealloc_len = dealloc_len as usize;
 
-    let mut bar = String::with_capacity(ALLOC_REP_BAR_SIZE as usize + 32);
-    bar.push_str("\x1b[");
-    bar.push_str(color::FG_YELLOW);
-    bar.push_str(";1m");
-    bar.extend(core::iter::repeat_n('=', alloc_len));
-    bar.push_str("\x1b[");
-    bar.push_str(color::FG_CYAN);
-    bar.push_str(";1m");
-    bar.extend(core::iter::repeat_n('=', realloc_len));
-    bar.push_str("\x1b[");
-    bar.push_str(color::FG_LIGHT_MAGENTA);
-    bar.push_str(";1m");
-    bar.extend(core::iter::repeat_n('=', dealloc_len));
-    bar.push_str("\x1b[0m");
-    println!("{bar}");
+    println!(
+        "| \x1b[{};1m{}\x1b[{};1m{}\x1b[{};1m{}\x1b[0m |",
+        color::FG_YELLOW,        "=".repeat(alloc_len), 
+        color::FG_CYAN,          "=".repeat(realloc_len), 
+        color::FG_LIGHT_MAGENTA, "=".repeat(dealloc_len),
+    );
 
     println!(
         "\x1b[{}mAlloc: {}   \x1b[{}mRealloc: {}   \x1b[{}mDealloc: {}\x1b[0m\n",
@@ -459,7 +450,7 @@ fn print_alloc_report() {
     );
 
     println!("Total Bytes:");
-    println!("Allocated: {}     Deallocated: {}", rep.alloc_total, rep.dealloc_total);
+    println!("Allocated: {} Bytes   Deallocated: {} Bytes   Max In RT: {} Bytes", rep.alloc_total, rep.dealloc_total, rep.max_in_runtime);
 }
 
 fn print_none() {
