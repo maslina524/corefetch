@@ -13,13 +13,13 @@ jobs:
         include:
           - os: windows-latest
             target: x86_64-pc-windows-msvc
-            binary: corefetch.exe
+            binary: lazyfetch.exe
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            binary: corefetch
+            binary: lazyfetch
           - os: ubuntu-latest
             target: aarch64-linux-android
-            binary: corefetch
+            binary: lazyfetch
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -72,9 +72,9 @@ jobs:
         run: |
           cd target/${{ matrix.target }}/release/
           if [ "${{ matrix.os }}" = "windows-latest" ]; then
-            mv "${{ matrix.binary }}" "corefetch-${{ matrix.target }}.exe"
+            mv "${{ matrix.binary }}" "lazyfetch-${{ matrix.target }}.exe"
           else
-            mv "${{ matrix.binary }}" "corefetch-${{ matrix.target }}"
+            mv "${{ matrix.binary }}" "lazyfetch-${{ matrix.target }}"
           fi
 
       - name: Generate SHA-256 hash
@@ -83,18 +83,18 @@ jobs:
         run: |
           cd target/${{ matrix.target }}/release/
           if [ "${{ matrix.os }}" = "windows-latest" ]; then
-            BIN="corefetch-${{ matrix.target }}.exe"
+            BIN="lazyfetch-${{ matrix.target }}.exe"
           else
-            BIN="corefetch-${{ matrix.target }}"
+            BIN="lazyfetch-${{ matrix.target }}"
           fi
           ./$BIN --version hash > "sha256-${{ matrix.target }}"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: corefetch-${{ matrix.target }}
+          name: lazyfetch-${{ matrix.target }}
           path: |
-            target/${{ matrix.target }}/release/corefetch-${{ matrix.target }}*
+            target/${{ matrix.target }}/release/lazyfetch-${{ matrix.target }}*
             target/${{ matrix.target }}/release/sha256-${{ matrix.target }}
 
   release:

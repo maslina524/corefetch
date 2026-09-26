@@ -1,18 +1,18 @@
 [package]
-name = "corefetch"
-version = "0.4.1"
+name = "lazyfetch"
+version = "0.4.3"
 edition = "2024"
 description = "fastfetch-based program written in rust with #![no_std]"
 license = "MIT"
 authors = ["maslina524 <luk.kirill2804@gmail.com>"]
-repository = "https://github.com/maslina524/corefetch"
+repository = "https://github.com/maslina524/lazyfetch"
 categories = ["no-std", "command-line-utilities"]
 keywords = [
     "cli", "no-std", "embedded", "fetch", "no-dependencies"
 ]
 
 [[bin]]
-name = "corefetch"
+name = "lazyfetch"
 path = "src/main.rs"
 
 [profile.release]

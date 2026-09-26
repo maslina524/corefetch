@@ -306,13 +306,13 @@ mod setup {
         use termimad::MadSkin;
 
         static HELP_RAW: &str = concat!(
-            "corefetch is a neofetch-like tool for beautiful system information display with flexible output customization\n",
+            "lazyfetch is a neofetch-like tool for beautiful system information display with flexible output customization\n",
             "\n",
-            "**Usage: corefetch*** <?options>*\n",
+            "**Usage: lazyfetch*** <?options>*\n",
             "\n",
             "**Commands:**\n",
             "  -h, --help <?options>     \tPrint this message\n",
-            "  -v, --version <?options>  \tPrint corefetch version\n",
+            "  -v, --version <?options>  \tPrint lazyfetch version\n",
             "  -l, --logo                \tCustom logo (name or file)\n",
             "  -c, --config              \tCustom preset (http url or file)",
         );
@@ -526,7 +526,7 @@ fn main() {
     let is_nightly = ver.contains("nightly") || ver.contains("dev");
     assert!(
         is_nightly,
-        "\x1b[31;1mTo compile and work with the corefetch source code, the nightly version of the compiler is required\x1b[0m"
+        "\x1b[31;1mTo compile and work with the lazyfetch source code, the nightly version of the compiler is required\x1b[0m"
     );
 
     let (raw, encoded) = setup::compress_logos();

@@ -59,12 +59,12 @@ impl Path {
         Self::from(inner)
     }
 
-    pub fn corefetch() -> Self {
-        Self::local().join("corefetch")
+    pub fn lazyfetch() -> Self {
+        Self::local().join("lazyfetch")
     }
 
     pub fn cache() -> Self {
-        Self::corefetch().join("cache")
+        Self::lazyfetch().join("cache")
     }
 
     pub fn with_capacity(cap: usize) -> Self {

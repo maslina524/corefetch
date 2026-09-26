@@ -5,7 +5,7 @@ labels: ["bug"]
 body:
   - type: markdown
     attributes:
-      value: "Thank you for helping improve corefetch!"
+      value: "Thank you for helping improve lazyfetch!"
 
   - type: input
     id: version

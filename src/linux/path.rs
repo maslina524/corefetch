@@ -40,12 +40,12 @@ impl Path {
         Self::home().join(".local/share")
     }
 
-    pub fn corefetch() -> Self {
-        Self::local().join("corefetch")
+    pub fn lazyfetch() -> Self {
+        Self::local().join("lazyfetch")
     }
 
     pub fn cache() -> Self {
-        Self::home().join("cache/corefetch")
+        Self::home().join("cache/lazyfetch")
     }
 
     pub fn with_capacity(cap: usize) -> Self {

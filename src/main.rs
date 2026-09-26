@@ -122,7 +122,7 @@ mod panic_impl {
         }
 
         let link = format!(
-            "https://github.com/maslina524/corefetch/issues/new?template=panic.yaml&version={}&title={}&target={}&location={}",
+            "https://github.com/maslina524/lazyfetch/issues/new?template=panic.yaml&version={}&title={}&target={}&location={}",
             env!("CARGO_PKG_VERSION"),
             msg,
             env!("TARGET"),
@@ -594,7 +594,7 @@ cargo build --release
 #[unsafe(no_mangle)]
 extern "C" fn main(argc: c_int, argv: *const *const c_char) -> c_int {
     let _ = ARGS.set(imp::env::args_init(argc as usize, argv.cast()));
-    corefetch_main() as c_int
+    lazyfetch_main() as c_int
 }
 
 // #[cfg(not(test))]
@@ -602,10 +602,10 @@ extern "C" fn main(argc: c_int, argv: *const *const c_char) -> c_int {
 #[unsafe(no_mangle)]
 extern "C" fn main() -> c_int {
     let _ = ARGS.set(imp::env::args_init());
-    corefetch_main() as c_int
+    lazyfetch_main() as c_int
 }
 
-fn corefetch_main() -> i32 {
+fn lazyfetch_main() -> i32 {
     let args = env::args();
 
     // Commands
