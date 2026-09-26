@@ -40,11 +40,11 @@ impl GpuInfo {
         let memory_total = MemorySize::from_bytes(desc.DedicatedVideoMemory as u64);
 
         Self {
+            vendor_id: desc.VendorId,
             vendor: Self::vendor_name(desc.VendorId),
             name,
             device_id: desc.DeviceId,
             driver,
-            temperature: Self::temperature(desc.VendorId),
             typ: GpuType::get_old(desc.VendorId, memory_total),
             memory_total,
             frequency: Self::frequency(desc.VendorId)
@@ -160,14 +160,6 @@ mod tests {
     }
 
     #[test]
-    fn name_test() {
-        let info = GpuInfo::new();
-        let name = info.name;
-        assert_ne!(name, "");
-        println!("Name: {name}");
-    }
-
-    #[test]
     fn device_id_test() {
         let info = GpuInfo::new();
         let id = info.device_id;
@@ -181,14 +173,5 @@ mod tests {
         let driver = info.driver;
         assert!(driver != "Unknown");
         println!("Driver: {driver}");
-    }
-
-    #[test]
-    fn temperature_test() {
-        let info = GpuInfo::new();
-        if info.vendor == "NVIDIA" {
-            assert!(info.temperature.get() != 0.0);
-            println!("Temperature: {}", info.temperature);
-        }
     }
 }

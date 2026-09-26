@@ -1,16 +1,21 @@
-use alloc::string::String;
+use alloc::{
+    string::String,
+    boxed::Box
+};
 use doc::Docs;
 
 use crate::{
-    detect::gpu::{GpuInfo, GpuType},
-    impl_module,
+    detect::gpu::{GpuInfo, GpuType, temperature},
     formats::{Frequency, MemorySize, Percent, Temperature},
     impl_display_for_module,
+    impl_module,
     modules::Module,
-    sync::OnceLock
+    sync::OnceLock,
+    ui::lazy::LazyField
 };
 
-static GPU: OnceLock<Gpu> = OnceLock::new();
+static GPU   : OnceLock<Gpu> = OnceLock::new();
+static VENDOR: OnceLock<u32> = OnceLock::new();
 
 #[derive(Debug, Docs)]
 pub struct Gpu {
@@ -21,7 +26,7 @@ pub struct Gpu {
     #[doc = "Driver"]
     pub driver: String,
     #[doc = "Temperature"]
-    pub temperature: Temperature,
+    pub temperature: LazyField<Temperature>,
     #[doc = "Core count"]
     pub core_count: usize,
     #[doc = "Type"]
@@ -63,11 +68,17 @@ pub struct Gpu {
 impl Module for Gpu {
     fn new() -> Self {
         let info = GpuInfo::new();
+        let _ = VENDOR.set(info.vendor_id);
+
         Self {
             vendor: info.vendor,
             name: info.name,
             driver: info.driver,
-            temperature: info.temperature,
+            temperature: LazyField::new(
+                Box::new(
+                    || { temperature(*VENDOR.get().unwrap()) }
+                )
+            ),
             core_count: 0,
             r#type: info.typ,
             dedicated_total: info.memory_total,

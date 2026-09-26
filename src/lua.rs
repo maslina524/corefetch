@@ -6,12 +6,7 @@ use core::{
 use alloc::{borrow::Cow, collections::BTreeMap, ffi::CString, string::String};
 
 use crate::{
-    abort, cfg_if, format,
-    formats::{expand_rust_unicode, snake_to_camel_ascii},
-    imp::fs::{self, ReadError},
-    superstr::ConcatStr,
-    sync::OnceLock,
-    warning,
+    abort, cfg_if, format, formats::{expand_rust_unicode, snake_to_camel_ascii}, imp::fs::{self, ReadError}, superstr::ConcatStr, sync::OnceLock, ui::lazy::LazyField, warning,
 };
 
 cfg_if! {
@@ -153,8 +148,9 @@ impl_as_lua_debug_string!(
     crate::imp::path::Path,
     alloc::borrow::Cow<'static, str>
 );
-impl_as_lua_to_string!(crate::detect::datetime::AmPm);
-
+impl_as_lua_to_string!(
+    crate::detect::datetime::AmPm
+);
 impl_as_lua_into_f64!(
     crate::formats::Temperature,
     crate::formats::Percent,
@@ -176,6 +172,13 @@ impl<const N: usize> AsLua for ConcatStr<N> {
     fn as_lua(&self) -> LuaType {
         #[allow(clippy::cast_precision_loss)]
         LuaType::String(format!("{self:?}"))
+    }
+    const LUA_TYPE: &'static str = "string";
+}
+impl<T: core::fmt::Display> AsLua for LazyField<T> {
+    fn as_lua(&self) -> LuaType {
+        #[allow(clippy::cast_precision_loss)]
+        LuaType::String(format!("{self}"))
     }
     const LUA_TYPE: &'static str = "string";
 }

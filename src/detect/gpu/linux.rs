@@ -27,12 +27,12 @@ impl GpuInfo {
             .unwrap_or_else(String::new);
         let memory_total = Self::memory_total();
 
-        Self { 
+        Self {
+            vendor_id,
             vendor: Self::vendor_name(vendor_id),
             name: Self::name(vendor_id, device_id),
             device_id,
             driver,
-            temperature: Self::temperature(vendor_id),
             typ: GpuType::get_by_vendor_and_bus(vendor_id, device_id, &pci_address),
             memory_total,
             frequency: Self::frequency(vendor_id)

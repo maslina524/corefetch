@@ -82,11 +82,11 @@ impl core::fmt::Display for GpuType {
 
 #[derive(Default)]
 pub struct GpuInfo {
+    pub vendor_id: u32,
     pub vendor: &'static str,
     pub name: String,
     pub device_id: u32,
     pub driver: String,
-    pub temperature: Temperature,
     pub typ: GpuType,
     pub memory_total: MemorySize,
     pub frequency: Frequency
@@ -159,14 +159,6 @@ impl GpuInfo {
         }
     }
 
-    fn temperature(vendor_id: u32) -> Temperature {
-        let val = match vendor_id {
-            0x10DE => NvidiaLib::get().gpu_temperature() as f32,
-            _ => 0.0,
-        };
-        Temperature::Celsius(val)
-    }
-
     fn frequency(vendor_id: u32) -> Frequency {
         let val = match vendor_id {
             0x10DE => NvidiaLib::get().get_frequency_ghz() as f32,
@@ -186,4 +178,12 @@ impl GpuInfo {
             _ => "Unknown",
         }
     }
+}
+
+pub fn temperature(vendor_id: u32) -> Temperature {
+    let val = match vendor_id {
+        0x10DE => NvidiaLib::get().gpu_temperature() as f32,
+        _ => 0.0,
+    };
+    Temperature::Celsius(val)
 }

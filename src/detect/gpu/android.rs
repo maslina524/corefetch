@@ -35,12 +35,12 @@ impl GpuInfo {
             _ => ("Unknown", 0),
         };
 
-        Self { 
+        Self {
+            vendor_id,
             vendor,
             name,
             device_id: 0,
             driver: egl,
-            temperature: Self::temperature(vendor_id),
             typ: GpuType::BuiltIn,
             memory_total: MemorySize::default(),
             frequency: Self::frequency(vendor_id)
