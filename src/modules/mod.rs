@@ -1,6 +1,6 @@
 pub mod break_;     // 7)  Break         : Print an empty line
 pub mod colors;     // 14) Colors        : Display the terminal's 16-color palette
-pub mod commit;     // NF) Commit        : Display last commit
+pub mod commit;     // LF) Commit        : Display last commit
 pub mod cpu;        // 15) CPU           : Print CPU name, frequency, etc.
 pub mod custom;     // 19) Custom        : Print a custom string, with or without key
 pub mod datetime;   // 20) DateTime      : Print the current date and time

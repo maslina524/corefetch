@@ -42,6 +42,7 @@ mod detect;
 mod json;
 mod logo;
 mod modules;
+mod ui;
 
 cfg_if! {
     if #[cfg(target_os = "windows")] {
