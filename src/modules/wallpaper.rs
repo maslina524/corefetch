@@ -3,7 +3,7 @@ use alloc::string::String
 use doc::Docs;
 
 use crate::{
-    format_for_module,
+    impl_module,
     impl_display_for_module,
     modules::Module,
     sync::OnceLock,
@@ -53,8 +53,7 @@ impl Module for Wallpaper {
         "wallpaper"
     }
 
-    format_for_module!(
-        Wallpaper,
+    impl_module!(
         file_name, full_path
     );
 }

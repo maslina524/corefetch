@@ -1,7 +1,7 @@
 use doc::Docs;
 
 use crate::{
-    format_for_module, 
+    impl_module, 
     imp::env, 
     impl_display_for_module, 
     modules::Module, 
@@ -43,7 +43,7 @@ impl Module for Processes {
         "processes"
     }
 
-    format_for_module!(Processes, result);
+    impl_module!(result);
 }
 
 impl_display_for_module!(Processes);

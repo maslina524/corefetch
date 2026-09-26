@@ -1,7 +1,7 @@
 use doc::Docs;
 
 use crate::{
-    format_for_module,
+    impl_module,
     impl_display_for_module,
     modules::Module,
     sync::OnceLock
@@ -83,8 +83,7 @@ impl Module for Version {
         "version"
     }
 
-    format_for_module!(
-        Version,
+    impl_module!(
         project_name, version, version_tweak, build_type,
         sysname, arch, cmake_built_type, compile_time,
         compiler, libc, package_manager, release_link,

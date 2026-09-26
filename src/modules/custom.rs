@@ -2,7 +2,7 @@ use doc::Docs;
 
 use crate::{
     impl_display_for_module,
-    format_for_module,
+    impl_module,
     modules::Module, 
     sync::OnceLock
 };
@@ -35,9 +35,7 @@ impl Module for Custom {
         "custom"
     }
 
-    format_for_module!(
-        Custom,
-    );
+    impl_module!();
 }
 
 impl_display_for_module!(Custom);

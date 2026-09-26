@@ -4,7 +4,7 @@ use doc::Docs;
 use crate::{
     detect::datetime::{AmPm, DatetimeInfo}, 
     format, 
-    format_for_module, 
+    impl_module, 
     impl_display_for_module, 
     modules::Module, 
     sync::OnceLock
@@ -113,8 +113,7 @@ impl Module for Datetime {
         "datetime"
     }
 
-    format_for_module!(
-        Processes,
+    impl_module!(
         year, year_short, month, month_pretty,
         month_name, month_name_short, week, weekday,
         weekday_short, day_in_year, day_in_month, day_in_week,

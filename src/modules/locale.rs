@@ -3,7 +3,7 @@ use doc::Docs;
 
 use crate::{
     impl_display_for_module, 
-    format_for_module, 
+    impl_module, 
     modules::Module, 
     sync::OnceLock,
     detect::locale::LocaleInfo
@@ -42,7 +42,7 @@ impl Module for Locale {
         "locale"
     }
 
-    format_for_module!(Locale, result);
+    impl_module!(result);
 }
 
 

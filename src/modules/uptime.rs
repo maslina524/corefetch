@@ -2,7 +2,7 @@ use alloc::string::String;
 use doc::Docs;
 
 use crate::{
-    format_for_module,
+    impl_module,
     impl_display_for_module,
     modules::Module,
     sync::OnceLock,
@@ -70,8 +70,7 @@ impl Module for Uptime {
         "uptime"
     }
 
-    format_for_module!(
-        Uptime,
+    impl_module!(
         days, hours, minutes, seconds, 
         milliseconds, boot_time, years, days_of_year, 
         years_fraction, formatted

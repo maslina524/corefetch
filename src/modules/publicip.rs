@@ -3,7 +3,7 @@ use doc::Docs;
 use alloc::string::String;
 
 use crate::{
-    format_for_module,
+    impl_module,
     impl_display_for_module,
     detect::publicip,
     modules::Module, 
@@ -43,8 +43,7 @@ impl Module for PublicIP {
         "publicip"
     }
 
-    format_for_module!(
-        PublicIP,
+    impl_module!(
         ip, location
     );
 }

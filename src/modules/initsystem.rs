@@ -3,7 +3,7 @@ use doc::Docs;
 
 use crate::{
     impl_display_for_module,
-    format_for_module,
+    impl_module,
     detect::initsystem::InitSystemInfo,
     modules::Module, 
     sync::OnceLock,
@@ -53,8 +53,7 @@ impl Module for Initsystem {
         "initsystem"
     }
 
-    format_for_module!(
-        InitSystem,
+    impl_module!(
         name, exe, version, pid
     );
 }

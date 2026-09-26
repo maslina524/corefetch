@@ -3,7 +3,7 @@ use doc::Docs;
 
 use crate::{
     detect::memory::MemoryInfo,
-    format_for_module, 
+    impl_module, 
     formats::{MemorySize, Percent}, 
     impl_display_for_module, 
     modules::Module, 
@@ -57,8 +57,7 @@ impl Module for Memory {
         "cpu"
     }
 
-    format_for_module!(
-        Memory,
+    impl_module!(
         used, total, percentage, percentage_bar
     );
 }

@@ -6,7 +6,7 @@ use alloc::borrow::Cow;
 use crate::{
     detect::os::OsInfo, 
     format, 
-    format_for_module, 
+    impl_module, 
     impl_display_for_module, 
     superstr::ConcatStr, 
     logo::LogoInfo, 
@@ -96,8 +96,7 @@ impl Module for Os {
         "os"
     }
 
-    format_for_module!(
-        Os,
+    impl_module!(
         sysname, name, pretty_name, id,
         id_like, variant, variant_id, version,
         version_id, codename, build_id, arch,

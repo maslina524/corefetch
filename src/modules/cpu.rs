@@ -3,7 +3,7 @@ use doc::Docs;
 
 use crate::{
     detect::cpu::CpuInfo,
-    format_for_module, 
+    impl_module, 
     formats::{Frequency, Temperature}, 
     impl_display_for_module, 
     modules::Module, 
@@ -86,9 +86,8 @@ impl Module for Cpu {
     fn string_name(&self) -> &'static str {
         "cpu"
     }
-
-    format_for_module!(
-        Cpu,
+    
+    impl_module!(
         name, vendor, cores_physical, cores_logical,
         cores_online, freq_base, freq_max, temperature,
         core_types, packages, march, numa_nodes,

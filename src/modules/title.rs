@@ -3,7 +3,7 @@ use doc::Docs;
 
 use crate::{
     detect::title::TitleInfo,
-    format_for_module,
+    impl_module,
     impl_display_for_module,
     modules::Module,
     imp::path::Path,
@@ -77,8 +77,7 @@ impl Module for Title {
         "title"
     }
 
-    format_for_module!(
-        Title,
+    impl_module!(
         user_name, host_name, home_dir, exe_path, 
         user_shell, user_name_colored, at_symbol_colored, host_name_colored, 
         full_user_name, user_id, pid, cwd

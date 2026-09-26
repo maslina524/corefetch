@@ -1,6 +1,7 @@
 use alloc::{
     string::String,
-    collections::BTreeMap
+    collections::BTreeMap,
+    boxed::Box
 };
 
 use doc::Docs;
@@ -42,6 +43,10 @@ impl Module for Break {
 
     fn format(&self, _key: super::FormatValue, _format: super::FormatValue, _map: Option<&BTreeMap<String, Value>>) -> Option<String> {
         Some(String::from('\n'))
+    }
+
+    fn field_registry(&self) -> Box<[(&'static str, &dyn core::fmt::Display)]> {
+        unreachable!()
     }
 }
 

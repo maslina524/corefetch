@@ -21,6 +21,8 @@ pub mod version;    // 68) Version       : Print the Fastfetch version and build
 pub mod wallpaper;  // 70) Wallpaper     : Print the file path of the current wallpaper
 pub mod weather;    // 71) Weather       : Print weather information
 
+use core::fmt::Display;
+
 pub use break_::Break;
 pub use colors::Colors;
 pub use commit::Commit;
@@ -45,7 +47,9 @@ pub use weather::Weather;
 
 use alloc::{
     string::{String, ToString},
-    collections::BTreeMap
+    collections::BTreeMap,
+    vec::Vec,
+    boxed::Box
 };
 
 use crate::{
@@ -54,12 +58,12 @@ use crate::{
 };
 
 type ModulePtr = &'static dyn Module;
-type Registy   = (&'static str, fn() -> ModulePtr);
+type Registry  = (&'static str, fn() -> ModulePtr);
 type Example   = (&'static str, String);
 
 static UNSUPPORTED_FIELDS: [&str; 1] = ["{cmake-built-type}"];
 
-static REGISTRY: &[Registy] = &[
+static REGISTRY: &[Registry] = &[
     ("break",      || Break::get()),
     ("colors",     || Colors::get()),
     ("commit",     || Commit::get()),
@@ -100,7 +104,7 @@ pub struct DocString {
 pub trait Docs {
     fn strings_format() -> Option<&'static [DocString]>;
     fn strings_lua() -> Option<&'static [DocString]>;
-    fn strings_example(self) -> Option<alloc::vec::Vec<(&'static str, String)>>;
+    fn strings_example(self) -> Option<Vec<(&'static str, String)>>;
 }
 
 pub struct DocsVtable {
@@ -145,6 +149,7 @@ pub trait Module {
     fn title(&self) -> &'static str;
     fn string_name(&self) -> &'static str;
     fn format(&self, key: FormatValue, format: FormatValue, map: Option<&BTreeMap<String, Value>>) -> Option<String>;
+    fn field_registry(&self) -> Box<[(&'static str, &dyn Display)]>;
 }
 
 pub fn from_preset_module(s: &str) -> Option<&'static dyn Module> {
@@ -167,6 +172,29 @@ where
         s = formats::lazy_replace(&s, &crate::format!("{{{idx}}}"), value).into_owned();
     }
     s
+}
+
+pub fn __field_name(raw: &'static str) -> &'static str {
+    let trimmed = raw.strip_prefix("r#").unwrap_or(raw);
+    if trimmed.contains('_') {
+        alloc::boxed::Box::leak(trimmed.replace('_', "-").into_boxed_str())
+    } else {
+        trimmed
+    }
+}
+
+// Name is the string we get from the config
+// Field is the raw field name from the structure
+//
+// We need to compare these two strings 
+// ignoring `r#` at the beginning of field and interpreting `_` as `-`
+pub fn __eq_name_and_field(name: &str, field: &str) -> bool {
+    field
+        .strip_prefix("r#")
+        .unwrap_or(field)
+        .chars()
+        .map(|c| if c == '_' { '-' } else { c })
+        .eq(name.chars())
 }
 
 #[macro_export]
@@ -202,17 +230,31 @@ macro_rules! impl_display_for_module {
 }
 
 #[macro_export]
-macro_rules! format_for_module {
-    ($name:ident, $($field:ident),*) => {
-        fn format(
-            &self,
-            key: super::FormatValue,
-            format: super::FormatValue,
-            _map: Option<&alloc::collections::BTreeMap<alloc::string::String, $crate::json::Value>>,
-        ) -> Option<alloc::string::String> {
-            let title_raw = format.format.unwrap_or(self.title());
+macro_rules! impl_module {
+    ($($field:ident),*) => {
+        fn field_registry(&self) -> alloc::boxed::Box<[(&'static str, &dyn core::fmt::Display)]> {
+            alloc::boxed::Box::new(
+                [$(
+                    (stringify!($field), &self.$field as &dyn core::fmt::Display),
+                )*]
+            )
+        }
 
-            let value_raw: alloc::string::String = if let Some(code) = title_raw.strip_prefix("lua:") {
+        fn format(
+            &self, 
+            key: super::FormatValue, 
+            format: super::FormatValue, 
+            _map: Option<&alloc::collections::BTreeMap<alloc::string::String, super::Value>>
+        ) -> Option<alloc::string::String> {
+            use core::fmt::Write;
+
+            use alloc::string::String;
+
+            let mut ret = String::with_capacity(128);
+
+            let title_raw = format.format.unwrap_or(self.title());
+            // Proccess Lua
+            let body: String = if let Some(code) = title_raw.strip_prefix("lua:") {
                 let code = $crate::lua::open_lua_file(code).into_owned();
 
                 #[allow(unused_mut)]
@@ -231,68 +273,57 @@ macro_rules! format_for_module {
                 alloc::borrow::ToOwned::to_owned(title_raw)
             };
 
-            let fields: &[(&str, alloc::string::String)] = &[$(
-                (
-                    stringify!($field),
-                    $crate::format_module!(@to_string &self.$field),
-                ),
-            )*];
+            let registry = self.field_registry();
 
-            let value_substituted = $crate::modules::replace_fields(value_raw, fields);
+            // Substituting values into the module body
+            let mut body_ret = String::with_capacity(96);
+            let body_parser = $crate::ui::parser::FormatParserIter::new(&body);
+            for part in body_parser {
+                match part {
+                    $crate::ui::parser::Part::Text(s) => {
+                        let _ = write!(body_ret, "{s}");
+                    },
+                    $crate::ui::parser::Part::Var(v) => {
+                        if let Some((_, display)) = registry.iter().find(|(k, _)| $crate::modules::__eq_name_and_field(v, k)) {
+                            let _ = write!(body_ret, "{}", display);
+                        } else {
+                            let _ = write!(body_ret, "{{{v}}}");
+                        }
+                    }
+                }
+            }
 
-            if value_substituted.is_empty() {
-                return None;
+            if body_ret.is_empty() {
+                return None
+            }
+
+            // Substituting values into the module key
+            let mut key_ret = String::with_capacity(16);
+            let key_parser = $crate::ui::parser::FormatParserIter::new(key.format.unwrap_or(self.key()));
+            for part in key_parser {
+                match part {
+                    $crate::ui::parser::Part::Text(s) => {
+                        let _ = write!(key_ret, "{s}");
+                    },
+                    $crate::ui::parser::Part::Var(v) => {
+                        if let Some((_, display)) = registry.iter().find(|(k, _)| $crate::modules::__eq_name_and_field(v, k)) {
+                            let _ = write!(key_ret, "{}", display);
+                        } else {
+                            let _ = write!(key_ret, "{{{v}}}");
+                        }
+                    }
+                }
+            }
+
+            if key_ret.is_empty() {
+                return Some(body_ret);
             }
 
             let key_color = key.color.unwrap_or($crate::logo::LogoInfo::get().unwrap().color_keys);
-            let key_raw   = key.format.unwrap_or(self.key());
-
-            let key_substituted = $crate::modules::replace_fields(
-                alloc::borrow::ToOwned::to_owned(key_raw),
-                fields,
-            );
-
-            if key_substituted.is_empty() {
-                return Some(value_substituted);
-            }
-
             let separator = $crate::config::Config::get().get_display_separator();
-
-            let mut full_string = alloc::string::String::with_capacity(
-                key_color.len() + key_substituted.len() + separator.len()
-                    + value_substituted.len() + 8,
-            );
-            {
-                use alloc::fmt::Write as _;
-                let _ = write!(
-                    full_string,
-                    "\x1b[{key_color};1m{key_substituted}\x1b[0m{separator}{value_substituted}"
-                );
-            }
-
-            Some(full_string)
+            
+            let _ = write!(ret, "\x1b[{key_color};1m{key_ret}\x1b[0m{separator}{body_ret}");
+            Some(ret)
         }
     };
-}
-
-#[macro_export]
-macro_rules! format_module {
-    ($format:expr, $obj:ident $(,)?) => {{
-        $crate::format_module!(@to_string $format)
-    }};
-
-    ($format:expr, $obj:ident, $($field:ident),*) => {{
-        let result = $crate::format_module!(@to_string $format);        
-        $crate::modules::replace_fields(
-            result, 
-            &[$((
-                stringify!($field), 
-                &$crate::format_module!(@to_string &$obj.$field)
-            )),*]
-        )
-    }};
-    
-    (@to_string $expr:expr) => {{
-        alloc::string::ToString::to_string($expr)
-    }};
 }

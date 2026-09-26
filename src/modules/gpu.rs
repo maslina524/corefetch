@@ -3,7 +3,7 @@ use doc::Docs;
 
 use crate::{
     detect::gpu::{GpuInfo, GpuType},
-    format_for_module,
+    impl_module,
     formats::{Frequency, MemorySize, Percent, Temperature},
     impl_display_for_module,
     modules::Module,
@@ -114,8 +114,7 @@ impl Module for Gpu {
         "gpu"
     }
 
-    format_for_module!(
-        Gpu,
+    impl_module!(
         vendor, name, driver, temperature, 
         core_count, r#type, dedicated_total, dedicated_used, 
         shared_total, shared_used, platform_api, frequency, 

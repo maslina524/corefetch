@@ -1,6 +1,7 @@
 use alloc::{
     string::String,
-    collections::BTreeMap
+    collections::BTreeMap,
+    boxed::Box
 };
 use doc::Docs;
 
@@ -83,6 +84,10 @@ impl Module for Colors {
         }
         
         Some(ret)
+    }
+
+    fn field_registry(&self) -> Box<[(&'static str, &dyn core::fmt::Display)]> {
+        unreachable!()
     }
 }
 

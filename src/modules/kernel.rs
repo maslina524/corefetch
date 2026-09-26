@@ -3,7 +3,7 @@ use doc::Docs;
 
 use crate::{
     detect::kernel::KernelInfo,
-    format_for_module, 
+    impl_module, 
     formats::MemorySize, 
     impl_display_for_module, 
     modules::Module, 
@@ -60,8 +60,7 @@ impl Module for Kernel {
         "kernel"
     }
 
-    format_for_module!(
-        Kernel,
+    impl_module!(
         sysname, release, version, arch,
         display_version, page_size
     );

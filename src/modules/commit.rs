@@ -1,8 +1,8 @@
 use doc::Docs;
 
 use crate::{
-    impl_display_for_module,
-    format_for_module,
+    impl_display_for_module, 
+    impl_module, 
     modules::Module, 
     sync::OnceLock
 };
@@ -70,8 +70,7 @@ impl Module for Commit {
         "commit"
     }
 
-    format_for_module!(
-        Commit,
+    impl_module!(
         author, email, date, date_small,
         sha, sha_short, message, files, added,
         deleted, total

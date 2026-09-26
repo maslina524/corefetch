@@ -1,14 +1,15 @@
 use alloc::{
     string::String,
     collections::BTreeMap,
-    vec::Vec
+    vec::Vec,
+    boxed::Box
 };
 
 use doc::Docs;
 
 use crate::{
     detect::disk::get_disks, 
-    format_for_module, 
+    impl_module, 
     formats::{MemorySize, Percent, Time}, 
     impl_display_for_module, 
     json::Value, 
@@ -61,6 +62,10 @@ impl Module for DiskList {
 
         Some(s)
     }
+
+    fn field_registry(&self) -> Box<[(&'static str, &dyn core::fmt::Display)]> {
+        unreachable!()
+    }
 }
 
 #[derive(Debug, Clone, Default, Docs)]
@@ -98,8 +103,7 @@ impl Disk {
         "Disk ({mountpoint})"
     }
 
-    format_for_module!(
-        Disk,
+    impl_module!(
         size_used, size_total, size_percentage, files_used, 
         files_total, files_percentage, is_external, is_hidden, 
         filesystem, name, is_readonly, create_time, 

@@ -2,7 +2,7 @@ use doc::Docs;
 
 use crate::{
     detect::weather,
-    format_for_module, 
+    impl_module, 
     formats::{Percent, Temperature}, 
     impl_display_for_module, 
     superstr::ConcatStr, 
@@ -105,8 +105,7 @@ impl Module for Weather {
         "weather"
     }
 
-    format_for_module!(
-        Weather,
+    impl_module!(
         result, condition_emoji, condition, condition_symbol, 
         humidity, temperature_actual, temperature_feels, wind, 
         location, moon_emoji, moon_day, precipitation, 
