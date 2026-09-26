@@ -21,8 +21,6 @@ pub mod version;    // 68) Version       : Print the Fastfetch version and build
 pub mod wallpaper;  // 70) Wallpaper     : Print the file path of the current wallpaper
 pub mod weather;    // 71) Weather       : Print weather information
 
-use core::fmt::Display;
-
 pub use break_::Break;
 pub use colors::Colors;
 pub use commit::Commit;
@@ -48,8 +46,7 @@ pub use weather::Weather;
 use alloc::{
     string::{String, ToString},
     collections::BTreeMap,
-    vec::Vec,
-    boxed::Box
+    vec::Vec
 };
 
 use crate::{
@@ -149,7 +146,7 @@ pub trait Module {
     fn title(&self) -> &'static str;
     fn string_name(&self) -> &'static str;
     fn format(&self, key: FormatValue, format: FormatValue, map: Option<&BTreeMap<String, Value>>) -> Option<String>;
-    fn field_registry(&self) -> Box<[(&'static str, &dyn Display)]>;
+    fn resolve_field(&self, name: &str) -> Option<&dyn core::fmt::Display>;
 }
 
 pub fn from_preset_module(s: &str) -> Option<&'static dyn Module> {
@@ -232,12 +229,17 @@ macro_rules! impl_display_for_module {
 #[macro_export]
 macro_rules! impl_module {
     ($($field:ident),*) => {
-        fn field_registry(&self) -> alloc::boxed::Box<[(&'static str, &dyn core::fmt::Display)]> {
-            alloc::boxed::Box::new(
-                [$(
-                    (stringify!($field), &self.$field as &dyn core::fmt::Display),
-                )*]
-            )
+        #[allow(unused_variables)]
+        fn resolve_field(&self, name: &str) -> Option<&dyn core::fmt::Display> {
+            $(
+                {
+                    let field_name = stringify!($field);
+                    if $crate::modules::__eq_name_and_field(name, field_name) {
+                        return Some(&self.$field as &dyn core::fmt::Display);
+                    }
+                }
+            )*
+            None
         }
 
         fn format(
@@ -273,8 +275,6 @@ macro_rules! impl_module {
                 alloc::borrow::ToOwned::to_owned(title_raw)
             };
 
-            let registry = self.field_registry();
-
             // Substituting values into the module body
             let mut body_ret = String::with_capacity(96);
             let body_parser = $crate::ui::parser::FormatParserIter::new(&body);
@@ -284,7 +284,7 @@ macro_rules! impl_module {
                         let _ = write!(body_ret, "{s}");
                     },
                     $crate::ui::parser::Part::Var(v) => {
-                        if let Some((_, display)) = registry.iter().find(|(k, _)| $crate::modules::__eq_name_and_field(v, k)) {
+                        if let Some(display) = self.resolve_field(v) {
                             let _ = write!(body_ret, "{}", display);
                         } else {
                             let _ = write!(body_ret, "{{{v}}}");
@@ -306,7 +306,7 @@ macro_rules! impl_module {
                         let _ = write!(key_ret, "{s}");
                     },
                     $crate::ui::parser::Part::Var(v) => {
-                        if let Some((_, display)) = registry.iter().find(|(k, _)| $crate::modules::__eq_name_and_field(v, k)) {
+                        if let Some(display) = self.resolve_field(v) {
                             let _ = write!(key_ret, "{}", display);
                         } else {
                             let _ = write!(key_ret, "{{{v}}}");

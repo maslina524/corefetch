@@ -1,8 +1,7 @@
 use alloc::{
     string::String,
     collections::BTreeMap,
-    vec::Vec,
-    boxed::Box
+    vec::Vec
 };
 
 use doc::Docs;
@@ -63,7 +62,7 @@ impl Module for DiskList {
         Some(s)
     }
 
-    fn field_registry(&self) -> Box<[(&'static str, &dyn core::fmt::Display)]> {
+    fn resolve_field(&self, _name: &str) -> Option<&dyn core::fmt::Display> {
         unreachable!()
     }
 }
